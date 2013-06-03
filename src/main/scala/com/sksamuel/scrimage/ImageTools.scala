@@ -68,8 +68,8 @@ object ImageTools {
         _draw(sizePrime, (0, 0), scaled)
     }
 
-    private[image] def ratio(source: Image): Double = ratio(source.getWidth(null), source.getHeight(null))
-    private[image] def ratio(width: Int, height: Int): Double = if (height == 0) 0 else width / height.toDouble
+    def ratio(source: Image): Double = ratio(source.getWidth(null), source.getHeight(null))
+    def ratio(width: Int, height: Int): Double = if (height == 0) 0 else width / height.toDouble
 
     /**
      * Returns width and height that allow the given source width, height to fit inside the target width, height
