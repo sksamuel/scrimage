@@ -57,30 +57,29 @@
         <commons.sanselan.version>0.97-incubator</commons.sanselan.version>
         <commons.validator.version>1.4.0</commons.validator.version>
 
-        
+
         <javax.servlet.version>2.5</javax.servlet.version>
         <javax.jsp.version>2.1</javax.jsp.version>
-    
+
         <javax.jaxb.version>2.2.5</javax.jaxb.version>
         <javax.validation.version>1.0.0.GA</javax.validation.version>
         <javax.jms.version>1.1</javax.jms.version>
 
-     
+
         <jodatime.version>1.4</jodatime.version>
-      
+
         <junit.version>4.11</junit.version>
-   
+
 
         <log4j.version>1.2.17</log4j.version>
 
         <mockito.version>1.9.5</mockito.version>
 
-      
 
         <slf4j.version>1.6.6</slf4j.version>
         <scala.test.version>1.9.1</scala.test.version>
         <scala.version>2.10.1</scala.version>
-     
+
     </properties>
 
     <dependencyManagement>
@@ -257,9 +256,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.spatial4j</groupId>
-            <artifactId>spatial4j</artifactId>
-            <version>0.3</version>
+            <groupId>org.apache.sanselan</groupId>
+            <artifactId>sanselan</artifactId>
+            <version>0.97-incubator</version>
         </dependency>
         <dependency>
             <groupId>org.scala-lang</groupId>
