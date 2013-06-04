@@ -5,18 +5,19 @@ import java.awt.Graphics2D
 import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.Centering.Center
 import com.mortennobel.imagescaling.{ResampleFilters, ResampleOp}
+import java.awt.geom.AffineTransform
 
 /** @author Stephen Samuel
   *
   *         RichImage is class that represents an in memory image.
   *
-  **/
-class Image(image: BufferedImage) {
+  * */
+class Image(val awt: BufferedImage) {
 
     val SCALE_THREADS = 2
 
-    val width: Int = image.getWidth(null)
-    val height: Int = image.getHeight(null)
+    val width: Int = awt.getWidth(null)
+    val height: Int = awt.getHeight(null)
     val dimensions: (Int, Int) = (width, height)
 
     /**
@@ -31,7 +32,7 @@ class Image(image: BufferedImage) {
      * @return This image after the filter has been applied.
      */
     def filter(filter: Filter): Image = {
-        image.getGraphics.asInstanceOf[Graphics2D].drawImage(image, filter.op, 0, 0)
+        filter.apply(this)
         this
     }
 
@@ -44,12 +45,16 @@ class Image(image: BufferedImage) {
      * @return A clone of this image.
      */
     def copy = {
-        val c = new BufferedImage(width, height, image.getType)
-        c.getGraphics.drawImage(image, 0, 0, null)
+        val c = new BufferedImage(width, height, awt.getType)
+        c.getGraphics.drawImage(awt, 0, 0, null)
         new Image(c)
     }
 
-    def flipX = this
+    def flipX = {
+        val tx = AffineTransform.getScaleInstance(-1, 1)
+        tx.translate(-width, 0)
+    }
+
     def flipY = this
     def rotateLeft = this
     def rotateRight = this
@@ -95,7 +100,7 @@ class Image(image: BufferedImage) {
             case BSpline => op.setFilter(ResampleFilters.getBSplineFilter)
             case Lanczos3 => op.setFilter(ResampleFilters.getLanczos3Filter)
         }
-        val scaled = op.filter(image, null)
+        val scaled = op.filter(awt, null)
         new Image(scaled)
     }
 
@@ -110,8 +115,8 @@ class Image(image: BufferedImage) {
      * @return a new Image that is the result of resizing the canvas.
      */
     def resize(dimension: (Int, Int), centering: Centering = Center): Image = {
-        val target = new BufferedImage(dimension._1, dimension._2, image.getType)
-        target.getGraphics.asInstanceOf[Graphics2D].drawImage(image, 0, 0, null)
+        val target = new BufferedImage(dimension._1, dimension._2, awt.getType)
+        target.getGraphics.asInstanceOf[Graphics2D].drawImage(awt, 0, 0, null)
         new Image(target)
     }
 }
@@ -139,9 +144,21 @@ object Centering {
 }
 
 trait Filter {
+    def apply(image: Image)
+}
+
+/**
+ * Extension of Filter that applies its filters using a standard java BufferedImageOp
+ */
+trait BufferedOpFilter extends Filter {
     val op: BufferedImageOp
+    def apply(image: Image) {
+        image.awt.getGraphics.asInstanceOf[Graphics2D].drawImage(image.awt, op, 0, 0)
+    }
 }
 
 object RichImage {
     implicit def awt2rich(awtImage: BufferedImage) = new Image(awtImage)
 }
+
+

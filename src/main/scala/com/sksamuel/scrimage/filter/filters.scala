@@ -1,20 +1,27 @@
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.Filter
+import com.sksamuel.scrimage.BufferedOpFilter
 import com.sksamuel.scrimage.filter.RippleType.{Noise, Triangle, Sawtooth, Sine}
 import com.sksamuel.scrimage.filter.SmearType.{Squares, Lines, Circles, Crosses}
+import java.awt.image.{BufferedImage, RescaleOp}
 
 /** @author Stephen Samuel */
-object BlurFilter extends Filter {
+object BlurFilter extends BufferedOpFilter {
     val op = new com.jhlabs.image.BlurFilter()
 }
 
-class GaussianBlueFilter(radius: Int = 2) extends Filter {
+class GaussianBlueFilter(radius: Int = 2) extends BufferedOpFilter {
     val op = new com.jhlabs.image.GaussianFilter()
 }
 
-object GrayscaleFilter extends Filter {
+object GrayscaleFilter extends BufferedOpFilter {
     val op = new com.jhlabs.image.GrayscaleFilter()
+}
+
+class BrightenFilter(amount: Float) extends BufferedOpFilter {
+    val src = new BufferedImage(200, 200, BufferedImage.TYPE_BYTE_INDEXED)
+    val op = new RescaleOp(amount, 0, null)
+    val result = op.filter(src, null)
 }
 
 sealed trait RippleType
@@ -25,7 +32,7 @@ object RippleType {
     case object Noise extends RippleType
 }
 
-class RippleFilter(rippleType: RippleType, xAmplitude: Float = 5.0f, yAmplitude: Float = 0.0f) extends Filter {
+class RippleFilter(rippleType: RippleType, xAmplitude: Float = 5.0f, yAmplitude: Float = 0.0f) extends BufferedOpFilter {
     val op = new com.jhlabs.image.RippleFilter()
     op.setXAmplitude(xAmplitude)
     op.setYAmplitude(yAmplitude)
@@ -37,11 +44,12 @@ class RippleFilter(rippleType: RippleType, xAmplitude: Float = 5.0f, yAmplitude:
     }
 }
 
-object EdgeFilter extends Filter {
+object EdgeFilter extends BufferedOpFilter {
     val op = new com.jhlabs.image.EdgeFilter()
 }
 
-class LensBlurFilter(radius: Float, bloom: Float = 2, bloomThreshold: Float = 255, sides: Int = 5, angle: Float = 0) extends Filter {
+class LensBlurFilter(radius: Float, bloom: Float = 2, bloomThreshold: Float = 255, sides: Int = 5, angle: Float = 0)
+  extends BufferedOpFilter {
     val op = new com.jhlabs.image.LensBlurFilter()
     op.setSides(sides)
     op.setBloomThreshold(bloomThreshold)
@@ -57,7 +65,7 @@ object SmearType {
     case object Squares extends SmearType
 }
 
-class SmearFilter(smearType: SmearType, angle: Float = 0, density: Float = 0.5f, scatter: Float = 0.0f) extends Filter {
+class SmearFilter(smearType: SmearType, angle: Float = 0, density: Float = 0.5f, scatter: Float = 0.0f) extends BufferedOpFilter {
     val op = new com.jhlabs.image.SmearFilter()
     op.setDensity(density)
     op.setAngle(angle)
@@ -70,15 +78,15 @@ class SmearFilter(smearType: SmearType, angle: Float = 0, density: Float = 0.5f,
     }
 }
 
-object BumpFilter extends Filter {
+object BumpFilter extends BufferedOpFilter {
     val op = new com.jhlabs.image.BumpFilter()
 }
 
-object DespeckleFilter extends Filter {
+object DespeckleFilter extends BufferedOpFilter {
     val op = new com.jhlabs.image.DespeckleFilter()
 }
 
-class GlowFilter(amount: Float = 0.5) extends Filter {
+class GlowFilter(amount: Float = 0.5) extends BufferedOpFilter {
     val op = new com.jhlabs.image.GlowFilter()
     op.setAmount(amount)
 }
