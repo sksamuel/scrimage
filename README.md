@@ -2,8 +2,9 @@ scrimage
 ========
 
 Scrimage is a Scala library for image manipulating, processing and filtering. The aim of the this library is to provide a
-quick and easy way to do the kinds of image operations that most people need, such as scaling, rotating, converting between
-formats and applying filters.
+quick and easy way to do the kinds of image operations that most people need, on a daily basis, such as scaling, rotating,
+converting between formats and applying filters. It is not intended to provide functionality that might be required by a
+more "serious" image application - such as a lightroom clone.
 
 [![Build Status](https://travis-ci.org/sksamuel/scrimage.png)](https://travis-ci.org/sksamuel/scrimage)
 
@@ -22,9 +23,27 @@ Filters
 
 Scrimage comes with a wide array (or List ;)) of filters. Most of these filters I have not written myself,
 but rather collected from other open source imaging libraries (where the license allows), and either re-written
-them in Scala or wrapped them in a Scala wrapper.
+them in Scala or wrapped them in a Scala wrapper. The original authors are attributed inside the file headers.
 
-|filter name|example page|
-|Blur|example.png|
-|Gaussian Blur|example.png|
-|Edge|example.png|
+| Filter Name        | Example           |
+| ------------- |:-------------:|
+| col 3 is      | right-aligned |
+| col 2 is      | centered      |
+| zebra stripes | are neat      |
+
+Quick Examples
+===============
+
+Reading an image, scaling it to 50%, and writing out as PNG
+```scala
+val in = ... // input stream
+val out = ... // output stream
+Image(in).scale(0.5).write(out)
+```
+
+Reading an image from a java File, applying a blur filter, then flipping it on the horizontal axis, then writing out as a Jpeg
+```scala
+val inFile = ... // input File
+val outFile = ... // output File
+Image(inFile).filter(BlurFilter).flipX.write(outFile)
+```

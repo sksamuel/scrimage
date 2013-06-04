@@ -7,6 +7,7 @@ import com.sksamuel.scrimage.Centering.Center
 import com.mortennobel.imagescaling.{ResampleFilters, ResampleOp}
 import java.awt.geom.AffineTransform
 import java.io.{InputStream, OutputStream, File}
+import com.sksamuel.scrimage.Format.PNG
 
 /** @author Stephen Samuel
   *
@@ -172,11 +173,12 @@ class Image(val awt: BufferedImage) {
         new Image(target)
     }
 
-    def write(file: File) {
-        ImageWriter(file).write(this)
+    def write(file: File, format: Format = PNG) {
+        ImageWriter(file).write(this, format)
     }
-    def write(out: OutputStream) {
-        ImageWriter(out).write(this)
+
+    def write(out: OutputStream, format: Format = PNG) {
+        ImageWriter(out).write(this, format)
     }
 
     override def equals(obj: Any): Boolean = obj match {
