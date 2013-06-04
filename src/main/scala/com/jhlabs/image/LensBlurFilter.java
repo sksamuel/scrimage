@@ -28,7 +28,6 @@ public class LensBlurFilter extends AbstractBufferedImageOp {
     private float radius = 10;
     private float bloom = 2;
     private float bloomThreshold = 255;
-    private float angle = 0;
     private int sides = 5;
 
     /**
@@ -155,6 +154,7 @@ public class LensBlurFilter extends AbstractBufferedImageOp {
         double polyAngle = Math.PI / sides;
         double polyScale = 1.0f / Math.cos(polyAngle);
         double r2 = radius * radius;
+        float angle = 0;
         double rangle = Math.toRadians(angle);
         float total = 0;
         int i = 0;
