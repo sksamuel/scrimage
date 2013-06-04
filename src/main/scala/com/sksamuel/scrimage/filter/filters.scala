@@ -86,7 +86,7 @@ object DespeckleFilter extends BufferedOpFilter {
     val op = new com.jhlabs.image.DespeckleFilter()
 }
 
-class GlowFilter(amount: Float = 0.5) extends BufferedOpFilter {
+class GlowFilter(amount: Float = 0.5f) extends BufferedOpFilter {
     val op = new com.jhlabs.image.GlowFilter()
     op.setAmount(amount)
 }
