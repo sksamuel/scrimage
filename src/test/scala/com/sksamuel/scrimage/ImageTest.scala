@@ -2,10 +2,11 @@ package com.sksamuel.scrimage
 
 import org.scalatest.{OneInstancePerTest, BeforeAndAfter, FunSuite}
 import java.awt.image.BufferedImage
-import sun.awt.resources.awt
 
 /** @author Stephen Samuel */
 class ImageTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
+
+    val in = getClass.getResourceAsStream("/bird.jpg")
 
     test("ratio happy path") {
         val awt1 = new BufferedImage(200, 400, BufferedImage.TYPE_INT_ARGB)
@@ -22,5 +23,11 @@ class ImageTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
 
         val awt5 = new BufferedImage(111, 333, BufferedImage.TYPE_INT_ARGB)
         assert(1 / 3d === Image(awt5).ratio)
+    }
+
+    test("pixel happy path") {
+        val image = ImageReader(in).read
+        assert(-303240469 === image.pixel(0, 0))
+        assert(1347364339 === image.pixel(100, 100))
     }
 }

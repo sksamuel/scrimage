@@ -24,9 +24,9 @@ class Image(val awt: BufferedImage) {
     /**
      * Returns the pixel data at the given point as an int consisting of the ARGB values.
      *
-     * Inspired by user ryyst's code from
+     * Inspired by user mota's code from
      * http://stackoverflow.com/questions/6524196/java-get-pixel-array-from-image
-     * http://stackoverflow.com/users/282635/ryyst
+     * http://stackoverflow.com/users/408286/mota
      *
      * @param point the coordinates of the pixel to grab
      *
@@ -34,12 +34,13 @@ class Image(val awt: BufferedImage) {
      */
     def pixel(point: (Int, Int)): Int = {
         val pixels = awt.getRaster.getDataBuffer.asInstanceOf[DataBufferByte].getData
-        val pixelIndex = point._1 * point._2 * 4
+        val pixelIndex = (width * point._2 + point._1) * 4
         // stored in the raster array as ABGR but we are dealing with ARGB consistently.
-        (pixels(pixelIndex) & 0xff) << 24 + // alpha
-          (pixels(pixelIndex + 1) & 0xff) + // blue
-          (pixels(pixelIndex + 2) & 0xff) << 8 + // green
-          (pixels(pixelIndex + 3) & 0xff) << 16 // red
+        val alpha = (pixels(pixelIndex) & 0xff) << 24 // alpha
+        val red = (pixels(pixelIndex + 3) & 0xff) << 16 // red
+        val green = (pixels(pixelIndex + 2) & 0xff) << 8 // green
+        val blue = (pixels(pixelIndex + 1) & 0xff) // blue
+        alpha + red + green + blue
     }
 
     /**
