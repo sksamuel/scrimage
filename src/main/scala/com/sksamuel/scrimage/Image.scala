@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage
 
-import java.awt.image.{BufferedImageOp, BufferedImage}
+import java.awt.image.{AffineTransformOp, BufferedImageOp, BufferedImage}
 import java.awt.Graphics2D
 import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.Centering.Center
@@ -11,7 +11,7 @@ import java.awt.geom.AffineTransform
   *
   *         RichImage is class that represents an in memory image.
   *
-  * */
+  **/
 class Image(val awt: BufferedImage) {
 
     val SCALE_THREADS = 2
@@ -50,12 +50,30 @@ class Image(val awt: BufferedImage) {
         new Image(c)
     }
 
-    def flipX = {
+    /**
+     *
+     * @return A new image that is the result of flipping this image horizontally.
+     */
+    def flipX: Image = {
         val tx = AffineTransform.getScaleInstance(-1, 1)
         tx.translate(-width, 0)
+        val op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR)
+        val flipped = op.filter(awt, null)
+        new Image(flipped)
     }
 
-    def flipY = this
+    /**
+     *
+     * @return A new image that is the result of flipping this image vertically.
+     */
+    def flipY: Image = {
+        val tx = AffineTransform.getScaleInstance(1, -1)
+        tx.translate(0, -height)
+        val op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR)
+        val flipped = op.filter(awt, null)
+        new Image(flipped)
+    }
+
     def rotateLeft = this
     def rotateRight = this
     def rotate(angle: Float) = this
