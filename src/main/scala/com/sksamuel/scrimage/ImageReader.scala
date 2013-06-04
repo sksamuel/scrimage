@@ -6,7 +6,11 @@ import org.apache.commons.io.FileUtils
 
 /** @author Stephen Samuel */
 class ImageReader(in: InputStream) {
-    def read: Image = new Image(ImageIO.read(in))
+    require(in != null, "Input stream to reader must not be null")
+    def read: Image = {
+        require(in.available > 0)
+        Image(ImageIO.read(in))
+    }
 }
 
 object ImageReader {

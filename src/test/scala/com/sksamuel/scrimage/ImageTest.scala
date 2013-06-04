@@ -34,8 +34,8 @@ class ImageTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
 
     test("pixel happy path") {
         val image = ImageReader(in).read
-        assert(-303240469 === image.pixel(0, 0))
-        assert(1347364339 === image.pixel(100, 100))
+        assert(-1 === image.pixel(0, 0))
+        assert(-1 === image.pixel(100, 100))
     }
 
     test("test") {

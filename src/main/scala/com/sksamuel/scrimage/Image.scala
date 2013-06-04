@@ -1,21 +1,25 @@
 package com.sksamuel.scrimage
 
-import java.awt.image.{DataBufferByte, AffineTransformOp, BufferedImageOp, BufferedImage}
+import java.awt.image._
 import java.awt.Graphics2D
-import com.sksamuel.scrimage.ScaleMethod._
-import com.sksamuel.scrimage.Centering.Center
 import com.mortennobel.imagescaling.{ResampleFilters, ResampleOp}
 import java.awt.geom.AffineTransform
 import java.io.{InputStream, OutputStream, File}
 import com.sksamuel.scrimage.Format.PNG
+import com.sksamuel.scrimage.ScaleMethod._
+import com.sksamuel.scrimage.Centering.Center
+import javax.imageio.ImageIO
+import org.apache.commons.io.FileUtils
 
 /** @author Stephen Samuel
   *
   *         RichImage is class that represents an in memory image.
   *
-  **/
+  * */
 class Image(val awt: BufferedImage) {
-    require(awt != null)
+    require(awt != null, "Wrapping image cannot be null")
+    require(awt.getType == Image.CANONICAL_DATA_TYPE,
+        "Unsupported underlying image type. Consider using Image.apply(java.awt.Image) in order to wrap the image in the right data type")
 
     val SCALE_THREADS = 2
 
@@ -24,12 +28,10 @@ class Image(val awt: BufferedImage) {
     lazy val dimensions: (Int, Int) = (width, height)
     lazy val ratio: Double = if (height == 0) 0 else width / height.toDouble
 
+    // creates a new raw image that is the same size as this image and uses the canonical data model
+    def raw: BufferedImage = Image.raw(awt)
+
     /**
-     * Returns the pixel data at the given point as an int consisting of the ARGB values.
-     *
-     * Inspired by user mota's code from
-     * http://stackoverflow.com/questions/6524196/java-get-pixel-array-from-image
-     * http://stackoverflow.com/users/408286/mota
      *
      * @param point the coordinates of the pixel to grab
      *
@@ -37,38 +39,30 @@ class Image(val awt: BufferedImage) {
      */
     def pixel(point: (Int, Int)): Int = {
         val pixels = awt.getRaster.getDataBuffer.asInstanceOf[DataBufferByte].getData
-        val pixelIndex = (width * point._2 + point._1) * 4
-        // stored in the raster array as ABGR but we are dealing with ARGB consistently.
-        val alpha = (pixels(pixelIndex) & 0xff) << 24 // alpha
-        val red = (pixels(pixelIndex + 3) & 0xff) << 16 // red
-        val green = (pixels(pixelIndex + 2) & 0xff) << 8 // green
-        val blue = (pixels(pixelIndex + 1) & 0xff) // blue
-        alpha + red + green + blue
+        val pixelIndex = (width * point._2 + point._1)
+        pixels(pixelIndex)
     }
 
-    def pixels: Array[Byte] = awt.getRaster.getDataBuffer.asInstanceOf[DataBufferByte].getData
+    def pixels: Array[Byte] = {
+        awt.getRaster.getDataBuffer match {
+            case buffer: DataBufferByte => buffer.getData
+            case _ => throw new UnsupportedOperationException
+        }
+    }
 
     /**
      *
-     * Applies the given filter to this image and returns the modified image. Note, unlike most operations this operation
-     * is mutable to the current image. If you wish to operate on a copy, then call copy() before filter, eg
-     *
-     * image.copy.filter(myFilter)
+     * Applies the given filter to this image and returns the modified image.
      *
      * @param filter the filter to apply. See Filter.
      *
-     * @return This image after the filter has been applied.
+     * @return A new image with the given filter applied.
      */
-    def filter(filter: Filter): Image = {
-        filter.apply(this)
-        this
-    }
+    def filter(filter: Filter): Image = filter.apply(this)
 
     /**
      * Copies this image and returns a new image with a new backing array. Any operations to the copied image will
      * not affect the original. Images can be copied multiple times.
-     *
-     * This operation is useful when you want to apply a mutable operation without destroying the original image.
      *
      * @return A clone of this image.
      */
@@ -111,34 +105,49 @@ class Image(val awt: BufferedImage) {
     }
 
     /**
+     *
      * Returns a copy of the image which has been scaled to fit
      * inside the current dimensions whilst keeping the aspect ratio.
      *
-     *
+     * @param width the target size
+     * @param height the target size
      *
      * @return
      */
-    def fit(dimension: (Int, Int), scaleMethod: ScaleMethod = Bicubic, centering: Centering = Center): Image = copy
+    def fit(width: Int, height: Int, scaleMethod: ScaleMethod = Bicubic, centering: Centering = Center): Image = copy // todo
 
     /**
      *
      * That is the canvas will have the given dimensions but the image will not necessarily cover it all.
      *
-     * @param dimension the target size
-     * @param scaleMethod
+     * @param width the target width
+     * @param height the target height
+     * @param scaleMethod the type of scaling method to use. Defaults to Bicubic
      *
      * @return
      */
-    def cover(dimension: (Int, Int), scaleMethod: ScaleMethod = Bicubic): Image = copy
+    def cover(width: Int, height: Int, scaleMethod: ScaleMethod = Bicubic): Image = copy // todo
 
-    def scale(scaleFactor: Double): Image = scale((width * scaleFactor).toInt, (height * scaleFactor).toInt)
+    def scale(scaleFactor: Double): Image = scale(scaleFactor, Bicubic)
 
     /**
      *
-     * Scale will resize the canvas and the image. This is like a "image resize" in Photoshop
+     * Scale will resize the canvas and the image. This is like a "image resize" in Photoshop.
      *
-     * @param width the target size
-     * @param height
+     * @param scaleFactor the target increase or decrease. 1 is the same as original.
+     * @param scaleMethod the type of scaling method to use.
+     *
+     * @return a new Image that is the result of scaling this image
+     */
+    def scale(scaleFactor: Double, scaleMethod: ScaleMethod): Image =
+        scale((width * scaleFactor).toInt, (height * scaleFactor).toInt, scaleMethod)
+
+    /**
+     *
+     * Scale will resize the canvas and the image. This is like a "image resize" in Photoshop.
+     *
+     * @param width the target width
+     * @param height the target height
      * @param scaleMethod the type of scaling method to use. Defaults to SmoothScale
      *
      * @return a new Image that is the result of scaling this image
@@ -173,37 +182,60 @@ class Image(val awt: BufferedImage) {
         new Image(target)
     }
 
-    def write(file: File, format: Format = PNG) {
+    def write(file: File) {
+        write(file, PNG)
+    }
+    def write(file: File, format: Format) {
         ImageWriter(file).write(this, format)
     }
-
-    def write(out: OutputStream, format: Format = PNG) {
+    def write(out: OutputStream) {
+        write(out, PNG)
+    }
+    def write(out: OutputStream, format: Format) {
         ImageWriter(out).write(this, format)
     }
 
     override def equals(obj: Any): Boolean = obj match {
-        case other: Image => pixels.sameElements(other.pixels)
+        case other: Image => other.pixels.sameElements(pixels)
         case _ => false
     }
 }
 
 object Image {
-    def apply(in: InputStream): Image = ImageReader(in).read
-    def apply(file: File): Image = ImageReader(file).read
-    def apply(awt: BufferedImage) = new Image(awt)
+
+    val CANONICAL_DATA_TYPE = BufferedImage.TYPE_4BYTE_ABGR
+
+    def apply(in: InputStream): Image = {
+        require(in != null)
+        require(in.available > 0)
+        apply(ImageIO.read(in))
+    }
+
+    def apply(file: File): Image = {
+        require(file != null)
+        val in = FileUtils.openInputStream(file)
+        apply(in)
+    }
+
     def apply(awt: java.awt.Image): Image = {
+        require(awt != null, "Input image cannot be null")
         awt match {
-            case buff: BufferedImage => apply(buff)
+            case buff: BufferedImage if buff.getType == CANONICAL_DATA_TYPE => new Image(buff)
             case _ => copy(awt)
         }
     }
+
     def copy(awt: java.awt.Image) = {
-        val buff = new BufferedImage(awt.getWidth(null), awt.getHeight(null), BufferedImage.TYPE_INT_ARGB)
+        require(awt != null, "Input image cannot be null")
+        val buff = raw(awt)
         val g2 = buff.getGraphics
         g2.drawImage(awt, 0, 0, null)
         g2.dispose()
-        apply(buff)
+        new Image(buff)
     }
+
+    def raw(awt: java.awt.Image): BufferedImage =
+        new BufferedImage(awt.getWidth(null), awt.getHeight(null), CANONICAL_DATA_TYPE)
 }
 
 sealed trait ScaleMethod
@@ -229,7 +261,7 @@ object Centering {
 }
 
 trait Filter {
-    def apply(image: Image)
+    def apply(image: Image): Image
 }
 
 /**
@@ -237,8 +269,12 @@ trait Filter {
  */
 trait BufferedOpFilter extends Filter {
     val op: BufferedImageOp
-    def apply(image: Image) {
-        image.awt.getGraphics.asInstanceOf[Graphics2D].drawImage(image.awt, op, 0, 0)
+    def apply(image: Image): Image = {
+        val target = image.raw
+        val g2 = target.getGraphics.asInstanceOf[Graphics2D]
+        g2.drawImage(image.awt, op, 0, 0)
+        g2.dispose()
+        new Image(target)
     }
 }
 

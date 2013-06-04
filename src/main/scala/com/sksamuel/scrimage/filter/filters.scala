@@ -4,11 +4,21 @@ import com.sksamuel.scrimage.{Image, Filter, BufferedOpFilter}
 import com.sksamuel.scrimage.filter.RippleType.{Noise, Triangle, Sawtooth, Sine}
 import com.sksamuel.scrimage.filter.SmearType.{Squares, Lines, Circles, Crosses}
 import java.awt.image._
-import java.awt.Toolkit
+import java.awt.{RenderingHints, Toolkit}
 
 /** @author Stephen Samuel */
 object BlurFilter extends BufferedOpFilter {
     val op = new com.jhlabs.image.BlurFilter()
+}
+
+class QuantizeFilter(colors: Int, dither: Boolean) extends BufferedOpFilter {
+    val op = new com.jhlabs.image.QuantizeFilter
+    op.setNumColors(colors)
+    op.setDither(dither)
+}
+object QuantizeFilter {
+    def apply(): QuantizeFilter = new QuantizeFilter(256, false)
+    def apply(colors: Int, dither: Boolean = false): QuantizeFilter = new QuantizeFilter(colors, dither)
 }
 
 class GaussianBlurFilter(radius: Int = 2) extends BufferedOpFilter {
@@ -24,7 +34,7 @@ object GrayscaleFilter extends BufferedOpFilter {
 }
 
 class BrightenFilter(amount: Float) extends BufferedOpFilter {
-    val op = new RescaleOp(amount, 0, null)
+    val op = new RescaleOp(amount, 0, new RenderingHints(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY))
 }
 
 object BrightenFilter {
@@ -58,7 +68,7 @@ class RedFilter extends Filter {
         def filterRGB(x: Int, y: Int, rgb: Int) = rgb & 0xffff0000
     }
 
-    def apply(image: Image) {
+    def apply(image: Image): Image = {
         val filteredSrc = new FilteredImageSource(image.awt.getSource, _RedFilter)
         val awt = Toolkit.getDefaultToolkit.createImage(filteredSrc)
         Image(awt)
