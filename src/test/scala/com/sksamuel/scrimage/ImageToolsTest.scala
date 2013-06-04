@@ -1,10 +1,10 @@
 package com.sksamuel.scrimage
 
-import org.scalatest.{BeforeAndAfter, FunSuite}
+import org.scalatest.{OneInstancePerTest, BeforeAndAfter, FunSuite}
 import java.awt.image.BufferedImage
 
 /** @author Stephen Samuel */
-class ImageToolsTest extends FunSuite with BeforeAndAfter {
+class ImageToolsTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
 
     test("when writing out an image then the array is the right length") {
         val image = new BufferedImage(100, 200, BufferedImage.TYPE_INT_BGR)

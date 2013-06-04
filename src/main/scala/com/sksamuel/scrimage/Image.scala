@@ -16,19 +16,19 @@ class Image(val awt: BufferedImage) {
 
     val SCALE_THREADS = 2
 
-    val width: Int = awt.getWidth(null)
-    val height: Int = awt.getHeight(null)
-    val dimensions: (Int, Int) = (width, height)
+    lazy val width: Int = awt.getWidth(null)
+    lazy val height: Int = awt.getHeight(null)
+    lazy val dimensions: (Int, Int) = (width, height)
+    lazy val ratio: Double = if (height == 0) 0 else width / height.toDouble
 
     /**
-     *
      * Returns the pixel data at the given point as an int consisting of the ARGB values.
      *
      * Inspired by user ryyst's code from
      * http://stackoverflow.com/questions/6524196/java-get-pixel-array-from-image
      * http://stackoverflow.com/users/282635/ryyst
      *
-     * @param point
+     * @param point the coordinates of the pixel to grab
      *
      * @return
      */
