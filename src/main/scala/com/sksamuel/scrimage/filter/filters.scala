@@ -20,9 +20,12 @@ object GrayscaleFilter extends BufferedOpFilter {
 }
 
 class BrightenFilter(amount: Float) extends BufferedOpFilter {
-    val src = new BufferedImage(200, 200, BufferedImage.TYPE_BYTE_INDEXED)
     val op = new RescaleOp(amount, 0, null)
-    val result = op.filter(src, null)
+}
+
+object BrightenFilter {
+    def apply(amount: Double) = new BrightenFilter(amount.toFloat)
+    def apply(amount: Float) = new BrightenFilter(amount)
 }
 
 sealed trait RippleType

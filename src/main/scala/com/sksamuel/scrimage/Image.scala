@@ -7,13 +7,12 @@ import com.sksamuel.scrimage.Centering.Center
 import com.mortennobel.imagescaling.{ResampleFilters, ResampleOp}
 import java.awt.geom.AffineTransform
 import java.io.{InputStream, OutputStream, File}
-import scala.collection.mutable
 
 /** @author Stephen Samuel
   *
   *         RichImage is class that represents an in memory image.
   *
-  **/
+  * */
 class Image(val awt: BufferedImage) {
     require(awt != null)
 
@@ -179,7 +178,7 @@ class Image(val awt: BufferedImage) {
     }
 
     override def equals(obj: Any): Boolean = obj match {
-        case other: Image => (pixels: mutable.WrappedArray[Byte]) == (other.pixels: mutable.WrappedArray[Byte])
+        case other: Image => pixels.sameElements(other.pixels)
         case _ => false
     }
 }
