@@ -5,7 +5,7 @@ import javax.imageio.ImageIO
 
 /** @author Stephen Samuel */
 class ImageReader(in: InputStream) {
-    def read = ImageIO.read(in)
+    def read: Image = new Image(ImageIO.read(in))
 }
 
 object ImageReader {
