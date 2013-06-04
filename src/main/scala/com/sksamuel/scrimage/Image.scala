@@ -6,13 +6,16 @@ import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.Centering.Center
 import com.mortennobel.imagescaling.{ResampleFilters, ResampleOp}
 import java.awt.geom.AffineTransform
+import java.io.{InputStream, OutputStream, File}
+import scala.collection.mutable
 
 /** @author Stephen Samuel
   *
   *         RichImage is class that represents an in memory image.
   *
-  * */
+  **/
 class Image(val awt: BufferedImage) {
+    require(awt != null)
 
     val SCALE_THREADS = 2
 
@@ -42,6 +45,8 @@ class Image(val awt: BufferedImage) {
         val blue = (pixels(pixelIndex + 1) & 0xff) // blue
         alpha + red + green + blue
     }
+
+    def pixels: Array[Byte] = awt.getRaster.getDataBuffer.asInstanceOf[DataBufferByte].getData
 
     /**
      *
@@ -124,17 +129,20 @@ class Image(val awt: BufferedImage) {
      */
     def cover(dimension: (Int, Int), scaleMethod: ScaleMethod = Bicubic): Image = copy
 
+    def scale(scaleFactor: Double): Image = scale((width * scaleFactor).toInt, (height * scaleFactor).toInt)
+
     /**
      *
      * Scale will resize the canvas and the image. This is like a "image resize" in Photoshop
      *
-     * @param dimensions the target size
+     * @param width the target size
+     * @param height
      * @param scaleMethod the type of scaling method to use. Defaults to SmoothScale
      *
      * @return a new Image that is the result of scaling this image
      */
-    def scale(dimensions: (Int, Int), scaleMethod: ScaleMethod = Bicubic): Image = {
-        val op = new ResampleOp(dimensions._1, dimensions._2)
+    def scale(width: Int, height: Int, scaleMethod: ScaleMethod = Bicubic): Image = {
+        val op = new ResampleOp(width, height)
         op.setNumberOfThreads(SCALE_THREADS)
         scaleMethod match {
             case FastScale =>
@@ -152,19 +160,33 @@ class Image(val awt: BufferedImage) {
      * Resize will resize the canvas, it will not scale the image. This is like a "canvas resize" in Photoshop.
      * If the dimensions are smaller than the current canvas size then the image will be cropped.
      *
-     * @param dimension the target size
+     * @param dimensions the target size
      * @param centering
      *
      * @return a new Image that is the result of resizing the canvas.
      */
-    def resize(dimension: (Int, Int), centering: Centering = Center): Image = {
-        val target = new BufferedImage(dimension._1, dimension._2, awt.getType)
+    def resize(dimensions: (Int, Int), centering: Centering = Center): Image = {
+        val target = new BufferedImage(dimensions._1, dimensions._2, awt.getType)
         target.getGraphics.asInstanceOf[Graphics2D].drawImage(awt, 0, 0, null)
         new Image(target)
+    }
+
+    def write(file: File) {
+        ImageWriter(file).write(this)
+    }
+    def write(out: OutputStream) {
+        ImageWriter(out).write(this)
+    }
+
+    override def equals(obj: Any): Boolean = obj match {
+        case other: Image => (pixels: mutable.WrappedArray[Byte]) == (other.pixels: mutable.WrappedArray[Byte])
+        case _ => false
     }
 }
 
 object Image {
+    def apply(in: InputStream): Image = ImageReader(in).read
+    def apply(file: File): Image = ImageReader(file).read
     def apply(awt: BufferedImage) = new Image(awt)
     def apply(awt: java.awt.Image): Image = {
         awt match {

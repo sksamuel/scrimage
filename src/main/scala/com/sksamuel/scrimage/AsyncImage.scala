@@ -18,8 +18,8 @@ class AsyncImage(image: Image) {
         this
     }
 
-    def scale(dimensions: (Int, Int), scaleMethod: ScaleMethod = Bicubic): Future[AsyncImage] = future {
-        image.scale(dimensions, scaleMethod)
+    def scale(width: Int, height: Int, scaleMethod: ScaleMethod = Bicubic): Future[AsyncImage] = future {
+        image.scale(width, height)
         this
     }
 }

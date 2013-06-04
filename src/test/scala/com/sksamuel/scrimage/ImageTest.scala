@@ -2,6 +2,7 @@ package com.sksamuel.scrimage
 
 import org.scalatest.{OneInstancePerTest, BeforeAndAfter, FunSuite}
 import java.awt.image.BufferedImage
+import java.io.File
 
 /** @author Stephen Samuel */
 class ImageTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
@@ -28,12 +29,18 @@ class ImageTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
     test("dimensions happy path") {
         val image = ImageReader(in).read
         assert(1944 === image.width)
-        assert(234234 === image.height)
+        assert(1296 === image.height)
     }
 
     test("pixel happy path") {
         val image = ImageReader(in).read
         assert(-303240469 === image.pixel(0, 0))
         assert(1347364339 === image.pixel(100, 100))
+    }
+
+    test("test") {
+        val image = ImageReader(in).read
+        val file = new File("bird_small.png")
+        image.scale(0.20).write(file)
     }
 }
