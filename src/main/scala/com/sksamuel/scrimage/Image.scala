@@ -2,7 +2,7 @@ package com.sksamuel.scrimage
 
 import java.awt.image.{BufferedImageOp, BufferedImage}
 import java.awt.Graphics2D
-import com.sksamuel.scrimage.ScaleMethod.{FastScale, Lanczos3, BSpline, Bicubic}
+import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.Centering.Center
 import com.mortennobel.imagescaling.{ResampleFilters, ResampleOp}
 
@@ -10,7 +10,7 @@ import com.mortennobel.imagescaling.{ResampleFilters, ResampleOp}
   *
   *         RichImage is class that represents an in memory image.
   *
-  * */
+  **/
 class Image(image: BufferedImage) {
 
     val SCALE_THREADS = 2
@@ -89,8 +89,9 @@ class Image(image: BufferedImage) {
         val op = new ResampleOp(100, 200)
         op.setNumberOfThreads(SCALE_THREADS)
         scaleMethod match {
-            case FastScale => op.setFilter(ResampleFilters.getBiCubicFilter)
+            case FastScale =>
             case Bicubic => op.setFilter(ResampleFilters.getBiCubicFilter)
+            case Bilinear => op.setFilter(ResampleFilters.getTriangleFilter)
             case BSpline => op.setFilter(ResampleFilters.getBSplineFilter)
             case Lanczos3 => op.setFilter(ResampleFilters.getLanczos3Filter)
         }
@@ -120,6 +121,7 @@ object ScaleMethod {
     object FastScale extends ScaleMethod
     object Lanczos3 extends ScaleMethod
     object BSpline extends ScaleMethod
+    object Bilinear extends ScaleMethod
     object Bicubic extends ScaleMethod
 }
 
