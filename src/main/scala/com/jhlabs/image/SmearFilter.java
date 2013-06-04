@@ -16,17 +16,16 @@ limitations under the License.
 
 package com.jhlabs.image;
 
-import java.util.*;
 import java.awt.*;
-import java.awt.image.*;
-import com.jhlabs.math.*;
+import java.util.Date;
+import java.util.Random;
 
 public class SmearFilter extends WholeImageFilter {
-	
-	public final static int CROSSES = 0;
-	public final static int LINES = 1;
-	public final static int CIRCLES = 2;
-	public final static int SQUARES = 3;
+
+    public final static int CROSSES = 0;
+    public final static int LINES = 1;
+    public final static int CIRCLES = 2;
+    public final static int SQUARES = 3;
 
 	private Colormap colormap = new LinearColormap();
 	private float angle = 0;
