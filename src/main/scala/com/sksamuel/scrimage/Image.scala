@@ -44,7 +44,7 @@ class Image(val awt: BufferedImage) {
      *
      * @return A clone of this image.
      */
-    def copy = Image(awt)
+    def copy = Image.copy(awt)
 
     /**
      *
@@ -138,9 +138,15 @@ class Image(val awt: BufferedImage) {
 object Image {
     def apply(awt: BufferedImage) = new Image(awt)
     def apply(awt: java.awt.Image): Image = {
-        val c = new BufferedImage(awt.getWidth(null), awt.getHeight(null), BufferedImage.TYPE_INT_ARGB)
-        c.getGraphics.drawImage(awt, 0, 0, null)
-        apply(c)
+        awt match {
+            case buff: BufferedImage => apply(buff)
+            case _ => copy(awt)
+        }
+    }
+    def copy(awt: java.awt.Image) = {
+        val buff = new BufferedImage(awt.getWidth(null), awt.getHeight(null), BufferedImage.TYPE_INT_ARGB)
+        buff.getGraphics.drawImage(awt, 0, 0, null)
+        apply(buff)
     }
 }
 
