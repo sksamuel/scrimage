@@ -29,7 +29,7 @@ class Image(val awt: BufferedImage) {
     lazy val ratio: Double = if (height == 0) 0 else width / height.toDouble
 
     // creates a new raw image that is the same size as this image and uses the canonical data model
-    def raw: BufferedImage = Image.raw(awt)
+    def _raw: BufferedImage = Image.raw(awt)
 
     /**
      *
@@ -166,18 +166,23 @@ class Image(val awt: BufferedImage) {
         new Image(scaled)
     }
 
+    def resize(scaleFactor: Double): Image = resize((width * scaleFactor).toInt, (height * scaleFactor).toInt, Center)
+    def resize(scaleFactor: Double, centering: Centering): Image =
+        resize((width * scaleFactor).toInt, (height * scaleFactor).toInt, centering)
+
     /**
      *
      * Resize will resize the canvas, it will not scale the image. This is like a "canvas resize" in Photoshop.
      * If the dimensions are smaller than the current canvas size then the image will be cropped.
      *
-     * @param dimensions the target size
-     * @param centering
+     * @param width the target width
+     * @param height the target height
+     * @param centering where to position the original image after the canvas size change
      *
      * @return a new Image that is the result of resizing the canvas.
      */
-    def resize(dimensions: (Int, Int), centering: Centering = Center): Image = {
-        val target = new BufferedImage(dimensions._1, dimensions._2, awt.getType)
+    def resize(width: Int, height: Int, centering: Centering = Center): Image = {
+        val target = new BufferedImage(width, height, Image.CANONICAL_DATA_TYPE)
         target.getGraphics.asInstanceOf[Graphics2D].drawImage(awt, 0, 0, null)
         new Image(target)
     }
@@ -185,16 +190,20 @@ class Image(val awt: BufferedImage) {
     def write(file: File) {
         write(file, PNG)
     }
+
     def write(file: File, format: Format) {
         ImageWriter(file).write(this, format)
     }
+
     def write(out: OutputStream) {
         write(out, PNG)
     }
+
     def write(out: OutputStream, format: Format) {
         ImageWriter(out).write(this, format)
     }
 
+    override def hashCode(): Int = awt.hashCode
     override def equals(obj: Any): Boolean = obj match {
         case other: Image => other.pixels.sameElements(pixels)
         case _ => false
@@ -270,7 +279,7 @@ trait Filter {
 trait BufferedOpFilter extends Filter {
     val op: BufferedImageOp
     def apply(image: Image): Image = {
-        val target = image.raw
+        val target = image._raw
         val g2 = target.getGraphics.asInstanceOf[Graphics2D]
         g2.drawImage(image.awt, op, 0, 0)
         g2.dispose()

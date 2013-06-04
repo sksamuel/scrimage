@@ -13,8 +13,8 @@ class AsyncImage(image: Image) {
         this
     }
 
-    def resize(dimensions: (Int, Int), centering: Centering = Center): Future[AsyncImage] = future {
-        image.resize(dimensions, centering)
+    def resize(width: Int, height: Int, centering: Centering = Center): Future[AsyncImage] = future {
+        image.resize(width, height, centering)
         this
     }
 

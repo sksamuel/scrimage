@@ -61,6 +61,9 @@ class RippleFilter(rippleType: RippleType, xAmplitude: Float = 5.0f, yAmplitude:
         case Noise => op.setWaveType(com.jhlabs.image.RippleFilter.NOISE)
     }
 }
+object RippleFilter {
+    def apply(rippleType: RippleType) = new RippleFilter(rippleType, 0.5f, 0.0f)
+}
 
 class RedFilter extends Filter {
 
@@ -79,13 +82,16 @@ object EdgeFilter extends BufferedOpFilter {
     val op = new com.jhlabs.image.EdgeFilter()
 }
 
-class LensBlurFilter(radius: Float, bloom: Float = 2, bloomThreshold: Float = 255, sides: Int = 5, angle: Float = 0)
+class LensBlurFilter(radius: Float, bloom: Float, bloomThreshold: Float, sides: Int, angle: Float)
   extends BufferedOpFilter {
     val op = new com.jhlabs.image.LensBlurFilter()
     op.setSides(sides)
     op.setBloomThreshold(bloomThreshold)
     op.setBloom(bloom)
     op.setRadius(radius)
+}
+object LensBlurFilter {
+    def apply() = new LensBlurFilter(5, 2, 255, 5, 0)
 }
 
 sealed trait SmearType
@@ -107,6 +113,13 @@ class SmearFilter(smearType: SmearType, angle: Float = 0, density: Float = 0.5f,
         case Lines => op.setShape(com.jhlabs.image.SmearFilter.LINES)
         case Squares => op.setShape(com.jhlabs.image.SmearFilter.SQUARES)
     }
+}
+object SmearFilter {
+    def apply(smearType: SmearType) = new SmearFilter(smearType, 0, 0.5f, 0.0f)
+}
+
+object SolarizeFilter extends BufferedOpFilter {
+    val op = new com.jhlabs.image.SolarizeFilter()
 }
 
 object InvertFilter extends BufferedOpFilter {
