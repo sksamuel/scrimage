@@ -3,7 +3,7 @@ package com.sksamuel.scrimage
 import java.awt.image.BufferedImage
 import org.apache.commons.io.FilenameUtils
 import java.net.URLConnection
-import java.awt.{Image, Color}
+import java.awt.{Image => AWTImage, Color}
 import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO
 
@@ -35,7 +35,7 @@ object ImageTools {
     /**
      * Scales the given image to fit the target dimensions while keeping the current aspect ratio.
      */
-    def fit(source: Image, size: (Int, Int)): BufferedImage = {
+    def fit(source: AWTImage, size: (Int, Int)): BufferedImage = {
         val sizePrime = normalizeSize(source, size)
         val fitted = dimensionsToFit(sizePrime, (source.getWidth(null), source.getHeight(null)))
         val scaled = source.getScaledInstance(fitted._1, fitted._2, SCALING_METHOD)
@@ -43,14 +43,14 @@ object ImageTools {
         _draw(sizePrime, offset, scaled)
     }
 
-    def normalizeSize(source: Image, size: (Int, Int)) = size match {
+    def normalizeSize(source: AWTImage, size: (Int, Int)) = size match {
         case (0, 0) => (0, 0)
         case (0, h) => ((ratio(source) * h).toInt, h)
         case (w, 0) => (w, (w.toDouble / ratio(source)).toInt)
         case (w, h) => (w, h)
     }
 
-    private def _draw(size: (Int, Int), offset: (Int, Int), image: Image) = {
+    private def _draw(size: (Int, Int), offset: (Int, Int), image: AWTImage) = {
         val target = new BufferedImage(size._1, size._2, BufferedImage.TYPE_INT_RGB)
         val g = target.createGraphics
         g.setColor(BG_COLOR)
@@ -62,13 +62,13 @@ object ImageTools {
     /**
      * Resizes the given image into the new target dimensions.
      */
-    def resize(source: Image, size: (Int, Int)): BufferedImage = {
+    def resize(source: AWTImage, size: (Int, Int)): BufferedImage = {
         val sizePrime = normalizeSize(source, size)
         val scaled = source.getScaledInstance(sizePrime._1, sizePrime._2, SCALING_METHOD)
         _draw(sizePrime, (0, 0), scaled)
     }
 
-    def ratio(source: Image): Double = ratio(source.getWidth(null), source.getHeight(null))
+    def ratio(source: AWTImage): Double = ratio(source.getWidth(null), source.getHeight(null))
     def ratio(width: Int, height: Int): Double = if (height == 0) 0 else width / height.toDouble
 
     /**

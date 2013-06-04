@@ -47,10 +47,10 @@ class LensBlurFilter(radius: Float, bloom: Float = 2, bloomThreshold: Float = 25
 
 sealed trait SmearType
 object SmearType {
-    case object Circles extends RippleType
-    case object Crosses extends RippleType
-    case object Lines extends RippleType
-    case object Squares extends RippleType
+    case object Circles extends SmearType
+    case object Crosses extends SmearType
+    case object Lines extends SmearType
+    case object Squares extends SmearType
 }
 
 class SmearFilter(smearType: SmearType, angle: Float = 0, density: Float = 0.5f, scatter: Float = 0.0f) extends Filter {

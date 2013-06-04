@@ -2,8 +2,9 @@ package com.sksamuel.scrimage
 
 import java.awt.image.{BufferedImageOp, BufferedImage}
 import java.awt.Graphics2D
-import com.sksamuel.scrimage.ScaleMethod.SmoothScale
+import com.sksamuel.scrimage.ScaleMethod.{FastScale, Lanczos3, BSpline, Bicubic}
 import com.sksamuel.scrimage.Centering.Center
+import com.mortennobel.imagescaling.{ResampleFilters, ResampleOp}
 
 /** @author Stephen Samuel
   *
@@ -11,6 +12,8 @@ import com.sksamuel.scrimage.Centering.Center
   *
   * */
 class Image(image: BufferedImage) {
+
+    val SCALE_THREADS = 2
 
     val width: Int = image.getWidth(null)
     val height: Int = image.getHeight(null)
@@ -28,7 +31,7 @@ class Image(image: BufferedImage) {
      * @return This image after the filter has been applied.
      */
     def filter(filter: Filter): Image = {
-        image.getGraphics.asInstanceOf[Graphics2D].drawImage(c.image, filter.op, 0, 0)
+        image.getGraphics.asInstanceOf[Graphics2D].drawImage(image, filter.op, 0, 0)
         this
     }
 
@@ -42,7 +45,7 @@ class Image(image: BufferedImage) {
      */
     def copy = {
         val c = new BufferedImage(width, height, image.getType)
-        c.getGraphics.drawImage(image, 0, 0)
+        c.getGraphics.drawImage(image, 0, 0, null)
         new Image(c)
     }
 
@@ -60,38 +63,47 @@ class Image(image: BufferedImage) {
      *
      * @return
      */
-    def fit(dimension: (Int, Int), scaleMethod: ScaleMethod = SmoothScale, centering: Centering = Center): Image = copy
+    def fit(dimension: (Int, Int), scaleMethod: ScaleMethod = Bicubic, centering: Centering = Center): Image = copy
 
     /**
      *
      * That is the canvas will have the given dimensions but the image will not necessarily cover it all.
      *
-     * @param dimension
+     * @param dimension the target size
      * @param scaleMethod
      *
      * @return
      */
-    def cover(dimension: (Int, Int), scaleMethod: ScaleMethod = SmoothScale): Image = copy
+    def cover(dimension: (Int, Int), scaleMethod: ScaleMethod = Bicubic): Image = copy
 
     /**
      *
      * Scale will resize the canvas and the image. This is like a "image resize" in Photoshop
      *
-     * @param dimension
+     * @param dimension the target size
      * @param scaleMethod the type of scaling method to use. Defaults to SmoothScale
      *
      * @return a new Image that is the result of scaling this image
      */
-    def scale(dimension: (Int, Int), scaleMethod: ScaleMethod = SmoothScale): Image = {
-        val target = ImageTools.resize(image, dimension)
-        new Image(target)
+    def scale(dimension: (Int, Int), scaleMethod: ScaleMethod = Bicubic): Image = {
+        val op = new ResampleOp(100, 200)
+        op.setNumberOfThreads(SCALE_THREADS)
+        scaleMethod match {
+            case FastScale => op.setFilter(ResampleFilters.getBiCubicFilter)
+            case Bicubic => op.setFilter(ResampleFilters.getBiCubicFilter)
+            case BSpline => op.setFilter(ResampleFilters.getBSplineFilter)
+            case Lanczos3 => op.setFilter(ResampleFilters.getLanczos3Filter)
+        }
+        val scaled = op.filter(image, null)
+        new Image(scaled)
     }
 
     /**
      *
      * Resize will resize the canvas, it will not scale the image. This is like a "canvas resize" in Photoshop.
      * If the dimensions are smaller than the current canvas size then the image will be cropped.
-     * @param dimension
+     *
+     * @param dimension the target size
      * @param centering
      *
      * @return a new Image that is the result of resizing the canvas.
@@ -106,9 +118,9 @@ class Image(image: BufferedImage) {
 sealed trait ScaleMethod
 object ScaleMethod {
     object FastScale extends ScaleMethod
-    object SmoothScale extends ScaleMethod
-    object ReplicateScale extends ScaleMethod
-    object AreaAveragingScale extends ScaleMethod
+    object Lanczos3 extends ScaleMethod
+    object BSpline extends ScaleMethod
+    object Bicubic extends ScaleMethod
 }
 
 sealed trait Centering
