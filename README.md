@@ -1,6 +1,30 @@
 scrimage
 ========
 
-Scala library for image processing
+Scrimage is a Scala library for image manipulating, processing and filtering. The aim of the this library is to provide a
+quick and easy way to do the kinds of image operations that most people need, such as scaling, rotating, converting between
+formats and applying filters.
 
 [![Build Status](https://travis-ci.org/sksamuel/scrimage.png)](https://travis-ci.org/sksamuel/scrimage)
+
+API
+===
+
+Scrimage has a consistent, idiomatic scala, and mostly immutable API for accessing images.
+I say mostly immutable because for some operations creating a copy of the underlying image
+would prove expensive (think a blur filter on a 3000 x 3000 image where you do not care about
+keeping the original in memory). For these kinds of operations Scrimage supports a copy
+operation that can be used to mimic immutability by first creating a copy and then performing
+the operation on that.
+
+Filters
+=======
+
+Scrimage comes with a wide array (or List ;)) of filters. Most of these filters I have not written myself,
+but rather collected from other open source imaging libraries (where the license allows), and either re-written
+them in Scala or wrapped them in a Scala wrapper.
+
+|filter name|example page|
+|Blur|example.png|
+|Gaussian Blur|example.png|
+|Edge|example.png|
