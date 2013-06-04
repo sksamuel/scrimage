@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage
 
-import java.awt.image.{AffineTransformOp, BufferedImageOp, BufferedImage}
+import java.awt.image.{DataBufferByte, AffineTransformOp, BufferedImageOp, BufferedImage}
 import java.awt.Graphics2D
 import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.Centering.Center
@@ -11,7 +11,7 @@ import java.awt.geom.AffineTransform
   *
   *         RichImage is class that represents an in memory image.
   *
-  **/
+  * */
 class Image(val awt: BufferedImage) {
 
     val SCALE_THREADS = 2
@@ -19,6 +19,28 @@ class Image(val awt: BufferedImage) {
     val width: Int = awt.getWidth(null)
     val height: Int = awt.getHeight(null)
     val dimensions: (Int, Int) = (width, height)
+
+    /**
+     *
+     * Returns the pixel data at the given point as an int consisting of the ARGB values.
+     *
+     * Inspired by user ryyst's code from
+     * http://stackoverflow.com/questions/6524196/java-get-pixel-array-from-image
+     * http://stackoverflow.com/users/282635/ryyst
+     *
+     * @param point
+     *
+     * @return
+     */
+    def pixel(point: (Int, Int)): Int = {
+        val pixels = awt.getRaster.getDataBuffer.asInstanceOf[DataBufferByte].getData
+        val pixelIndex = point._1 * point._2 * 4
+        // stored in the raster array as ABGR but we are dealing with ARGB consistently.
+        (pixels(pixelIndex) & 0xff) << 24 + // alpha
+          (pixels(pixelIndex + 1) & 0xff) + // blue
+          (pixels(pixelIndex + 2) & 0xff) << 8 + // green
+          (pixels(pixelIndex + 3) & 0xff) << 16 // red
+    }
 
     /**
      *
@@ -70,9 +92,15 @@ class Image(val awt: BufferedImage) {
         new Image(flipped)
     }
 
-    def rotateLeft = this
-    def rotateRight = this
-    def rotate(angle: Float) = this
+    def rotateLeft = _rotate(Math.PI)
+    def rotateRight = _rotate(-Math.PI)
+
+    def _rotate(angle: Double): Image = {
+        val target = new BufferedImage(height, width, awt.getType)
+        target.getGraphics.asInstanceOf[Graphics2D].rotate(angle)
+        target.getGraphics.drawImage(awt, 0, 0, null)
+        new Image(target)
+    }
 
     /**
      * Returns a copy of the image which has been scaled to fit
