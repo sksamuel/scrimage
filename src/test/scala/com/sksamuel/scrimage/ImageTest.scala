@@ -2,7 +2,6 @@ package com.sksamuel.scrimage
 
 import org.scalatest.{BeforeAndAfter, FunSuite}
 import java.awt.image.BufferedImage
-import java.io.File
 
 /** @author Stephen Samuel */
 class ImageTest extends FunSuite with BeforeAndAfter {
@@ -59,10 +58,5 @@ class ImageTest extends FunSuite with BeforeAndAfter {
     test("pixel happy path") {
         assert(-1 === image.pixel(0, 0))
         assert(-1 === image.pixel(100, 100))
-    }
-
-    test("test") {
-        val file = new File("bird_small.png")
-        image.scale(0.20).write(file)
     }
 }
