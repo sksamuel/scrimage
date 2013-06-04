@@ -11,8 +11,12 @@ object BlurFilter extends BufferedOpFilter {
     val op = new com.jhlabs.image.BlurFilter()
 }
 
-class GaussianBlueFilter(radius: Int = 2) extends BufferedOpFilter {
-    val op = new com.jhlabs.image.GaussianFilter()
+class GaussianBlurFilter(radius: Int = 2) extends BufferedOpFilter {
+    val op = new com.jhlabs.image.GaussianFilter(radius)
+}
+object GaussianBlurFilter {
+    def apply() = new GaussianBlurFilter()
+    def apply(radius: Int) = new GaussianBlurFilter(radius)
 }
 
 object GrayscaleFilter extends BufferedOpFilter {
