@@ -73,3 +73,8 @@ object BumpFilter extends Filter {
 object DespeckleFilter extends Filter {
     val op = new com.jhlabs.image.DespeckleFilter()
 }
+
+class GlowFilter(amount: Float = 0.5) extends Filter {
+    val op = new com.jhlabs.image.GlowFilter()
+    op.setAmount(amount)
+}
