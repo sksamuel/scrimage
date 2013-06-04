@@ -20,4 +20,7 @@ object FilterExampleGenerator extends App {
     image.filter(PointillizeFilter(PointillizeGridType.Square)).write(new File("examples/filters/bird_pointillize_square.png"))
     image.filter(PointillizeFilter(PointillizeGridType.Triangular)).write(new File("examples/filters/bird_pointillize_triangular.png"))
     image.filter(PointillizeFilter(PointillizeGridType.Octangal)).write(new File("examples/filters/bird_pointillize_octagonal.png"))
+
+    image.filter(ThresholdFilter(127)).write(new File("examples/filters/bird_pointillize_threshold_127.png"))
+    image.filter(ThresholdFilter(127, black = 0x00ff0000)).write(new File("examples/filters/bird_pointillize_threshold_red_127.png"))
 }
