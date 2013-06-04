@@ -49,11 +49,13 @@ class RippleFilter(rippleType: RippleType, xAmplitude: Float = 5.0f, yAmplitude:
 }
 
 class RedFilter extends Filter {
+
     object _RedFilter extends RGBImageFilter {
         def filterRGB(x: Int, y: Int, rgb: Int) = rgb & 0xffff0000
     }
-    def apply(image: Image) = {
-        val filteredSrc = new FilteredImageSource(null, _RedFilter)
+
+    def apply(image: Image) {
+        val filteredSrc = new FilteredImageSource(image.awt.getSource, _RedFilter)
         val awt = Toolkit.getDefaultToolkit.createImage(filteredSrc)
         Image(awt)
     }

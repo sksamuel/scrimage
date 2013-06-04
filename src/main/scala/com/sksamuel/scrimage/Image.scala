@@ -12,7 +12,7 @@ import java.io.{InputStream, OutputStream, File}
   *
   *         RichImage is class that represents an in memory image.
   *
-  * */
+  **/
 class Image(val awt: BufferedImage) {
     require(awt != null)
 
@@ -102,8 +102,10 @@ class Image(val awt: BufferedImage) {
 
     def _rotate(angle: Double): Image = {
         val target = new BufferedImage(height, width, awt.getType)
-        target.getGraphics.asInstanceOf[Graphics2D].rotate(angle)
-        target.getGraphics.drawImage(awt, 0, 0, null)
+        val g2 = target.getGraphics.asInstanceOf[Graphics2D]
+        g2.rotate(angle)
+        g2.drawImage(awt, 0, 0, null)
+        g2.dispose()
         new Image(target)
     }
 
@@ -195,7 +197,9 @@ object Image {
     }
     def copy(awt: java.awt.Image) = {
         val buff = new BufferedImage(awt.getWidth(null), awt.getHeight(null), BufferedImage.TYPE_INT_ARGB)
-        buff.getGraphics.drawImage(awt, 0, 0, null)
+        val g2 = buff.getGraphics
+        g2.drawImage(awt, 0, 0, null)
+        g2.dispose()
         apply(buff)
     }
 }
