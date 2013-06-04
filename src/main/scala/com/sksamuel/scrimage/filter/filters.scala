@@ -1,9 +1,10 @@
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.{Image, Filter, BufferedOpFilter}
 import com.sksamuel.scrimage.filter.RippleType.{Noise, Triangle, Sawtooth, Sine}
 import com.sksamuel.scrimage.filter.SmearType.{Squares, Lines, Circles, Crosses}
-import java.awt.image.{BufferedImage, RescaleOp}
+import java.awt.image._
+import java.awt.Toolkit
 
 /** @author Stephen Samuel */
 object BlurFilter extends BufferedOpFilter {
@@ -41,6 +42,17 @@ class RippleFilter(rippleType: RippleType, xAmplitude: Float = 5.0f, yAmplitude:
         case Sawtooth => op.setWaveType(com.jhlabs.image.RippleFilter.SAWTOOTH)
         case Triangle => op.setWaveType(com.jhlabs.image.RippleFilter.TRIANGLE)
         case Noise => op.setWaveType(com.jhlabs.image.RippleFilter.NOISE)
+    }
+}
+
+class RedFilter extends Filter {
+    object _RedFilter extends RGBImageFilter {
+        def filterRGB(x: Int, y: Int, rgb: Int) = rgb & 0xffff0000
+    }
+    def apply(image: Image) = {
+        val filteredSrc = new FilteredImageSource(null, _RedFilter)
+        val awt = Toolkit.getDefaultToolkit.createImage(filteredSrc)
+        Image(awt)
     }
 }
 

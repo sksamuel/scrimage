@@ -11,7 +11,7 @@ import java.awt.geom.AffineTransform
   *
   *         RichImage is class that represents an in memory image.
   *
-  **/
+  * */
 class Image(val awt: BufferedImage) {
 
     val SCALE_THREADS = 2
@@ -44,11 +44,7 @@ class Image(val awt: BufferedImage) {
      *
      * @return A clone of this image.
      */
-    def copy = {
-        val c = new BufferedImage(width, height, awt.getType)
-        c.getGraphics.drawImage(awt, 0, 0, null)
-        new Image(c)
-    }
+    def copy = Image(awt)
 
     /**
      *
@@ -136,6 +132,14 @@ class Image(val awt: BufferedImage) {
         val target = new BufferedImage(dimension._1, dimension._2, awt.getType)
         target.getGraphics.asInstanceOf[Graphics2D].drawImage(awt, 0, 0, null)
         new Image(target)
+    }
+}
+
+object Image {
+    def apply(awt: java.awt.Image): Image = {
+        val c = new BufferedImage(awt.getWidth(null), awt.getHeight(null), BufferedImage.TYPE_INT_ARGB)
+        c.getGraphics.drawImage(awt, 0, 0, null)
+        new Image(c)
     }
 }
 
