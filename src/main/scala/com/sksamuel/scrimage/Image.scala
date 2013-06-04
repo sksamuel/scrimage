@@ -80,13 +80,13 @@ class Image(image: BufferedImage) {
      *
      * Scale will resize the canvas and the image. This is like a "image resize" in Photoshop
      *
-     * @param dimension the target size
+     * @param dimensions the target size
      * @param scaleMethod the type of scaling method to use. Defaults to SmoothScale
      *
      * @return a new Image that is the result of scaling this image
      */
-    def scale(dimension: (Int, Int), scaleMethod: ScaleMethod = Bicubic): Image = {
-        val op = new ResampleOp(100, 200)
+    def scale(dimensions: (Int, Int), scaleMethod: ScaleMethod = Bicubic): Image = {
+        val op = new ResampleOp(dimensions._1, dimensions._2)
         op.setNumberOfThreads(SCALE_THREADS)
         scaleMethod match {
             case FastScale =>
