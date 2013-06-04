@@ -25,6 +25,12 @@ class ImageTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
         assert(1 / 3d === Image(awt5).ratio)
     }
 
+    test("dimensions happy path") {
+        val image = ImageReader(in).read
+        assert(1944 === image.width)
+        assert(234234 === image.height)
+    }
+
     test("pixel happy path") {
         val image = ImageReader(in).read
         assert(-303240469 === image.pixel(0, 0))

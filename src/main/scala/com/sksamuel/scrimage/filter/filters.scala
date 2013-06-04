@@ -90,6 +90,10 @@ class SmearFilter(smearType: SmearType, angle: Float = 0, density: Float = 0.5f,
     }
 }
 
+object InvertFilter extends BufferedOpFilter {
+    val op = new com.jhlabs.image.InvertFilter()
+}
+
 object BumpFilter extends BufferedOpFilter {
     val op = new com.jhlabs.image.BumpFilter()
 }
