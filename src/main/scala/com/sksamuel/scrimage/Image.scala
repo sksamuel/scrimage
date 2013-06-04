@@ -166,7 +166,7 @@ class Image(val awt: BufferedImage) {
         new Image(scaled)
     }
 
-    def resize(scaleFactor: Double): Image = resize((width * scaleFactor).toInt, (height * scaleFactor).toInt, Center)
+    def resize(scaleFactor: Double): Image = resize(scaleFactor, Center)
     def resize(scaleFactor: Double, centering: Centering): Image =
         resize((width * scaleFactor).toInt, (height * scaleFactor).toInt, centering)
 
@@ -287,8 +287,8 @@ trait BufferedOpFilter extends Filter {
     }
 }
 
-object RichImage {
-    implicit def awt2rich(awtImage: BufferedImage) = new Image(awtImage)
+object Implicits {
+    implicit def awt2rich(awt: java.awt.Image) = Image(awt)
 }
 
 
