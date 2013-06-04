@@ -37,6 +37,10 @@ class RippleFilter(rippleType: RippleType, xAmplitude: Float = 5.0f, yAmplitude:
     }
 }
 
+object EdgeFilter extends Filter {
+    val op = new com.jhlabs.image.EdgeFilter()
+}
+
 class LensBlurFilter(radius: Float, bloom: Float = 2, bloomThreshold: Float = 255, sides: Int = 5, angle: Float = 0) extends Filter {
     val op = new com.jhlabs.image.LensBlurFilter()
     op.setSides(sides)
