@@ -102,4 +102,11 @@ class ImageTest extends FunSuite with BeforeAndAfter {
         assert(515 === padded.width)
         assert(643 === padded.height)
     }
+
+    test("when padding with a border size then the width and height are increased by the right amount") {
+        val image = Image.empty(85, 56)
+        val padded = image.pad(4)
+        assert(93 === padded.width)
+        assert(64 === padded.height)
+    }
 }

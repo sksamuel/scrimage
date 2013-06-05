@@ -16,7 +16,7 @@ import com.sksamuel.scrimage.Color.White
   *
   *         RichImage is class that represents an in memory image.
   *
-  * */
+  **/
 class Image(val awt: BufferedImage) {
     require(awt != null, "Wrapping image cannot be null")
     require(awt.getType == Image.CANONICAL_DATA_TYPE,
@@ -74,9 +74,7 @@ class Image(val awt: BufferedImage) {
     def flipX: Image = {
         val tx = AffineTransform.getScaleInstance(-1, 1)
         tx.translate(-width, 0)
-        val op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR)
-        val flipped = op.filter(awt, null)
-        new Image(flipped)
+        _flip(tx)
     }
 
     /**
@@ -86,6 +84,10 @@ class Image(val awt: BufferedImage) {
     def flipY: Image = {
         val tx = AffineTransform.getScaleInstance(1, -1)
         tx.translate(0, -height)
+        _flip(tx)
+    }
+
+    private[scrimage] def _flip(tx: AffineTransform): Image = {
         val op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR)
         val flipped = op.filter(awt, null)
         new Image(flipped)
@@ -188,9 +190,28 @@ class Image(val awt: BufferedImage) {
         new Image(target)
     }
 
-    def pad(requiredWidth: Int, requiredHeight: Int, color: com.sksamuel.scrimage.Color = White): Image = {
-        val w = if (width < requiredWidth) requiredWidth else width
-        val h = if (height < requiredHeight) requiredHeight else height
+    def pad(size: Int): Image = pad(size, Color.White)
+    def pad(size: Int, color: com.sksamuel.scrimage.Color): Image = pad(width + size * 2, height + size * 2, color)
+
+    /**
+     *
+     * Creates a new image which is the result of this image padded to the canvas size specified.
+     * If this image is already larger than the specified pad then the sizes of the existing
+     * image will be used instead.
+     *
+     * Eg, requesting a pad of 200,200 on an image of 250,300 will result
+     * in keeping the 250,300. Eg2, requesting a pad of 300,300 on an image of 400,250 will result
+     * in the width staying at 400 and the height padded to 300.
+
+     * @param preferredWidth the size of the output canvas width
+     * @param preferredHeight the size of the output canvas height
+     * @param color the background of the padded area.
+     *
+     * @return A new image that is the result of the padding
+     */
+    def pad(preferredWidth: Int, preferredHeight: Int, color: com.sksamuel.scrimage.Color = White): Image = {
+        val w = if (width < preferredWidth) preferredWidth else width
+        val h = if (height < preferredHeight) preferredHeight else height
         val filled = Image.filled(w, h, color)
         val g = filled.awt.getGraphics
         g.drawImage(awt, ((w - width) / 2.0).toInt, ((h - height) / 2.0).toInt, null)

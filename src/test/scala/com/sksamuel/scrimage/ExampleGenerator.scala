@@ -4,7 +4,7 @@ import com.sksamuel.scrimage.filter._
 import java.io.File
 
 /** @author Stephen Samuel */
-object FilterExampleGenerator extends App {
+object ExampleGenerator extends App {
 
     val image = Image(getClass.getResourceAsStream("/bird.jpg")).scale(0.15)
 
@@ -38,5 +38,10 @@ object FilterExampleGenerator extends App {
     image.filter(ThresholdFilter(127, black = 0x00ff0000)).write(new File("examples/filters/bird_threshold_red_127.png"))
 
     image.filter(UnsharpFilter()).write(new File("examples/filters/bird_unsharp.png"))
+
+    //// --- API examples /////
+
+    image.pad(20, Color.Black).write(new File("examples/bird_pad_20.png"))
+    image.resize(0.5).write(new File("examples/bird_resize_half.png"))
 
 }
