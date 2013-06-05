@@ -6,7 +6,7 @@ import java.io.File
 /** @author Stephen Samuel */
 object FilterExampleGenerator extends App {
 
-    val image = Image(getClass.getResourceAsStream("/bird.jpg")).scale(0.25)
+    val image = Image(getClass.getResourceAsStream("/bird.jpg")).scale(0.15)
 
     image.filter(BlockFilter(4)).write(new File("examples/filters/bird_block_4.png"))
     image.filter(BlurFilter).write(new File("examples/filters/bird_blur.png"))
@@ -33,7 +33,7 @@ object FilterExampleGenerator extends App {
     image.filter(SmearFilter(SmearType.Circles)).write(new File("examples/filters/bird_smear_circles.png"))
     image.filter(SolarizeFilter).write(new File("examples/filters/bird_solarize.png"))
 
-    image.filter(ThresholdFilter(127, black = 0x00ff0000)).write(new File("examples/filters/bird_pointillize_threshold_red_127.png"))
+    image.filter(ThresholdFilter(127, black = 0x00ff0000)).write(new File("examples/filters/bird_threshold_red_127.png"))
 
     image.filter(UnsharpFilter()).write(new File("examples/filters/bird_unsharp.png"))
 

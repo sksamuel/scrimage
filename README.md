@@ -27,11 +27,22 @@ but rather collected from other open source imaging libraries (where the license
 
 | Filter Name        | Example           |
 | ------------- |:-------------:|
-| Blur filter      |  |
-| Unsharpen filter      |       |
-| Lens blur filter |        |
-| Chrome Filter |  |
-| 
+| Block       | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_block_4.png) |
+| Blur       | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_blur.png) |
+| Bump       | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_bump.png) |
+| Chrome       | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_chrome.png) |
+| Despeckle       | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_despeckle.png) |
+| Edge | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_edge.png) |
+| Gaussian Blur      | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_gaussianblur.png) |
+| Invert      | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_invert.png) |
+| Lens Blur      | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_lensblur.png) |
+| Quantize      | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_quantize_256.png) |
+| Pointillze      | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_pointillize_square.png) |
+| Ripple      | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_ripple.png) |
+| Smear       | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_smear_circles.png) |
+| Solarize       | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_solarize.png) |
+| Threshold       | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_threshold_red_127.png) |
+| Unsharpen  | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_unsharp.png) |
 
 
 ### Quick Examples
