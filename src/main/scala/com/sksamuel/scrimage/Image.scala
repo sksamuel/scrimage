@@ -9,7 +9,7 @@ import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.Centering.Center
 import javax.imageio.ImageIO
 import org.apache.commons.io.FileUtils
-import java.awt.image.{AffineTransformOp, DataBufferByte, BufferedImage}
+import java.awt.image.{DataBufferInt, AffineTransformOp, BufferedImage}
 import com.sksamuel.scrimage.Color.White
 
 /** @author Stephen Samuel
@@ -50,14 +50,14 @@ class Image(val awt: BufferedImage) {
      * @return
      */
     def pixel(point: (Int, Int)): Int = {
-        val pixels = awt.getRaster.getDataBuffer.asInstanceOf[DataBufferByte].getData
+        val pixels = awt.getRaster.getDataBuffer.asInstanceOf[DataBufferInt].getData
         val pixelIndex = (width * point._2 + point._1)
         pixels(pixelIndex)
     }
 
-    def pixels: Array[Byte] = {
+    def pixels: Array[Int] = {
         awt.getRaster.getDataBuffer match {
-            case buffer: DataBufferByte => buffer.getData
+            case buffer: DataBufferInt => buffer.getData
             case _ => throw new UnsupportedOperationException
         }
     }
@@ -199,7 +199,7 @@ class Image(val awt: BufferedImage) {
             case Lanczos3 => op.setFilter(ResampleFilters.getLanczos3Filter)
         }
         val scaled = op.filter(awt, null)
-        new Image(scaled)
+        Image(scaled)
     }
 
     def resize(scaleFactor: Double): Image = resize(scaleFactor, Center)
@@ -236,18 +236,20 @@ class Image(val awt: BufferedImage) {
      * in keeping the 250,300. Eg2, requesting a pad of 300,300 on an image of 400,250 will result
      * in the width staying at 400 and the height padded to 300.
 
-     * @param preferredWidth the size of the output canvas width
-     * @param preferredHeight the size of the output canvas height
+     * @param targetWidth the size of the output canvas width
+     * @param targetHeight the size of the output canvas height
      * @param color the background of the padded area.
      *
      * @return A new image that is the result of the padding
      */
-    def pad(preferredWidth: Int, preferredHeight: Int, color: com.sksamuel.scrimage.Color = White): Image = {
-        val w = if (width < preferredWidth) preferredWidth else width
-        val h = if (height < preferredHeight) preferredHeight else height
+    def pad(targetWidth: Int, targetHeight: Int, color: com.sksamuel.scrimage.Color = White): Image = {
+        val w = if (width < targetWidth) targetWidth else width
+        val h = if (height < targetHeight) targetHeight else height
         val filled = Image.filled(w, h, color)
         val g = filled.awt.getGraphics
-        g.drawImage(awt, ((w - width) / 2.0).toInt, ((h - height) / 2.0).toInt, null)
+        val x = ((w - width) / 2.0).toInt
+        val y = ((h - height) / 2.0).toInt
+        g.drawImage(awt, x, y, null)
         g.dispose()
         filled
     }
@@ -281,7 +283,7 @@ class Image(val awt: BufferedImage) {
 
 object Image {
 
-    val CANONICAL_DATA_TYPE = BufferedImage.TYPE_4BYTE_ABGR
+    val CANONICAL_DATA_TYPE = BufferedImage.TYPE_INT_ARGB
 
     def apply(in: InputStream): Image = {
         require(in != null)
@@ -304,8 +306,8 @@ object Image {
     }
 
     /**
-     * Creates a new Image which is the a new copy of the given image.
-     * Any operations to the new object do not affect the given image.
+     * Creates a new Image which is a copy of the given image.
+     * Any operations to the new object do not affect the original image.
      *
      * @param image the image to copy
      *

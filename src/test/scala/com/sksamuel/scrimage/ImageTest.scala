@@ -26,6 +26,11 @@ class ImageTest extends FunSuite with BeforeAndAfter {
         assert(1 / 3d === Image(awt5).ratio)
     }
 
+    test("copy returns a new backing image") {
+        val copy = image.copy
+        assert(copy.awt.hashCode != image.awt.hashCode)
+    }
+
     test("when scaling by pixels then the output image has the given dimensions") {
         val scaled = image.scale(40, 50)
         assert(40 === scaled.width)
@@ -55,18 +60,43 @@ class ImageTest extends FunSuite with BeforeAndAfter {
         assert(1296 === image.height)
     }
 
-    test("pixel happy path") {
-        assert(-1 === image.pixel(0, 0))
-        assert(-1 === image.pixel(100, 100))
+    //    test("pixel happy path") {
+    //        assert(-1 === image.pixel(0, 0))
+    //        assert(-1 === image.pixel(100, 100))
+    //    }
+
+    test("when created a filled copy then the dimensions are the same as the original") {
+        val copy1 = image.filled(Color.Red)
+        assert(1944 === copy1.width)
+        assert(1296 === copy1.height)
+
+        val copy2 = image.filled(0x00FF00FF)
+        assert(1944 === copy2.width)
+        assert(1296 === copy2.height)
+
+        val copy3 = image.filled(java.awt.Color.WHITE)
+        assert(1944 === copy3.width)
+        assert(1296 === copy3.height)
     }
 
-    test("when creating a blank filled image the dimensions are as specified") {
+    test("hashcode is as from AWT") {
+        val buffered = new BufferedImage(445, 464, Image.CANONICAL_DATA_TYPE)
+        assert(Image(buffered).hashCode === buffered.hashCode)
+    }
+
+    test("when creating a blank copy then the dimensions are the same as the original") {
+        val copy = image.empty
+        assert(1944 === copy.width)
+        assert(1296 === copy.height)
+    }
+
+    test("when create a new filled image then the dimensions are as specified") {
         val image = Image.filled(595, 911, Color.Black)
         assert(595 === image.width)
         assert(911 === image.height)
     }
 
-    test("when creating a filled copy then the dimensions are as specified") {
+    test("when creating a new empty image then the dimensions are as specified") {
         val image = Image.empty(80, 90)
         assert(80 === image.width)
         assert(90 === image.height)
