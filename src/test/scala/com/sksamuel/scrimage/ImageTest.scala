@@ -138,4 +138,19 @@ class ImageTest extends FunSuite with BeforeAndAfter {
         assert(51 === fitted.width)
         assert(66 === fitted.height)
     }
+
+    test("when resizing an image the output image should match as expected") {
+        val expected = Image(getClass.getResourceAsStream("/bird_resize_025.png"))
+        assert(expected === image.resize(0.25))
+    }
+
+    test("when scaling an image the output image should match as expected") {
+        val expected = Image(getClass.getResourceAsStream("/bird_scale_025.png"))
+        assert(expected === image.scale(0.25))
+    }
+
+    test("when fitting an image the output image should match as expected") {
+        val expected = Image(getClass.getResourceAsStream("/bird_fitted_900_300.png"))
+        assert(expected === image.fit(900, 300, Color.Red))
+    }
 }

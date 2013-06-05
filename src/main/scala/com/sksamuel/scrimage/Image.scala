@@ -135,12 +135,15 @@ class Image(val awt: BufferedImage) {
      */
     def fit(targetWidth: Int,
             targetHeight: Int,
-            scaleMethod: ScaleMethod = Bicubic,
-            color: com.sksamuel.scrimage.Color = White): Image = {
+            color: com.sksamuel.scrimage.Color = White,
+            scaleMethod: ScaleMethod = Bicubic): Image = {
         val fittedDimensions = ImageTools.dimensionsToFit((targetWidth, targetHeight), (width, height))
+        val scaled = scale(fittedDimensions._1, fittedDimensions._2)
         val target = Image.filled(targetWidth, targetHeight, color)
         val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
-        g2.drawImage(awt, ((targetWidth - fittedDimensions._1) / 2.0).toInt, ((targetHeight - fittedDimensions._2) / 2.0).toInt, null)
+        val x = ((targetWidth - fittedDimensions._1) / 2.0).toInt
+        val y = ((targetHeight - fittedDimensions._2) / 2.0).toInt
+        g2.drawImage(scaled.awt, x, y, null)
         g2.dispose()
         target
     }
@@ -179,14 +182,14 @@ class Image(val awt: BufferedImage) {
      *
      * Scale will resize the canvas and the image. This is like a "image resize" in Photoshop.
      *
-     * @param width the target width
-     * @param height the target height
+     * @param targetWidth the target width
+     * @param targetHeight the target height
      * @param scaleMethod the type of scaling method to use. Defaults to SmoothScale
      *
      * @return a new Image that is the result of scaling this image
      */
-    def scale(width: Int, height: Int, scaleMethod: ScaleMethod = Bicubic): Image = {
-        val op = new ResampleOp(width, height)
+    def scale(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): Image = {
+        val op = new ResampleOp(targetWidth, targetHeight)
         op.setNumberOfThreads(SCALE_THREADS)
         scaleMethod match {
             case FastScale =>

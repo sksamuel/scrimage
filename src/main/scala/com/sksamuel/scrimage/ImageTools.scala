@@ -3,14 +3,14 @@ package com.sksamuel.scrimage
 import java.awt.image.BufferedImage
 import org.apache.commons.io.FilenameUtils
 import java.net.URLConnection
-import java.awt.{Image => AWTImage, Color}
+import java.awt.{Image => AWTImage}
 import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO
 
 /** @author Stephen Samuel */
 object ImageTools {
 
-    val BG_COLOR = Color.WHITE
+    val BG_COLOR = java.awt.Color.WHITE
     val SCALING_METHOD = java.awt.Image.SCALE_AREA_AVERAGING
 
     // write out the image to bytes
