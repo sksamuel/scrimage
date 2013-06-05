@@ -9,6 +9,6 @@ class ChromeFilter(amount: Float, exposure: Float) extends BufferedOpFilter {
     op.setExposure(exposure)
 }
 object ChromeFilter {
-    def apply(): ChromeFilter = new ChromeFilter(0.5f, 1.0f)
+    def apply(): ChromeFilter = apply(0.5f, 1.0f)
     def apply(amount: Float, exposure: Float): ChromeFilter = new ChromeFilter(amount, exposure)
 }

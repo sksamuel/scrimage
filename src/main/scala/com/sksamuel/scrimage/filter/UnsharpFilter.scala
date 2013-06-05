@@ -15,7 +15,7 @@ class UnsharpFilter(amount: Float, threshold: Int, edgeAction: EdgeAction) exten
     }
 }
 object UnsharpFilter {
-    def apply(): UnsharpFilter = new UnsharpFilter(0.5f, 1, ZeroEdges)
+    def apply(): UnsharpFilter = apply(0.5f, 1, ZeroEdges)
     def apply(amount: Float, threshold: Int, edgeAction: EdgeAction = ZeroEdges): UnsharpFilter =
         new UnsharpFilter(amount, threshold, edgeAction)
 }

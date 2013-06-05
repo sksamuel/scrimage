@@ -8,6 +8,6 @@ class BlockFilter(blockSize: Int) extends BufferedOpFilter {
     val op: BufferedImageOp = new com.jhlabs.image.BlockFilter(blockSize)
 }
 object BlockFilter {
-    def apply(): BlockFilter = new BlockFilter(2)
+    def apply(): BlockFilter = apply(2)
     def apply(blockSize: Int): BlockFilter = new BlockFilter(blockSize)
 }
