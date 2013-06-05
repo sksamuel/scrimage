@@ -71,17 +71,20 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <maven.plugin.jar.version>2.4</maven.plugin.jar.version>
         <maven.plugin.war.version>2.3</maven.plugin.war.version>
-        <maven.plugin.gpg.version>1.4</maven.plugin.gpg.version>
         <maven.plugin.resources.version>2.6</maven.plugin.resources.version>
         <maven.plugin.compiler.version>3.1</maven.plugin.compiler.version>
-        <maven.plugin.surefire.version>2.14.1</maven.plugin.surefire.version>
-        <maven.plugin.dependency.version>2.4</maven.plugin.dependency.version>
-        <maven.plugin.cargo.version>1.2.2</maven.plugin.cargo.version>
+        <maven.plugin.cargo.version>1.4.0</maven.plugin.cargo.version>
+        <maven.plugin.dependency.version>2.7</maven.plugin.dependency.version>
+        <maven.plugin.gpg.version>1.4</maven.plugin.gpg.version>
+        <maven.plugin.jar.version>2.4</maven.plugin.jar.version>
+        <maven.plugin.javadoc.version>2.9</maven.plugin.javadoc.version>
         <maven.plugin.release.version>2.3.2</maven.plugin.release.version>
         <maven.plugin.autoinc.version>2.0-SNAPSHOT</maven.plugin.autoinc.version>
+        <maven.plugin.surefire.version>2.14.1</maven.plugin.surefire.version>
         <maven.plugin.scala.version>3.1.4</maven.plugin.scala.version>
+        <maven.plugin.scalatest.version>1.0-M2</maven.plugin.scalatest.version>
+        <maven.plugin.source.version>2.2.1</maven.plugin.source.version>
 
         <compiler.version.source>1.7</compiler.version.source>
         <compiler.version.target>1.7</compiler.version.target>
@@ -204,7 +207,23 @@
                 <plugin>
                     <groupId>net.alchim31.maven</groupId>
                     <artifactId>scala-maven-plugin</artifactId>
-                    <version>${maven.plugin.scala.version}</version>
+                    <executions>
+                        <execution>
+                            <id>scala-compile-first</id>
+                            <phase>process-resources</phase>
+                            <goals>
+                                <goal>add-source</goal>
+                                <goal>compile</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>scala-test-compile</id>
+                            <phase>process-test-resources</phase>
+                            <goals>
+                                <goal>testCompile</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
                 <!-- disable surefire -->
                 <plugin>
@@ -237,33 +256,50 @@
                         </execution>
                     </executions>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${maven.plugin.source.version}</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven.plugin.javadoc.version}</version>
+                    <executions>
+                        <execution>
+                            <id>attach-javadocs</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>scala-compile-first</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>scala-test-compile</id>
-                        <phase>process-test-resources</phase>
-                        <goals>
-                            <goal>testCompile</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.scalatest</groupId>
                 <artifactId>scalatest-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
