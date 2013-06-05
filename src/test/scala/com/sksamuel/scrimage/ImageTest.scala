@@ -59,4 +59,47 @@ class ImageTest extends FunSuite with BeforeAndAfter {
         assert(-1 === image.pixel(0, 0))
         assert(-1 === image.pixel(100, 100))
     }
+
+    test("when creating a blank filled image the dimensions are as specified") {
+        val image = Image.filled(595, 911, Color.Black)
+        assert(595 === image.width)
+        assert(911 === image.height)
+    }
+
+    test("when creating a filled copy then the dimensions are as specified") {
+        val image = Image.empty(80, 90)
+        assert(80 === image.width)
+        assert(90 === image.height)
+    }
+
+    test("when padding to a width smaller than the image width then the width is not reduced") {
+        val image = Image.empty(85, 56)
+        val padded = image.pad(55, 162)
+        assert(85 === padded.width)
+    }
+
+    test("when padding to a height smaller than the image height then the height is not reduced") {
+        val image = Image.empty(85, 56)
+        val padded = image.pad(90, 15)
+        assert(56 === padded.height)
+    }
+
+    test("when padding to a width larger than the image width then the width is increased") {
+        val image = Image.empty(85, 56)
+        val padded = image.pad(151, 162)
+        assert(151 === padded.width)
+    }
+
+    test("when padding to a height larger than the image height then the height is increased") {
+        val image = Image.empty(85, 56)
+        val padded = image.pad(90, 77)
+        assert(77 === padded.height)
+    }
+
+    test("when padding to a size larger than the image then the image canvas is increased") {
+        val image = Image.empty(85, 56)
+        val padded = image.pad(515, 643)
+        assert(515 === padded.width)
+        assert(643 === padded.height)
+    }
 }

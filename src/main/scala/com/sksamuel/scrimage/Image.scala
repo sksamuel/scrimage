@@ -1,6 +1,5 @@
 package com.sksamuel.scrimage
 
-import java.awt.image._
 import java.awt.Graphics2D
 import com.mortennobel.imagescaling.{ResampleFilters, ResampleOp}
 import java.awt.geom.AffineTransform
@@ -10,6 +9,8 @@ import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.Centering.Center
 import javax.imageio.ImageIO
 import org.apache.commons.io.FileUtils
+import java.awt.image.{BufferedImageOp, AffineTransformOp, DataBufferByte, BufferedImage}
+import com.sksamuel.scrimage.Color.White
 
 /** @author Stephen Samuel
   *
@@ -187,6 +188,20 @@ class Image(val awt: BufferedImage) {
         new Image(target)
     }
 
+    def pad(requiredWidth: Int, requiredHeight: Int, color: com.sksamuel.scrimage.Color = White): Image = {
+        val w = if (width < requiredWidth) requiredWidth else width
+        val h = if (height < requiredHeight) requiredHeight else height
+        val filled = Image.filled(w, h, color)
+        val g = filled.awt.getGraphics
+        g.drawImage(awt, ((w - width) / 2.0).toInt, ((h - height) / 2.0).toInt, null)
+        g.dispose()
+        filled
+    }
+
+    def filled(color: com.sksamuel.scrimage.Color): Image = filled(color.value)
+    def filled(color: Int): Image = filled(new java.awt.Color(color))
+    def filled(color: java.awt.Color): Image = Image.filled(width, height, color)
+
     def write(file: File) {
         write(file, PNG)
     }
@@ -243,8 +258,20 @@ object Image {
         new Image(buff)
     }
 
-    def raw(awt: java.awt.Image): BufferedImage =
-        new BufferedImage(awt.getWidth(null), awt.getHeight(null), CANONICAL_DATA_TYPE)
+    def filled(width: Int, height: Int, color: com.sksamuel.scrimage.Color): Image = filled(width, height, color.value)
+    def filled(width: Int, height: Int, color: Int): Image = filled(width, height, new java.awt.Color(color))
+    def filled(width: Int, height: Int, color: java.awt.Color): Image = {
+        val awt = new BufferedImage(width, height, Image.CANONICAL_DATA_TYPE)
+        val g2 = awt.getGraphics
+        g2.setColor(color)
+        g2.fillRect(0, 0, awt.getWidth, awt.getHeight)
+        g2.dispose()
+        new Image(awt)
+    }
+
+    def raw(awt: java.awt.Image): BufferedImage = raw(awt.getWidth(null), awt.getHeight(null))
+    def raw(width: Int, height: Int): BufferedImage = new BufferedImage(width, height, CANONICAL_DATA_TYPE)
+    def empty(width: Int, height: Int): Image = new Image(new BufferedImage(width, height, CANONICAL_DATA_TYPE))
 }
 
 sealed trait ScaleMethod
