@@ -104,9 +104,20 @@ class ImageTest extends FunSuite with BeforeAndAfter {
     }
 
     test("when padding with a border size then the width and height are increased by the right amount") {
-        val image = Image.empty(85, 56)
         val padded = image.pad(4)
-        assert(93 === padded.width)
-        assert(64 === padded.height)
+        assert(1952 === padded.width)
+        assert(1304 === padded.height)
+    }
+
+    test("when flipping on x axis the dimensions are retained") {
+        val flipped = image.flipX
+        assert(1944 === flipped.width)
+        assert(1296 === flipped.height)
+    }
+
+    test("when flipping on y axis the dimensions are retained") {
+        val flipped = image.flipY
+        assert(1944 === flipped.width)
+        assert(1296 === flipped.height)
     }
 }
