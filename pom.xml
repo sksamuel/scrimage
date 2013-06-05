@@ -3,10 +3,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
+
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage</artifactId>
-    <version>0.7.0</version>
     <packaging>jar</packaging>
+    <version>0.7.0</version>
+    <name>Scrimage</name>
+    <description>A scala library for image manipulation and processing.</description>
+    <url>https://github.com/sksamuel/scrimage</url>
 
     <prerequisites>
         <maven>3.0</maven>
@@ -26,12 +35,45 @@
         <url>git@github.com:sksamuel/scrimage.git</url>
     </scm>
 
+    <developers>
+        <developer>
+            <name>Stephen Samuel</name>
+            <email>sam@sksamuel.com</email>
+            <timezone>GMT</timezone>
+        </developer>
+    </developers>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${maven.plugin.gpg.version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <maven.plugin.jar.version>2.4</maven.plugin.jar.version>
         <maven.plugin.war.version>2.3</maven.plugin.war.version>
+        <maven.plugin.gpg.version>1.4</maven.plugin.gpg.version>
         <maven.plugin.resources.version>2.6</maven.plugin.resources.version>
         <maven.plugin.compiler.version>3.1</maven.plugin.compiler.version>
         <maven.plugin.surefire.version>2.14.1</maven.plugin.surefire.version>
