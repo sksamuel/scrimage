@@ -21,8 +21,6 @@ class Image(val awt: BufferedImage) {
     require(awt.getType == Image.CANONICAL_DATA_TYPE,
         "Unsupported underlying image type. Consider using Image.apply(java.awt.Image) in order to wrap the image in the right data type")
 
-    val SCALE_THREADS = 2
-
     lazy val width: Int = awt.getWidth(null)
     lazy val height: Int = awt.getHeight(null)
     lazy val dimensions: (Int, Int) = (width, height)
@@ -141,6 +139,8 @@ class Image(val awt: BufferedImage) {
      */
     def scale(scaleFactor: Double, scaleMethod: ScaleMethod): Image =
         scale((width * scaleFactor).toInt, (height * scaleFactor).toInt, scaleMethod)
+
+    val SCALE_THREADS = 2
 
     /**
      *

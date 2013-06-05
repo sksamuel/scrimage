@@ -1,5 +1,4 @@
-scrimage
-========
+## Scrimage
 
 Scrimage is a Scala library for image manipulating, processing and filtering. The aim of the this library is to provide a
 quick and easy way to do the kinds of image operations that most people need, on a daily basis, such as scaling, rotating,
@@ -8,8 +7,11 @@ more "serious" image application - such as a lightroom clone.
 
 [![Build Status](https://travis-ci.org/sksamuel/scrimage.png)](https://travis-ci.org/sksamuel/scrimage)
 
-API
-===
+### License
+
+This software is licensed under the Apache 2 License.
+
+### API
 
 Scrimage has a consistent, idiomatic scala, and mostly immutable API for accessing images.
 I say mostly immutable because for some operations creating a copy of the underlying image
@@ -18,21 +20,21 @@ keeping the original in memory). For these kinds of operations Scrimage supports
 operation that can be used to mimic immutability by first creating a copy and then performing
 the operation on that.
 
-Filters
-=======
+### Filters
 
 Scrimage comes with a wide array (or List ;)) of filters. Most of these filters I have not written myself,
-but rather collected from other open source imaging libraries (where the license allows), and either re-written
-them in Scala or wrapped them in a Scala wrapper. The original authors are attributed inside the file headers.
+but rather collected from other open source imaging libraries (where the license allows - see file headers for attribution), and either re-written them in Scala or wrapped them in a Scala wrapper. 
 
 | Filter Name        | Example           |
 | ------------- |:-------------:|
-| col 3 is      | right-aligned |
-| col 2 is      | centered      |
-| zebra stripes | are neat      |
+| Blur filter      |  |
+| Unsharpen filter      |       |
+| Lens blur filter |        |
+| Chrome Filter |  |
+| 
 
-Quick Examples
-===============
+
+### Quick Examples
 
 Reading an image, scaling it to 50%, and writing out as PNG
 ```scala
