@@ -12,10 +12,13 @@ object RippleType {
     case object Noise extends RippleType
 }
 
-class RippleFilter(rippleType: RippleType, xAmplitude: Float = 5.0f, yAmplitude: Float = 0.0f) extends BufferedOpFilter {
+class RippleFilter(rippleType: RippleType, xAmplitude: Float, yAmplitude: Float, xWavelength: Float, yWavelength: Float)
+  extends BufferedOpFilter {
     val op = new com.jhlabs.image.RippleFilter()
     op.setXAmplitude(xAmplitude)
     op.setYAmplitude(yAmplitude)
+    op.setXWavelength(xWavelength)
+    op.setYWavelength(yWavelength)
     rippleType match {
         case Sine => op.setWaveType(com.jhlabs.image.RippleFilter.SINE)
         case Sawtooth => op.setWaveType(com.jhlabs.image.RippleFilter.SAWTOOTH)
@@ -24,5 +27,5 @@ class RippleFilter(rippleType: RippleType, xAmplitude: Float = 5.0f, yAmplitude:
     }
 }
 object RippleFilter {
-    def apply(rippleType: RippleType) = new RippleFilter(rippleType, 0.5f, 0.0f)
+    def apply(rippleType: RippleType) = new RippleFilter(rippleType, 2f, 2f, 6f, 6f)
 }
