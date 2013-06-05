@@ -183,4 +183,16 @@ class ImageTest extends FunSuite with BeforeAndAfter {
         val expected = Image(getClass.getResourceAsStream("/bird_fitted_900_300.png"))
         assert(expected === image.fit(900, 300, Color.Red))
     }
+
+    test("when scaling by width then target image maintains aspect ratio") {
+        val scaled = image.scaleWidth(500)
+        assert(scaled.width === 500)
+        assert(scaled.ratio - image.ratio < 0.01)
+    }
+
+    test("when scaling by height then target image maintains aspect ratio") {
+        val scaled = image.scaleHeight(400)
+        assert(scaled.height === 400)
+        assert(scaled.ratio - image.ratio < 0.01)
+    }
 }

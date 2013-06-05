@@ -16,7 +16,7 @@ import com.sksamuel.scrimage.Color.White
   *
   *         RichImage is class that represents an in memory image.
   *
-  **/
+  * */
 class Image(val awt: BufferedImage) {
     require(awt != null, "Wrapping image cannot be null")
     require(awt.getType == Image.CANONICAL_DATA_TYPE,
@@ -162,6 +162,8 @@ class Image(val awt: BufferedImage) {
         null
     }
 
+    def scaleWidth(targetWidth: Int): Image = scale(targetWidth, ((targetWidth / width.toDouble) * height).toInt, Bicubic)
+    def scaleHeight(targetHeight: Int): Image = scale(((targetHeight / height.toDouble) * width).toInt, targetHeight, Bicubic)
     def scale(scaleFactor: Double): Image = scale(scaleFactor, Bicubic)
 
     /**
