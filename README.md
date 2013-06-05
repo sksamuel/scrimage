@@ -98,9 +98,15 @@ and re-written them in Scala, wrapped them in a Scala wrapper, or fixed bugs and
 Scrimage is available on maven central. This means you want to use one of the following:
 
 Maven:
+```xml
+<dependency>
+    <groupId>com.sksamuel.scrimage</groupId>
+    <artifactId>scrimage</artifactId>
+    <version>0.7.0</version>
+</dependency>
+```
 
 SBT:
-
-Gradle:
-
-Ivy:
+```scala
+libraryDependencies += "com.sksamuel.scrimage" % "scrimage" % "0.7.0
+```
