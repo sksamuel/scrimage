@@ -9,7 +9,7 @@ import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.Centering.Center
 import javax.imageio.ImageIO
 import org.apache.commons.io.FileUtils
-import java.awt.image.{BufferedImageOp, AffineTransformOp, DataBufferByte, BufferedImage}
+import java.awt.image.{AffineTransformOp, DataBufferByte, BufferedImage}
 import com.sksamuel.scrimage.Color.White
 
 /** @author Stephen Samuel
@@ -27,8 +27,21 @@ class Image(val awt: BufferedImage) {
     lazy val dimensions: (Int, Int) = (width, height)
     lazy val ratio: Double = if (height == 0) 0 else width / height.toDouble
 
-    // creates a new raw image that is the same size as this image and uses the canonical data model
-    def _raw: BufferedImage = Image.raw(awt)
+    /**
+     * Creates a new empty Image with the same dimensions of this image.
+     *
+     * @return a new Image that is a clone of this image but with uninitialized data
+     */
+    def empty: Image = Image.empty(width, height)
+
+    /**
+     * Creates a new image with the same data as this image.
+     * Any operations to the copied image will not affect the original.
+     * Images can be copied multiple times.
+     *
+     * @return A copy of this image.
+     */
+    def copy = Image._copy(awt)
 
     /**
      *
@@ -51,21 +64,13 @@ class Image(val awt: BufferedImage) {
 
     /**
      *
-     * Applies the given filter to this image and returns the modified image.
+     * Creates a copy of this image with the given filter applied. The original (this) image is unchanged.
      *
-     * @param filter the filter to apply. See Filter.
+     * @param filter the filter to apply. See com.sksamuel.scrimage.Filter.
      *
      * @return A new image with the given filter applied.
      */
     def filter(filter: Filter): Image = filter.apply(this)
-
-    /**
-     * Copies this image and returns a new image with a new backing array. Any operations to the copied image will
-     * not affect the original. Images can be copied multiple times.
-     *
-     * @return A clone of this image.
-     */
-    def copy = Image.copy(awt)
 
     /**
      *
@@ -93,7 +98,18 @@ class Image(val awt: BufferedImage) {
         new Image(flipped)
     }
 
+    /**
+     * Returns a copy of this image rotated 90 degrees anti-clockwise (counter clockwise to US English speakers).
+     *
+     * @return
+     */
     def rotateLeft = _rotate(Math.PI)
+
+    /**
+     * Returns a copy of this image rotated 90 degrees clockwise.
+     *
+     * @return
+     */
     def rotateRight = _rotate(-Math.PI)
 
     def _rotate(angle: Double): Image = {
@@ -107,15 +123,27 @@ class Image(val awt: BufferedImage) {
 
     /**
      *
-     * Returns a copy of the image which has been scaled to fit
-     * inside the current dimensions whilst keeping the aspect ratio.
+     * Returns a copy of this image with the given dimensions where the original image has been scaled
+     * to fit inside the new dimensions whilst retaining the original aspect ratio.
      *
-     * @param width the target size
-     * @param height the target size
+     * @param targetWidth the target width
+     * @param targetHeight the target height
+     * @param scaleMethod the algorithm to use for the scaling operation. See ScaleMethod.
+     * @param color the color to use as the "padding" colour should the scaled original not fit exactly inside the new dimensions
      *
      * @return
      */
-    def fit(width: Int, height: Int, scaleMethod: ScaleMethod = Bicubic, centering: Centering = Center): Image = copy // todo
+    def fit(targetWidth: Int,
+            targetHeight: Int,
+            scaleMethod: ScaleMethod = Bicubic,
+            color: com.sksamuel.scrimage.Color = White): Image = {
+        val fittedDimensions = ImageTools.dimensionsToFit((targetWidth, targetHeight), (width, height))
+        val target = Image.filled(targetWidth, targetHeight, color)
+        val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
+        g2.drawImage(awt, ((targetWidth - fittedDimensions._1) / 2.0).toInt, ((targetHeight - fittedDimensions._2) / 2.0).toInt, null)
+        g2.dispose()
+        target
+    }
 
     /**
      *
@@ -127,7 +155,9 @@ class Image(val awt: BufferedImage) {
      *
      * @return
      */
-    def cover(width: Int, height: Int, scaleMethod: ScaleMethod = Bicubic): Image = copy // todo
+    def cover(width: Int, height: Int, scaleMethod: ScaleMethod = Bicubic): Image = {
+        null
+    }
 
     def scale(scaleFactor: Double): Image = scale(scaleFactor, Bicubic)
 
@@ -266,13 +296,25 @@ object Image {
         require(awt != null, "Input image cannot be null")
         awt match {
             case buff: BufferedImage if buff.getType == CANONICAL_DATA_TYPE => new Image(buff)
-            case _ => copy(awt)
+            case _ => _copy(awt)
         }
     }
 
-    def copy(awt: java.awt.Image) = {
+    /**
+     * Creates a new Image which is the a new copy of the given image.
+     * Any operations to the new object do not affect the given image.
+     *
+     * @param image the image to copy
+     *
+     * @return a new Image object.
+     */
+    def apply(image: Image): Image = _copy(image.awt)
+
+    private[scrimage] def _empty(awt: java.awt.Image): BufferedImage = _empty(awt.getWidth(null), awt.getHeight(null))
+    private[scrimage] def _empty(width: Int, height: Int): BufferedImage = new BufferedImage(width, height, CANONICAL_DATA_TYPE)
+    private[scrimage] def _copy(awt: java.awt.Image) = {
         require(awt != null, "Input image cannot be null")
-        val buff = raw(awt)
+        val buff = _empty(awt)
         val g2 = buff.getGraphics
         g2.drawImage(awt, 0, 0, null)
         g2.dispose()
@@ -290,8 +332,15 @@ object Image {
         new Image(awt)
     }
 
-    def raw(awt: java.awt.Image): BufferedImage = raw(awt.getWidth(null), awt.getHeight(null))
-    def raw(width: Int, height: Int): BufferedImage = new BufferedImage(width, height, CANONICAL_DATA_TYPE)
+    /**
+     * Create a new Image that is the given width and height with no initialization. This will usually result in a
+     * default black background (all pixel data defaulting to zeroes) but that is not guaranteed.
+     *
+     * @param width the width of the new image
+     * @param height the height of the new image
+     *
+     * @return the new Image with the given width and height
+     */
     def empty(width: Int, height: Int): Image = new Image(new BufferedImage(width, height, CANONICAL_DATA_TYPE))
 }
 
@@ -315,24 +364,6 @@ object Centering {
     object Bottom extends Centering
     object BottomLeft extends Centering
     object BottomRight extends Centering
-}
-
-trait Filter {
-    def apply(image: Image): Image
-}
-
-/**
- * Extension of Filter that applies its filters using a standard java BufferedImageOp
- */
-trait BufferedOpFilter extends Filter {
-    val op: BufferedImageOp
-    def apply(image: Image): Image = {
-        val target = image._raw
-        val g2 = target.getGraphics.asInstanceOf[Graphics2D]
-        g2.drawImage(image.awt, op, 0, 0)
-        g2.dispose()
-        new Image(target)
-    }
 }
 
 object Implicits {

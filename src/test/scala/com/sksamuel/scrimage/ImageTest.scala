@@ -120,4 +120,22 @@ class ImageTest extends FunSuite with BeforeAndAfter {
         assert(1944 === flipped.width)
         assert(1296 === flipped.height)
     }
+
+    test("when rotating left the width and height are reversed") {
+        val flipped = image.rotateLeft
+        assert(1296 === flipped.width)
+        assert(1944 === flipped.height)
+    }
+
+    test("when rotating right the width and height are reversed") {
+        val flipped = image.rotateRight
+        assert(1296 === flipped.width)
+        assert(1944 === flipped.height)
+    }
+
+    test("when fitting an image the output image should have the specified dimensions") {
+        val fitted = image.fit(51, 66)
+        assert(51 === fitted.width)
+        assert(66 === fitted.height)
+    }
 }

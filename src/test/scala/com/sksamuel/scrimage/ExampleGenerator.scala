@@ -43,5 +43,6 @@ object ExampleGenerator extends App {
 
     image.pad(20, Color.Black).write(new File("examples/bird_pad_20.png"))
     image.resize(0.5).write(new File("examples/bird_resize_half.png"))
+    image.fit(image.width - 20, image.height - 100).write(new File("examples/bird_fitted.png"))
 
 }
