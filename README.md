@@ -33,7 +33,7 @@ but rather collected from other open source imaging libraries (where the license
 | Chrome       | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_chrome.png) |
 | Despeckle       | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_despeckle.png) |
 | Edge | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_edge.png) |
-| Gaussian Blur      | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_gaussianblur.png) |
+| Gaussian Blur      | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_gaussian.png) |
 | Invert      | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_invert.png) |
 | Lens Blur      | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_lensblur.png) |
 | Quantize      | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_quantize_256.png) |

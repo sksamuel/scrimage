@@ -28,6 +28,7 @@ object FilterExampleGenerator extends App {
 
     image.filter(PointillizeFilter(PointillizeGridType.Square)).write(new File("examples/filters/bird_pointillize_square.png"))
 
+    image.filter(RaysFilter(threshold = 0.1f, strength = 0.6f)).write(new File("examples/filters/bird_rays.png"))
     image.filter(RippleFilter(RippleType.Sine)).write(new File("examples/filters/bird_ripple.png"))
 
     image.filter(SmearFilter(SmearType.Circles)).write(new File("examples/filters/bird_smear_circles.png"))
