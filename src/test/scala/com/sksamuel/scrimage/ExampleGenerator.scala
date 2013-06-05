@@ -6,43 +6,53 @@ import java.io.File
 /** @author Stephen Samuel */
 object ExampleGenerator extends App {
 
-    val image = Image(getClass.getResourceAsStream("/bird.jpg")).scale(0.15)
+    val image1 = Image(getClass.getResourceAsStream("/bird.jpg")).scale(0.15)
+    val image2 = Image(getClass.getResourceAsStream("/colosseum.jpg")).scale(0.15)
+    val image3 = Image(getClass.getResourceAsStream("/lanzarote.jpg")).scale(0.15)
 
-    image.filter(BlockFilter(4)).write(new File("examples/filters/bird_block_4.png"))
-    image.filter(BlurFilter).write(new File("examples/filters/bird_blur.png"))
-    image.filter(BumpFilter).write(new File("examples/filters/bird_bump.png"))
+    for ( t <- List(("bird", image1), ("colosseum", image2), ("lanzarote", image3)) ) {
 
-    image.filter(ChromeFilter()).write(new File("examples/filters/bird_chrome.png"))
+        val filename = t._1
+        val image = t._2
 
-    image.filter(DespeckleFilter).write(new File("examples/filters/bird_despeckle.png"))
+        image.filter(BlockFilter(4)).write(new File("examples/filters/" + filename + "_block_4.png"))
+        image.filter(BlurFilter).write(new File("examples/filters/" + filename + "_blur.png"))
+        image.filter(BumpFilter).write(new File("examples/filters/" + filename + "_bump.png"))
 
-    image.filter(EdgeFilter).write(new File("examples/filters/bird_edge.png"))
+        image.filter(ChromeFilter()).write(new File("examples/filters/" + filename + "_chrome.png"))
 
-    image.filter(GaussianBlurFilter()).write(new File("examples/filters/bird_gaussian.png"))
+        image.filter(DespeckleFilter).write(new File("examples/filters/" + filename + "_despeckle.png"))
 
-    image.filter(InvertFilter).write(new File("examples/filters/bird_invert.png"))
+        image.filter(EdgeFilter).write(new File("examples/filters/" + filename + "_edge.png"))
 
-    image.filter(LensBlurFilter()).write(new File("examples/filters/bird_lensblur.png"))
+        image.filter(GaussianBlurFilter()).write(new File("examples/filters/" + filename + "_gaussian.png"))
 
-    image.filter(QuantizeFilter(256)).write(new File("examples/filters/bird_quantize_256.png"))
+        image.filter(InvertFilter).write(new File("examples/filters/" + filename + "_invert.png"))
 
-    image.filter(PointillizeFilter(PointillizeGridType.Square)).write(new File("examples/filters/bird_pointillize_square.png"))
+        image.filter(LensBlurFilter()).write(new File("examples/filters/" + filename + "_lensblur.png"))
 
-    image.filter(RaysFilter(threshold = 0.1f, strength = 0.6f)).write(new File("examples/filters/bird_rays.png"))
-    image.filter(RippleFilter(RippleType.Sine)).write(new File("examples/filters/bird_ripple.png"))
+        image.filter(QuantizeFilter(256)).write(new File("examples/filters/" + filename + "_quantize_256.png"))
 
-    image.filter(SmearFilter(SmearType.Circles)).write(new File("examples/filters/bird_smear_circles.png"))
-    image.filter(SparkleFilter()).write(new File("examples/filters/bird_sparkle.png"))
-    image.filter(SolarizeFilter).write(new File("examples/filters/bird_solarize.png"))
+        image
+          .filter(PointillizeFilter(PointillizeGridType.Square))
+          .write(new File("examples/filters/" + filename + "_pointillize_square.png"))
 
-    image.filter(ThresholdFilter(127, black = 0x00ff0000)).write(new File("examples/filters/bird_threshold_red_127.png"))
+        image.filter(RaysFilter(threshold = 0.1f, strength = 0.6f)).write(new File("examples/filters/" + filename + "_rays.png"))
+        image.filter(RippleFilter(RippleType.Sine)).write(new File("examples/filters/" + filename + "_ripple.png"))
 
-    image.filter(UnsharpFilter()).write(new File("examples/filters/bird_unsharp.png"))
+        image.filter(SmearFilter(SmearType.Circles)).write(new File("examples/filters/" + filename + "_smear_circles.png"))
+        image.filter(SparkleFilter()).write(new File("examples/filters/" + filename + "_sparkle.png"))
+        image.filter(SolarizeFilter).write(new File("examples/filters/" + filename + "_solarize.png"))
 
-    //// --- API examples /////
+        image.filter(ThresholdFilter(127, black = 0x00ff0000)).write(new File("examples/filters/" + filename + "_threshold_red_127.png"))
 
-    image.pad(20, Color.Black).write(new File("examples/bird_pad_20.png"))
-    image.resize(0.5).write(new File("examples/bird_resize_half.png"))
-    image.fit(image.width - 20, image.height - 100).write(new File("examples/bird_fitted.png"))
+        image.filter(UnsharpFilter()).write(new File("examples/filters/" + filename + "_unsharp.png"))
 
+        //// --- API examples /////
+
+        image.pad(20, Color.Black).write(new File("examples/" + filename + "_pad_20.png"))
+        image.resize(0.5).write(new File("examples/" + filename + "_resize_half.png"))
+        image.fit(image.width - 20, image.height - 100).write(new File("examples/" + filename + "_fitted.png"))
+
+    }
 }
