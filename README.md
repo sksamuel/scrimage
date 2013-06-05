@@ -23,7 +23,8 @@ the operation on that.
 ### Filters
 
 Scrimage comes with a wide array (or List ;)) of filters. Most of these filters I have not written myself,
-but rather collected from other open source imaging libraries (where the license allows - see file headers for attribution), and either re-written them in Scala or wrapped them in a Scala wrapper. 
+but rather collected from other open source imaging libraries (where the license allows - see file headers for attribution),
+and re-written them in Scala, wrapped them in a Scala wrapper, or fixed bugs and modified them.
 
 | Filter Name        | Example           |
 | ------------- |:-------------:|
@@ -38,7 +39,9 @@ but rather collected from other open source imaging libraries (where the license
 | Lens Blur      | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_lensblur.png) |
 | Quantize      | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_quantize_256.png) |
 | Pointillze      | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_pointillize_square.png) |
+| Rays      | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_rays.png) |
 | Ripple      | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_ripple.png) |
+| Sparkle       | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_sparkle.png) |
 | Smear       | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_smear_circles.png) |
 | Solarize       | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_solarize.png) |
 | Threshold       | ![example](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_threshold_red_127.png) |

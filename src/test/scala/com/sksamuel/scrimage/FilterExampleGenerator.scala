@@ -32,6 +32,7 @@ object FilterExampleGenerator extends App {
     image.filter(RippleFilter(RippleType.Sine)).write(new File("examples/filters/bird_ripple.png"))
 
     image.filter(SmearFilter(SmearType.Circles)).write(new File("examples/filters/bird_smear_circles.png"))
+    image.filter(SparkleFilter()).write(new File("examples/filters/bird_sparkle.png"))
     image.filter(SolarizeFilter).write(new File("examples/filters/bird_solarize.png"))
 
     image.filter(ThresholdFilter(127, black = 0x00ff0000)).write(new File("examples/filters/bird_threshold_red_127.png"))
