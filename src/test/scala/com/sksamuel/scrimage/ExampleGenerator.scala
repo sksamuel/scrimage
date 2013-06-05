@@ -22,20 +22,24 @@ object ExampleGenerator extends App {
         image.filter(ChromeFilter()).write(new File("examples/filters/" + filename + "_chrome.png"))
 
         image.filter(DespeckleFilter).write(new File("examples/filters/" + filename + "_despeckle.png"))
+        image.filter(DiffuseFilter(4)).write(new File("examples/filters/" + filename + "_diffuse_4.png"))
 
         image.filter(EdgeFilter).write(new File("examples/filters/" + filename + "_edge.png"))
 
+        image.filter(GammaFilter(2)).write(new File("examples/filters/" + filename + "_gamma_2.png"))
         image.filter(GaussianBlurFilter()).write(new File("examples/filters/" + filename + "_gaussian.png"))
+        image.filter(GlowFilter()).write(new File("examples/filters/" + filename + "_glow.png"))
+        image.filter(GrayscaleFilter).write(new File("examples/filters/" + filename + "_grayscale.png"))
 
         image.filter(InvertFilter).write(new File("examples/filters/" + filename + "_invert.png"))
 
         image.filter(LensBlurFilter()).write(new File("examples/filters/" + filename + "_lensblur.png"))
 
-        image.filter(QuantizeFilter(256)).write(new File("examples/filters/" + filename + "_quantize_256.png"))
-
         image
           .filter(PointillizeFilter(PointillizeGridType.Square))
           .write(new File("examples/filters/" + filename + "_pointillize_square.png"))
+
+        image.filter(QuantizeFilter(256)).write(new File("examples/filters/" + filename + "_quantize_256.png"))
 
         image.filter(RaysFilter(threshold = 0.1f, strength = 0.6f)).write(new File("examples/filters/" + filename + "_rays.png"))
         image.filter(RippleFilter(RippleType.Sine)).write(new File("examples/filters/" + filename + "_ripple.png"))
@@ -53,6 +57,6 @@ object ExampleGenerator extends App {
         image.pad(20, Color.Black).write(new File("examples/" + filename + "_pad_20.png"))
         image.resize(0.5).write(new File("examples/" + filename + "_resize_half.png"))
         image.fit(image.width - 20, image.height - 100).write(new File("examples/" + filename + "_fitted.png"))
-
+        image.scale(0.5).write(new File("examples/" + filename + "_scale_half.png"))
     }
 }
