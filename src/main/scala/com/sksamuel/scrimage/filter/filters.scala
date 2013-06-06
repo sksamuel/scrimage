@@ -20,10 +20,9 @@ class RedFilter extends Filter {
         def filterRGB(x: Int, y: Int, rgb: Int) = rgb & 0xffff0000
     }
 
-    def apply(image: Image): Image = {
+    def apply(image: Image) {
         val filteredSrc = new FilteredImageSource(image.awt.getSource, _RedFilter)
-        val awt = Toolkit.getDefaultToolkit.createImage(filteredSrc)
-        Image(awt)
+        Toolkit.getDefaultToolkit.createImage(filteredSrc)
     }
 }
 

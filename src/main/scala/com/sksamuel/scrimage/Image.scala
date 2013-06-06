@@ -16,7 +16,7 @@ import com.sksamuel.scrimage.Position.Center
   *
   *         RichImage is class that represents an in memory image.
   *
-  **/
+  * */
 class Image(val awt: BufferedImage) {
     require(awt != null, "Wrapping image cannot be null")
     require(awt.getType == Image.CANONICAL_DATA_TYPE,
@@ -28,7 +28,7 @@ class Image(val awt: BufferedImage) {
     lazy val ratio: Double = if (height == 0) 0 else width / height.toDouble
 
     /**
-     * Creates a new empty Image with the same dimensions of this image.
+     * Creates an empty Image with the same dimensions of this image.
      *
      * @return a new Image that is a clone of this image but with uninitialized data
      */
@@ -36,15 +36,14 @@ class Image(val awt: BufferedImage) {
 
     /**
      * Creates a new image with the same data as this image.
-     * Any operations to the copied image will not affect the original.
-     * Images can be copied multiple times.
+     * Any operations to the copied image will not write back to the original.
+     * Images can be copied multiple times as well as copies copied etc.
      *
      * @return A copy of this image.
      */
     def copy = Image._copy(awt)
 
     /**
-     *
      * @param point the coordinates of the pixel to grab
      *
      * @return
@@ -55,6 +54,12 @@ class Image(val awt: BufferedImage) {
         pixels(pixelIndex)
     }
 
+    /**
+     * Returns the pixels of this image represented as integers
+     * in a single dimension array.
+     *
+     * @return
+     */
     def pixels: Array[Int] = {
         awt.getRaster.getDataBuffer match {
             case buffer: DataBufferInt => buffer.getData
@@ -63,17 +68,20 @@ class Image(val awt: BufferedImage) {
     }
 
     /**
-     *
-     * Creates a copy of this image with the given filter applied. The original (this) image is unchanged.
+     * Creates a copy of this image with the given filter applied.
+     * The original (this) image is unchanged.
      *
      * @param filter the filter to apply. See com.sksamuel.scrimage.Filter.
      *
      * @return A new image with the given filter applied.
      */
-    def filter(filter: Filter): Image = filter.apply(this)
+    def filter(filter: Filter): Image = {
+        val target = copy
+        filter.apply(target)
+        target
+    }
 
     /**
-     *
      * @return A new image that is the result of flipping this image horizontally.
      */
     def flipX: Image = {
@@ -92,7 +100,7 @@ class Image(val awt: BufferedImage) {
         _flip(tx)
     }
 
-    private[scrimage] def _flip(tx: AffineTransform): Image = {
+    def _flip(tx: AffineTransform): Image = {
         val op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR)
         val flipped = op.filter(awt, null)
         new Image(flipped)
@@ -403,6 +411,27 @@ class Image(val awt: BufferedImage) {
         case other: Image => other.pixels.sameElements(pixels)
         case _ => false
     }
+
+    // -- mutable operations -- //
+
+    def _fill(color: java.awt.Color): Image = {
+        val g2 = awt.getGraphics
+        g2.setColor(color)
+        g2.fillRect(0, 0, awt.getWidth, awt.getHeight)
+        g2.dispose()
+        this
+    }
+
+    /**
+     * Creates a MutableImage instance backed by this image.
+     *
+     * Note, any changes to the mutable image write back to this Image.
+     * If you want a mutable copy then you must first copy this image
+     * before invoking this operation.
+     *
+     * @return
+     */
+    def toMutable: MutableImage = new MutableImage(awt)
 }
 
 object Image {
@@ -441,24 +470,23 @@ object Image {
 
     private[scrimage] def _empty(awt: java.awt.Image): BufferedImage = _empty(awt.getWidth(null), awt.getHeight(null))
     private[scrimage] def _empty(width: Int, height: Int): BufferedImage = new BufferedImage(width, height, CANONICAL_DATA_TYPE)
+
     private[scrimage] def _copy(awt: java.awt.Image) = {
         require(awt != null, "Input image cannot be null")
-        val buff = _empty(awt)
-        val g2 = buff.getGraphics
+        val copy = _empty(awt)
+        val g2 = copy.getGraphics
         g2.drawImage(awt, 0, 0, null)
         g2.dispose()
-        new Image(buff)
+        new Image(copy)
     }
 
     def filled(width: Int, height: Int, color: com.sksamuel.scrimage.Color): Image = filled(width, height, color.value)
     def filled(width: Int, height: Int, color: Int): Image = filled(width, height, new java.awt.Color(color))
     def filled(width: Int, height: Int, color: java.awt.Color): Image = {
         val awt = new BufferedImage(width, height, Image.CANONICAL_DATA_TYPE)
-        val g2 = awt.getGraphics
-        g2.setColor(color)
-        g2.fillRect(0, 0, awt.getWidth, awt.getHeight)
-        g2.dispose()
-        new Image(awt)
+        val filled = new Image(awt)
+        filled._fill(color)
+        filled
     }
 
     /**

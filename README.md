@@ -7,10 +7,9 @@ more "serious" image application - such as a lightroom clone.
 
 Scrimage has a consistent, idiomatic scala, and mostly immutable API for accessing images.
 I say mostly immutable because for some operations creating a copy of the underlying image
-would prove expensive (think a blur filter on a 3000 x 3000 image where you do not care about
-keeping the original in memory). For these kinds of operations Scrimage supports a copy
-operation that can be used to mimic immutability by first creating a copy and then performing
-the operation on that.
+would prove expensive (think a filter on a 8000 x 6000 image where you do not care about
+keeping the original in memory). For these kinds of operations Scrimage supports a MutableImage
+instance for which operations that are able to be performed in place act on the original data.
 
 [![Build Status](https://travis-ci.org/sksamuel/scrimage.png)](https://travis-ci.org/sksamuel/scrimage)
 
