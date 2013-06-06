@@ -11,6 +11,7 @@ import java.awt.image.{DataBufferInt, AffineTransformOp, BufferedImage}
 import com.sksamuel.scrimage.Color.White
 import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 import com.sksamuel.scrimage.Position.Center
+import com.sksamuel.scrimage.io.ImageWriter
 
 /** @author Stephen Samuel
   *
@@ -390,20 +391,19 @@ class Image(val awt: BufferedImage) {
      */
     def filled(color: java.awt.Color): Image = Image.filled(width, height, color)
 
+    def writer[T <: ImageWriter](format: Format[T]): T = format.writer
+
     def write(file: File) {
-        write(file, PNG)
+        write(file, Format.PNG)
     }
-
-    def write(file: File, format: Format) {
-        ImageWriter(file).write(this, format)
+    def write(file: File, format: Format[_ <: ImageWriter]) {
+        write(file, format)
     }
-
     def write(out: OutputStream) {
         write(out, PNG)
     }
-
-    def write(out: OutputStream, format: Format) {
-        ImageWriter(out).write(this, format)
+    def write(out: OutputStream, format: Format[_ <: ImageWriter]) {
+        writer(format).write(this, out)
     }
 
     override def hashCode(): Int = awt.hashCode

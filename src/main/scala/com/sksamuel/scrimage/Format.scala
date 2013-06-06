@@ -1,9 +1,28 @@
 package com.sksamuel.scrimage
 
+import com.sksamuel.scrimage.io._
+
 /** @author Stephen Samuel */
-sealed trait Format
+sealed trait Format[T <: ImageWriter] {
+    def reader: ImageReader = GenericImageIOReader
+
+    /**
+     * Returns a new defaultly configured writer compatible with the format type.
+     *
+     */
+    def writer: T
+}
 object Format {
-    case object PNG extends Format
-    case object JPEG extends Format
-    case object GIF extends Format
+    case object PNG extends Format[PngWriter] {
+        def writer = new PngWriter
+    }
+    case object JPEG extends Format[JpegWriter] {
+        def writer = new JpegWriter(0.75f)
+    }
+    case object GIF extends Format[GifWriter] {
+        def writer = new GifWriter
+    }
+    case object TIFF extends Format[TiffWriter] {
+        def writer = TiffWriter
+    }
 }
