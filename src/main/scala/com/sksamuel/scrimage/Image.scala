@@ -308,7 +308,7 @@ class Image(val awt: BufferedImage) {
      * @return a new Image that is the result of resizing the canvas.
      */
     def resize(targetWidth: Int, targetHeight: Int, position: Position = Center): Image = {
-        val target = new BufferedImage(width, height, Image.CANONICAL_DATA_TYPE)
+        val target = new BufferedImage(targetWidth, targetHeight, Image.CANONICAL_DATA_TYPE)
         target.getGraphics.asInstanceOf[Graphics2D].drawImage(awt, 0, 0, null)
         new Image(target)
     }
