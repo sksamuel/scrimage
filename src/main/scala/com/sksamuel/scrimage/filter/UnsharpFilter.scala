@@ -5,13 +5,13 @@ import com.sksamuel.scrimage.filter.EdgeAction.{WrapEdges, ClampEdges, ZeroEdges
 
 /** @author Stephen Samuel */
 class UnsharpFilter(amount: Float, threshold: Int, edgeAction: EdgeAction) extends BufferedOpFilter {
-    val op = new com.jhlabs.image.UnsharpFilter()
+    val op = new thirdparty.jhlabs.image.UnsharpFilter()
     op.setAmount(amount)
     op.setThreshold(threshold)
     edgeAction match {
-        case ZeroEdges => op.setEdgeAction(com.jhlabs.image.ConvolveFilter.ZERO_EDGES)
-        case ClampEdges => op.setEdgeAction(com.jhlabs.image.ConvolveFilter.CLAMP_EDGES)
-        case WrapEdges => op.setEdgeAction(com.jhlabs.image.ConvolveFilter.WRAP_EDGES)
+        case ZeroEdges => op.setEdgeAction(thirdparty.jhlabs.image.ConvolveFilter.ZERO_EDGES)
+        case ClampEdges => op.setEdgeAction(thirdparty.jhlabs.image.ConvolveFilter.CLAMP_EDGES)
+        case WrapEdges => op.setEdgeAction(thirdparty.jhlabs.image.ConvolveFilter.WRAP_EDGES)
     }
 }
 object UnsharpFilter {

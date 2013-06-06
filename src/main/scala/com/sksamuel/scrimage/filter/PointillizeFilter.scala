@@ -12,7 +12,7 @@ class PointillizeFilter(angle: Float = 0.0f,
                         fuzziness: Float,
                         gridType: PointillizeGridType)
   extends BufferedOpFilter {
-    val op = new com.jhlabs.image.PointillizeFilter
+    val op = new thirdparty.jhlabs.image.PointillizeFilter
     op.setAngle(angle)
     op.setScale(scale)
     op.setEdgeThickness(edgeThickness)
@@ -20,11 +20,11 @@ class PointillizeFilter(angle: Float = 0.0f,
     op.setFadeEdges(fadeEdges)
     op.setFuzziness(fuzziness)
     gridType match {
-        case Random => op.setGridType(com.jhlabs.image.CellularFilter.RANDOM)
-        case Square => op.setGridType(com.jhlabs.image.CellularFilter.SQUARE)
-        case Hexagonal => op.setGridType(com.jhlabs.image.CellularFilter.HEXAGONAL)
-        case Octangal => op.setGridType(com.jhlabs.image.CellularFilter.OCTAGONAL)
-        case Triangular => op.setGridType(com.jhlabs.image.CellularFilter.TRIANGULAR)
+        case Random => op.setGridType(thirdparty.jhlabs.image.CellularFilter.RANDOM)
+        case Square => op.setGridType(thirdparty.jhlabs.image.CellularFilter.SQUARE)
+        case Hexagonal => op.setGridType(thirdparty.jhlabs.image.CellularFilter.HEXAGONAL)
+        case Octangal => op.setGridType(thirdparty.jhlabs.image.CellularFilter.OCTAGONAL)
+        case Triangular => op.setGridType(thirdparty.jhlabs.image.CellularFilter.TRIANGULAR)
     }
 }
 

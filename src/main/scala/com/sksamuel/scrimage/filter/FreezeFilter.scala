@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage.filter
 
-import thirdparty.BlendComposite
 import com.sksamuel.scrimage.CompositeFilter
+import thirdparty.romainguy.BlendComposite
 
 /** @author Stephen Samuel
   *

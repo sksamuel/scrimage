@@ -4,7 +4,7 @@ import com.sksamuel.scrimage.BufferedOpFilter
 
 /** @author Stephen Samuel */
 class TwirlFilter(angle: Double, radius: Int, centerX: Float, centerY: Float) extends BufferedOpFilter {
-    val op = new com.jhlabs.image.TwirlFilter()
+    val op = new thirdparty.jhlabs.image.TwirlFilter()
     op.setCentreX(centerX)
     op.setCentreY(centerY)
     op.setRadius(radius.toFloat)

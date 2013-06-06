@@ -5,7 +5,7 @@ import com.sksamuel.scrimage.BufferedOpFilter
 /** @author Stephen Samuel */
 class LensBlurFilter(radius: Float, bloom: Float, bloomThreshold: Float, sides: Int, angle: Float)
   extends BufferedOpFilter {
-    val op = new com.jhlabs.image.LensBlurFilter()
+    val op = new thirdparty.jhlabs.image.LensBlurFilter()
     op.setSides(sides)
     op.setBloomThreshold(bloomThreshold)
     op.setBloom(bloom)

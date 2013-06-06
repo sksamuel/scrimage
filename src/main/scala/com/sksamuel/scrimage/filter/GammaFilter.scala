@@ -4,7 +4,7 @@ import com.sksamuel.scrimage.BufferedOpFilter
 
 /** @author Stephen Samuel */
 class GammaFilter(gamma: Float) extends BufferedOpFilter {
-    val op = new com.jhlabs.image.GammaFilter()
+    val op = new thirdparty.jhlabs.image.GammaFilter()
     op.setGamma(gamma)
 }
 object GammaFilter {

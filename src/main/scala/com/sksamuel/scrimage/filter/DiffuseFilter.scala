@@ -4,7 +4,7 @@ import com.sksamuel.scrimage.BufferedOpFilter
 
 /** @author Stephen Samuel */
 class DiffuseFilter(scale: Float) extends BufferedOpFilter {
-    val op = new com.jhlabs.image.DiffuseFilter()
+    val op = new thirdparty.jhlabs.image.DiffuseFilter()
     op.setScale(scale)
 }
 object DiffuseFilter {

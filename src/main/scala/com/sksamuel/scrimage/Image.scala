@@ -1,7 +1,6 @@
 package com.sksamuel.scrimage
 
 import java.awt.Graphics2D
-import com.mortennobel.imagescaling.{ResampleFilters, ResampleOp}
 import java.awt.geom.AffineTransform
 import java.io.{InputStream, OutputStream, File}
 import com.sksamuel.scrimage.Format.PNG
@@ -11,12 +10,13 @@ import javax.imageio.ImageIO
 import org.apache.commons.io.FileUtils
 import java.awt.image.{DataBufferInt, AffineTransformOp, BufferedImage}
 import com.sksamuel.scrimage.Color.White
+import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 
 /** @author Stephen Samuel
   *
   *         RichImage is class that represents an in memory image.
   *
-  * */
+  **/
 class Image(val awt: BufferedImage) {
     require(awt != null, "Wrapping image cannot be null")
     require(awt.getType == Image.CANONICAL_DATA_TYPE,

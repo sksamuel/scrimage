@@ -4,7 +4,7 @@ import com.sksamuel.scrimage.BufferedOpFilter
 
 /** @author Stephen Samuel */
 class QuantizeFilter(colors: Int, dither: Boolean) extends BufferedOpFilter {
-    val op = new com.jhlabs.image.QuantizeFilter
+    val op = new thirdparty.jhlabs.image.QuantizeFilter
     op.setNumColors(colors)
     op.setDither(dither)
 }

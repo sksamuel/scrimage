@@ -4,7 +4,7 @@ import com.sksamuel.scrimage.BufferedOpFilter
 
 /** @author Stephen Samuel */
 class OilFilter(range: Int, levels: Int) extends BufferedOpFilter {
-    val op = new com.jhlabs.image.OilFilter()
+    val op = new thirdparty.jhlabs.image.OilFilter()
     op.setRange(range)
     op.setLevels(levels)
 }

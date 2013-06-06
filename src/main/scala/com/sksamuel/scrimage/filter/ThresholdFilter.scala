@@ -4,7 +4,7 @@ import com.sksamuel.scrimage.BufferedOpFilter
 
 /** @author Stephen Samuel */
 class ThresholdFilter(threshold: Int, white: Int, black: Int) extends BufferedOpFilter {
-    val op = new com.jhlabs.image.ThresholdFilter(threshold)
+    val op = new thirdparty.jhlabs.image.ThresholdFilter(threshold)
     op.setBlack(black)
     op.setWhite(white)
 }

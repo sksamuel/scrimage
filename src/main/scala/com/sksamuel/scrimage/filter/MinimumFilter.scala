@@ -4,5 +4,5 @@ import com.sksamuel.scrimage.BufferedOpFilter
 
 /** @author Stephen Samuel */
 object MinimumFilter extends BufferedOpFilter {
-    val op = new com.jhlabs.image.MinimumFilter()
+    val op = new thirdparty.jhlabs.image.MinimumFilter()
 }

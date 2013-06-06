@@ -14,16 +14,16 @@ object RippleType {
 
 class RippleFilter(rippleType: RippleType, xAmplitude: Float, yAmplitude: Float, xWavelength: Float, yWavelength: Float)
   extends BufferedOpFilter {
-    val op = new com.jhlabs.image.RippleFilter()
+    val op = new thirdparty.jhlabs.image.RippleFilter()
     op.setXAmplitude(xAmplitude)
     op.setYAmplitude(yAmplitude)
     op.setXWavelength(xWavelength)
     op.setYWavelength(yWavelength)
     rippleType match {
-        case Sine => op.setWaveType(com.jhlabs.image.RippleFilter.SINE)
-        case Sawtooth => op.setWaveType(com.jhlabs.image.RippleFilter.SAWTOOTH)
-        case Triangle => op.setWaveType(com.jhlabs.image.RippleFilter.TRIANGLE)
-        case Noise => op.setWaveType(com.jhlabs.image.RippleFilter.NOISE)
+        case Sine => op.setWaveType(thirdparty.jhlabs.image.RippleFilter.SINE)
+        case Sawtooth => op.setWaveType(thirdparty.jhlabs.image.RippleFilter.SAWTOOTH)
+        case Triangle => op.setWaveType(thirdparty.jhlabs.image.RippleFilter.TRIANGLE)
+        case Noise => op.setWaveType(thirdparty.jhlabs.image.RippleFilter.NOISE)
     }
 }
 object RippleFilter {

@@ -5,7 +5,7 @@ import java.awt.image.BufferedImageOp
 
 /** @author Stephen Samuel */
 class BlockFilter(blockSize: Int) extends BufferedOpFilter {
-    val op: BufferedImageOp = new com.jhlabs.image.BlockFilter(blockSize)
+    val op: BufferedImageOp = new thirdparty.jhlabs.image.BlockFilter(blockSize)
 }
 object BlockFilter {
     def apply(): BlockFilter = apply(2)

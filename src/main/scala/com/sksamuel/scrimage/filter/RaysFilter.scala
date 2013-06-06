@@ -4,7 +4,7 @@ import com.sksamuel.scrimage.BufferedOpFilter
 
 /** @author Stephen Samuel */
 class RaysFilter(opacity: Float, threshold: Float, strength: Float) extends BufferedOpFilter {
-    val op = new com.jhlabs.image.RaysFilter()
+    val op = new thirdparty.jhlabs.image.RaysFilter()
     op.setOpacity(opacity)
     op.setThreshold(threshold)
     op.setStrength(strength)

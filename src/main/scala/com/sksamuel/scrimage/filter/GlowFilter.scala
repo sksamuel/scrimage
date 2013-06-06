@@ -4,7 +4,7 @@ import com.sksamuel.scrimage.BufferedOpFilter
 
 /** @author Stephen Samuel */
 class GlowFilter(amount: Float) extends BufferedOpFilter {
-    val op = new com.jhlabs.image.GlowFilter()
+    val op = new thirdparty.jhlabs.image.GlowFilter()
     op.setAmount(amount)
 }
 object GlowFilter {

@@ -4,7 +4,7 @@ import com.sksamuel.scrimage.BufferedOpFilter
 
 /** @author Stephen Samuel */
 class ChromeFilter(amount: Float, exposure: Float) extends BufferedOpFilter {
-    val op = new com.jhlabs.image.ChromeFilter()
+    val op = new thirdparty.jhlabs.image.ChromeFilter()
     op.setAmount(amount)
     op.setExposure(exposure)
 }

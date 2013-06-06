@@ -13,17 +13,17 @@ object SmearType {
 }
 
 class SmearFilter(smearType: SmearType, angle: Float, density: Float, scatter: Float, distance: Int, mix: Float) extends BufferedOpFilter {
-    val op = new com.jhlabs.image.SmearFilter()
+    val op = new thirdparty.jhlabs.image.SmearFilter()
     op.setDensity(density)
     op.setAngle(angle)
     op.setScatter(scatter)
     op.setDistance(distance)
     op.setMix(mix)
     smearType match {
-        case Circles => op.setShape(com.jhlabs.image.SmearFilter.CIRCLES)
-        case Crosses => op.setShape(com.jhlabs.image.SmearFilter.CROSSES)
-        case Lines => op.setShape(com.jhlabs.image.SmearFilter.LINES)
-        case Squares => op.setShape(com.jhlabs.image.SmearFilter.SQUARES)
+        case Circles => op.setShape(thirdparty.jhlabs.image.SmearFilter.CIRCLES)
+        case Crosses => op.setShape(thirdparty.jhlabs.image.SmearFilter.CROSSES)
+        case Lines => op.setShape(thirdparty.jhlabs.image.SmearFilter.LINES)
+        case Squares => op.setShape(thirdparty.jhlabs.image.SmearFilter.SQUARES)
     }
 }
 object SmearFilter {

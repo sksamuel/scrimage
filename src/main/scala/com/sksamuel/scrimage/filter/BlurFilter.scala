@@ -4,5 +4,5 @@ import com.sksamuel.scrimage.BufferedOpFilter
 
 /** @author Stephen Samuel */
 object BlurFilter extends BufferedOpFilter {
-    val op = new com.jhlabs.image.BlurFilter()
+    val op = new thirdparty.jhlabs.image.BlurFilter()
 }
