@@ -134,7 +134,7 @@ class ImageTest extends FunSuite with BeforeAndAfter {
     }
 
     test("when padding with a border size then the width and height are increased by the right amount") {
-        val padded = image.pad(4)
+        val padded = image.pad(4, Color.White)
         assert(1952 === padded.width)
         assert(1304 === padded.height)
     }
@@ -185,14 +185,20 @@ class ImageTest extends FunSuite with BeforeAndAfter {
     }
 
     test("when scaling by width then target image maintains aspect ratio") {
-        val scaled = image.scaleWidth(500)
+        val scaled = image.scaleToWidth(500)
         assert(scaled.width === 500)
         assert(scaled.ratio - image.ratio < 0.01)
     }
 
     test("when scaling by height then target image maintains aspect ratio") {
-        val scaled = image.scaleHeight(400)
+        val scaled = image.scaleToHeight(400)
         assert(scaled.height === 400)
         assert(scaled.ratio - image.ratio < 0.01)
+    }
+
+    test("when covering an image the output image should have the specified dimensions") {
+        val covered = image.cover(51, 66)
+        assert(51 === covered.width)
+        assert(66 === covered.height)
     }
 }

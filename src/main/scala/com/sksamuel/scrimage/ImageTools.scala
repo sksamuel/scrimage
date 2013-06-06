@@ -71,6 +71,20 @@ object ImageTools {
     def ratio(source: AWTImage): Double = ratio(source.getWidth(null), source.getHeight(null))
     def ratio(width: Int, height: Int): Double = if (height == 0) 0 else width / height.toDouble
 
+    def dimensionsToCover(target: (Int, Int), source: (Int, Int)): (Int, Int) = {
+
+        val minWidth = if (target._1 < source._1) source._1 else target._1
+        val minHeight = if (target._2 < source._2) source._2 else target._2
+
+        val wscale = minWidth / source._1.toDouble
+        val hscale = minHeight / source._2.toDouble
+
+        if (wscale < hscale)
+            ((source._1 * hscale).toInt, (source._2 * hscale).toInt)
+        else
+            ((source._1 * wscale).toInt, (source._2 * wscale).toInt)
+    }
+
     /**
      * Returns width and height that allow the given source width, height to fit inside the target width, height
      * without losing aspect ratio

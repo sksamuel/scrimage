@@ -105,5 +105,25 @@ class ImageToolsTest extends FunSuite with BeforeAndAfter with OneInstancePerTes
         assert(actual.getWidth === 50)
         assert(actual.getHeight === 80)
     }
+
+    test("when covering an area that is the same size as the source then the same dimensions are returned") {
+        val covered = ImageTools.dimensionsToCover((333, 333), (333, 333))
+        assert(covered === (333, 333))
+    }
+
+    test("when covering an area that is wider than the source then the dimensions have the larger width") {
+        val covered = ImageTools.dimensionsToCover((600, 40), (400, 40))
+        assert(covered === (600, 60))
+    }
+
+    test("when covering an area that is taller than the source then the dimensions have the larger height") {
+        val covered = ImageTools.dimensionsToCover((400, 800), (400, 400))
+        assert(covered === (800, 800))
+    }
+
+    test("when covering an area that is wider and taller than the aspect ratio is maintained") {
+        val covered = ImageTools.dimensionsToCover((420, 200), (80, 100))
+        assert(covered === (420, 525))
+    }
 }
 

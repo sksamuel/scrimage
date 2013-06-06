@@ -123,22 +123,25 @@ class Image(val awt: BufferedImage) {
 
     /**
      *
-     * Returns a copy of this image with the given dimensions where the original image has been scaled
-     * to fit inside the new dimensions whilst retaining the original aspect ratio.
+     * Returns a copy of this image with the given dimensions
+     * where the original image has been scaled to fit completely
+     * inside the new dimensions whilst retaining the original aspect ratio.
      *
      * @param targetWidth the target width
      * @param targetHeight the target height
      * @param scaleMethod the algorithm to use for the scaling operation. See ScaleMethod.
      * @param color the color to use as the "padding" colour should the scaled original not fit exactly inside the new dimensions
+     * @param position where to position the image inside the new canvas
      *
-     * @return
+     * @return a new Image with the original image scaled to fit inside
      */
     def fit(targetWidth: Int,
             targetHeight: Int,
             color: com.sksamuel.scrimage.Color = White,
-            scaleMethod: ScaleMethod = Bicubic): Image = {
+            scaleMethod: ScaleMethod = Bicubic,
+            position: Position = Center): Image = {
         val fittedDimensions = ImageTools.dimensionsToFit((targetWidth, targetHeight), (width, height))
-        val scaled = scale(fittedDimensions._1, fittedDimensions._2)
+        val scaled = scale(fittedDimensions._1, fittedDimensions._2, scaleMethod)
         val target = Image.filled(targetWidth, targetHeight, color)
         val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
         val x = ((targetWidth - fittedDimensions._1) / 2.0).toInt
@@ -150,25 +153,79 @@ class Image(val awt: BufferedImage) {
 
     /**
      *
-     * That is the canvas will have the given dimensions but the image will not necessarily cover it all.
+     * Returns a copy of the canvas with the given dimensions where the
+     * original image has been scaled to completely cover the new dimensions
+     * whilst retaining the original aspect ratio.
      *
-     * @param width the target width
-     * @param height the target height
+     * If the new dimensions have a different aspect ratio than the old image
+     * then the image will be cropped so that it still covers the new area
+     * without leaving any background.
+     *
+     * @param targetWidth the target width
+     * @param targetHeight the target height
      * @param scaleMethod the type of scaling method to use. Defaults to Bicubic
+     * @param position where to position the image inside the new canvas
      *
-     * @return
+     * @return a new Image with the original image scaled to cover the new dimensions
      */
-    def cover(width: Int, height: Int, scaleMethod: ScaleMethod = Bicubic): Image = {
-        null
+    def cover(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod = Bicubic, position: Position = Center): Image = {
+        val coveredDimensions = ImageTools.dimensionsToCover((targetWidth, targetHeight), (width, height))
+        val scaled = scale(coveredDimensions._1, coveredDimensions._2, scaleMethod)
+        val target = Image.empty(targetWidth, targetHeight)
+        val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
+        val x = ((targetWidth - coveredDimensions._1) / 2.0).toInt
+        val y = ((targetHeight - coveredDimensions._2) / 2.0).toInt
+        g2.drawImage(scaled.awt, x, y, null)
+        g2.dispose()
+        target
     }
 
-    def scaleWidth(targetWidth: Int): Image = scale(targetWidth, ((targetWidth / width.toDouble) * height).toInt, Bicubic)
-    def scaleHeight(targetHeight: Int): Image = scale(((targetHeight / height.toDouble) * width).toInt, targetHeight, Bicubic)
+    /**
+     *
+     * Scale will resize the canvas and scale the image to match.
+     * This is like a "image resize" in Photoshop.
+     *
+     * This overloaded version of scale will scale the image so that the new image
+     * has a width that matches the given targetWidth
+     * and the same aspect ratio as the original.
+     *
+     * Eg, an image of 200,300 with a scaleToWidth of 400 will result
+     * in a scaled image of 400,600
+     *
+     * @param targetWidth the target width
+     * @param scaleMethod the type of scaling method to use.
+     *
+     * @return a new Image that is the result of scaling this image
+     */
+    def scaleToWidth(targetWidth: Int, scaleMethod: ScaleMethod = Bicubic): Image =
+        scale(targetWidth, ((targetWidth / width.toDouble) * height).toInt, Bicubic)
+
+    /**
+     *
+     * Scale will resize the canvas and scale the image to match.
+     * This is like a "image resize" in Photoshop.
+     *
+     * This overloaded version of scale will scale the image so that the new image
+     * has a height that matches the given targetHeight
+     * and the same aspect ratio as the original.
+     *
+     * Eg, an image of 200,300 with a scaleToHeight of 450 will result
+     * in a scaled image of 300,450
+     *
+     * @param targetHeight the target height
+     * @param scaleMethod the type of scaling method to use.
+     *
+     * @return a new Image that is the result of scaling this image
+     */
+    def scaleToHeight(targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): Image =
+        scale(((targetHeight / height.toDouble) * width).toInt, targetHeight, Bicubic)
+
     def scale(scaleFactor: Double): Image = scale(scaleFactor, Bicubic)
 
     /**
      *
-     * Scale will resize the canvas and the image. This is like a "image resize" in Photoshop.
+     * Scale will resize the canvas and the image.
+     * This is like a "image resize" in Photoshop.
      *
      * @param scaleFactor the target increase or decrease. 1 is the same as original.
      * @param scaleMethod the type of scaling method to use.
@@ -182,7 +239,11 @@ class Image(val awt: BufferedImage) {
 
     /**
      *
-     * Scale will resize the canvas and the image. This is like a "image resize" in Photoshop.
+     * Scale will resize the canvas and the image.
+     * This is like a "image resize" in Photoshop.
+     *
+     * The size of the scaled instance are taken from the given
+     * width and height parameters.
      *
      * @param targetWidth the target width
      * @param targetHeight the target height
@@ -204,28 +265,67 @@ class Image(val awt: BufferedImage) {
         Image(scaled)
     }
 
+    /**
+     *
+     * Resize will resize the canvas, it will not scale the image.
+     * This is like a "canvas resize" in Photoshop.
+     *
+     * This overloaded version of resize will resize by a scale factor.
+     *
+     * @param scaleFactor the scaleFactor. 1 retains original size. 0.5 is half. 2 double. etc
+     *
+     * @return a new Image that is the result of resizing the canvas.
+     */
     def resize(scaleFactor: Double): Image = resize(scaleFactor, Center)
+
+    /**
+     *
+     * Resize will resize the canvas, it will not scale the image.
+     * This is like a "canvas resize" in Photoshop.
+     *
+     * This overloaded version of resize will resize by a scale factor.
+     *
+     * @param scaleFactor the scaleFactor. 1 retains original size. 0.5 is half. 2 double. etc
+     * @param position where to position the original image after the canvas size change
+     *
+     * @return a new Image that is the result of resizing the canvas.
+     */
     def resize(scaleFactor: Double, position: Position): Image =
         resize((width * scaleFactor).toInt, (height * scaleFactor).toInt, position)
 
     /**
      *
-     * Resize will resize the canvas, it will not scale the image. This is like a "canvas resize" in Photoshop.
-     * If the dimensions are smaller than the current canvas size then the image will be cropped.
+     * Resize will resize the canvas, it will not scale the image.
+     * This is like a "canvas resize" in Photoshop.
      *
-     * @param width the target width
-     * @param height the target height
+     * If the dimensions are smaller than the current canvas size
+     * then the image will be cropped.
+     *
+     * @param targetWidth the target width
+     * @param targetHeight the target height
      * @param position where to position the original image after the canvas size change
      *
      * @return a new Image that is the result of resizing the canvas.
      */
-    def resize(width: Int, height: Int, position: Position = Center): Image = {
+    def resize(targetWidth: Int, targetHeight: Int, position: Position = Center): Image = {
         val target = new BufferedImage(width, height, Image.CANONICAL_DATA_TYPE)
         target.getGraphics.asInstanceOf[Graphics2D].drawImage(awt, 0, 0, null)
         new Image(target)
     }
 
-    def pad(size: Int): Image = pad(size, Color.White)
+    /**
+     *
+     * Creates a new image which is the result of this image
+     * padded with the given number of pixels on each edge.
+     *
+     * Eg, requesting a pad of 30 on an image of 250,300 will result
+     * in a new image with a canvas size of 310,360
+
+     * @param size the number of pixels to add on each edge
+     * @param color the background of the padded area.
+     *
+     * @return A new image that is the result of the padding
+     */
     def pad(size: Int, color: com.sksamuel.scrimage.Color): Image = pad(width + size * 2, height + size * 2, color)
 
     /**
@@ -235,7 +335,9 @@ class Image(val awt: BufferedImage) {
      * image will be used instead.
      *
      * Eg, requesting a pad of 200,200 on an image of 250,300 will result
-     * in keeping the 250,300. Eg2, requesting a pad of 300,300 on an image of 400,250 will result
+     * in keeping the 250,300.
+     *
+     * Eg2, requesting a pad of 300,300 on an image of 400,250 will result
      * in the width staying at 400 and the height padded to 300.
 
      * @param targetWidth the size of the output canvas width
@@ -244,7 +346,7 @@ class Image(val awt: BufferedImage) {
      *
      * @return A new image that is the result of the padding
      */
-    def pad(targetWidth: Int, targetHeight: Int, color: com.sksamuel.scrimage.Color = White): Image = {
+    def pad(targetWidth: Int, targetHeight: Int, color: com.sksamuel.scrimage.Color = Color.White): Image = {
         val w = if (width < targetWidth) targetWidth else width
         val h = if (height < targetHeight) targetHeight else height
         val filled = Image.filled(w, h, color)
@@ -256,8 +358,28 @@ class Image(val awt: BufferedImage) {
         filled
     }
 
+    /**
+     * Creates a new Image with the same dimensions of this image and with
+     * all the pixels initialized to the given color
+     *
+     * @return a new Image with the same dimensions as this
+     */
     def filled(color: com.sksamuel.scrimage.Color): Image = filled(color.value)
+
+    /**
+     * Creates a new Image with the same dimensions of this image and with
+     * all the pixels initialized to the given color
+     *
+     * @return a new Image with the same dimensions as this
+     */
     def filled(color: Int): Image = filled(new java.awt.Color(color))
+
+    /**
+     * Creates a new Image with the same dimensions of this image and with
+     * all the pixels initialized to the given color
+     *
+     * @return a new Image with the same dimensions as this
+     */
     def filled(color: java.awt.Color): Image = Image.filled(width, height, color)
 
     def write(file: File) {
