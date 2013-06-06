@@ -5,12 +5,12 @@ import java.awt.geom.AffineTransform
 import java.io.{InputStream, OutputStream, File}
 import com.sksamuel.scrimage.Format.PNG
 import com.sksamuel.scrimage.ScaleMethod._
-import com.sksamuel.scrimage.Centering.Center
 import javax.imageio.ImageIO
 import org.apache.commons.io.FileUtils
 import java.awt.image.{DataBufferInt, AffineTransformOp, BufferedImage}
 import com.sksamuel.scrimage.Color.White
 import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
+import com.sksamuel.scrimage.Position.Center
 
 /** @author Stephen Samuel
   *
@@ -205,8 +205,8 @@ class Image(val awt: BufferedImage) {
     }
 
     def resize(scaleFactor: Double): Image = resize(scaleFactor, Center)
-    def resize(scaleFactor: Double, centering: Centering): Image =
-        resize((width * scaleFactor).toInt, (height * scaleFactor).toInt, centering)
+    def resize(scaleFactor: Double, position: Position): Image =
+        resize((width * scaleFactor).toInt, (height * scaleFactor).toInt, position)
 
     /**
      *
@@ -215,11 +215,11 @@ class Image(val awt: BufferedImage) {
      *
      * @param width the target width
      * @param height the target height
-     * @param centering where to position the original image after the canvas size change
+     * @param position where to position the original image after the canvas size change
      *
      * @return a new Image that is the result of resizing the canvas.
      */
-    def resize(width: Int, height: Int, centering: Centering = Center): Image = {
+    def resize(width: Int, height: Int, position: Position = Center): Image = {
         val target = new BufferedImage(width, height, Image.CANONICAL_DATA_TYPE)
         target.getGraphics.asInstanceOf[Graphics2D].drawImage(awt, 0, 0, null)
         new Image(target)
@@ -358,19 +358,6 @@ object ScaleMethod {
     object BSpline extends ScaleMethod
     object Bilinear extends ScaleMethod
     object Bicubic extends ScaleMethod
-}
-
-sealed trait Centering
-object Centering {
-    object Center extends Centering
-    object TopLeft extends Centering
-    object TopRight extends Centering
-    object Top extends Centering
-    object Left extends Centering
-    object Right extends Centering
-    object Bottom extends Centering
-    object BottomLeft extends Centering
-    object BottomRight extends Centering
 }
 
 object Implicits {
