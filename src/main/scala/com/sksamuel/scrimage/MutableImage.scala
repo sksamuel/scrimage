@@ -13,12 +13,17 @@ class MutableImage(awt: BufferedImage) extends Image(awt) {
         this
     }
 
-    override def filter(filter: Filter): Image = {
+    override def filter(filter: Filter): MutableImage = {
         filter.apply(this)
         this
     }
 
-    override def filled(color: java.awt.Color): Image = super._fill(color)
+    override def filled(color: Color): MutableImage = filled(color.value)
+    override def filled(color: Int): MutableImage = filled(new java.awt.Color(color))
+    override def filled(color: java.awt.Color): MutableImage = {
+        super._fill(color)
+        this
+    }
 }
 
 object MutableImage {
