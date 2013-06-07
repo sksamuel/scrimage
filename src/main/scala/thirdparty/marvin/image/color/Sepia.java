@@ -43,13 +43,10 @@ import thirdparty.marvin.image.MarvinImageMask;
  */
 public class Sepia extends MarvinAbstractImagePlugin {
 
-    private MarvinAttributes attributes;
+    private final int depth;
 
-
-    public void load() {
-        attributes = getAttributes();
-        attributes.set("txtValue", "20");
-        attributes.set("intensity", 20);
+    public Sepia(int depth) {
+        this.depth = depth;
     }
 
     public void process
@@ -60,10 +57,7 @@ public class Sepia extends MarvinAbstractImagePlugin {
                     MarvinImageMask mask,
                     boolean previewMode
             ) {
-        int r, g, b, depth, corfinal;
-
-        //Define a intensidade do filtro...
-        depth = Integer.parseInt(attributes.get("intensity").toString());
+        int r, g, b, corfinal;
 
         int width = imageIn.getWidth();
         int height = imageIn.getHeight();
