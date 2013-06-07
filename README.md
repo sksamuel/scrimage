@@ -97,6 +97,8 @@ and either re-written them in Scala, wrapped them in Scala, or fixed bugs and mo
 | Dither       | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_dither.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_dither.png) |
 | Diffuse | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_diffuse_4.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_diffuse_4.png) |
 | Edge | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_edge.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_edge.png) |
+| Emboss | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_emboss.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_emboss.png) |
+| Error Diffusion | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_errordiffusion.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_errordiffusion.png) |
 | Gamma | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_gamma_2.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_gamma_2.png) |
 | Gaussian Blur      | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_gaussian.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_gaussian.png) |
 | Invert      | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_invert.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_invert.png) |
@@ -107,6 +109,7 @@ and either re-written them in Scala, wrapped them in Scala, or fixed bugs and mo
 | Rays      | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_rays.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_rays.png) |
 | Ripple      | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_ripple.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_ripple.png) |
 | Rylanders       | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_rylanders.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_rylanders.png) |
+| Sepia       | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_sepia.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_sepia.png) |
 | Smear       | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_smear_circles.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_smear_circles.png) |
 | Solarize       | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_solarize.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_solarize.png) |
 | Sparkle       | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_sparkle.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_sparkle.png) |

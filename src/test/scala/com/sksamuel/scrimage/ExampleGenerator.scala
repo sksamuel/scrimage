@@ -26,6 +26,7 @@ object ExampleGenerator extends App {
         image.filter(DiffuseFilter(4)).write(new File("examples/filters/" + filename + "_diffuse_4.png"))
 
         image.filter(EdgeFilter).write(new File("examples/filters/" + filename + "_edge.png"))
+        image.filter(EmbossFilter).write(new File("examples/filters/" + filename + "_emboss.png"))
         image.filter(ErrorDiffusionHalftoneFilter()).write(new File("examples/filters/" + filename + "_errordiffusion.png"))
 
         image.filter(GammaFilter(2)).write(new File("examples/filters/" + filename + "_gamma_2.png"))
@@ -50,6 +51,7 @@ object ExampleGenerator extends App {
         image.filter(RippleFilter(RippleType.Sine)).write(new File("examples/filters/" + filename + "_ripple.png"))
         image.filter(RylandersFilter).write(new File("examples/filters/" + filename + "_rylanders.png"))
 
+        image.filter(SepiaFilter).write(new File("examples/filters/" + filename + "_sepia.png"))
         image.filter(SmearFilter(SmearType.Circles)).write(new File("examples/filters/" + filename + "_smear_circles.png"))
         image.filter(SparkleFilter()).write(new File("examples/filters/" + filename + "_sparkle.png"))
         image.filter(SolarizeFilter).write(new File("examples/filters/" + filename + "_solarize.png"))
