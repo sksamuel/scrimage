@@ -94,8 +94,10 @@ and either re-written them in Scala, wrapped them in Scala, or fixed bugs and mo
 | ------------- |-------------|-------------|
 | Block       | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_block_4.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_block_4.png) |
 | Blur       | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_blur.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_blur.png) |
+| Brightness | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_brightness.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_brightness.png) |
 | Bump       | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_bump.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_bump.png) |
 | Chrome       | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_chrome.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_chrome.png) |
+| Contrast | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_contrast.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_contrast.png) |
 | Despeckle       | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_despeckle.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_despeckle.png) |
 | Dither       | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_dither.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_dither.png) |
 | Diffuse | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_diffuse_4.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_diffuse_4.png) |
