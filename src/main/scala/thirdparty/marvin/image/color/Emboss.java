@@ -1,4 +1,4 @@
-package thirdparty.marvin.image.color.emboss;
+package thirdparty.marvin.image.color;
 
 /**
  Marvin Project <2007-2012>

@@ -36,7 +36,7 @@
  * @author Smita Nair
  */
 
-package thirdparty.marvin.image.restoration.noiseReduction;
+package thirdparty.marvin.image.restoration;
 
 import thirdparty.marvin.image.MarvinAbstractImagePlugin;
 import thirdparty.marvin.image.MarvinAttributes;
