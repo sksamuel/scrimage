@@ -27,16 +27,16 @@ This software is licensed under the Apache 2 License.
 | resize | Resizes the canvas to the given dimensions. Note this does not scale the image but simply changes the dimensions of the canvas on which the image is sitting. Specifying a larger size will pad the image with a background color and specifying a smaller size will crop the image. | ```image.resize(500,800)``` for an absolute resize or ```image.resize(0.5)``` for a percentage resize
 | scale | Scales the image to given dimensions. This operation will change both the canvas dimensions and the image to match. This is what most people think of when they say they want to "resize" an image. | ```image.scale(x,y)``` for an absolute scale or ```image.scale(percentage)``` for a percentage scale
 | pad | Resizes the canvas by adding a number of pixels around the image in a given color. | ```image.pad(20, Color.Black)``` would add 20 pixels of black around the entire image, thus increasing the canvas width and height both by 40 pixels (20 top, 20 bottom etc).
-| fit | tbc | |
-| cover | tbc | |
-| copy | Creates a new clone of this image with a new pixel buffer. Any operations on the copy do not write back to the original. | ```image.copy``` |
-| empty | Creates a new image but without initializing the data buffer to any specific values. | ```image.empty``` on an existing instance to use the same dimensions or ```Image.empty(x,y)``` to create a new image with the given dimensions |
+| fit | Resizes the canvas to the given dimensions and scales the original image so that it is the maximum possible size inside the canvas while maintaining aspect ratio.<br/><br/>This operation is useful if you want a group of images to all have the same canvas dimensions while maintaining the original aspect ratios. Think thumbnails on a site like amazon. | Given a 64x64 image then ```image.fit(128,96,Color.White)``` would result in a new image of 128x96 where the original image is now 96,96 as that is the largest it can be scaled to without overflowing the canvas bounds. The additional 'spare' width of 32 pixels would be set to the given background color, white in this case.
+| cover | Resizes the canvas to the given dimensions and scales the original image so that it is the minimum size needed to cover the new dimensions without leaving any background visible.<br/><br/>This operation is useful if you want to generate an avatar/thumbnail style image from a larger image where having no background is more important than cropping part of the image. Think a facebook style profile thumbnail. | Given a 64x64 image then ```image.cover(128,96)``` would result in a new image of 128x96 where the original image is now 128,128 as that is the smallest it can be scaled to without leaving any visible background. 32 pixels of the height is lost as that is "off canvas" |
+| copy | Creates a new clone of this image with a new pixel buffer. Any operations on the copy do not write back to the original.| ```image.copy``` |
+| empty | Creates a new image but without initializing the data buffer to any specific values.| ```image.empty``` on an existing instance to use the same dimensions or ```Image.empty(x,y)``` to create a new image with the given dimensions |
 | filled | Creates a new image and initializes the data buffer to the given color. | ```image.filled(Color.Red)``` |
-| rotate left | Pretty obvious | |
-| rotate right | Pretty obvious | |
-| flip x | Pretty obvious | |
-| flip y | Pretty obvious | |
-| filter | Applies a filter. | ```image.filter(BlurFilter)``` or ```image.filter(GaussianBlur(5)).filter(LensFlareFilter)``` |
+| rotate left | Rotates the image anti clockwise. Results in width and height being flipped.| ```image.rotateLeft``` |
+| rotate right | Rotates the image clockwise. Results in width and height being flipped. | ```image.rotateRight``` |
+| flip x | Flips the image horizontally. Left becomes right. | ```image.flipX``` |
+| flip y | Flips the image vertically. Top becomes bottom. | ```image.flipY``` |
+| filter | Returns a new image with the given filter applied. See the filters section for examples of the filters available. Filters can be chained and are applied in sequence. | ```image.filter(BlurFilter)``` or ```image.filter(GaussianBlur(5)).filter(SepiaFilter)``` Most filters can be created from companion objects with sensible default values. |
 
 
 ### Quick Examples
@@ -132,11 +132,11 @@ Maven:
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage</artifactId>
-    <version>0.8.0</version>
+    <version>0.9.0</version>
 </dependency>
 ```
 
 SBT:
 ```scala
-libraryDependencies += "com.sksamuel.scrimage" % "scrimage" % "0.7.0
+libraryDependencies += "com.sksamuel.scrimage" % "scrimage" % "0.9.0
 ```
