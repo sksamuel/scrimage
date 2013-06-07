@@ -39,6 +39,7 @@ import thirdparty.marvin.image.grayScale.GrayScale;
  * @version 1.0 02/28/2008
  */
 public class Dithering extends MarvinAbstractImagePlugin {
+
     private static final int DOT_AREA = 5;
     private static final int arrDither[] = {167, 200, 230, 216, 181,
             94, 72, 193, 242, 232,
@@ -47,17 +48,12 @@ public class Dithering extends MarvinAbstractImagePlugin {
             232, 153, 111, 36, 52
     };
 
-    public void load() {
-    }
+    public void process(MarvinImage a_imageIn,
+                        MarvinImage a_imageOut,
+                        MarvinAttributes a_attributesOut,
+                        MarvinImageMask a_mask,
+                        boolean a_previewMode) {
 
-    public void process(
-            MarvinImage a_imageIn,
-            MarvinImage a_imageOut,
-            MarvinAttributes a_attributesOut,
-            MarvinImageMask a_mask,
-            boolean a_previewMode
-    ) {
-        // Gray
         MarvinImagePlugin l_filter = new GrayScale();
         l_filter.process(a_imageIn, a_imageIn, a_attributesOut, a_mask, a_previewMode);
 
