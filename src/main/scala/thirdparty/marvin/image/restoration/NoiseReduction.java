@@ -56,8 +56,7 @@ public class NoiseReduction extends MarvinAbstractImagePlugin {
                         MarvinImage a_imageOut,
                         MarvinAttributes a_attributesOut,
                         MarvinImageMask a_mask,
-                        boolean a_previewMode
-    ) {
+                        boolean a_previewMode) {
         width = a_imageIn.getWidth();
         height = a_imageIn.getHeight();
 
