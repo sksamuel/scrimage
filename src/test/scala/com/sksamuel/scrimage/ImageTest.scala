@@ -2,6 +2,7 @@ package com.sksamuel.scrimage
 
 import org.scalatest.{BeforeAndAfter, FunSuite}
 import java.awt.image.BufferedImage
+import com.sksamuel.scrimage.filter.BlurFilter
 
 /** @author Stephen Samuel */
 class ImageTest extends FunSuite with BeforeAndAfter {
@@ -29,6 +30,11 @@ class ImageTest extends FunSuite with BeforeAndAfter {
     test("copy returns a new backing image") {
         val copy = image.copy
         assert(copy.awt.hashCode != image.awt.hashCode)
+    }
+
+    test("when applying a filter a new image is created") {
+        val flipped = image.filter(BlurFilter)
+        assert(!flipped.eq(image))
     }
 
     test("when scaling by pixels then the output image has the given dimensions") {
@@ -149,6 +155,16 @@ class ImageTest extends FunSuite with BeforeAndAfter {
         val flipped = image.flipY
         assert(1944 === flipped.width)
         assert(1296 === flipped.height)
+    }
+
+    test("when flipping on x axis a new image is created") {
+        val flipped = image.flipX
+        assert(!flipped.eq(image))
+    }
+
+    test("when flipping on y axis a new image is created") {
+        val flipped = image.flipY
+        assert(!flipped.eq(image))
     }
 
     test("when rotating left the width and height are reversed") {

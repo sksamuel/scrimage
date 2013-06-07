@@ -7,7 +7,6 @@ class GaussianBlurFilter(radius: Int) extends BufferedOpFilter {
     val op = new thirdparty.jhlabs.image.GaussianFilter(radius)
 }
 object GaussianBlurFilter {
-    def apply(): GaussianBlurFilter = apply(2)
-    def apply(radius: Int): GaussianBlurFilter = new GaussianBlurFilter(radius)
+    def apply(radius: Int = 2): GaussianBlurFilter = new GaussianBlurFilter(radius)
 }
 

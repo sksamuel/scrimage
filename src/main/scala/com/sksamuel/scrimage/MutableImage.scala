@@ -9,7 +9,9 @@ class MutableImage(awt: BufferedImage) extends Image(awt) {
 
     override def _flip(tx: AffineTransform): MutableImage = {
         val op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR)
-        op.filter(awt, awt)
+        val output = op.createCompatibleDestImage(awt, null)
+        op.filter(awt, output)
+        awt.setData(output.getData)
         this
     }
 

@@ -9,7 +9,6 @@ class QuantizeFilter(colors: Int, dither: Boolean) extends BufferedOpFilter {
     op.setDither(dither)
 }
 object QuantizeFilter {
-    def apply(): QuantizeFilter = apply(256, false)
-    def apply(colors: Int, dither: Boolean = false): QuantizeFilter = new QuantizeFilter(colors, dither)
+    def apply(colors: Int = 256, dither: Boolean = false): QuantizeFilter = new QuantizeFilter(colors, dither)
 }
 
