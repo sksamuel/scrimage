@@ -55,7 +55,7 @@ object ExampleGenerator extends App {
         image.filter(SolarizeFilter).write(new File("examples/filters/" + filename + "_solarize.png"))
 
         image.filter(TelevisionFilter).write(new File("examples/filters/" + filename + "_television.png"))
-        image.filter(ThresholdFilter(127, black = 0x00ff0000)).write(new File("examples/filters/" + filename + "_threshold_red_127.png"))
+        image.filter(ThresholdFilter(127)).write(new File("examples/filters/" + filename + "_threshold_red_127.png"))
 
         image.filter(UnsharpFilter()).write(new File("examples/filters/" + filename + "_unsharp.png"))
 

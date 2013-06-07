@@ -42,17 +42,13 @@ import thirdparty.marvin.image.MarvinImageMask;
  * @version 1.0 12/07/2011
  */
 public class Emboss extends MarvinAbstractImagePlugin {
-    public void load() {
-    }
 
-    public void process
-            (
-                    MarvinImage a_imageIn,
-                    MarvinImage a_imageOut,
-                    MarvinAttributes a_attributesOut,
-                    MarvinImageMask a_mask,
-                    boolean a_previewMode
-            ) {
+    public void process(MarvinImage a_imageIn,
+                        MarvinImage a_imageOut,
+                        MarvinAttributes a_attributesOut,
+                        MarvinImageMask a_mask,
+                        boolean a_previewMode) {
+
         boolean[][] l_arrMask = a_mask.getMaskArray();
 
         for (int x = 0; x < a_imageIn.getWidth(); x++) {
