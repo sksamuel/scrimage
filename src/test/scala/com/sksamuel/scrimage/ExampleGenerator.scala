@@ -17,6 +17,7 @@ object ExampleGenerator extends App {
 
         image.filter(BlockFilter(4)).write(new File("examples/filters/" + filename + "_block_4.png"))
         image.filter(BlurFilter).write(new File("examples/filters/" + filename + "_blur.png"))
+        image.filter(BrightnessFilter(1.3f)).write(new File("examples/filters/" + filename + "_brightness.png"))
         image.filter(BumpFilter).write(new File("examples/filters/" + filename + "_bump.png"))
 
         image.filter(ContrastFilter(1.3f)).write(new File("examples/filters/" + filename + "_contrast.png"))
