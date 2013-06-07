@@ -19,6 +19,7 @@ object ExampleGenerator extends App {
         image.filter(BlurFilter).write(new File("examples/filters/" + filename + "_blur.png"))
         image.filter(BumpFilter).write(new File("examples/filters/" + filename + "_bump.png"))
 
+        image.filter(ContrastFilter(1.3f)).write(new File("examples/filters/" + filename + "_contrast.png"))
         image.filter(ChromeFilter()).write(new File("examples/filters/" + filename + "_chrome.png"))
 
         image.filter(DespeckleFilter).write(new File("examples/filters/" + filename + "_despeckle.png"))
