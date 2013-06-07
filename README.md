@@ -45,14 +45,14 @@ Reading an image, scaling it to 50% using the Bicubic method, and writing out as
 ```scala
 val in = ... // input stream
 val out = ... // output stream
-Image(in).scale(0.5, Bicubic).write(out)
+Image(in).scale(0.5, Bicubic).write(out) // Png is default
 ```
 
 Reading an image from a java File, applying a blur filter, then flipping it on the horizontal axis, then writing out as a Jpeg
 ```scala
 val inFile = ... // input File
 val outFile = ... // output File
-Image(inFile).filter(BlurFilter).flipX.write(outFile)
+Image(inFile).filter(BlurFilter).flipX.write(outFile, Jpeg) // specified Jpeg
 ```
 
 Padding an image with a 20 pixel border around the edges in red
@@ -89,6 +89,8 @@ println(s"Width: ${image.width} Height: ${image.height} Ratio: ${image.ratio}")
 Scrimage comes with a wide array (or Seq ;) of filters. Most of these filters I have not written myself,
 but rather collected from other open source imaging libraries (for compliance with licenses and / or attribution - see file headers),
 and either re-written them in Scala, wrapped them in Scala, or fixed bugs and modified them.
+
+Some filters have options which can be set when creating the filters. All filters are immutable. Most filters have sensible default options as default parameters.
 
 | Filter | Example 1 | Example 2 |
 | ------------- |-------------|-------------|
