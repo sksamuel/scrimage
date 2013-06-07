@@ -41,19 +41,21 @@ object ExampleGenerator extends App {
 
         image.filter(OilFilter()).write(new File("examples/filters/" + filename + "_oil.png"))
 
-        image
-          .filter(PointillizeFilter(PointillizeGridType.Square))
+        image.filter(PointillizeFilter(PointillizeGridType.Square))
           .write(new File("examples/filters/" + filename + "_pointillize_square.png"))
+        image.filter(PrewittFilter).write(new File("examples/filters/" + filename + "_prewitt.png"))
 
         image.filter(QuantizeFilter(256)).write(new File("examples/filters/" + filename + "_quantize_256.png"))
 
         image.filter(RaysFilter(threshold = 0.1f, strength = 0.6f)).write(new File("examples/filters/" + filename + "_rays.png"))
         image.filter(RippleFilter(RippleType.Sine)).write(new File("examples/filters/" + filename + "_ripple.png"))
+        image.filter(RobertsFilter).write(new File("examples/filters/" + filename + "_roberts.png"))
         image.filter(RylandersFilter).write(new File("examples/filters/" + filename + "_rylanders.png"))
 
         image.filter(SepiaFilter).write(new File("examples/filters/" + filename + "_sepia.png"))
         image.filter(SmearFilter(SmearType.Circles)).write(new File("examples/filters/" + filename + "_smear_circles.png"))
         image.filter(SparkleFilter()).write(new File("examples/filters/" + filename + "_sparkle.png"))
+        image.filter(SobelsFilter).write(new File("examples/filters/" + filename + "_sobels.png"))
         image.filter(SolarizeFilter).write(new File("examples/filters/" + filename + "_solarize.png"))
 
         image.filter(TelevisionFilter).write(new File("examples/filters/" + filename + "_television.png"))

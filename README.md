@@ -1,9 +1,12 @@
 ## Scrimage
 
-Scrimage is a Scala library for image manipulating, processing and filtering. The aim of the this library is to provide a
+Scrimage is a Scala library for image manipulating and filtering. The aim of the this library is to provide a
 quick and easy way to do the kinds of image operations that most people need, on a daily basis, such as scaling, rotating,
 converting between formats and applying filters. It is not intended to provide functionality that might be required by a
-more "serious" image application - such as a lightroom clone.
+more "serious" image application - such as face recognition or movement detection.
+
+A typical use case for this library would be creating thumbnails of images uploaded by users in a web app, or resizing a
+set of images to have a consistent size, or applying an unblur filter to all images in a print application.
 
 Scrimage has a consistent, idiomatic scala, and mostly immutable API for accessing images.
 I say mostly immutable because for some operations creating a copy of the underlying image
@@ -84,7 +87,7 @@ println(s"Width: ${image.width} Height: ${image.height} Ratio: ${image.ratio}")
 ### Filters
 
 Scrimage comes with a wide array (or Seq ;) of filters. Most of these filters I have not written myself,
-but rather collected from other open source imaging libraries (for compliance with licenses and / or attribute - see file headers),
+but rather collected from other open source imaging libraries (for compliance with licenses and / or attribution - see file headers),
 and either re-written them in Scala, wrapped them in Scala, or fixed bugs and modified them.
 
 | Filter Name | Example 1 | Example 2 |
