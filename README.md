@@ -94,19 +94,23 @@ and either re-written them in Scala, wrapped them in Scala, or fixed bugs and mo
 | Bump       | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_bump.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_bump.png) |
 | Chrome       | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_chrome.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_chrome.png) |
 | Despeckle       | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_despeckle.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_despeckle.png) |
+| Dither       | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_dither.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_dither.png) |
 | Diffuse | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_diffuse_4.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_diffuse_4.png) |
 | Edge | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_edge.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_edge.png) |
 | Gamma | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_gamma_2.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_gamma_2.png) |
 | Gaussian Blur      | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_gaussian.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_gaussian.png) |
 | Invert      | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_invert.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_invert.png) |
 | Lens Blur      | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_lensblur.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_lensblur.png) |
+| Lens Flare      | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_lensflare.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_lensflare.png) |
 | Pointillze      | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_pointillize_square.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_pointillize_square.png) |
 | Quantize      | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_quantize_256.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_quantize_256.png) |
 | Rays      | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_rays.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_rays.png) |
 | Ripple      | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_ripple.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_ripple.png) |
+| Rylanders       | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_rylanders.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_rylanders.png) |
 | Smear       | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_smear_circles.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_smear_circles.png) |
 | Solarize       | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_solarize.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_solarize.png) |
 | Sparkle       | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_sparkle.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_sparkle.png) |
+| Television       | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_television.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_television.png) |
 | Threshold       | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_threshold_red_127.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_threshold_red_127.png) |
 | Unsharpen  | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_unsharp.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_unsharp.png) |
 

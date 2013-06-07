@@ -40,7 +40,7 @@ import thirdparty.marvin.image.grayScale.GrayScale;
  */
 public class Dithering extends MarvinAbstractImagePlugin {
 
-    private static final int DOT_AREA = 5;
+    private static final int DOT_AREA = 3;
     private static final int arrDither[] = {167, 200, 230, 216, 181,
             94, 72, 193, 242, 232,
             36, 52, 222, 167, 200,
