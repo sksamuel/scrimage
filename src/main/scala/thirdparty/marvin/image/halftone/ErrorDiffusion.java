@@ -40,20 +40,18 @@ import thirdparty.marvin.image.grayScale.GrayScale;
  * @version 1.0 02/28/2008
  */
 public class ErrorDiffusion extends MarvinAbstractImagePlugin {
-    int threshold;
 
-    public void load() {
-        threshold = 128;
+    private final int threshold;
+
+    public ErrorDiffusion(int threshold) {
+        this.threshold = threshold;
     }
 
-    public void process
-            (
-                    MarvinImage a_imageIn,
-                    MarvinImage a_imageOut,
-                    MarvinAttributes a_attributesOut,
-                    MarvinImageMask a_mask,
-                    boolean a_previewMode
-            ) {
+    public void process(MarvinImage a_imageIn,
+                        MarvinImage a_imageOut,
+                        MarvinAttributes a_attributesOut,
+                        MarvinImageMask a_mask,
+                        boolean a_previewMode) {
         int color;
         double dif;
 
