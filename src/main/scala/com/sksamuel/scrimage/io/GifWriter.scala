@@ -6,7 +6,7 @@ import javax.imageio.ImageIO
 import org.apache.commons.io.IOUtils
 
 /** @author Stephen Samuel */
-class GifWriter extends GifWriter {
+class GifWriter extends ImageWriter {
     def write(image: Image, out: OutputStream) {
         ImageIO.write(image.awt, "gif", out)
         IOUtils.closeQuietly(out)

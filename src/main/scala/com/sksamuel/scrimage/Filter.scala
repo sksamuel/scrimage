@@ -2,6 +2,7 @@ package com.sksamuel.scrimage
 
 import java.awt.image.BufferedImageOp
 import java.awt.{Composite, Graphics2D}
+import thirdparty.marvin.image.{MarvinImageMask, MarvinAttributes, MarvinAbstractImagePlugin, MarvinImage}
 
 /** @author Stephen Samuel */
 trait Filter {
@@ -11,7 +12,7 @@ trait Filter {
 /**
  * Extension of Filter that applies its filters using a standard java BufferedImageOp
  */
-trait BufferedOpFilter extends Filter {
+abstract class BufferedOpFilter extends Filter {
     val op: BufferedImageOp
     def apply(image: Image) {
         val g2 = image.awt.getGraphics.asInstanceOf[Graphics2D]
@@ -20,12 +21,32 @@ trait BufferedOpFilter extends Filter {
     }
 }
 
+/**
+ * Implementation of Filter that provides filtering through delegation
+ * to a plugin from the Marvin framework. The plugins are modified
+ * so that the dependancy on the marvin gui is removed.
+ *
+ **/
+abstract class MarvinFilter extends Filter {
+    val plugin: MarvinAbstractImagePlugin
+    def apply(image: Image) {
+
+        val input = new MarvinImage(image.awt)
+        val output = new MarvinImage(image.width, image.height)
+
+        plugin.process(input, output, new MarvinAttributes(), MarvinImageMask.NULL_MASK, false)
+
+        input.setIntColorArray(output.getIntColorArray)
+        input.update()
+    }
+}
+
 /** @author Stephen Samuel
   *
   *         A filter that works by applying a java.awt.Composite to the entire image.
   *
   *
-  * */
+  **/
 abstract class CompositeFilter extends Filter {
     val composite: Composite
     val color = java.awt.Color.RED

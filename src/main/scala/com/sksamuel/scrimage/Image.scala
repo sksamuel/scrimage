@@ -397,7 +397,7 @@ class Image(val awt: BufferedImage) {
         write(file, Format.PNG)
     }
     def write(file: File, format: Format[_ <: ImageWriter]) {
-        write(file, format)
+        write(FileUtils.openOutputStream(file), format)
     }
     def write(out: OutputStream) {
         write(out, PNG)
