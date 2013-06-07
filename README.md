@@ -138,5 +138,5 @@ Maven:
 
 SBT:
 ```scala
-libraryDependencies += "com.sksamuel.scrimage" % "scrimage" % "0.9.0
+libraryDependencies += "com.sksamuel.scrimage" % "scrimage" % "0.9.0"
 ```
