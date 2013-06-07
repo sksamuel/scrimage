@@ -1,6 +1,7 @@
 *.class
 *.log
 .idea
+scrimage.iml
 
 # sbt specific
 dist/*

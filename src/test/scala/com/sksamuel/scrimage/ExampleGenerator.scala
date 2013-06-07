@@ -6,9 +6,9 @@ import java.io.File
 /** @author Stephen Samuel */
 object ExampleGenerator extends App {
 
-    val image1 = Image(getClass.getResourceAsStream("/bird.jpg")).scaleToWidth(260)
-    val image2 = Image(getClass.getResourceAsStream("/colosseum.jpg")).scaleToWidth(260)
-    val image3 = Image(getClass.getResourceAsStream("/lanzarote.jpg")).scaleToWidth(260)
+    val image1 = Image(getClass.getResourceAsStream("/bird.jpg")).scaleToWidth(300)
+    val image2 = Image(getClass.getResourceAsStream("/colosseum.jpg")).scaleToWidth(300)
+    val image3 = Image(getClass.getResourceAsStream("/lanzarote.jpg")).scaleToWidth(310)
 
     for ( t <- List(("bird", image1), ("colosseum", image2), ("lanzarote", image3)) ) {
 

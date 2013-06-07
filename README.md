@@ -90,7 +90,7 @@ Scrimage comes with a wide array (or Seq ;) of filters. Most of these filters I 
 but rather collected from other open source imaging libraries (for compliance with licenses and / or attribution - see file headers),
 and either re-written them in Scala, wrapped them in Scala, or fixed bugs and modified them.
 
-| Filter Name | Example 1 | Example 2 |
+| Filter | Example 1 | Example 2 |
 | ------------- |-------------|-------------|
 | Block       | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_block_4.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_block_4.png) |
 | Blur       | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_blur.png) | ![](https://raw.github.com/sksamuel/scrimage/master/examples/filters/lanzarote_blur.png) |
