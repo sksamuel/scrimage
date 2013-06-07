@@ -12,7 +12,7 @@ Scrimage has a consistent, idiomatic scala, and mostly immutable API for accessi
 I say mostly immutable because for some operations creating a copy of the underlying image
 would prove expensive (think a filter on a 8000 x 6000 image where you do not care about
 keeping the original in memory). For these kinds of operations Scrimage supports a MutableImage
-instance for which operations that are able to be performed in place act on the original data.
+instance where operations that can be performed in place mutate the original.
 
 [![Build Status](https://travis-ci.org/sksamuel/scrimage.png)](https://travis-ci.org/sksamuel/scrimage)
 
