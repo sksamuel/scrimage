@@ -32,7 +32,7 @@ abstract class MarvinFilter extends Filter {
     def apply(image: Image) {
 
         val input = new MarvinImage(image.awt)
-        val output = new MarvinImage(image.width, image.height)
+        val output = input.clone()
 
         plugin.process(input, output, new MarvinAttributes(), MarvinImageMask.NULL_MASK, false)
 
