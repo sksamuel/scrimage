@@ -23,6 +23,6 @@ object Format {
         def writer = new GifWriter
     }
     case object TIFF extends Format[TiffWriter] {
-        def writer = TiffWriter
+        def writer = TiffWriter()
     }
 }
