@@ -2,7 +2,7 @@ package com.sksamuel.scrimage.io
 
 import com.sksamuel.scrimage.Image
 import java.io.OutputStream
-import javax.imageio.{ImageWriteParam, ImageIO}
+import javax.imageio.{IIOImage, ImageWriteParam, ImageIO}
 import org.apache.commons.io.IOUtils
 
 /** @author Stephen Samuel */
@@ -16,14 +16,18 @@ class TiffWriter(compression: Boolean, compressionType: String = TiffWriter.COMP
         val writer = ImageIO.getImageWritersByFormatName("tiff").next()
 
         val params = writer.getDefaultWriteParam
+
         if (compression) {
             params.setCompressionMode(ImageWriteParam.MODE_EXPLICIT)
             params.setCompressionType(compressionType)
+            params.setTilingMode(ImageWriteParam.MODE_EXPLICIT)
+            params.setTiling(image.width, image.height, 0, 0)
         }
 
         writer.setOutput(out)
-        writer.write(image.awt)
+        writer.write(null, new IIOImage(image.awt, null, null), params)
         writer.dispose()
+
         IOUtils.closeQuietly(out)
     }
 }

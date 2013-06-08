@@ -20,7 +20,7 @@ object Format {
         def writer = JpegWriter()
     }
     case object GIF extends Format[GifWriter] {
-        def writer = new GifWriter
+        def writer = GifWriter()
     }
     case object TIFF extends Format[TiffWriter] {
         def writer = TiffWriter()
