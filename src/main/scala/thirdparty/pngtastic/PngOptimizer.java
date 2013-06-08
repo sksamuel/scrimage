@@ -22,30 +22,10 @@ public class PngOptimizer {
         this.pngCompressionHandler = new PngtasticCompressionHandler();
     }
 
-    /** */
-    public void optimize(PngImage image, String outputFileName, boolean removeGamma, Integer compressionLevel)
-            throws FileNotFoundException, IOException {
-
-        PngImage optimized = optimize(image, removeGamma, compressionLevel);
-
-        ByteArrayOutputStream optimizedBytes = new ByteArrayOutputStream();
-        long optimizedSize = optimized.writeDataOutputStream(optimizedBytes).size();
-
-        File originalFile = new File(image.getFileName());
-        long originalFileSize = originalFile.length();
-
-        byte[] optimalBytes = (optimizedSize < originalFileSize)
-                ? optimizedBytes.toByteArray() : getFileBytes(originalFile, originalFileSize);
-
-        optimized.export(outputFileName, optimalBytes);
-    }
-
-    /** */
     public PngImage optimize(PngImage image) throws IOException {
         return this.optimize(image, false, null);
     }
 
-    /** */
     public PngImage optimize(PngImage image, boolean removeGamma, Integer compressionLevel) throws IOException {
         // FIXME: support low bit depth interlaced images
         if (image.getInterlace() == 1 && image.getSampleBitCount() < 8) {
