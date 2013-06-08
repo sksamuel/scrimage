@@ -9,6 +9,5 @@ class OilFilter(range: Int, levels: Int) extends BufferedOpFilter {
     op.setLevels(levels)
 }
 object OilFilter {
-    def apply(): OilFilter = apply(3, 256)
-    def apply(range: Int, levels: Int): OilFilter = new OilFilter(range, levels)
+    def apply(range: Int = 3, levels: Int = 256): OilFilter = new OilFilter(range, levels)
 }

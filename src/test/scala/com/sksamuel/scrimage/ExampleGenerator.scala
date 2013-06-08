@@ -6,70 +6,74 @@ import java.io.File
 /** @author Stephen Samuel */
 object ExampleGenerator extends App {
 
-    val image1 = Image(getClass.getResourceAsStream("/bird.jpg")).scaleToWidth(300)
-    val image2 = Image(getClass.getResourceAsStream("/colosseum.jpg")).scaleToWidth(300)
-    val image3 = Image(getClass.getResourceAsStream("/lanzarote.jpg")).scaleToWidth(310)
+    val image1 = Image(getClass.getResourceAsStream("/bird.jpg"))
+    val image2 = Image(getClass.getResourceAsStream("/colosseum.jpg"))
+    val image3 = Image(getClass.getResourceAsStream("/lanzarote.jpg"))
+
+    val filters: List[(String, Filter)] = List(
+        ("block_4", BlockFilter(4)),
+        ("blur", BlurFilter),
+        ("brightness", BrightnessFilter(1.3f)),
+        ("bump", BumpFilter),
+        ("chrome", ChromeFilter()),
+        ("color_halftone", ColorHalftoneFilter()),
+        ("contrast", ContrastFilter(1.3f)),
+        ("despeckle", DespeckleFilter),
+        ("diffuse_4", DiffuseFilter(4)),
+        ("dither", DitherFilter),
+        ("edge", EdgeFilter),
+        ("emboss", EmbossFilter),
+        ("errordiffusion", ErrorDiffusionHalftoneFilter()),
+        ("gamma_2", GammaFilter(2)),
+        ("gaussian", GaussianBlurFilter()),
+        ("glow", GlowFilter()),
+        ("grayscale", GrayscaleFilter),
+        ("invert", InvertFilter),
+        ("lensblur", LensBlurFilter()),
+        ("lensflare", LensFlareFilter),
+        ("minimum", MinimumFilter),
+        ("maximum", MaximumFilter),
+        ("offset", OffsetFilter(60, 40)),
+        ("oil", OilFilter()),
+        ("pointillize_square", PointillizeFilter(PointillizeGridType.Square)),
+        ("posterize", PosterizeFilter()),
+        ("prewitt", PrewittFilter),
+        ("quantize_256", QuantizeFilter(256)),
+        ("rays", RaysFilter(threshold = 0.1f, strength = 0.6f)),
+        ("ripple", RippleFilter(RippleType.Sine)),
+        ("roberts", RobertsFilter),
+        ("rylanders", RylandersFilter),
+        ("sepia", SepiaFilter),
+        ("smear_circles", SmearFilter(SmearType.Circles)),
+        ("sobels", SobelsFilter),
+        ("solarize", SolarizeFilter),
+        ("sparkle", SparkleFilter()),
+        ("swim", SwimFilter()),
+        ("television", TelevisionFilter),
+        ("threshold_127", ThresholdFilter(127)),
+        ("twirl", TwirlFilter(75)),
+        ("unsharp", UnsharpFilter()))
 
     for ( t <- List(("bird", image1), ("colosseum", image2), ("lanzarote", image3)) ) {
 
         val filename = t._1
         val image = t._2
+        val large = image.scaleToWidth(800)
+        val small = image.scaleToWidth(256)
 
-        image.filter(BlockFilter(4)).write(new File("examples/filters/" + filename + "_block_4.png"))
-        image.filter(BlurFilter).write(new File("examples/filters/" + filename + "_blur.png"))
-        image.filter(BrightnessFilter(1.3f)).write(new File("examples/filters/" + filename + "_brightness.png"))
-        image.filter(BumpFilter).write(new File("examples/filters/" + filename + "_bump.png"))
+        for ( filter <- filters ) {
+            val filterName = filter._1
+            println("Generating example " + filename + " " + filterName)
+            large.filter(filter._2).write(new File("examples/filters/" + filename + "_" + filterName + "_large.png"))
+            small.filter(filter._2).write(new File("examples/filters/" + filename + "_" + filterName + "_small.png"))
+        }
 
-        image.filter(ContrastFilter(1.3f)).write(new File("examples/filters/" + filename + "_contrast.png"))
-        image.filter(ChromeFilter()).write(new File("examples/filters/" + filename + "_chrome.png"))
-
-        image.filter(DespeckleFilter).write(new File("examples/filters/" + filename + "_despeckle.png"))
-        image.filter(DitherFilter).write(new File("examples/filters/" + filename + "_dither.png"))
-        image.filter(DiffuseFilter(4)).write(new File("examples/filters/" + filename + "_diffuse_4.png"))
-
-        image.filter(EdgeFilter).write(new File("examples/filters/" + filename + "_edge.png"))
-        image.filter(EmbossFilter).write(new File("examples/filters/" + filename + "_emboss.png"))
-        image.filter(ErrorDiffusionHalftoneFilter()).write(new File("examples/filters/" + filename + "_errordiffusion.png"))
-
-        image.filter(GammaFilter(2)).write(new File("examples/filters/" + filename + "_gamma_2.png"))
-        image.filter(GaussianBlurFilter()).write(new File("examples/filters/" + filename + "_gaussian.png"))
-        image.filter(GlowFilter()).write(new File("examples/filters/" + filename + "_glow.png"))
-        image.filter(GrayscaleFilter).write(new File("examples/filters/" + filename + "_grayscale.png"))
-
-        image.filter(InvertFilter).write(new File("examples/filters/" + filename + "_invert.png"))
-
-        image.filter(LensBlurFilter()).write(new File("examples/filters/" + filename + "_lensblur.png"))
-        image.filter(LensFlareFilter).write(new File("examples/filters/" + filename + "_lensflare.png"))
-
-        image.filter(OilFilter()).write(new File("examples/filters/" + filename + "_oil.png"))
-
-        image.filter(PointillizeFilter(PointillizeGridType.Square))
-          .write(new File("examples/filters/" + filename + "_pointillize_square.png"))
-        image.filter(PrewittFilter).write(new File("examples/filters/" + filename + "_prewitt.png"))
-
-        image.filter(QuantizeFilter(256)).write(new File("examples/filters/" + filename + "_quantize_256.png"))
-
-        image.filter(RaysFilter(threshold = 0.1f, strength = 0.6f)).write(new File("examples/filters/" + filename + "_rays.png"))
-        image.filter(RippleFilter(RippleType.Sine)).write(new File("examples/filters/" + filename + "_ripple.png"))
-        image.filter(RobertsFilter).write(new File("examples/filters/" + filename + "_roberts.png"))
-        image.filter(RylandersFilter).write(new File("examples/filters/" + filename + "_rylanders.png"))
-
-        image.filter(SepiaFilter).write(new File("examples/filters/" + filename + "_sepia.png"))
-        image.filter(SmearFilter(SmearType.Circles)).write(new File("examples/filters/" + filename + "_smear_circles.png"))
-        image.filter(SparkleFilter()).write(new File("examples/filters/" + filename + "_sparkle.png"))
-        image.filter(SobelsFilter).write(new File("examples/filters/" + filename + "_sobels.png"))
-        image.filter(SolarizeFilter).write(new File("examples/filters/" + filename + "_solarize.png"))
-
-        image.filter(TelevisionFilter).write(new File("examples/filters/" + filename + "_television.png"))
-        image.filter(ThresholdFilter(127)).write(new File("examples/filters/" + filename + "_threshold_red_127.png"))
-
-        image.filter(UnsharpFilter()).write(new File("examples/filters/" + filename + "_unsharp.png"))
 
         //// --- API examples /////
 
-        image.pad(20, Color.Black).write(new File("examples/" + filename + "_pad_20.png"))
-        image.resize(0.5).write(new File("examples/" + filename + "_resize_half.png"))
-        image.fit(image.width - 20, image.height - 100).write(new File("examples/" + filename + "_fitted.png"))
-        image.scale(0.5).write(new File("examples/" + filename + "_scale_half.png"))
+        //    image.pad(20, Color.Black).write(new File("examples/" + filename + "_pad_20.png"))
+        //    image.resize(0.5).write(new File("examples/" + filename + "_resize_half.png"))
+        //   image.fit(image.width - 20, image.height - 100).write(new File("examples/" + filename + "_fitted.png"))
+        //    image.scale(0.5).write(new File("examples/" + filename + "_scale_half.png"))
     }
 }
