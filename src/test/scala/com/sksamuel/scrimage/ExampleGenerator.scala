@@ -11,12 +11,12 @@ object ExampleGenerator extends App {
     val image3 = Image(getClass.getResourceAsStream("/lanzarote.jpg"))
 
     val filters: List[(String, Filter)] = List(
-        ("block_4", BlockFilter(4)),
         ("blur", BlurFilter),
         ("brightness", BrightnessFilter(1.3f)),
         ("bump", BumpFilter),
         ("chrome", ChromeFilter()),
         ("color_halftone", ColorHalftoneFilter()),
+        ("contour", ContourFilter()),
         ("contrast", ContrastFilter(1.3f)),
         ("despeckle", DespeckleFilter),
         ("diffuse_4", DiffuseFilter(4)),
@@ -35,6 +35,7 @@ object ExampleGenerator extends App {
         ("maximum", MaximumFilter),
         ("offset", OffsetFilter(60, 40)),
         ("oil", OilFilter()),
+        ("pixelate_4", PixelateFilter(4)),
         ("pointillize_square", PointillizeFilter(PointillizeGridType.Square)),
         ("posterize", PosterizeFilter()),
         ("prewitt", PrewittFilter),
