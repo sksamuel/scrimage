@@ -17,7 +17,7 @@ object Format {
         def writer = new PngWriter
     }
     case object JPEG extends Format[JpegWriter] {
-        def writer = new JpegWriter(0.75f)
+        def writer = JpegWriter()
     }
     case object GIF extends Format[GifWriter] {
         def writer = new GifWriter
