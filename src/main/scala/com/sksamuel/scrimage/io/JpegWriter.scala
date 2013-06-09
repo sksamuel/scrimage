@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.io
 
-import com.sksamuel.scrimage.Image
+import com.sksamuel.scrimage.{Color, Image}
 import java.io.OutputStream
 import javax.imageio.{IIOImage, ImageWriteParam, ImageIO}
 import org.apache.commons.io.IOUtils
@@ -17,6 +17,7 @@ class JpegWriter(image: Image, compression: Float, progressive: Boolean) extends
     def withProgressive(progressive: Boolean): JpegWriter = new JpegWriter(image, compression, progressive)
 
     def write(out: OutputStream) {
+
         val writer = ImageIO.getImageWritersByFormatName("jpeg").next()
         val params = writer.getDefaultWriteParam
         params.setCompressionMode(ImageWriteParam.MODE_EXPLICIT)
@@ -26,9 +27,14 @@ class JpegWriter(image: Image, compression: Float, progressive: Boolean) extends
         else
             params.setProgressiveMode(ImageWriteParam.MODE_DISABLED)
 
+        // jpegs cannot write out transparency. The java version will break
+        // see http://stackoverflow.com/questions/464825/converting-transparent-gif-png-to-jpeg-using-java
+        // so have to remove alpha
+        val noAlpha = image.removeTransparency(Color.White)
+
         val output = new MemoryCacheImageOutputStream(out)
         writer.setOutput(output)
-        writer.write(null, new IIOImage(image.awt, null, null), params)
+        writer.write(null, new IIOImage(noAlpha.awt, null, null), params)
         writer.dispose()
         output.close()
         IOUtils.closeQuietly(out)
@@ -36,5 +42,5 @@ class JpegWriter(image: Image, compression: Float, progressive: Boolean) extends
 }
 
 object JpegWriter {
-    def apply(image: Image) = new JpegWriter(image, 0.75f, false)
+    def apply(image: Image) = new JpegWriter(image, 0.8f, false)
 }

@@ -20,8 +20,6 @@ import com.sksamuel.scrimage.io.ImageWriter
   **/
 class Image(val awt: BufferedImage) {
     require(awt != null, "Wrapping image cannot be null")
-    require(awt.getType == Image.CANONICAL_DATA_TYPE,
-        "Unsupported underlying image type. Consider using Image.apply(java.awt.Image) in order to wrap the image in the right data type")
 
     lazy val width: Int = awt.getWidth(null)
     lazy val height: Int = awt.getHeight(null)
@@ -73,6 +71,13 @@ class Image(val awt: BufferedImage) {
             case buffer: DataBufferInt => buffer.getData
             case _ => throw new UnsupportedOperationException
         }
+    }
+
+    def removeTransparency(color: Color): Image = {
+        val rgb = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
+        val g = rgb.createGraphics()
+        g.drawImage(awt, 0, 0, new java.awt.Color(color.value), null)
+        new Image(rgb)
     }
 
     /**

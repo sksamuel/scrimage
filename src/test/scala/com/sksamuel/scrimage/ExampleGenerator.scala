@@ -53,22 +53,23 @@ object ExampleGenerator extends App {
         ("television", TelevisionFilter),
         ("threshold_127", ThresholdFilter(127)),
         ("twirl", TwirlFilter(75)),
-        ("unsharp", UnsharpFilter()))
+        ("unsharp", UnsharpFilter()),
+        ("vintage", VintageFilter))
 
     for ( t <- List(("bird", image1), ("colosseum", image2), ("lanzarote", image3)) ) {
 
         val filename = t._1
         val image = t._2
-        val large = image.scaleToWidth(800)
-        val small = image.scaleToWidth(256)
+        val large = image.scaleToWidth(1200)
+        val small = image.scaleToWidth(200)
 
         for ( filter <- filters ) {
             val filterName = filter._1
             println("Generating example " + filename + " " + filterName)
-            large.filter(filter._2).write(new File("examples/filters/" + filename + "_" + filterName + "_large.png"))
-            small.filter(filter._2).write(new File("examples/filters/" + filename + "_" + filterName + "_small.png"))
+            large.filter(filter._2).write(new File("examples/filters/" + filename + "_" + filterName + "_large.jpeg"), Format.JPEG)
+            small.filter(filter._2).writer(Format.PNG).withCompression(9)
+              .write(new File("examples/filters/" + filename + "_" + filterName + "_small.png"))
         }
-
 
         //// --- API examples /////
 
