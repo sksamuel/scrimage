@@ -23,4 +23,18 @@ class MutableImageTest extends FunSuite with BeforeAndAfter with OneInstancePerT
         val flipped = image.filter(BlurFilter)
         assert(flipped.eq(image))
     }
+
+    test("when filling an image then a new image is not created") {
+        assert(image.eq(image.filled(0)))
+        assert(image.eq(image.filled(java.awt.Color.BLACK)))
+    }
+
+    test("when creating a mutable copy of an existing image then the underlying image is copied") {
+        val image = Image.empty(200, 300)
+        assert(image.awt.hashCode === image.awt.hashCode)
+        assert(image.toMutable.awt.hashCode != image.awt.hashCode)
+
+        assert(image.awt.hashCode === image.awt.hashCode)
+        assert(MutableImage(image).awt.hashCode != image.awt.hashCode)
+    }
 }

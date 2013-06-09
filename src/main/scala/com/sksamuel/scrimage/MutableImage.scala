@@ -20,7 +20,6 @@ class MutableImage(awt: BufferedImage) extends Image(awt) {
         this
     }
 
-    override def filled(color: Color): MutableImage = filled(color.value)
     override def filled(color: Int): MutableImage = filled(new java.awt.Color(color))
     override def filled(color: java.awt.Color): MutableImage = {
         super._fill(color)
@@ -31,6 +30,6 @@ class MutableImage(awt: BufferedImage) extends Image(awt) {
 object MutableImage {
     def apply(in: InputStream): MutableImage = Image(in).toMutable
     def apply(file: File): MutableImage = Image(file).toMutable
-    def apply(awt: java.awt.Image): MutableImage = Image(awt).toMutable
     def apply(image: Image): MutableImage = image.toMutable
+    def apply(buff: BufferedImage): MutableImage = Image(buff).toMutable
 }

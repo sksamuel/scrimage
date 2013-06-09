@@ -37,6 +37,7 @@ class ImageTest extends FunSuite with BeforeAndAfter {
         assert(!flipped.eq(image))
     }
 
+
     test("when scaling by pixels then the output image has the given dimensions") {
         val scaled = image.scale(40, 50)
         assert(40 === scaled.width)
@@ -62,8 +63,8 @@ class ImageTest extends FunSuite with BeforeAndAfter {
     }
 
     test("dimensions happy path") {
-        assert(1944 === image.width)
-        assert(1296 === image.height)
+        val awt = new BufferedImage(200, 400, BufferedImage.TYPE_INT_ARGB)
+        assert((200, 400) === Image(awt).dimensions)
     }
 
     test("pixel returns correct ARGB integer") {
@@ -96,7 +97,7 @@ class ImageTest extends FunSuite with BeforeAndAfter {
     }
 
     test("when created a filled copy then the dimensions are the same as the original") {
-        val copy1 = image.filled(Color.Red)
+        val copy1 = image.filled(java.awt.Color.RED)
         assert(1944 === copy1.width)
         assert(1296 === copy1.height)
 
@@ -121,7 +122,7 @@ class ImageTest extends FunSuite with BeforeAndAfter {
     }
 
     test("when create a new filled image then the dimensions are as specified") {
-        val image = Image.filled(595, 911, Color.Black)
+        val image = Image.filled(595, 911, java.awt.Color.BLACK)
         assert(595 === image.width)
         assert(911 === image.height)
     }
@@ -164,7 +165,7 @@ class ImageTest extends FunSuite with BeforeAndAfter {
     }
 
     test("when padding with a border size then the width and height are increased by the right amount") {
-        val padded = image.pad(4, Color.White)
+        val padded = image.pad(4, java.awt.Color.WHITE)
         assert(1952 === padded.width)
         assert(1304 === padded.height)
     }
@@ -236,14 +237,14 @@ class ImageTest extends FunSuite with BeforeAndAfter {
     }
 
     test("when fitting an image the output image should match as expected") {
-        val fitted = image.fit(900, 300, Color.Red)
+        val fitted = image.fit(900, 300, java.awt.Color.RED)
         val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird_fitted_900_300.png"))
         assert(fitted.pixels.length === fitted.pixels.length)
         assert(expected === fitted)
     }
 
     test("when fitting an image the output image should have specified dimensions") {
-        val fitted = image.fit(900, 300, Color.Red)
+        val fitted = image.fit(900, 300, java.awt.Color.RED)
         assert(900 === fitted.width)
         assert(300 === fitted.height)
     }

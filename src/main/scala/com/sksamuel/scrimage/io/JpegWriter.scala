@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.io
 
-import com.sksamuel.scrimage.{Color, Image}
+import com.sksamuel.scrimage.Image
 import java.io.OutputStream
 import javax.imageio.{IIOImage, ImageWriteParam, ImageIO}
 import org.apache.commons.io.IOUtils
@@ -30,7 +30,7 @@ class JpegWriter(image: Image, compression: Int, progressive: Boolean) extends I
         // jpegs cannot write out transparency. The java version will break
         // see http://stackoverflow.com/questions/464825/converting-transparent-gif-png-to-jpeg-using-java
         // so have to remove alpha
-        val noAlpha = image.removeTransparency(Color.White)
+        val noAlpha = image.removeTransparency(java.awt.Color.WHITE)
 
         val output = new MemoryCacheImageOutputStream(out)
         writer.setOutput(output)

@@ -8,7 +8,6 @@ import com.sksamuel.scrimage.ScaleMethod._
 import javax.imageio.ImageIO
 import org.apache.commons.io.{IOUtils, FileUtils}
 import java.awt.image.{DataBufferInt, AffineTransformOp, BufferedImage}
-import com.sksamuel.scrimage.Color.White
 import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.io.ImageWriter
@@ -17,7 +16,7 @@ import com.sksamuel.scrimage.io.ImageWriter
   *
   *         RichImage is class that represents an in memory image.
   *
-  * */
+  **/
 class Image(val awt: BufferedImage) {
     require(awt != null, "Wrapping image cannot be null")
 
@@ -111,10 +110,10 @@ class Image(val awt: BufferedImage) {
         }
     }
 
-    def removeTransparency(color: Color): Image = {
+    def removeTransparency(color: java.awt.Color): Image = {
         val rgb = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
         val g = rgb.createGraphics()
-        g.drawImage(awt, 0, 0, new java.awt.Color(color.value), null)
+        g.drawImage(awt, 0, 0, color, null)
         new Image(rgb)
     }
 
@@ -196,7 +195,7 @@ class Image(val awt: BufferedImage) {
      */
     def fit(targetWidth: Int,
             targetHeight: Int,
-            color: com.sksamuel.scrimage.Color = White,
+            color: java.awt.Color = java.awt.Color.WHITE,
             scaleMethod: ScaleMethod = Bicubic,
             position: Position = Center): Image = {
         val fittedDimensions = ImageTools.dimensionsToFit((targetWidth, targetHeight), (width, height))
@@ -387,7 +386,7 @@ class Image(val awt: BufferedImage) {
      *
      * @return A new image that is the result of the padding
      */
-    def pad(size: Int, color: com.sksamuel.scrimage.Color): Image = pad(width + size * 2, height + size * 2, color)
+    def pad(size: Int, color: java.awt.Color): Image = pad(width + size * 2, height + size * 2, color)
 
     /**
      *
@@ -407,7 +406,7 @@ class Image(val awt: BufferedImage) {
      *
      * @return A new image that is the result of the padding
      */
-    def pad(targetWidth: Int, targetHeight: Int, color: com.sksamuel.scrimage.Color = Color.White): Image = {
+    def pad(targetWidth: Int, targetHeight: Int, color: java.awt.Color = java.awt.Color.WHITE): Image = {
         val w = if (width < targetWidth) targetWidth else width
         val h = if (height < targetHeight) targetHeight else height
         val filled = Image.filled(w, h, color)
@@ -418,14 +417,6 @@ class Image(val awt: BufferedImage) {
         g.dispose()
         filled
     }
-
-    /**
-     * Creates a new Image with the same dimensions of this image and with
-     * all the pixels initialized to the given color
-     *
-     * @return a new Image with the same dimensions as this
-     */
-    def filled(color: com.sksamuel.scrimage.Color): Image = filled(color.value)
 
     /**
      * Creates a new Image with the same dimensions of this image and with
@@ -489,7 +480,7 @@ class Image(val awt: BufferedImage) {
      *
      * @return
      */
-    def toMutable: MutableImage = new MutableImage(awt)
+    def toMutable: MutableImage = new MutableImage(copy.awt)
 }
 
 object Image {
@@ -542,7 +533,6 @@ object Image {
         new Image(copy)
     }
 
-    def filled(width: Int, height: Int, color: com.sksamuel.scrimage.Color): Image = filled(width, height, color.value)
     def filled(width: Int, height: Int, color: Int): Image = filled(width, height, new java.awt.Color(color))
     def filled(width: Int, height: Int, color: java.awt.Color): Image = {
         val awt = new BufferedImage(width, height, Image.CANONICAL_DATA_TYPE)
@@ -575,5 +565,3 @@ object ScaleMethod {
 object Implicits {
     implicit def awt2rich(awt: java.awt.Image) = Image(awt)
 }
-
-

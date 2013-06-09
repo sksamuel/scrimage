@@ -19,4 +19,15 @@ class GifWriterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest
         assert(expected === actual)
 
     }
+
+    test("GIF progressive output happy path") {
+        val out = new ByteArrayOutputStream()
+        original.writer(Format.GIF).withProgressive(true).write(out)
+        val actual = Image(out.toByteArray)
+
+        val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_progressive.gif"))
+        assert(expected.pixels.length === actual.pixels.length)
+        assert(expected === actual)
+
+    }
 }
