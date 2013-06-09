@@ -17,7 +17,7 @@ import com.sksamuel.scrimage.io.ImageWriter
   *
   *         RichImage is class that represents an in memory image.
   *
-  * */
+  **/
 class Image(val awt: BufferedImage) {
     require(awt != null, "Wrapping image cannot be null")
     require(awt.getType == Image.CANONICAL_DATA_TYPE,
@@ -43,6 +43,13 @@ class Image(val awt: BufferedImage) {
      * @return A copy of this image.
      */
     def copy = Image._copy(awt)
+
+    // replace this image's AWT data by drawing the given BufferedImage over the top
+    def _draw(target: BufferedImage) {
+        val g2 = awt.getGraphics.asInstanceOf[Graphics2D]
+        g2.drawImage(target, 0, 0, null)
+        g2.dispose()
+    }
 
     /**
      * @param point the coordinates of the pixel to grab
