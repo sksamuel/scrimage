@@ -75,19 +75,11 @@ val in = ... // input stream
 val out = ... // output stream
 Image(in).scale(300, 200, FastScale)
 ```
-
-Writing out an optimized PNG
-```scala
-val in = ... // input stream
-val out = ... // output stream
-Image(in).writer(Format.PNG).withCompression(9).write(out)
-```
-
 Writing out a heavily compressed Jpeg thumbnail
 ```scala
 val in = ... // input stream
 val out = ... // output stream
-Image(in).scale(300,200).writer(Format.JPEG).withCompression(0.5).write(out)
+Image(in).fit(180,120).writer(Format.JPEG).withCompression(0.5).write(out)
 ```
 
 Printing the sizes and ratio of the image
@@ -98,11 +90,35 @@ val image = Image(in)
 println(s"Width: ${image.width} Height: ${image.height} Ratio: ${image.ratio}")
 ```
 
+### Input / Output
+
+Scrimage supports loading and saving of images in the common web formats (currently png, jpeg, gif). In addition it extends jav'sa image.io support by giving you an easy way to compress / optimize / interlace the images when saving.
+
+To load an image simply use the Image apply methods on an input stream, file, filepath (String) or a byte array. The format does not matter as the underlying reader will determine that. Eg, 
+```scala
+val in = ... // a handle to an input stream
+val image = Image(in)
+```
+
+To save a method, Scrimage provides an ImageWriter for each format it supports. An ImageWriter supports saving to a File, filepath (String), byte array, or OutputStream. The quickest way to use an ImageWriter is to call write() on an image, which will get a handle to an ImageWriter with the default configuration and use it for you. Eg,
+
+```scala
+val image = ... // some image
+image.write(new File("/home/sam/images/spaghetti.png"))
+```
+
+If you want to override the configuration for a writer then you will need to get a handle to the writer itself using the writer() method which returns an ImageWriter instance. From here you can then configure it before writing. A common example would be optimising a PNG to use compression (uses a modified version of PngTastic behind the scenes). Eg,
+
+```scala
+val image = ... // some image
+image.writer(Format.PNG).withCompression(9).write(new File("/home/sam/images/compressed_spahgetti.png"))
+```
+Note the writers are immutable and are created per image.
+
 ### Filters
 
-Scrimage comes with a wide array (or Seq ;) of filters. Most of these filters I have not written myself,
-but rather collected from other open source imaging libraries (for compliance with licenses and / or attribution - see file headers),
-and either re-written them in Scala, wrapped them in Scala, or fixed bugs and modified them.
+Scrimage comes with a wide array (or Iterable ;) of filters. Most of these filters I have not written myself,
+but rather collected from other open source imaging libraries (for compliance with licenses and / or attribution - see file headers), and either re-written them in Scala, wrapped them in Scala, fixed bugs or improved them.
 
 Some filters have options which can be set when creating the filters. All filters are immutable. Most filters have sensible default options as default parameters.
 
