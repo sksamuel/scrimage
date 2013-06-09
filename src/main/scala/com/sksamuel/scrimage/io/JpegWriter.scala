@@ -7,11 +7,11 @@ import org.apache.commons.io.IOUtils
 import javax.imageio.stream.MemoryCacheImageOutputStream
 
 /** @author Stephen Samuel */
-class JpegWriter(image: Image, compression: Float, progressive: Boolean) extends ImageWriter {
+class JpegWriter(image: Image, compression: Int, progressive: Boolean) extends ImageWriter {
 
-    def withCompression(compression: Float): JpegWriter = {
+    def withCompression(compression: Int): JpegWriter = {
         require(compression >= 0)
-        require(compression <= 1)
+        require(compression <= 100)
         new JpegWriter(image, compression, progressive)
     }
     def withProgressive(progressive: Boolean): JpegWriter = new JpegWriter(image, compression, progressive)
@@ -21,7 +21,7 @@ class JpegWriter(image: Image, compression: Float, progressive: Boolean) extends
         val writer = ImageIO.getImageWritersByFormatName("jpeg").next()
         val params = writer.getDefaultWriteParam
         params.setCompressionMode(ImageWriteParam.MODE_EXPLICIT)
-        params.setCompressionQuality(compression)
+        params.setCompressionQuality(compression / 100f)
         if (progressive)
             params.setProgressiveMode(ImageWriteParam.MODE_DEFAULT)
         else
@@ -42,5 +42,5 @@ class JpegWriter(image: Image, compression: Float, progressive: Boolean) extends
 }
 
 object JpegWriter {
-    def apply(image: Image) = new JpegWriter(image, 0.8f, false)
+    def apply(image: Image) = new JpegWriter(image, 80, false)
 }
