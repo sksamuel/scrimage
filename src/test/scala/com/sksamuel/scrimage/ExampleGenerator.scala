@@ -2,6 +2,7 @@ package com.sksamuel.scrimage
 
 import com.sksamuel.scrimage.filter._
 import java.io.File
+import org.apache.commons.io.FileUtils
 
 /** @author Stephen Samuel */
 object ExampleGenerator extends App {
@@ -19,12 +20,12 @@ object ExampleGenerator extends App {
         ("contour", ContourFilter()),
         ("contrast", ContrastFilter(1.3f)),
         ("despeckle", DespeckleFilter),
-        ("diffuse_4", DiffuseFilter(4)),
+        ("diffuse", DiffuseFilter(4)),
         ("dither", DitherFilter),
         ("edge", EdgeFilter),
         ("emboss", EmbossFilter),
         ("errordiffusion", ErrorDiffusionHalftoneFilter()),
-        ("gamma_2", GammaFilter(2)),
+        ("gamma", GammaFilter(2)),
         ("gaussian", GaussianBlurFilter()),
         ("glow", GlowFilter()),
         ("grayscale", GrayscaleFilter),
@@ -35,11 +36,11 @@ object ExampleGenerator extends App {
         ("maximum", MaximumFilter),
         ("offset", OffsetFilter(60, 40)),
         ("oil", OilFilter()),
-        ("pixelate_4", PixelateFilter(4)),
+        ("pixelate", PixelateFilter(4)),
         ("pointillize_square", PointillizeFilter(PointillizeGridType.Square)),
         ("posterize", PosterizeFilter()),
         ("prewitt", PrewittFilter),
-        ("quantize_256", QuantizeFilter(256)),
+        ("quantize", QuantizeFilter(256)),
         ("rays", RaysFilter(threshold = 0.1f, strength = 0.6f)),
         ("ripple", RippleFilter(RippleType.Sine)),
         ("roberts", RobertsFilter),
@@ -51,24 +52,33 @@ object ExampleGenerator extends App {
         ("sparkle", SparkleFilter()),
         ("swim", SwimFilter()),
         ("television", TelevisionFilter),
-        ("threshold_127", ThresholdFilter(127)),
+        ("threshold", ThresholdFilter(127)),
         ("twirl", TwirlFilter(75)),
         ("unsharp", UnsharpFilter()),
         ("vintage", VintageFilter))
 
-    for ( t <- List(("bird", image1), ("colosseum", image2), ("lanzarote", image3)) ) {
+    val sb = new StringBuffer()
 
-        val filename = t._1
-        val image = t._2
-        val large = image.scaleToWidth(1200)
-        val small = image.scaleToWidth(200)
+    for ( filter <- filters ) {
 
-        for ( filter <- filters ) {
-            val filterName = filter._1
+        val filterName = filter._1
+
+        sb.append("\n| " + filterName + " | ")
+
+        for ( t <- List(("bird", image1), ("colosseum", image2), ("lanzarote", image3)) ) {
+
+            val filename = t._1
+            val image = t._2
+            val large = image.scaleToWidth(1200)
+            val small = image.scaleToWidth(200)
+
             println("Generating example " + filename + " " + filterName)
             large.filter(filter._2).write(new File("examples/filters/" + filename + "_" + filterName + "_large.jpeg"), Format.JPEG)
             small.filter(filter._2).writer(Format.PNG).withCompression(9)
               .write(new File("examples/filters/" + filename + "_" + filterName + "_small.png"))
+
+            sb
+              .append(s"<a href='https://raw.github.com/sksamuel/scrimage/master/examples/filters/${filename}_${filterName}_large.jpeg'><img src='https://raw.github.com/sksamuel/scrimage/master/examples/filters/${filename}_${filterName}_small.png'><a/> | ")
         }
 
         //// --- API examples /////
@@ -78,4 +88,6 @@ object ExampleGenerator extends App {
         //   image.fit(image.width - 20, image.height - 100).write(new File("examples/" + filename + "_fitted.png"))
         //    image.scale(0.5).write(new File("examples/" + filename + "_scale_half.png"))
     }
+
+    FileUtils.write(new File("filters.md"), sb.toString)
 }
