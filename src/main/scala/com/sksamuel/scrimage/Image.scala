@@ -17,7 +17,7 @@ import com.sksamuel.scrimage.io.ImageWriter
   *
   *         RichImage is class that represents an in memory image.
   *
-  **/
+  * */
 class Image(val awt: BufferedImage) {
     require(awt != null, "Wrapping image cannot be null")
 
@@ -50,25 +50,63 @@ class Image(val awt: BufferedImage) {
     }
 
     /**
-     * @param point the coordinates of the pixel to grab
+     * Returns the pixel at the given coordinates as a integer in RGB format.
+     *
+     * @param x the x coordinate of the pixel to grab
+     * @param y the y coordinate of the pixel to grab
      *
      * @return
      */
-    def pixel(point: (Int, Int)): Int = {
-        val pixels = awt.getRaster.getDataBuffer.asInstanceOf[DataBufferInt].getData
-        val pixelIndex = (width * point._2 + point._1)
-        pixels(pixelIndex)
+    def pixel(x: Int, y: Int): Int = {
+        val k = width * y + x
+        awt.getRaster.getDataBuffer match {
+            //     case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_RGB => buffer.getData()(k)
+            case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_ARGB => buffer.getData()(k)
+            //            case buffer: DataBufferByte if awt.getType == BufferedImage.TYPE_3BYTE_BGR =>
+            //                val blue = buffer.getData()(k * 3)
+            //                val green = buffer.getData()(k * 3 + 1)
+            //                val red = buffer.getData()(k * 3 + 2)
+            //                red << 16 | green << 8 | blue << 0
+            //            case buffer: DataBufferByte if awt.getType == BufferedImage.TYPE_4BYTE_ABGR =>
+            //                val alpha = buffer.getData()(k * 4)
+            //                val blue = buffer.getData()(k * 4 + 1)
+            //                val green = buffer.getData()(k * 4 + 2)
+            //                val red = buffer.getData()(k * 4 + 3)
+            //                alpha << 24 | red << 16 | green << 8 | blue << 0
+            case _ => throw new UnsupportedOperationException
+        }
     }
 
     /**
-     * Returns the pixels of this image represented as integers
-     * in a single dimension array.
+     * Returns the pixels of this image represented as an array of Integers.
      *
      * @return
      */
     def pixels: Array[Int] = {
         awt.getRaster.getDataBuffer match {
-            case buffer: DataBufferInt => buffer.getData
+            //        case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_RGB => buffer.getData
+            case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_ARGB => buffer.getData
+            //            case buffer: DataBufferByte if awt.getType == BufferedImage.TYPE_3BYTE_BGR =>
+            //                val array = new Array[Int](buffer.getData.length / 3)
+            //                for ( k <- 0 until array.length ) {
+            //                    val blue = array(k * 3)
+            //                    val green = array(k * 3 + 1)
+            //                    val red = array(k * 3 + 2)
+            //                    val pixel = red << 16 | green << 8 | blue << 0
+            //                    array(k) = pixel
+            //                }
+            //                array
+            //            case buffer: DataBufferByte if awt.getType == BufferedImage.TYPE_4BYTE_ABGR =>
+            //                val array = new Array[Int](buffer.getData.length / 4)
+            //                for ( k <- 0 until array.length ) {
+            //                    val alpha = array(k * 4)
+            //                    val blue = array(k * 4 + 1)
+            //                    val green = array(k * 4 + 2)
+            //                    val red = array(k * 4 + 3)
+            //                    val pixel = alpha << 24 | red << 16 | green << 8 | blue << 0
+            //                    array(k) = pixel
+            //                }
+            //                array
             case _ => throw new UnsupportedOperationException
         }
     }
@@ -219,7 +257,7 @@ class Image(val awt: BufferedImage) {
      * @return a new Image that is the result of scaling this image
      */
     def scaleToWidth(targetWidth: Int, scaleMethod: ScaleMethod = Bicubic): Image =
-        scale(targetWidth, ((targetWidth / width.toDouble) * height).toInt, Bicubic)
+        scale(targetWidth, (targetWidth / width.toDouble * height).toInt, Bicubic)
 
     /**
      *
@@ -239,7 +277,7 @@ class Image(val awt: BufferedImage) {
      * @return a new Image that is the result of scaling this image
      */
     def scaleToHeight(targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): Image =
-        scale(((targetHeight / height.toDouble) * width).toInt, targetHeight, Bicubic)
+        scale((targetHeight / height.toDouble * width).toInt, targetHeight, Bicubic)
 
     def scale(scaleFactor: Double): Image = scale(scaleFactor, Bicubic)
 

@@ -66,10 +66,34 @@ class ImageTest extends FunSuite with BeforeAndAfter {
         assert(1296 === image.height)
     }
 
-    //    test("pixel happy path") {
-    //        assert(-1 === image.pixel(0, 0))
-    //        assert(-1 === image.pixel(100, 100))
-    //    }
+    test("pixel returns correct ARGB integer") {
+        val image = new Image(new BufferedImage(50, 30, BufferedImage.TYPE_INT_ARGB))
+        val g = image.awt.getGraphics
+        g.setColor(java.awt.Color.RED)
+        g.fillRect(10, 10, 10, 10)
+        g.dispose()
+        assert(0 === image.pixel(0, 0))
+        assert(0 === image.pixel(9, 10))
+        assert(0 === image.pixel(10, 9))
+        assert(0xFFFF0000 === image.pixel(10, 10))
+        assert(0xFFFF0000 === image.pixel(19, 19))
+        assert(0 === image.pixel(20, 20))
+    }
+
+    test("pixel array has correct number of pixels") {
+        val image = new Image(new BufferedImage(50, 30, BufferedImage.TYPE_INT_ARGB))
+        assert(1500 === image.pixels.size)
+    }
+
+    test("pixel array has correct ARGB integer") {
+        val image = new Image(new BufferedImage(50, 30, BufferedImage.TYPE_INT_ARGB))
+        val g = image.awt.getGraphics
+        g.setColor(java.awt.Color.RED)
+        g.fillRect(10, 10, 10, 10)
+        g.dispose()
+        assert(0 === image.pixels(0))
+        assert(0xFFFF0000 === image.pixels(765))
+    }
 
     test("when created a filled copy then the dimensions are the same as the original") {
         val copy1 = image.filled(Color.Red)
@@ -186,18 +210,42 @@ class ImageTest extends FunSuite with BeforeAndAfter {
     }
 
     test("when resizing an image the output image should match as expected") {
-        val expected = Image(getClass.getResourceAsStream("/bird_resize_025.png"))
-        assert(expected === image.resize(0.25))
+        val resized = image.resize(0.25)
+        val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird_resized_025.png"))
+        assert(expected.pixels.length === resized.pixels.length)
+        assert(expected.pixels === resized.pixels)
+    }
+
+    test("when resizing an image the output image should have specified dimensions") {
+        val r = image.resize(900, 300)
+        assert(900 === r.width)
+        assert(300 === r.height)
     }
 
     test("when scaling an image the output image should match as expected") {
-        val expected = Image(getClass.getResourceAsStream("/bird_scale_025.png"))
-        assert(expected === image.scale(0.25))
+        val scaled = image.scale(0.25)
+        val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird_scale_025.png"))
+        assert(expected.pixels.length === scaled.pixels.length)
+        assert(expected === scaled)
+    }
+
+    test("when scaling an image the output image should have specified dimensions") {
+        val scaled = image.scale(900, 300)
+        assert(900 === scaled.width)
+        assert(300 === scaled.height)
     }
 
     test("when fitting an image the output image should match as expected") {
-        val expected = Image(getClass.getResourceAsStream("/bird_fitted_900_300.png"))
-        assert(expected === image.fit(900, 300, Color.Red))
+        val fitted = image.fit(900, 300, Color.Red)
+        val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird_fitted_900_300.png"))
+        assert(fitted.pixels.length === fitted.pixels.length)
+        assert(expected === fitted)
+    }
+
+    test("when fitting an image the output image should have specified dimensions") {
+        val fitted = image.fit(900, 300, Color.Red)
+        assert(900 === fitted.width)
+        assert(300 === fitted.height)
     }
 
     test("when scaling by width then target image maintains aspect ratio") {

@@ -104,14 +104,14 @@ To save a method, Scrimage provides an ImageWriter for each format it supports. 
 
 ```scala
 val image = ... // some image
-image.write(new File("/home/sam/images/spaghetti.png"))
+image.write(new File("/home/sam/spaghetti.png"))
 ```
 
 If you want to override the configuration for a writer then you will need to get a handle to the writer itself using the writer() method which returns an ImageWriter instance. From here you can then configure it before writing. A common example would be optimising a PNG to use compression (uses a modified version of PngTastic behind the scenes). Eg,
 
 ```scala
 val image = ... // some image
-image.writer(Format.PNG).withCompression(9).write(new File("/home/sam/images/compressed_spahgetti.png"))
+image.writer(Format.PNG).withCompression(9).write(new File("/home/sam/compressed_spahgetti.png"))
 ```
 Note the writers are immutable and are created per image.
 
