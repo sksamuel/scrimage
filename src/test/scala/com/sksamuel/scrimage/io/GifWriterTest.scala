@@ -12,8 +12,11 @@ class GifWriterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest
     test("GIF output happy path") {
         val out = new ByteArrayOutputStream()
         original.write(out, Format.GIF)
+        val actual = Image(out.toByteArray)
 
         val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_compressed.gif"))
-        assert(expected === Image(out.toByteArray))
+        assert(expected.pixels.length === actual.pixels.length)
+        assert(expected === actual)
+
     }
 }

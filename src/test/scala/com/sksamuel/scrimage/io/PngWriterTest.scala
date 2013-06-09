@@ -16,6 +16,7 @@ class PngWriterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest
         val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_compressed.png"))
         assert(expected.pixels.length === Image(out.toByteArray).pixels.length)
         assert(expected.pixels === Image(out.toByteArray).pixels)
+        assert(expected === Image(out.toByteArray))
     }
 
     test("png compression happy path") {
@@ -27,6 +28,7 @@ class PngWriterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest
             val expected = Image(getClass.getResourceAsStream(s"/com/sksamuel/scrimage/io/bird_compressed_$i.png"))
             assert(expected.pixels.length === Image(out.toByteArray).pixels.length)
             assert(expected.pixels === Image(out.toByteArray).pixels)
+            assert(expected === Image(out.toByteArray))
         }
     }
 }
