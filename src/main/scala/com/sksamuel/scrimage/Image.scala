@@ -2,11 +2,11 @@ package com.sksamuel.scrimage
 
 import java.awt.Graphics2D
 import java.awt.geom.AffineTransform
-import java.io.{InputStream, OutputStream, File}
+import java.io.{ByteArrayInputStream, InputStream, OutputStream, File}
 import com.sksamuel.scrimage.Format.PNG
 import com.sksamuel.scrimage.ScaleMethod._
 import javax.imageio.ImageIO
-import org.apache.commons.io.FileUtils
+import org.apache.commons.io.{IOUtils, FileUtils}
 import java.awt.image.{DataBufferInt, AffineTransformOp, BufferedImage}
 import com.sksamuel.scrimage.Color.White
 import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
@@ -324,9 +324,11 @@ class Image(val awt: BufferedImage) {
      * @return a new Image that is the result of resizing the canvas.
      */
     def resize(targetWidth: Int, targetHeight: Int, position: Position = Center): Image = {
-        val target = new BufferedImage(targetWidth, targetHeight, Image.CANONICAL_DATA_TYPE)
-        target.getGraphics.asInstanceOf[Graphics2D].drawImage(awt, 0, 0, null)
-        new Image(target)
+        val target = Image.empty(targetWidth, targetHeight)
+        val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
+        g2.drawImage(awt, 0, 0, null)
+        g2.dispose()
+        target
     }
 
     /**
@@ -398,8 +400,14 @@ class Image(val awt: BufferedImage) {
      */
     def filled(color: java.awt.Color): Image = Image.filled(width, height, color)
 
-    def writer[T <: ImageWriter](format: Format[T]): T = format.writer
+    def writer[T <: ImageWriter](format: Format[T]): T = format.writer(this)
 
+    def write(path: String) {
+        write(path, Format.PNG)
+    }
+    def write(path: String, format: Format[_ <: ImageWriter]) {
+        write(new File(path), format)
+    }
     def write(file: File) {
         write(file, Format.PNG)
     }
@@ -410,7 +418,7 @@ class Image(val awt: BufferedImage) {
         write(out, PNG)
     }
     def write(out: OutputStream, format: Format[_ <: ImageWriter]) {
-        writer(format).write(this, out)
+        writer(format).write(out)
     }
 
     override def hashCode(): Int = awt.hashCode
@@ -445,10 +453,14 @@ object Image {
 
     val CANONICAL_DATA_TYPE = BufferedImage.TYPE_INT_ARGB
 
+    def apply(bytes: Array[Byte]): Image = apply(new ByteArrayInputStream(bytes))
+
     def apply(in: InputStream): Image = {
         require(in != null)
         require(in.available > 0)
-        apply(ImageIO.read(in))
+        val image = apply(ImageIO.read(in))
+        IOUtils.closeQuietly(in)
+        image
     }
 
     def apply(file: File): Image = {

@@ -1,17 +1,18 @@
 package com.sksamuel.scrimage.io
 
-import com.sksamuel.scrimage.Image
 import java.io.OutputStream
 import javax.imageio.{IIOImage, ImageWriteParam, ImageIO}
 import org.apache.commons.io.IOUtils
+import com.sksamuel.scrimage.Image
+import javax.imageio.stream.MemoryCacheImageOutputStream
 
 /** @author Stephen Samuel */
-class TiffWriter(compression: Boolean, compressionType: String = TiffWriter.COMPRESSION_LZW) extends ImageWriter {
+class TiffWriter(image: Image, compression: Boolean, compressionType: String = TiffWriter.COMPRESSION_LZW) extends ImageWriter {
 
-    def withCompression(compression: Boolean): TiffWriter = new TiffWriter(compression, compressionType)
-    def withCompressionType(compressionType: String): TiffWriter = new TiffWriter(compression, compressionType)
+    def withCompression(compression: Boolean): TiffWriter = new TiffWriter(image, compression, compressionType)
+    def withCompressionType(compressionType: String): TiffWriter = new TiffWriter(image, compression, compressionType)
 
-    def write(image: Image, out: OutputStream) {
+    def write(out: OutputStream) {
 
         val writer = ImageIO.getImageWritersByFormatName("tiff").next()
 
@@ -24,9 +25,11 @@ class TiffWriter(compression: Boolean, compressionType: String = TiffWriter.COMP
             params.setTiling(image.width, image.height, 0, 0)
         }
 
-        writer.setOutput(out)
+        val output = new MemoryCacheImageOutputStream(out)
+        writer.setOutput(output)
         writer.write(null, new IIOImage(image.awt, null, null), params)
         writer.dispose()
+        output.close()
 
         IOUtils.closeQuietly(out)
     }
@@ -35,5 +38,5 @@ class TiffWriter(compression: Boolean, compressionType: String = TiffWriter.COMP
 object TiffWriter {
     val COMPRESSION_LZW = "LZW"
     val COMPRESSION_PACKBITS = "PackBits"
-    def apply() = new TiffWriter(false)
+    def apply(image: Image) = new TiffWriter(image, false)
 }

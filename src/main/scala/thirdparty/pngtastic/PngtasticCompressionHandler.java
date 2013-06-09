@@ -24,7 +24,6 @@ public class PngtasticCompressionHandler implements PngCompressionHandler {
             Deflater.FILTERED,
             Deflater.HUFFMAN_ONLY);
 
-    /** */
     public PngtasticCompressionHandler() {
     }
 
@@ -42,8 +41,7 @@ public class PngtasticCompressionHandler implements PngCompressionHandler {
             inflatedOut.write(block, 0, readLength);
         }
 
-        byte[] inflatedImageData = inflatedOut.toByteArray();
-        return inflatedImageData;
+        return inflatedOut.toByteArray();
     }
 
     /**

@@ -1,7 +1,6 @@
 package thirdparty.pngtastic;
 
 import java.io.*;
-import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -20,10 +19,6 @@ public class PngOptimizer {
         this.pngFilterHandler = new PngtasticFilterHandler();
         this.pngInterlaceHander = new PngtasticInterlaceHandler(pngFilterHandler);
         this.pngCompressionHandler = new PngtasticCompressionHandler();
-    }
-
-    public PngImage optimize(PngImage image) throws IOException {
-        return this.optimize(image, false, null);
     }
 
     public PngImage optimize(PngImage image, boolean removeGamma, Integer compressionLevel) throws IOException {
@@ -47,9 +42,6 @@ public class PngOptimizer {
                 ? pngInterlaceHander.deInterlace((int) image.getWidth(), (int) image.getHeight(), image.getSampleBitCount(), inflatedImageData)
                 : getScanlines(inflatedImageData, image.getSampleBitCount(), scanlineLength, image.getHeight());
 
-        // TODO: use this for bit depth reduction
-//		this.getColors(image, originalScanlines);
-
         // apply each type of filtering
         Map<PngFilterType, List<byte[]>> filteredScanlines = new HashMap<PngFilterType, List<byte[]>>();
         for (PngFilterType filterType : PngFilterType.standardValues()) {
@@ -60,13 +52,11 @@ public class PngOptimizer {
         }
 
         // pick the filter that compresses best
-        PngFilterType bestFilterType = null;
         byte[] deflatedImageData = null;
         for (Entry<PngFilterType, List<byte[]>> entry : filteredScanlines.entrySet()) {
             byte[] imageResult = pngCompressionHandler.deflate(serialize(entry.getValue()), compressionLevel, true);
             if (deflatedImageData == null || imageResult.length < deflatedImageData.length) {
                 deflatedImageData = imageResult;
-                bestFilterType = entry.getKey();
             }
         }
 
@@ -308,19 +298,4 @@ public class PngOptimizer {
             return true;
         }
     }
-
-    private byte[] getFileBytes(File originalFile, long originalFileSize) throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate((int) originalFileSize);
-        FileInputStream ins = null;
-        try {
-            ins = new FileInputStream(originalFile);
-            ins.getChannel().read(buffer);
-        } finally {
-            if (ins != null) {
-                ins.close();
-            }
-        }
-        return buffer.array();
-    }
-
 }

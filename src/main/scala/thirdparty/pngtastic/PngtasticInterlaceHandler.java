@@ -1,6 +1,7 @@
 package thirdparty.pngtastic;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -22,22 +23,6 @@ public class PngtasticInterlaceHandler implements PngInterlaceHandler {
     /** */
     public PngtasticInterlaceHandler(PngFilterHandler pngFilterHandler) {
         this.pngFilterHandler = pngFilterHandler;
-    }
-
-    /**
-     * {@inheritDoc}
-     * <p/>
-     * Throws a runtime exception.
-     * <p/>
-     * NOTE: This is left unimplemented currently.  Interlacing should make
-     * most images larger in filesize, so pngtastic currently deinterlaces
-     * all images passed through it.  There may be rare exceptions that
-     * actually benefit from interlacing, so there may come a time to revisit
-     * this.
-     */
-    @Override
-    public List<byte[]> interlace(int width, int height, int sampleBitCount, byte[] inflatedImageData) {
-        throw new RuntimeException("Not implemented");
     }
 
     /**
@@ -64,7 +49,7 @@ public class PngtasticInterlaceHandler implements PngInterlaceHandler {
                 System.arraycopy(inflatedImageData, offset, row, 0, rowLength);
                 try {
                     this.pngFilterHandler.deFilter(row, previousRow, sampleBitCount);
-                } catch (PngException e) {
+                } catch (PngException ignored) {
                 }
 
                 int samples = (row.length - 1) / sampleSize;
@@ -81,10 +66,7 @@ public class PngtasticInterlaceHandler implements PngInterlaceHandler {
             }
             subImageOffset = offset + rowLength;
         }
-        for (int i = 0; i < rows.length; i++) {
-            results.add(rows[i]);
-        }
-
+        Collections.addAll(results, rows);
         return results;
     }
 }
