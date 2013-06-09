@@ -7,7 +7,7 @@ import java.io.ByteArrayOutputStream
 /** @author Stephen Samuel */
 class PngWriterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
 
-    val original = Image(getClass.getResourceAsStream("/bird.jpg")).scale(300, 200)
+    val original = Image(getClass.getResourceAsStream("/bird.jpg")).scaleTo(300, 200)
 
     test("png output happy path") {
         val out = new ByteArrayOutputStream()

@@ -39,7 +39,7 @@ class ImageTest extends FunSuite with BeforeAndAfter {
 
 
     test("when scaling by pixels then the output image has the given dimensions") {
-        val scaled = image.scale(40, 50)
+        val scaled = image.scaleTo(40, 50)
         assert(40 === scaled.width)
         assert(50 === scaled.height)
     }
@@ -51,7 +51,7 @@ class ImageTest extends FunSuite with BeforeAndAfter {
     }
 
     test("when resizing by pixels then the output image has the given dimensions") {
-        val scaled = image.resize(440, 505)
+        val scaled = image.resizeTo(440, 505)
         assert(440 === scaled.width)
         assert(505 === scaled.height)
     }
@@ -135,31 +135,31 @@ class ImageTest extends FunSuite with BeforeAndAfter {
 
     test("when padding to a width smaller than the image width then the width is not reduced") {
         val image = Image.empty(85, 56)
-        val padded = image.pad(55, 162)
+        val padded = image.padTo(55, 162)
         assert(85 === padded.width)
     }
 
     test("when padding to a height smaller than the image height then the height is not reduced") {
         val image = Image.empty(85, 56)
-        val padded = image.pad(90, 15)
+        val padded = image.padTo(90, 15)
         assert(56 === padded.height)
     }
 
     test("when padding to a width larger than the image width then the width is increased") {
         val image = Image.empty(85, 56)
-        val padded = image.pad(151, 162)
+        val padded = image.padTo(151, 162)
         assert(151 === padded.width)
     }
 
     test("when padding to a height larger than the image height then the height is increased") {
         val image = Image.empty(85, 56)
-        val padded = image.pad(90, 77)
+        val padded = image.padTo(90, 77)
         assert(77 === padded.height)
     }
 
     test("when padding to a size larger than the image then the image canvas is increased") {
         val image = Image.empty(85, 56)
-        val padded = image.pad(515, 643)
+        val padded = image.padTo(515, 643)
         assert(515 === padded.width)
         assert(643 === padded.height)
     }
@@ -218,7 +218,7 @@ class ImageTest extends FunSuite with BeforeAndAfter {
     }
 
     test("when resizing an image the output image should have specified dimensions") {
-        val r = image.resize(900, 300)
+        val r = image.resizeTo(900, 300)
         assert(900 === r.width)
         assert(300 === r.height)
     }
@@ -231,7 +231,7 @@ class ImageTest extends FunSuite with BeforeAndAfter {
     }
 
     test("when scaling an image the output image should have specified dimensions") {
-        val scaled = image.scale(900, 300)
+        val scaled = image.scaleTo(900, 300)
         assert(900 === scaled.width)
         assert(300 === scaled.height)
     }

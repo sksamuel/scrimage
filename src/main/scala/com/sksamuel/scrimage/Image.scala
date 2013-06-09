@@ -199,7 +199,7 @@ class Image(val awt: BufferedImage) {
             scaleMethod: ScaleMethod = Bicubic,
             position: Position = Center): Image = {
         val fittedDimensions = ImageTools.dimensionsToFit((targetWidth, targetHeight), (width, height))
-        val scaled = scale(fittedDimensions._1, fittedDimensions._2, scaleMethod)
+        val scaled = scaleTo(fittedDimensions._1, fittedDimensions._2, scaleMethod)
         val target = Image.filled(targetWidth, targetHeight, color)
         val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
         val x = ((targetWidth - fittedDimensions._1) / 2.0).toInt
@@ -228,7 +228,7 @@ class Image(val awt: BufferedImage) {
      */
     def cover(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod = Bicubic, position: Position = Center): Image = {
         val coveredDimensions = ImageTools.dimensionsToCover((targetWidth, targetHeight), (width, height))
-        val scaled = scale(coveredDimensions._1, coveredDimensions._2, scaleMethod)
+        val scaled = scaleTo(coveredDimensions._1, coveredDimensions._2, scaleMethod)
         val target = Image.empty(targetWidth, targetHeight)
         val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
         val x = ((targetWidth - coveredDimensions._1) / 2.0).toInt
@@ -256,7 +256,7 @@ class Image(val awt: BufferedImage) {
      * @return a new Image that is the result of scaling this image
      */
     def scaleToWidth(targetWidth: Int, scaleMethod: ScaleMethod = Bicubic): Image =
-        scale(targetWidth, (targetWidth / width.toDouble * height).toInt, Bicubic)
+        scaleTo(targetWidth, (targetWidth / width.toDouble * height).toInt, scaleMethod)
 
     /**
      *
@@ -276,9 +276,7 @@ class Image(val awt: BufferedImage) {
      * @return a new Image that is the result of scaling this image
      */
     def scaleToHeight(targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): Image =
-        scale((targetHeight / height.toDouble * width).toInt, targetHeight, Bicubic)
-
-    def scale(scaleFactor: Double): Image = scale(scaleFactor, Bicubic)
+        scaleTo((targetHeight / height.toDouble * width).toInt, targetHeight, scaleMethod)
 
     /**
      *
@@ -290,8 +288,8 @@ class Image(val awt: BufferedImage) {
      *
      * @return a new Image that is the result of scaling this image
      */
-    def scale(scaleFactor: Double, scaleMethod: ScaleMethod): Image =
-        scale((width * scaleFactor).toInt, (height * scaleFactor).toInt, scaleMethod)
+    def scale(scaleFactor: Double, scaleMethod: ScaleMethod = Bicubic): Image =
+        scaleTo((width * scaleFactor).toInt, (height * scaleFactor).toInt, scaleMethod)
 
     val SCALE_THREADS = 2
 
@@ -309,7 +307,7 @@ class Image(val awt: BufferedImage) {
      *
      * @return a new Image that is the result of scaling this image
      */
-    def scale(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): Image = {
+    def scaleTo(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): Image = {
         val op = new ResampleOp(targetWidth, targetHeight)
         op.setNumberOfThreads(SCALE_THREADS)
         scaleMethod match {
@@ -331,25 +329,12 @@ class Image(val awt: BufferedImage) {
      * This overloaded version of resize will resize by a scale factor.
      *
      * @param scaleFactor the scaleFactor. 1 retains original size. 0.5 is half. 2 double. etc
-     *
-     * @return a new Image that is the result of resizing the canvas.
-     */
-    def resize(scaleFactor: Double): Image = resize(scaleFactor, Center)
-
-    /**
-     *
-     * Resize will resize the canvas, it will not scale the image.
-     * This is like a "canvas resize" in Photoshop.
-     *
-     * This overloaded version of resize will resize by a scale factor.
-     *
-     * @param scaleFactor the scaleFactor. 1 retains original size. 0.5 is half. 2 double. etc
      * @param position where to position the original image after the canvas size change
      *
      * @return a new Image that is the result of resizing the canvas.
      */
-    def resize(scaleFactor: Double, position: Position): Image =
-        resize((width * scaleFactor).toInt, (height * scaleFactor).toInt, position)
+    def resize(scaleFactor: Double, position: Position = Center): Image =
+        resizeTo((width * scaleFactor).toInt, (height * scaleFactor).toInt, position)
 
     /**
      *
@@ -365,7 +350,7 @@ class Image(val awt: BufferedImage) {
      *
      * @return a new Image that is the result of resizing the canvas.
      */
-    def resize(targetWidth: Int, targetHeight: Int, position: Position = Center): Image = {
+    def resizeTo(targetWidth: Int, targetHeight: Int, position: Position = Center): Image = {
         val target = Image.empty(targetWidth, targetHeight)
         val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
         g2.drawImage(awt, 0, 0, null)
@@ -386,7 +371,7 @@ class Image(val awt: BufferedImage) {
      *
      * @return A new image that is the result of the padding
      */
-    def pad(size: Int, color: java.awt.Color): Image = pad(width + size * 2, height + size * 2, color)
+    def pad(size: Int, color: java.awt.Color = java.awt.Color.WHITE): Image = padTo(width + size * 2, height + size * 2, color)
 
     /**
      *
@@ -406,7 +391,7 @@ class Image(val awt: BufferedImage) {
      *
      * @return A new image that is the result of the padding
      */
-    def pad(targetWidth: Int, targetHeight: Int, color: java.awt.Color = java.awt.Color.WHITE): Image = {
+    def padTo(targetWidth: Int, targetHeight: Int, color: java.awt.Color = java.awt.Color.WHITE): Image = {
         val w = if (width < targetWidth) targetWidth else width
         val h = if (height < targetHeight) targetHeight else height
         val filled = Image.filled(w, h, color)

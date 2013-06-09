@@ -7,7 +7,7 @@ import java.io.ByteArrayOutputStream
 /** @author Stephen Samuel */
 class JpegWriterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
 
-    val original = Image(getClass.getResourceAsStream("/bird.jpg")).scale(600, 400)
+    val original = Image(getClass.getResourceAsStream("/bird.jpg")).scaleTo(600, 400)
 
     test("jpeg compression happy path") {
         for ( i <- 0 to 100 by 10 ) {

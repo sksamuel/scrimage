@@ -1,7 +1,6 @@
 package com.sksamuel.scrimage
 
 import java.awt.image.BufferedImage
-import java.awt.{Image => AWTImage}
 import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO
 
