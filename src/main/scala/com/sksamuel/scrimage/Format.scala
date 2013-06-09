@@ -23,7 +23,4 @@ object Format {
     case object GIF extends Format[GifWriter] {
         def writer(image: Image) = GifWriter(image)
     }
-    case object TIFF extends Format[TiffWriter] {
-        def writer(image: Image) = TiffWriter(image)
-    }
 }
