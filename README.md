@@ -181,11 +181,11 @@ Maven:
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage</artifactId>
-    <version>0.9.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
 SBT:
 ```scala
-libraryDependencies += "com.sksamuel.scrimage" % "scrimage" % "0.9.0"
+libraryDependencies += "com.sksamuel.scrimage" % "scrimage" % "1.0.1"
 ```
