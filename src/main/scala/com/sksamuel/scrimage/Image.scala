@@ -2,8 +2,7 @@ package com.sksamuel.scrimage
 
 import java.awt.Graphics2D
 import java.awt.geom.AffineTransform
-import java.io.{ByteArrayInputStream, InputStream, OutputStream, File}
-import com.sksamuel.scrimage.Format.PNG
+import java.io.{ByteArrayInputStream, InputStream, File}
 import com.sksamuel.scrimage.ScaleMethod._
 import javax.imageio.ImageIO
 import org.apache.commons.io.{IOUtils, FileUtils}
@@ -22,8 +21,6 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
 
     lazy val width: Int = awt.getWidth(null)
     lazy val height: Int = awt.getHeight(null)
-    lazy val dimensions: (Int, Int) = (width, height)
-    lazy val ratio: Double = if (height == 0) 0 else width / height.toDouble
 
     /**
      * Creates an empty Image with the same dimensions of this image.
@@ -110,13 +107,6 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
         }
     }
 
-    def removeTransparency(color: java.awt.Color): Image = {
-        val rgb = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
-        val g = rgb.createGraphics()
-        g.drawImage(awt, 0, 0, color, null)
-        new Image(rgb)
-    }
-
     /**
      * Creates a copy of this image with the given filter applied.
      * The original (this) image is unchanged.
@@ -129,6 +119,13 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
         val target = copy
         filter.apply(target)
         target
+    }
+
+    def removeTransparency(color: java.awt.Color): Image = {
+        val rgb = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
+        val g = rgb.createGraphics()
+        g.drawImage(awt, 0, 0, color, null)
+        new Image(rgb)
     }
 
     /**
@@ -238,59 +235,6 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
         target
     }
 
-    /**
-     *
-     * Scale will resize the canvas and scale the image to match.
-     * This is like a "image resize" in Photoshop.
-     *
-     * This overloaded version of scale will scale the image so that the new image
-     * has a width that matches the given targetWidth
-     * and the same aspect ratio as the original.
-     *
-     * Eg, an image of 200,300 with a scaleToWidth of 400 will result
-     * in a scaled image of 400,600
-     *
-     * @param targetWidth the target width
-     * @param scaleMethod the type of scaling method to use.
-     *
-     * @return a new Image that is the result of scaling this image
-     */
-    def scaleToWidth(targetWidth: Int, scaleMethod: ScaleMethod = Bicubic): Image =
-        scaleTo(targetWidth, (targetWidth / width.toDouble * height).toInt, scaleMethod)
-
-    /**
-     *
-     * Scale will resize the canvas and scale the image to match.
-     * This is like a "image resize" in Photoshop.
-     *
-     * This overloaded version of scale will scale the image so that the new image
-     * has a height that matches the given targetHeight
-     * and the same aspect ratio as the original.
-     *
-     * Eg, an image of 200,300 with a scaleToHeight of 450 will result
-     * in a scaled image of 300,450
-     *
-     * @param targetHeight the target height
-     * @param scaleMethod the type of scaling method to use.
-     *
-     * @return a new Image that is the result of scaling this image
-     */
-    def scaleToHeight(targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): Image =
-        scaleTo((targetHeight / height.toDouble * width).toInt, targetHeight, scaleMethod)
-
-    /**
-     *
-     * Scale will resize the canvas and the image.
-     * This is like a "image resize" in Photoshop.
-     *
-     * @param scaleFactor the target increase or decrease. 1 is the same as original.
-     * @param scaleMethod the type of scaling method to use.
-     *
-     * @return a new Image that is the result of scaling this image
-     */
-    def scale(scaleFactor: Double, scaleMethod: ScaleMethod = Bicubic): Image =
-        scaleTo((width * scaleFactor).toInt, (height * scaleFactor).toInt, scaleMethod)
-
     val SCALE_THREADS = 2
 
     /**
@@ -326,21 +270,6 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
      * Resize will resize the canvas, it will not scale the image.
      * This is like a "canvas resize" in Photoshop.
      *
-     * This overloaded version of resize will resize by a scale factor.
-     *
-     * @param scaleFactor the scaleFactor. 1 retains original size. 0.5 is half. 2 double. etc
-     * @param position where to position the original image after the canvas size change
-     *
-     * @return a new Image that is the result of resizing the canvas.
-     */
-    def resize(scaleFactor: Double, position: Position = Center): Image =
-        resizeTo((width * scaleFactor).toInt, (height * scaleFactor).toInt, position)
-
-    /**
-     *
-     * Resize will resize the canvas, it will not scale the image.
-     * This is like a "canvas resize" in Photoshop.
-     *
      * If the dimensions are smaller than the current canvas size
      * then the image will be cropped.
      *
@@ -357,12 +286,6 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
         g2.dispose()
         target
     }
-
-    def resizeToHeight(targetHeight: Int, position: Position = Center): Image =
-        resizeTo((targetHeight / height.toDouble * height).toInt, targetHeight, position)
-
-    def resizeToWidth(targetWidth: Int, position: Position = Center): Image =
-        resizeTo(targetWidth, (targetWidth / width.toDouble * height).toInt, position)
 
     /**
      *
@@ -427,25 +350,6 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
 
     def writer[T <: ImageWriter](format: Format[T]): T = format.writer(this)
 
-    def write(path: String) {
-        write(path, Format.PNG)
-    }
-    def write(path: String, format: Format[_ <: ImageWriter]) {
-        write(new File(path), format)
-    }
-    def write(file: File) {
-        write(file, Format.PNG)
-    }
-    def write(file: File, format: Format[_ <: ImageWriter]) {
-        write(FileUtils.openOutputStream(file), format)
-    }
-    def write(out: OutputStream) {
-        write(out, PNG)
-    }
-    def write(out: OutputStream, format: Format[_ <: ImageWriter]) {
-        writer(format).write(out)
-    }
-
     override def hashCode(): Int = awt.hashCode
     override def equals(obj: Any): Boolean = obj match {
         case other: Image => other.pixels.sameElements(pixels)
@@ -472,6 +376,19 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
      * @return
      */
     def toMutable: MutableImage = new MutableImage(copy.awt)
+
+    /**
+     * Creates an AsyncImage instance backed by this image.
+     *
+     * The returned AsyncImage will contain the same backing array
+     * as this image.
+     *
+     * To return back to an image instance use asyncImage.toImage
+     *
+     * @return an AsyncImage wrapping this image.
+     */
+    def toAsync: AsyncImage = AsyncImage(this)
+
 }
 
 object Image {
