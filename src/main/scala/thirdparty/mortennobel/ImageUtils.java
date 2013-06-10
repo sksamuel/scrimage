@@ -16,65 +16,16 @@
  */
 package thirdparty.mortennobel;
 
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.ImageWriter;
-import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.stream.ImageInputStream;
-import javax.imageio.stream.ImageOutputStream;
-import javax.imageio.stream.MemoryCacheImageInputStream;
-import javax.imageio.stream.MemoryCacheImageOutputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
 
 /**
  * @author Heinz Doerr
  * @author Morten Nobel-Joergensen
  */
 public class ImageUtils {
-
-
-    static public String imageTypeName(BufferedImage img) {
-        switch (img.getType()) {
-            case BufferedImage.TYPE_3BYTE_BGR:
-                return "TYPE_3BYTE_BGR";
-            case BufferedImage.TYPE_4BYTE_ABGR:
-                return "TYPE_4BYTE_ABGR";
-            case BufferedImage.TYPE_4BYTE_ABGR_PRE:
-                return "TYPE_4BYTE_ABGR_PRE";
-            case BufferedImage.TYPE_BYTE_BINARY:
-                return "TYPE_BYTE_BINARY";
-            case BufferedImage.TYPE_BYTE_GRAY:
-                return "TYPE_BYTE_GRAY";
-            case BufferedImage.TYPE_BYTE_INDEXED:
-                return "TYPE_BYTE_INDEXED";
-            case BufferedImage.TYPE_CUSTOM:
-                return "TYPE_CUSTOM";
-            case BufferedImage.TYPE_INT_ARGB:
-                return "TYPE_INT_ARGB";
-            case BufferedImage.TYPE_INT_ARGB_PRE:
-                return "TYPE_INT_ARGB_PRE";
-            case BufferedImage.TYPE_INT_BGR:
-                return "TYPE_INT_BGR";
-            case BufferedImage.TYPE_INT_RGB:
-                return "TYPE_INT_RGB";
-            case BufferedImage.TYPE_USHORT_555_RGB:
-                return "TYPE_USHORT_555_RGB";
-            case BufferedImage.TYPE_USHORT_565_RGB:
-                return "TYPE_USHORT_565_RGB";
-            case BufferedImage.TYPE_USHORT_GRAY:
-                return "TYPE_USHORT_GRAY";
-        }
-        return "unknown image type #" + img.getType();
-    }
 
     static public int nrChannels(BufferedImage img) {
         switch (img.getType()) {
@@ -106,17 +57,6 @@ public class ImageUtils {
         return 0;
     }
 
-
-    /**
-     * returns one row (height == 1) of byte packed image data in BGR or AGBR form
-     *
-     * @param img
-     * @param y
-     * @param w
-     * @param array
-     * @param temp  must be either null or a array with length of w*h
-     * @return
-     */
     public static byte[] getPixelsBGR(BufferedImage img, int y, int w, byte[] array, int[] temp) {
         final int x = 0;
         final int h = 1;
@@ -265,49 +205,5 @@ public class ImageUtils {
         g2d.drawImage(src, 0, 0, null);
         g2d.dispose();
         return img;
-    }
-
-    /**
-     * Copy jpeg meta data (exif) from source to dest and save it to out.
-     *
-     * @param source
-     * @param dest
-     * @return result
-     * @throws IOException
-     */
-    public static byte[] copyJpegMetaData(byte[] source, byte[] dest) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ImageOutputStream out = new MemoryCacheImageOutputStream(baos);
-        copyJpegMetaData(new ByteArrayInputStream(source), new ByteArrayInputStream(dest), out);
-        return baos.toByteArray();
-    }
-
-    /**
-     * Copy jpeg meta data (exif) from source to dest and save it to out
-     *
-     * @param source
-     * @param dest
-     * @param out
-     * @throws IOException
-     */
-    public static void copyJpegMetaData(InputStream source, InputStream dest, ImageOutputStream out) throws IOException {
-        // Read meta data from src image
-        Iterator iter = ImageIO.getImageReadersByFormatName("jpeg");
-        ImageReader reader = (ImageReader) iter.next();
-        ImageInputStream iis = new MemoryCacheImageInputStream(source);
-        reader.setInput(iis);
-        IIOMetadata metadata = reader.getImageMetadata(0);
-        iis.close();
-        // Read dest image
-        ImageInputStream outIis = new MemoryCacheImageInputStream(dest);
-        reader.setInput(outIis);
-        IIOImage image = reader.readAll(0, null);
-        image.setMetadata(metadata);
-        outIis.close();
-        // write dest image
-        iter = ImageIO.getImageWritersByFormatName("jpeg");
-        ImageWriter writer = (ImageWriter) iter.next();
-        writer.setOutput(out);
-        writer.write(image);
     }
 }
