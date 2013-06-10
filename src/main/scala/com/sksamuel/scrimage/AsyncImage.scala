@@ -1,30 +1,35 @@
 package com.sksamuel.scrimage
 
+import scala.concurrent._
 import com.sksamuel.scrimage.Position.Center
-import java.awt.Graphics2D
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /** @author Stephen Samuel */
-class AsyncImage(image: Image) {
+class AsyncImage(image: Image) extends ImageLike[Future[Image]] {
 
-    /**
-     *
-     * Resize will resize the canvas, it will not scale the image.
-     * This is like a "canvas resize" in Photoshop.
-     *
-     * If the dimensions are smaller than the current canvas size
-     * then the image will be cropped.
-     *
-     * @param targetWidth the target width
-     * @param targetHeight the target height
-     * @param position where to position the original image after the canvas size change
-     *
-     * @return a new Image that is the result of resizing the canvas.
-     */
-    def resizeTo(targetWidth: Int, targetHeight: Int, position: Position = Center): Image = {
-        val target = Image.empty(targetWidth, targetHeight)
-        val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
-        g2.drawImage(image.awt, 0, 0, null)
-        g2.dispose()
-        target
+    def scale(scaleFactor: Double, scaleMethod: ScaleMethod): Future[Image] = future {
+        image.scale(scaleFactor, scaleMethod)
+    }
+    def scaleTo(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod): Future[Image] = future {
+        image.scaleTo(targetWidth, targetHeight, scaleMethod)
+    }
+    def scaleToWidth(targetWidth: Int, scaleMethod: ScaleMethod): Future[Image] = future {
+        image.scaleToWidth(targetWidth, scaleMethod)
+    }
+    def scaleToHeight(targetHeight: Int, scaleMethod: ScaleMethod): Future[Image] = future {
+        image.scaleToHeight(targetHeight, scaleMethod)
+    }
+
+    def resize(scaleFactor: Double, position: Position = Center): Future[Image] = future {
+        image.resize(scaleFactor, position)
+    }
+    def resizeTo(targetWidth: Int, targetHeight: Int, position: Position = Center): Future[Image] = future {
+        image.resizeTo(targetWidth, targetHeight, position)
+    }
+    def resizeToHeight(targetHeight: Int, position: Position = Center): Future[Image] = future {
+        image.resizeToHeight(targetHeight, position)
+    }
+    def resizeToWidth(targetWidth: Int, position: Position = Center): Future[Image] = future {
+        image.resizeToWidth(targetWidth, position)
     }
 }

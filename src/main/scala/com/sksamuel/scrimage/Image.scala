@@ -16,8 +16,8 @@ import com.sksamuel.scrimage.io.ImageWriter
   *
   *         RichImage is class that represents an in memory image.
   *
-  **/
-class Image(val awt: BufferedImage) {
+  * */
+class Image(val awt: BufferedImage) extends ImageLike[Image] {
     require(awt != null, "Wrapping image cannot be null")
 
     lazy val width: Int = awt.getWidth(null)
@@ -357,6 +357,12 @@ class Image(val awt: BufferedImage) {
         g2.dispose()
         target
     }
+
+    def resizeToHeight(targetHeight: Int, position: Position = Center): Image =
+        resizeTo((targetHeight / height.toDouble * height).toInt, targetHeight, position)
+
+    def resizeToWidth(targetWidth: Int, position: Position = Center): Image =
+        resizeTo(targetWidth, (targetWidth / width.toDouble * height).toInt, position)
 
     /**
      *
