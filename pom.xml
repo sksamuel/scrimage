@@ -122,16 +122,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpcore</artifactId>
-                <version>${commons.httpcore.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpclient</artifactId>
-                <version>${commons.httpclient.version}</version>
-            </dependency>
             <!-- TESTING -->
             <dependency>
                 <groupId>junit</groupId>
