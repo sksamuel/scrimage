@@ -10,6 +10,7 @@ import thirdparty.pngtastic.{PngOptimizer, PngImage}
 /** @author Stephen Samuel */
 class PngWriter(image: Image, compressionLevel: Int) extends ImageWriter {
 
+    def withMaxCompression = withCompression(9)
     def withCompression(compressionLevel: Int): PngWriter = new PngWriter(image, compressionLevel)
 
     def write(out: OutputStream) {

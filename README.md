@@ -90,6 +90,7 @@ val image = Image(in)
 println(s"Width: ${image.width} Height: ${image.height} Ratio: ${image.ratio}")
 ```
 
+
 ### Input / Output
 
 Scrimage supports loading and saving of images in the common web formats (currently png, jpeg, gif). In addition it extends jav'sa image.io support by giving you an easy way to compress / optimize / interlace the images when saving.
@@ -114,6 +115,33 @@ val image = ... // some image
 image.writer(Format.PNG).withCompression(9).write(new File("/home/sam/compressed_spahgetti.png"))
 ```
 Note the writers are immutable and are created per image.
+
+
+### Async (1.1.0+)
+
+In version 1.1.0 support for asynchronous operations was added. This is achieved using the AsyncImage class. First, get an instance of AsyncImage from an Image or other source:
+
+```scala
+val in = ... // input stream
+val a = AsyncImage(in)
+```
+
+Then any operations that act on that image return a Future[Image] instead of a standard Image. They will operate on the scala.concurrent implicit execution context.
+
+```scala
+... given an async image
+val filtered = a.filter(ContourFilter).filter(VintageFilter) // filterd has type Future[Image]
+```
+
+A more complicated example would be to load all images instead a directory, apply a grayscale filter, and then re-save them out as optimized PNGs.
+
+```scala
+val dir = new File("/home/sam/images")
+dir.listFiles().foreach(file => AsyncImage(file).filter(GrayscaleFilter).onSuccess {
+case image => image.writer(Format.PNG).withMaxCompression.write(file)
+})
+```
+
 
 ### Filters
 

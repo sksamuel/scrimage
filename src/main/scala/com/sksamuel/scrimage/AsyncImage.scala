@@ -6,6 +6,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import java.awt.Color
 import com.sksamuel.scrimage.io.ImageWriter
 import com.sksamuel.scrimage.ScaleMethod.Bicubic
+import java.io.{InputStream, File}
 
 /** @author Stephen Samuel */
 class AsyncImage(image: Image) extends ImageLike[Future[Image]] {
@@ -47,5 +48,9 @@ class AsyncImage(image: Image) extends ImageLike[Future[Image]] {
 }
 
 object AsyncImage {
+
+    def apply(bytes: Array[Byte]): AsyncImage = Image(bytes).toAsync
+    def apply(in: InputStream): AsyncImage = Image(in).toAsync
+    def apply(file: File): AsyncImage = Image(file).toAsync
     def apply(image: Image) = new AsyncImage(image)
 }
