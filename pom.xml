@@ -89,28 +89,9 @@
         <compiler.version.source>1.7</compiler.version.source>
         <compiler.version.target>1.7</compiler.version.target>
 
-
-        <commons.httpcore.version>4.2.1</commons.httpcore.version>
-        <commons.httpclient.version>4.2.1</commons.httpclient.version>
-        <commons.lang.version>2.6</commons.lang.version>
-        <commons.dbcp.version>1.4</commons.dbcp.version>
         <commons.io.version>2.4</commons.io.version>
-        <commons.collections.version>3.2.1</commons.collections.version>
-        <commons.logging.version>1.1.1</commons.logging.version>
         <commons.beanutils.version>1.8.3</commons.beanutils.version>
-        <commons.fileupload.version>1.3</commons.fileupload.version>
         <commons.sanselan.version>0.97-incubator</commons.sanselan.version>
-        <commons.validator.version>1.4.0</commons.validator.version>
-
-
-        <javax.servlet.version>2.5</javax.servlet.version>
-        <javax.jsp.version>2.1</javax.jsp.version>
-
-        <javax.jaxb.version>2.2.5</javax.jaxb.version>
-        <javax.validation.version>1.0.0.GA</javax.validation.version>
-        <javax.jms.version>1.1</javax.jms.version>
-
-        <jodatime.version>1.4</jodatime.version>
 
         <junit.version>4.11</junit.version>
         <log4j.version>1.2.17</log4j.version>

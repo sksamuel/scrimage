@@ -31,12 +31,14 @@ import com.sksamuel.scrimage.io.ImageWriter
   *
   *         RichImage is class that represents an in memory image.
   *
-  * */
+  **/
 class Image(val awt: BufferedImage) extends ImageLike[Image] {
     require(awt != null, "Wrapping image cannot be null")
 
     lazy val width: Int = awt.getWidth(null)
     lazy val height: Int = awt.getHeight(null)
+    lazy val center: (Int, Int) = (width / 2, height / 2)
+    lazy val radius: Int = Math.sqrt(Math.pow(width / 2.0, 2) + Math.pow(height / 2.0, 2)).toInt
 
     /**
      * Creates an empty Image with the same dimensions of this image.
