@@ -31,7 +31,7 @@ import com.sksamuel.scrimage.io.ImageWriter
   *
   *         RichImage is class that represents an in memory image.
   *
-  **/
+  * */
 class Image(val awt: BufferedImage) extends ImageLike[Image] {
     require(awt != null, "Wrapping image cannot be null")
     val SCALE_THREADS = Runtime.getRuntime.availableProcessors()
@@ -41,21 +41,18 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
     lazy val center: (Int, Int) = (width / 2, height / 2)
     lazy val radius: Int = Math.sqrt(Math.pow(width / 2.0, 2) + Math.pow(height / 2.0, 2)).toInt
 
-    /**
-     * Creates an empty Image with the same dimensions of this image.
-     *
-     * @return a new Image that is a clone of this image but with uninitialized data
-     */
-    def empty: Image = Image.empty(width, height)
+    override def empty: Image = Image.empty(width, height)
+    override def copy = Image._copy(awt)
 
-    /**
-     * Creates a new image with the same data as this image.
-     * Any operations to the copied image will not write back to the original.
-     * Images can be copied multiple times as well as copies copied etc.
-     *
-     * @return A copy of this image.
-     */
-    def copy = Image._copy(awt)
+    override def map(f: (Int, Int, Int) => Int): Image = {
+        val target = copy
+        points.foreach(p => target.awt.setRGB(p._1, p._2, f(p._1, p._2, target.awt.getRGB(p._1, p._2))))
+        target
+    }
+
+    override def foreach(f: (Int, Int, Int) => Unit) {
+        points.foreach(p => f(p._1, p._2, awt.getRGB(p._1, p._2)))
+    }
 
     // replace this image's AWT data by drawing the given BufferedImage over the top
     def _draw(target: BufferedImage) {
@@ -292,27 +289,6 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
                 Image(scaled)
         }
 
-    }
-
-    lazy val points = for ( x <- 0 to width; y <- 0 to height ) yield (x, y)
-
-    /**
-     * Maps the pixels of this image into another image by applying the given function to each point.
-     *
-     * The function accepts three parameters: x,y,p where x and y are the coordinates of the pixel
-     * being transformed and p is the current pixel value in ABGR format.
-     *
-     * @param f the function to transform pixel x,y with existing value p into a new pixel p'
-     * @return
-     */
-    def map(f: (Int, Int, Int) => Int): Image = {
-        val target = copy
-        points.foreach(p => target.awt.setRGB(p._1, p._2, f(p._1, p._2, target.awt.getRGB(p._1, p._2))))
-        target
-    }
-
-    def foreach(f: (Int, Int, Int) => Unit) {
-        points.foreach(p => f(p._1, p._2, awt.getRGB(p._1, p._2)))
     }
 
     /**

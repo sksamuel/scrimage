@@ -27,6 +27,17 @@ import java.io.{InputStream, File}
 /** @author Stephen Samuel */
 class AsyncImage(image: Image) extends ImageLike[Future[Image]] {
 
+    override def empty = image.empty
+    override def copy = image.copy
+
+    override def map(f: (Int, Int, Int) => Int): Future[Image] = future {
+        image.map(f)
+    }
+
+    def foreach(f: (Int, Int, Int) => Unit) {
+        image.foreach(f)
+    }
+
     def fit(targetWidth: Int, targetHeight: Int, color: Color, scaleMethod: ScaleMethod, position: Position): Future[Image] = future {
         image.fit(targetWidth, targetHeight, color, scaleMethod, position)
     }

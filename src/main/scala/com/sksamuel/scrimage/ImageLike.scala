@@ -29,11 +29,41 @@ trait ImageLike[R] {
     def width: Int
     def height: Int
     def dimensions: (Int, Int) = (width, height)
+    lazy val points: Seq[(Int, Int)] = for ( x <- 0 until width; y <- 0 until height ) yield (x, y)
+
+    /**
+     * Creates an empty Image with the same dimensions of this image.
+     *
+     * @return a new Image that is a clone of this image but with uninitialized data
+     */
+    def empty: Image
+
+    /**
+     * Creates a new image with the same data as this image.
+     * Any operations to the copied image will not write back to the original.
+     * Images can be copied multiple times as well as copies copied etc.
+     *
+     * @return A copy of this image.
+     */
+    def copy: Image
 
     /**
      * @return Returns the ratio for this image.
      */
     def ratio: Double = if (height == 0) 0 else width / height.toDouble
+
+    /**
+     * Maps the pixels of this image into another image by applying the given function to each point.
+     *
+     * The function accepts three parameters: x,y,p where x and y are the coordinates of the pixel
+     * being transformed and p is the current pixel value in ABGR format.
+     *
+     * @param f the function to transform pixel x,y with existing value p into a new pixel p'
+     * @return
+     */
+    def map(f: (Int, Int, Int) => Int): R
+
+    def foreach(f: (Int, Int, Int) => Unit)
 
     /**
      * Creates a copy of this image with the given filter applied.
