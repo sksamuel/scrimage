@@ -16,7 +16,7 @@
 
 package com.sksamuel.scrimage
 
-import java.awt.Graphics2D
+import java.awt.{RenderingHints, Graphics2D}
 import java.awt.geom.AffineTransform
 import java.io.{ByteArrayInputStream, InputStream, File}
 import com.sksamuel.scrimage.ScaleMethod._
@@ -31,7 +31,7 @@ import com.sksamuel.scrimage.io.ImageWriter
   *
   *         RichImage is class that represents an in memory image.
   *
-  **/
+  * */
 class Image(val awt: BufferedImage) extends ImageLike[Image] {
     require(awt != null, "Wrapping image cannot be null")
     val SCALE_THREADS = Runtime.getRuntime.availableProcessors()
@@ -269,17 +269,29 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
      * @return a new Image that is the result of scaling this image
      */
     def scaleTo(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): Image = {
-        val op = new ResampleOp(targetWidth, targetHeight)
-        op.setNumberOfThreads(SCALE_THREADS)
+
         scaleMethod match {
             case FastScale =>
-            case Bicubic => op.setFilter(ResampleFilters.getBiCubicFilter)
-            case Bilinear => op.setFilter(ResampleFilters.getTriangleFilter)
-            case BSpline => op.setFilter(ResampleFilters.getBSplineFilter)
-            case Lanczos3 => op.setFilter(ResampleFilters.getLanczos3Filter)
+                val target = Image.empty(targetWidth, targetHeight)
+                val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
+                g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR)
+                g2.drawImage(awt, 0, 0, targetWidth, targetHeight, null)
+                g2.dispose()
+                target
+            case _ =>
+                val op = new ResampleOp(targetWidth, targetHeight)
+                op.setNumberOfThreads(SCALE_THREADS)
+                scaleMethod match {
+                    case Bicubic => op.setFilter(ResampleFilters.getBiCubicFilter)
+                    case Bilinear => op.setFilter(ResampleFilters.getTriangleFilter)
+                    case BSpline => op.setFilter(ResampleFilters.getBSplineFilter)
+                    case Lanczos3 => op.setFilter(ResampleFilters.getLanczos3Filter)
+                    case _ =>
+                }
+                val scaled = op.filter(awt, null)
+                Image(scaled)
         }
-        val scaled = op.filter(awt, null)
-        Image(scaled)
+
     }
 
     /**
