@@ -294,6 +294,20 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
 
     }
 
+    lazy val points = for ( x <- 0 to width; y <- 0 to height ) yield (x, y)
+
+    /**
+     * Maps the pixels of this image into another image by applying the given function to each point.
+     *
+     * @param f the function to transform pixel value p, at point x,y into a new pixel p'
+     * @return
+     */
+    def map(f: (Int, Int, Int) => Int): Image = {
+        val target = copy
+        points.foreach(p => target.awt.setRGB(p._1, p._2, f(p._1, p._2, target.awt.getRGB(p._1, p._2))))
+        target
+    }
+
     /**
      *
      * Resize will resize the canvas, it will not scale the image.
