@@ -34,6 +34,7 @@ import com.sksamuel.scrimage.io.ImageWriter
   **/
 class Image(val awt: BufferedImage) extends ImageLike[Image] {
     require(awt != null, "Wrapping image cannot be null")
+    val SCALE_THREADS = Runtime.getRuntime.availableProcessors()
 
     lazy val width: Int = awt.getWidth(null)
     lazy val height: Int = awt.getHeight(null)
@@ -252,8 +253,6 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
         g2.dispose()
         target
     }
-
-    val SCALE_THREADS = 2
 
     /**
      *
