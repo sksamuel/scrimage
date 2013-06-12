@@ -55,6 +55,7 @@ object ExampleGenerator extends App {
         ("threshold", ThresholdFilter(127)),
         ("twirl", TwirlFilter(75)),
         ("unsharp", UnsharpFilter()),
+        ("vignette", VignetteFilter()),
         ("vintage", VintageFilter))
 
     val sb = new StringBuffer()
