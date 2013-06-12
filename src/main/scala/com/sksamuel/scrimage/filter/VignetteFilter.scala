@@ -44,9 +44,6 @@ class VignetteFilter(start: Double, end: Double, blur: Double) extends Filter {
 
         g2.setComposite(BlendComposite.Multiply)
         g2.drawImage(image.awt, 0, 0, null)
-
-        blend.write("vignette.png")
-
     }
 }
 
