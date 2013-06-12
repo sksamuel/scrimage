@@ -117,7 +117,7 @@ image.writer(Format.PNG).withCompression(9).write(new File("/home/sam/compressed
 Note the writers are immutable and are created per image.
 
 
-### Async (1.1.0+)
+### Async
 
 In version 1.1.0 support for asynchronous operations was added. This is achieved using the AsyncImage class. First, get an instance of AsyncImage from an Image or other source:
 
@@ -203,7 +203,11 @@ Click on the small images to see an enlarged example.
 
 ### Benchmarks
 
-Some noddy benchmarks comparing the speed of rescaling an image. I've compared the basic getScaledInstance method in java.awt.Image with ImgScalr and Scrimage. ImgScalr delegates to awt.Graphics2D for its rendering. Scrimage adapts the methods implemented by Morten Nobel. The code is inside src/test/scala/com/sksamuel/scrimage/ScalingBenchmark.scala. The results are for 100 runs of a resize to a fixed width / height.
+Some noddy benchmarks comparing the speed of rescaling an image. I've compared the basic getScaledInstance method in java.awt.Image with ImgScalr and Scrimage. ImgScalr delegates to awt.Graphics2D for its rendering. Scrimage adapts the methods implemented by Morten Nobel.
+
+The code is inside src/test/scala/com/sksamuel/scrimage/ScalingBenchmark.scala.
+
+The results are for 100 runs of a resize to a fixed width / height.
 
 | Library | Fast | High Quality (Method) |
 | --------- | --------- | --------- |
@@ -224,11 +228,11 @@ Maven:
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage</artifactId>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
 SBT:
 ```scala
-libraryDependencies += "com.sksamuel.scrimage" % "scrimage" % "1.0.1"
+libraryDependencies += "com.sksamuel.scrimage" % "scrimage" % "1.1.0"
 ```
