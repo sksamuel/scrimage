@@ -31,7 +31,7 @@ import com.sksamuel.scrimage.io.ImageWriter
   *
   *         RichImage is class that represents an in memory image.
   *
-  * */
+  **/
 class Image(val awt: BufferedImage) extends ImageLike[Image] {
     require(awt != null, "Wrapping image cannot be null")
     val SCALE_THREADS = Runtime.getRuntime.availableProcessors()
@@ -299,13 +299,20 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
     /**
      * Maps the pixels of this image into another image by applying the given function to each point.
      *
-     * @param f the function to transform pixel value p, at point x,y into a new pixel p'
+     * The function accepts three parameters: x,y,p where x and y are the coordinates of the pixel
+     * being transformed and p is the current pixel value in ABGR format.
+     *
+     * @param f the function to transform pixel x,y with existing value p into a new pixel p'
      * @return
      */
     def map(f: (Int, Int, Int) => Int): Image = {
         val target = copy
         points.foreach(p => target.awt.setRGB(p._1, p._2, f(p._1, p._2, target.awt.getRGB(p._1, p._2))))
         target
+    }
+
+    def foreach(f: (Int, Int, Int) => Unit) {
+        points.foreach(p => f(p._1, p._2, awt.getRGB(p._1, p._2)))
     }
 
     /**
