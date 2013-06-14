@@ -267,11 +267,53 @@ class ImageTest extends FunSuite with BeforeAndAfter {
         assert(66 === covered.height)
     }
 
-    test("components returns array of ARGB bytes") {
+    test("argb returns array of ARGB bytes") {
         val image = Image.filled(20, 20, Color.YELLOW)
         val components = image.argb
         assert(400 === components.size)
         for ( component <- components )
             assert(component === Array(255, 255, 255, 0))
+    }
+
+    test("rgb returns array of RGB bytes") {
+        val image = Image.filled(20, 20, Color.YELLOW)
+        val components = image.rgb
+        assert(400 === components.size)
+        for ( component <- components )
+            assert(component === Array(255, 255, 0))
+    }
+
+    test("argb pixel returns an array for the ARGB components") {
+        val image = Image.filled(20, 20, Color.YELLOW)
+        val rgb = image.argb(10, 10)
+        assert(rgb === Array(255, 255, 255, 0))
+    }
+
+    test("rgb pixel returns an array for the RGB components") {
+        val image = Image.filled(20, 20, Color.YELLOW)
+        val argb = image.rgb(10, 10)
+        assert(argb === Array(255, 255, 0))
+    }
+
+    test("pixel coordinate returns an ARGB integer for the pixel at that coordinate") {
+        val image = Image.filled(20, 20, Color.YELLOW)
+        val pixel = image.pixel(10, 10)
+        assert(0xFFFFFF00 === pixel)
+    }
+
+    test("foreach accesses to each pixel") {
+        val image = Image.empty(100, 100)
+        var count = 0
+        image.foreach((_, _, _) => count = count + 1)
+        assert(10000 === count)
+    }
+
+
+
+    test("map modifies each pixel and returns new image") {
+        val image = Image.empty(100, 100)
+        val mapped = image.map((_, _, _) => 0xFF00FF00)
+        for ( component <- mapped.argb )
+            assert(component === Array(255, 0, 255, 0))
     }
 }

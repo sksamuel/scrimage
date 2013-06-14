@@ -25,29 +25,34 @@ import com.sksamuel.scrimage.ScaleMethod.Bicubic
 import java.io.{InputStream, File}
 
 /** @author Stephen Samuel */
-class AsyncImage(image: Image) extends ImageLike[Future[Image]] {
+class AsyncImage(image: Image) extends ImageLike[Future[AsyncImage]] {
 
     override def empty = image.empty
     override def copy = image.copy
+    override def pixels: Array[Int] = image.pixels
 
-    override def map(f: (Int, Int, Int) => Int): Future[Image] = future {
-        image.map(f)
+    override def map(f: (Int, Int, Int) => Int): Future[AsyncImage] = future {
+        AsyncImage(image.map(f))
     }
 
     def foreach(f: (Int, Int, Int) => Unit) {
         image.foreach(f)
     }
 
-    def fit(targetWidth: Int, targetHeight: Int, color: Color, scaleMethod: ScaleMethod, position: Position): Future[Image] = future {
-        image.fit(targetWidth, targetHeight, color, scaleMethod, position)
+    def fit(targetWidth: Int,
+            targetHeight: Int,
+            color: Color = Color.WHITE,
+            scaleMethod: ScaleMethod = Bicubic,
+            position: Position = Position.Center): Future[AsyncImage] = future {
+        AsyncImage(image.fit(targetWidth, targetHeight, color, scaleMethod, position))
     }
 
-    def resizeTo(targetWidth: Int, targetHeight: Int, position: Position = Center): Future[Image] = future {
-        image.resizeTo(targetWidth, targetHeight, position)
+    def resizeTo(targetWidth: Int, targetHeight: Int, position: Position = Center): Future[AsyncImage] = future {
+        AsyncImage(image.resizeTo(targetWidth, targetHeight, position))
     }
 
-    def scaleTo(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): Future[Image] = future {
-        image.scaleTo(targetWidth, targetHeight, scaleMethod)
+    def scaleTo(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): Future[AsyncImage] = future {
+        AsyncImage(image.scaleTo(targetWidth, targetHeight, scaleMethod))
     }
 
     /**
@@ -58,8 +63,8 @@ class AsyncImage(image: Image) extends ImageLike[Future[Image]] {
      *
      * @return A new image with the given filter applied.
      */
-    def filter(filter: Filter): Future[Image] = future {
-        image.filter(filter)
+    def filter(filter: Filter): Future[AsyncImage] = future {
+        AsyncImage(image.filter(filter))
     }
 
     /**

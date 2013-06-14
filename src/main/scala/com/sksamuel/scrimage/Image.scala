@@ -33,7 +33,7 @@ import com.sksamuel.scrimage.PixelTools._
   *
   *         RichImage is class that represents an in memory image.
   *
-  **/
+  * */
 class Image(val awt: BufferedImage) extends ImageLike[Image] {
     require(awt != null, "Wrapping image cannot be null")
     val SCALE_THREADS = Runtime.getRuntime.availableProcessors()
@@ -410,10 +410,6 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
     def writer[T <: ImageWriter](format: Format[T]): T = format.writer(this)
 
     override def hashCode(): Int = awt.hashCode
-    override def equals(obj: Any): Boolean = obj match {
-        case other: Image => other.pixels.sameElements(pixels)
-        case _ => false
-    }
 
     // -- mutable operations -- //
 

@@ -209,4 +209,11 @@ trait ImageLike[R] {
     def write(out: OutputStream, format: Format[_ <: ImageWriter]) {
         writer(format).write(out)
     }
+
+    def pixels: Array[Int]
+
+    override def equals(obj: Any): Boolean = obj match {
+        case other: ImageLike[_] => other.pixels.sameElements(pixels)
+        case _ => false
+    }
 }
