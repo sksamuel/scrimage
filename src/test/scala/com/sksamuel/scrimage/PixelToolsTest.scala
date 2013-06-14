@@ -7,6 +7,8 @@ import java.awt.Color
 class PixelToolsTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
 
     val white = 0xFFFFFFFF
+    val yellow = 0xFFFFFF00
+    val pink = 0xFFFFAFAF
 
     test("non transparent alpha component") {
         assert(white === Color.WHITE.getRGB)
@@ -18,17 +20,20 @@ class PixelToolsTest extends FunSuite with BeforeAndAfter with OneInstancePerTes
     }
 
     test("red component") {
-        assert(white === Color.WHITE.getRGB)
-        assert(PixelTools.red(white) === 255)
+        assert(pink === Color.PINK.getRGB)
+        assert(PixelTools.red(yellow) === 255)
+        assert(PixelTools.red(pink) === 255)
     }
 
     test("blue component") {
-        assert(white === Color.WHITE.getRGB)
-        assert(PixelTools.blue(white) === 255)
+        assert(pink === Color.PINK.getRGB)
+        assert(PixelTools.blue(yellow) === 0)
+        assert(PixelTools.blue(pink) === 175)
     }
 
     test("green component") {
-        assert(white === Color.WHITE.getRGB)
-        assert(PixelTools.green(white) === 255)
+        assert(yellow === Color.YELLOW.getRGB)
+        assert(PixelTools.green(yellow) === 255)
+        assert(PixelTools.green(pink) === 175)
     }
 }
