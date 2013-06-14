@@ -34,6 +34,8 @@ object ExampleGenerator extends App {
         ("lensflare", LensFlareFilter),
         ("minimum", MinimumFilter),
         ("maximum", MaximumFilter),
+        ("motionblur", MotionBlurFilter(Math.PI / 3.0, 20)),
+        ("noise", NoiseFilter()),
         ("offset", OffsetFilter(60, 40)),
         ("oil", OilFilter()),
         ("pixelate", PixelateFilter(4)),
