@@ -8,23 +8,27 @@ class PixelToolsTest extends FunSuite with BeforeAndAfter with OneInstancePerTes
 
     val white = 0xFFFFFFFF
 
-    test("alpha component") {
+    test("non transparent alpha component") {
         assert(white === Color.WHITE.getRGB)
-        assert(PixelTools.alpha(white) === Color.WHITE.getAlpha.toByte)
+        assert(PixelTools.alpha(white) === 255)
+    }
+
+    test("transparent alpha component") {
+        assert(PixelTools.alpha(0xDD001122) === 221)
     }
 
     test("red component") {
         assert(white === Color.WHITE.getRGB)
-        assert(PixelTools.red(white) === Color.RED.getRed.toByte)
+        assert(PixelTools.red(white) === 255)
     }
 
     test("blue component") {
         assert(white === Color.WHITE.getRGB)
-        assert(PixelTools.blue(white) === Color.BLUE.getBlue.toByte)
+        assert(PixelTools.blue(white) === 255)
     }
 
     test("green component") {
         assert(white === Color.WHITE.getRGB)
-        assert(PixelTools.green(white) === Color.GREEN.getGreen.toByte)
+        assert(PixelTools.green(white) === 255)
     }
 }

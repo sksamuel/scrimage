@@ -33,7 +33,7 @@ import com.sksamuel.scrimage.PixelTools._
   *
   *         RichImage is class that represents an in memory image.
   *
-  * */
+  **/
 class Image(val awt: BufferedImage) extends ImageLike[Image] {
     require(awt != null, "Wrapping image cannot be null")
     val SCALE_THREADS = Runtime.getRuntime.availableProcessors()
@@ -99,9 +99,8 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
      *
      * @return an array containing ARGB components in that order.
      */
-    def components(x: Int, y: Int): Array[Byte] = {
+    def argb(x: Int, y: Int): Array[Int] = {
         val p = pixel(x, y)
-        import PixelTools._
         Array(alpha(p), red(p), green(p), blue(p))
     }
 
@@ -110,8 +109,17 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
      *
      * @return an array containing ARGB components in that order.
      */
-    def components: Array[Array[Byte]] = {
+    def argb: Array[Array[Int]] = {
         pixels.map(p => Array(alpha(p), red(p), green(p), blue(p)))
+    }
+
+    def rgb(x: Int, y: Int): Array[Int] = {
+        val p = pixel(x, y)
+        Array(red(p), green(p), blue(p))
+    }
+
+    def rgb: Array[Array[Int]] = {
+        pixels.map(p => Array(red(p), green(p), blue(p)))
     }
 
     /**

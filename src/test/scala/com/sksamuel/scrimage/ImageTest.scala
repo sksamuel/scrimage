@@ -269,7 +269,7 @@ class ImageTest extends FunSuite with BeforeAndAfter {
 
     test("components returns array of ARGB bytes") {
         val image = Image.filled(20, 20, Color.YELLOW)
-        val components = image.components
+        val components = image.argb
         assert(400 === components.size)
         for ( component <- components )
             assert(component === Array[Byte](255.toByte, 255.toByte, 255.toByte, 0))

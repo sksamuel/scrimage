@@ -3,8 +3,8 @@ package com.sksamuel.scrimage
 /** @author Stephen Samuel */
 object PixelTools {
 
-    def alpha(pixel: Int): Byte = (pixel >> 24 & 0xFF).toByte
-    def red(pixel: Int): Byte = (pixel >> 16 & 0xFF).toByte
-    def green(pixel: Int): Byte = (pixel >> 8 & 0xFF).toByte
-    def blue(pixel: Int): Byte = (pixel & 0xFF).toByte
+    def alpha(pixel: Int): Int = pixel >> 24 & 0xFF
+    def red(pixel: Int): Int = pixel >> 16 & 0xFF
+    def green(pixel: Int): Int = pixel >> 8 & 0xFF
+    def blue(pixel: Int): Int = pixel & 0xFF
 }
