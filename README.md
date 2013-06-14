@@ -93,7 +93,7 @@ println(s"Width: ${image.width} Height: ${image.height} Ratio: ${image.ratio}")
 
 ### Input / Output
 
-Scrimage supports loading and saving of images in the common web formats (currently png, jpeg, gif). In addition it extends jav'sa image.io support by giving you an easy way to compress / optimize / interlace the images when saving.
+Scrimage supports loading and saving of images in the common web formats (currently png, jpeg, gif, tiff). In addition it extends jav'sa image.io support by giving you an easy way to compress / optimize / interlace the images when saving.
 
 To load an image simply use the Image apply methods on an input stream, file, filepath (String) or a byte array. The format does not matter as the underlying reader will determine that. Eg, 
 ```scala
