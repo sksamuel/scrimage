@@ -3,6 +3,7 @@ package com.sksamuel.scrimage
 import org.scalatest.{BeforeAndAfter, FunSuite}
 import java.awt.image.BufferedImage
 import com.sksamuel.scrimage.filter.BlurFilter
+import java.awt.Color
 
 /** @author Stephen Samuel */
 class ImageTest extends FunSuite with BeforeAndAfter {
@@ -36,7 +37,6 @@ class ImageTest extends FunSuite with BeforeAndAfter {
         val flipped = image.filter(BlurFilter)
         assert(!flipped.eq(image))
     }
-
 
     test("when scaling by pixels then the output image has the given dimensions") {
         val scaled = image.scaleTo(40, 50)
@@ -265,5 +265,13 @@ class ImageTest extends FunSuite with BeforeAndAfter {
         val covered = image.cover(51, 66)
         assert(51 === covered.width)
         assert(66 === covered.height)
+    }
+
+    test("components returns array of ARGB bytes") {
+        val image = Image.filled(20, 20, Color.YELLOW)
+        val components = image.components
+        assert(400 === components.size)
+        for ( component <- components )
+            assert(component === Array[Byte](255.toByte, 255.toByte, 255.toByte, 0))
     }
 }

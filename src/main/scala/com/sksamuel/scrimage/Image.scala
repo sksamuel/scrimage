@@ -26,6 +26,8 @@ import java.awt.image.{DataBufferInt, AffineTransformOp, BufferedImage}
 import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.io.ImageWriter
+import scala.Array
+import com.sksamuel.scrimage.PixelTools._
 
 /** @author Stephen Samuel
   *
@@ -87,6 +89,29 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
             //                alpha << 24 | red << 16 | green << 8 | blue << 0
             case _ => throw new UnsupportedOperationException
         }
+    }
+
+    /**
+     * Returns the ARGB components for the pixel at the given coordinates
+     *
+     * @param x the x coordinate of the pixel component to grab
+     * @param y the y coordinate of the pixel component to grab
+     *
+     * @return an array containing ARGB components in that order.
+     */
+    def components(x: Int, y: Int): Array[Byte] = {
+        val p = pixel(x, y)
+        import PixelTools._
+        Array(alpha(p), red(p), green(p), blue(p))
+    }
+
+    /**
+     * Returns the ARGB components for all pixels in this image
+     *
+     * @return an array containing ARGB components in that order.
+     */
+    def components: Array[Array[Byte]] = {
+        pixels.map(p => Array(alpha(p), red(p), green(p), blue(p)))
     }
 
     /**
