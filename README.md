@@ -130,7 +130,7 @@ Then any operations that act on that image return a Future[Image] instead of a s
 
 ```scala
 ... given an async image
-val filtered = a.filter(ContourFilter).filter(VintageFilter) // filterd has type Future[Image]
+val filtered = a.filter(VintageFilter) // filtered has type Future[Image]
 ```
 
 A more complicated example would be to load all images instead a directory, apply a grayscale filter, and then re-save them out as optimized PNGs.
