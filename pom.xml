@@ -12,7 +12,7 @@
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage</artifactId>
     <packaging>jar</packaging>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>1.2.1</version>
     <name>Scrimage</name>
     <description>A scala library for image manipulation and processing.</description>
     <url>https://github.com/sksamuel/scrimage</url>
@@ -287,6 +287,7 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
         </dependency>
+
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
@@ -303,6 +304,11 @@
             <artifactId>imgscalr-lib</artifactId>
             <version>4.2</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sanselan</groupId>
+            <artifactId>sanselan</artifactId>
+            <version>0.97-incubator</version>
         </dependency>
     </dependencies>
 
