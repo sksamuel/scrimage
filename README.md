@@ -223,9 +223,9 @@ As you can see, ImgScalr is the fastest for simple rescaling, but Scrimage is mu
 
 
 
-### How to use
+### Including Scrimage in your project
 
-Scrimage is available on maven central.
+Scrimage is available on maven central. Add the dependency to your pom.xml:
 
 Maven:
 ```xml
@@ -236,7 +236,7 @@ Maven:
 </dependency>
 ```
 
-SBT:
+If using SBT then you want:
 ```scala
 libraryDependencies += "com.sksamuel.scrimage" % "scrimage" % "1.2.1"
 ```

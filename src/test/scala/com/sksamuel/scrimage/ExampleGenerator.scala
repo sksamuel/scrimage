@@ -13,6 +13,7 @@ object ExampleGenerator extends App {
 
     val filters: List[(String, Filter)] = List(
         ("blur", BlurFilter),
+        ("border", BorderFilter(8)),
         ("brightness", BrightnessFilter(1.3f)),
         ("bump", BumpFilter),
         ("chrome", ChromeFilter()),
