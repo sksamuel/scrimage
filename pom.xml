@@ -12,7 +12,7 @@
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage</artifactId>
     <packaging>jar</packaging>
-    <version>1.2.3</version>
+    <version>1.2.4</version>
     <name>Scrimage</name>
     <description>A scala library for image manipulation and processing.</description>
     <url>https://github.com/sksamuel/scrimage</url>
@@ -263,16 +263,10 @@
             <artifactId>scala-library</artifactId>
             <version>${scala.version}</version>
         </dependency>
-        <!-- TESTING -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <scope>test</scope>
+            <groupId>org.apache.sanselan</groupId>
+            <artifactId>sanselan</artifactId>
+            <version>0.97-incubator</version>
         </dependency>
         <!-- LOGGING -->
         <dependency>
@@ -287,12 +281,13 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
         </dependency>
-
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${commons.io.version}</version>
         </dependency>
+
+        <!-- TESTING -->
         <dependency>
             <groupId>org.scalatest</groupId>
             <artifactId>scalatest_2.10</artifactId>
@@ -306,9 +301,14 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.sanselan</groupId>
-            <artifactId>sanselan</artifactId>
-            <version>0.97-incubator</version>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
