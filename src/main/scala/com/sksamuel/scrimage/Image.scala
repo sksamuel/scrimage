@@ -43,6 +43,13 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
     lazy val center: (Int, Int) = (width / 2, height / 2)
     lazy val radius: Int = Math.sqrt(Math.pow(width / 2.0, 2) + Math.pow(height / 2.0, 2)).toInt
 
+    /**
+     * Returns the underlying bufferd image. Changes to this buffered image will write back to this image.
+     *
+     * @return the underlying buffered image
+     */
+    def toBufferedImage = awt
+
     override def empty: Image = Image.empty(width, height)
     override def copy = Image._copy(awt)
 

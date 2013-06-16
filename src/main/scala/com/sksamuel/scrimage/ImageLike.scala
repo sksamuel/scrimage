@@ -191,6 +191,10 @@ trait ImageLike[R] {
         scaleTo((width * scaleFactor).toInt, (height * scaleFactor).toInt, scaleMethod)
 
     def writer[T <: ImageWriter](format: Format[T]): T
+
+    def write: Array[Byte] = write(Format.PNG)
+    def write(format: Format[_ <: ImageWriter]): Array[Byte] = writer(format).write()
+
     def write(path: String) {
         write(path, Format.PNG)
     }
