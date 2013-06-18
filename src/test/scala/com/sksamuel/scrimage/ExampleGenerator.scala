@@ -3,6 +3,7 @@ package com.sksamuel.scrimage
 import com.sksamuel.scrimage.filter._
 import java.io.File
 import org.apache.commons.io.FileUtils
+import java.awt.Color
 
 /** @author Stephen Samuel */
 object ExampleGenerator extends App {
@@ -30,6 +31,7 @@ object ExampleGenerator extends App {
         ("gaussian", GaussianBlurFilter()),
         ("glow", GlowFilter()),
         ("grayscale", GrayscaleFilter),
+        ("hsb", HSBFilter(0.5)),
         ("invert", InvertFilter),
         ("lensblur", LensBlurFilter()),
         ("lensflare", LensFlareFilter),
@@ -56,6 +58,7 @@ object ExampleGenerator extends App {
         ("swim", SwimFilter()),
         ("television", TelevisionFilter),
         ("threshold", ThresholdFilter(127)),
+        ("tritone", TritoneFilter(new Color(0xFF000044), new Color(0xFF0066FF), Color.WHITE)),
         ("twirl", TwirlFilter(75)),
         ("unsharp", UnsharpFilter()),
         ("vignette", VignetteFilter()),
