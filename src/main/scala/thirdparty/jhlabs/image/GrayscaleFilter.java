@@ -19,6 +19,7 @@ package thirdparty.jhlabs.image;
 /**
  * A filter which converts an image to grayscale using the NTSC brightness calculation.
  */
+@Deprecated
 public class GrayscaleFilter extends PointFilter {
 
     public GrayscaleFilter() {

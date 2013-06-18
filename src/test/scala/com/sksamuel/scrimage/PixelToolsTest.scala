@@ -36,4 +36,10 @@ class PixelToolsTest extends FunSuite with BeforeAndAfter with OneInstancePerTes
         assert(PixelTools.green(yellow) === 255)
         assert(PixelTools.green(pink) === 175)
     }
+
+    test("rgb combination") {
+        assert(0xFFFF00FF === PixelTools.rgb(255, 0, 255))
+        assert(0xFF556677 === PixelTools.rgb(85, 102, 119))
+    }
+
 }

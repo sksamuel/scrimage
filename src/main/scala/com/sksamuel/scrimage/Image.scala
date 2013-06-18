@@ -33,7 +33,7 @@ import com.sksamuel.scrimage.PixelTools._
   *
   *         RichImage is class that represents an in memory image.
   *
-  * */
+  **/
 class Image(val awt: BufferedImage) extends ImageLike[Image] {
     require(awt != null, "Wrapping image cannot be null")
     val SCALE_THREADS = Runtime.getRuntime.availableProcessors()
@@ -55,8 +55,12 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
 
     override def map(f: (Int, Int, Int) => Int): Image = {
         val target = copy
-        points.foreach(p => target.awt.setRGB(p._1, p._2, f(p._1, p._2, target.awt.getRGB(p._1, p._2))))
+        target._mapInPlace(f)
         target
+    }
+
+    def _mapInPlace(f: (Int, Int, Int) => Int) {
+        points.foreach(p => awt.setRGB(p._1, p._2, f(p._1, p._2, awt.getRGB(p._1, p._2))))
     }
 
     override def foreach(f: (Int, Int, Int) => Unit) {
