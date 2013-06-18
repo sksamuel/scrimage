@@ -10,7 +10,7 @@ class DitherFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerT
     val original = Image(getClass.getResourceAsStream("/bird_small.png"))
 
     test("filter output matches expected") {
-        val expected = Image(getClass.getResourceAsStream("/bird_small_dither.png"))
+        val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_dither.png"))
         assert(original.filter(DitherFilter) === expected)
     }
 }

@@ -9,7 +9,7 @@ class ContrastFilterTest extends FunSuite with BeforeAndAfter with OneInstancePe
     val original = Image(getClass.getResourceAsStream("/bird_small.png"))
 
     test("filter output matches expected") {
-        val expected = Image(getClass.getResourceAsStream("/bird_small_contrast.png"))
+        val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_contrast.png"))
         assert(original.filter(ContrastFilter(1.3)) === expected)
     }
 }

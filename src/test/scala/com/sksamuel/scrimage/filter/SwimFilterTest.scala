@@ -9,7 +9,7 @@ class SwimFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTes
     val original = Image(getClass.getResourceAsStream("/bird_small.png"))
 
     test("filter output matches expected") {
-        val expected = Image(getClass.getResourceAsStream("/bird_small_swim.png"))
+        val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_swim.png"))
         assert(Image(original).filter(SwimFilter()) != expected)
     }
 }

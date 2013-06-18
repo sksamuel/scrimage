@@ -9,7 +9,7 @@ class PosterizeFilterTest extends FunSuite with BeforeAndAfter with OneInstanceP
     val original = Image(getClass.getResourceAsStream("/bird_small.png"))
 
     test("filter output matches expected") {
-        val expected = Image(getClass.getResourceAsStream("/bird_small_posterize.png"))
+        val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_posterize.png"))
         assert(original.filter(PosterizeFilter()) === expected)
     }
 }

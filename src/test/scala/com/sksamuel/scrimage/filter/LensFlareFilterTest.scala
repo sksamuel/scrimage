@@ -9,7 +9,7 @@ class LensFlareFilterTest extends FunSuite with BeforeAndAfter with OneInstanceP
     val original = Image(getClass.getResourceAsStream("/bird_small.png"))
 
     test("filter output matches expected") {
-        val expected = getClass.getResourceAsStream("/bird_small_lens_flare.png")
+        val expected = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_lens_flare.png")
         assert(original.filter(LensFlareFilter) != Image(expected)) // tis another random one
     }
 }

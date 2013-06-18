@@ -7,8 +7,8 @@ import com.sksamuel.scrimage.Image
 class QuanitzeFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
 
     val original = getClass.getResourceAsStream("/bird_small.png")
-    val expected_64 = getClass.getResourceAsStream("/bird_small_quantize_64.png")
-    val expected_256 = getClass.getResourceAsStream("/bird_small_quantize_256.png")
+    val expected_64 = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_quantize_64.png")
+    val expected_256 = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_quantize_256.png")
 
     test("filter output matches expected") {
         val image = Image(original)

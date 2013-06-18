@@ -9,7 +9,7 @@ class ErrorDiffusionFilterTest extends FunSuite with BeforeAndAfter with OneInst
     val original = Image(getClass.getResourceAsStream("/bird_small.png"))
 
     test("filter output matches expected") {
-        val expected = Image(getClass.getResourceAsStream("/bird_small_errordiffusion.png"))
+        val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_errordiffusion.png"))
         assert(original.filter(ErrorDiffusionHalftoneFilter()) === expected)
     }
 }

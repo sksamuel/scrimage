@@ -9,8 +9,8 @@ class GuassianBlurFilterTest extends FunSuite with BeforeAndAfter with OneInstan
     val original = Image(getClass.getResourceAsStream("/bird_small.png"))
 
     test("filter output matches expected") {
-        //original.filter(GaussianBlurFilter(6)).write(new File("src/test/resources/bird_small_guassian.png"))
-        val expected = Image(getClass.getResourceAsStream("/bird_small_guassian.png"))
+        //original.filter(GaussianBlurFilter(6)).write(new File("src/test/resources/com/sksamuel/scrimage/filters/bird_small_guassian.png"))
+        val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_guassian.png"))
         assert(original.filter(GaussianBlurFilter(6)) === expected)
     }
 }

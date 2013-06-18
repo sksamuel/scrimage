@@ -9,7 +9,7 @@ class PrewittFilterTest extends FunSuite with BeforeAndAfter with OneInstancePer
     val original = Image(getClass.getResourceAsStream("/bird_small.png"))
 
     test("filter output matches expected") {
-        val expected = Image(getClass.getResourceAsStream("/bird_small_prewitt.png"))
+        val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_prewitt.png"))
         assert(original.filter(PrewittFilter) === expected)
     }
 }

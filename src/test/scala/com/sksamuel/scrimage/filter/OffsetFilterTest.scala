@@ -9,7 +9,7 @@ class OffsetFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerT
     val original = Image(getClass.getResourceAsStream("/bird_small.png"))
 
     test("filter output matches expected") {
-        val expected = getClass.getResourceAsStream("/bird_small_offset.png")
+        val expected = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_offset.png")
         assert(original.filter(OffsetFilter(40, 60)) === Image(expected))
     }
 }

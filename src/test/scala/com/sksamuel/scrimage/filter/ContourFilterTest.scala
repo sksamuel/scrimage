@@ -9,7 +9,7 @@ class ContourFilterTest extends FunSuite with BeforeAndAfter with OneInstancePer
     val original = Image(getClass.getResourceAsStream("/bird_small.png"))
 
     test("filter output matches expected") {
-        val expected = Image(getClass.getResourceAsStream("/bird_small_contour.png"))
+        val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_contour.png"))
         assert(original.filter(ContourFilter()) === expected)
     }
 }

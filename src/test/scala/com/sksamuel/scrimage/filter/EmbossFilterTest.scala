@@ -9,7 +9,7 @@ class EmbossFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerT
     val original = Image(getClass.getResourceAsStream("/bird_small.png"))
 
     test("filter output matches expected") {
-        val expected = Image(getClass.getResourceAsStream("/bird_small_emboss.png"))
+        val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_emboss.png"))
         assert(original.filter(EmbossFilter) === expected)
     }
 }
