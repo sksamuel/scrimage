@@ -13,7 +13,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-
 package com.sksamuel.scrimage.filter
 
 import com.sksamuel.scrimage.{Image, Filter}
