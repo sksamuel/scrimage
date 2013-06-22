@@ -36,7 +36,7 @@ public class ThistleFilter {
         //texture
         BufferedImage texture;
         try {
-            texture = ImageIO.read(getClass().getResource("/texture_old_square.jpg"));
+            texture = ImageIO.read(getClass().getResource("/com/sksamuel/scrimage/filter/texture_old_square.jpg"));
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }

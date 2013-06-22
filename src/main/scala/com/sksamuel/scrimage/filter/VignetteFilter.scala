@@ -39,14 +39,18 @@ class VignetteFilter(start: Double, end: Double, blur: Double) extends Filter {
             Array(Color.WHITE, Color.WHITE, Color.BLACK))
         g2.setPaint(p)
         g2.fillRect(0, 0, blend.width, blend.height)
+        g2.dispose()
 
         blend.filter(GaussianBlurFilter((image.radius * blur).toInt))
 
-        g2.setComposite(BlendComposite.Multiply)
-        g2.drawImage(image.awt, 0, 0, null)
+        val g3 = image.awt.getGraphics.asInstanceOf[Graphics2D]
+        g3.setComposite(BlendComposite.Multiply)
+        g3.drawImage(blend.awt, 0, 0, null)
+        g3.dispose()
     }
 }
 
 object VignetteFilter {
-    def apply() = new VignetteFilter(0.8f, 0.9f, 0.3)
+    def apply(): VignetteFilter = apply(0.85f, 0.95f, 0.3)
+    def apply(start: Double, end: Double, blur: Double): VignetteFilter = new VignetteFilter(start, end, blur)
 }
