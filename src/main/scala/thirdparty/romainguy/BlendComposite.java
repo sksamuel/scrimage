@@ -43,7 +43,6 @@ public final class BlendComposite implements Composite {
         LIGHTEN,
         OVERLAY,
         HARD_LIGHT,
-        SOFT_LIGHT,
         DIFFERENCE,
         NEGATION,
         EXCLUSION,
@@ -77,7 +76,6 @@ public final class BlendComposite implements Composite {
     public static final BlendComposite Lighten = new BlendComposite(BlendingMode.LIGHTEN);
     public static final BlendComposite Overlay = new BlendComposite(BlendingMode.OVERLAY);
     public static final BlendComposite HardLight = new BlendComposite(BlendingMode.HARD_LIGHT);
-    public static final BlendComposite SoftLight = new BlendComposite(BlendingMode.SOFT_LIGHT);
     public static final BlendComposite Difference = new BlendComposite(BlendingMode.DIFFERENCE);
     public static final BlendComposite Negation = new BlendComposite(BlendingMode.NEGATION);
     public static final BlendComposite Exclusion = new BlendComposite(BlendingMode.EXCLUSION);
@@ -741,8 +739,6 @@ public final class BlendComposite implements Composite {
                             };
                         }
                     };
-                case SOFT_LIGHT:
-                    break;
                 case STAMP:
                     return new Blender() {
                         @Override
