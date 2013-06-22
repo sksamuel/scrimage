@@ -8,7 +8,7 @@ class TwirlFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTe
 
     val original = Image(getClass.getResourceAsStream("/bird_small.png"))
 
-    test("filter output matches expected") {
+    test("twirl filter output matches expected") {
         val expected = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_twirl.png")
         assert(original.filter(TwirlFilter(150)) === Image(expected))
     }

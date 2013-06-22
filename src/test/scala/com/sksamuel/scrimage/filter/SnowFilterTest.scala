@@ -8,7 +8,7 @@ class SnowFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTes
 
     val original = Image(getClass.getResourceAsStream("/bird_small.png"))
 
-    test("filter output matches expected") {
+    test("snow filter output matches expected") {
         val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_snow.png"))
         assert(original.filter(SnowFilter) === expected)
     }

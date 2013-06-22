@@ -10,7 +10,7 @@ class PixelateFilterTest extends FunSuite with BeforeAndAfter with OneInstancePe
     val expected2 = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_block_2.png")
     val expected4 = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_block_4.png")
 
-    test("filter output matches expected") {
+    test("pixelate filter output matches expected") {
         assert(original.filter(PixelateFilter(2)) === Image(expected2))
         assert(original.filter(PixelateFilter(4)) === Image(expected4))
     }
