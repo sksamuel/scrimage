@@ -20,36 +20,17 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImageOp;
 import java.awt.image.ColorModel;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Morten Nobel-Joergensen
  */
-public abstract class AdvancedResizeOp implements BufferedImageOp {
-
-    private List<ProgressListener> listeners = new ArrayList<ProgressListener>();
+public abstract class AdvancedResizeOp {
 
     private final DimensionConstrain dimensionConstrain;
 
     public AdvancedResizeOp(DimensionConstrain dimensionConstrain) {
         this.dimensionConstrain = dimensionConstrain;
-    }
-
-    protected void fireProgressChanged(float fraction) {
-        for (ProgressListener progressListener : listeners) {
-            progressListener.notifyProgress(fraction);
-        }
-    }
-
-    public final void addProgressListener(ProgressListener progressListener) {
-        listeners.add(progressListener);
-    }
-
-    public final boolean removeProgressListener(ProgressListener progressListener) {
-        return listeners.remove(progressListener);
     }
 
     public final BufferedImage filter(BufferedImage src, BufferedImage dest) {
@@ -61,16 +42,10 @@ public abstract class AdvancedResizeOp implements BufferedImageOp {
 
     protected abstract BufferedImage doFilter(BufferedImage src, BufferedImage dest, int dstWidth, int dstHeight);
 
-    /**
-     * {@inheritDoc}
-     */
     public final Rectangle2D getBounds2D(BufferedImage src) {
         return new Rectangle(0, 0, src.getWidth(), src.getHeight());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public final BufferedImage createCompatibleDestImage(BufferedImage src,
                                                          ColorModel destCM) {
         if (destCM == null) {
@@ -82,17 +57,7 @@ public abstract class AdvancedResizeOp implements BufferedImageOp {
                 destCM.isAlphaPremultiplied(), null);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public final Point2D getPoint2D(Point2D srcPt, Point2D dstPt) {
         return (Point2D) srcPt.clone();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public final RenderingHints getRenderingHints() {
-        return null;
     }
 }

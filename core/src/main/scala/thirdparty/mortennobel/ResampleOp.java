@@ -50,37 +50,16 @@ public class ResampleOp extends AdvancedResizeOp {
             this.arrWeight = arrWeight;
             this.numContributors = numContributors;
         }
-
-
-        public int getNumContributors() {
-            return numContributors;
-        }
-
-        public int[] getArrN() {
-            return arrN;
-        }
-
-        public int[] getArrPixel() {
-            return arrPixel;
-        }
-
-        public float[] getArrWeight() {
-            return arrWeight;
-        }
     }
 
     private SubSamplingData horizontalSubsamplingData;
     private SubSamplingData verticalSubsamplingData;
-
-    private int processedItems;
-    private float totalItems;
 
     private int numberOfThreads = Runtime.getRuntime().availableProcessors();
 
     private AtomicInteger multipleInvocationLock = new AtomicInteger();
 
     private ResampleFilter filter = ResampleFilters.getLanczos3Filter();
-
 
     public ResampleOp(int destWidth, int destHeight) {
         this(DimensionConstrain.createAbsolutionDimension(destWidth, destHeight));
@@ -129,13 +108,9 @@ public class ResampleOp extends AdvancedResizeOp {
 
         byte[][] workPixels = new byte[srcHeight][dstWidth * nrChannels];
 
-        this.processedItems = 0;
-        this.totalItems = srcHeight + dstWidth;
-
         // Pre-calculate  sub-sampling
         horizontalSubsamplingData = createSubSampling(filter, srcWidth, dstWidth);
         verticalSubsamplingData = createSubSampling(filter, srcHeight, dstHeight);
-
 
         final BufferedImage scrImgCopy = srcImg;
         final byte[][] workPixelsCopy = workPixels;
@@ -176,7 +151,10 @@ public class ResampleOp extends AdvancedResizeOp {
             out = dest;
             int nrDestChannels = ImageUtils.nrChannels(dest);
             if (nrDestChannels != nrChannels) {
-                String errorMgs = String.format("Destination image must be compatible width source image. Source image had %d channels destination image had %d channels", nrChannels, nrDestChannels);
+                String
+                        errorMgs =
+                        String.format("Destination image must be compatible width source image. Source image had %d channels destination " +
+                                "image had %d channels", nrChannels, nrDestChannels);
                 throw new RuntimeException(errorMgs);
             }
         } else {
@@ -321,7 +299,6 @@ public class ResampleOp extends AdvancedResizeOp {
                 final int max = verticalSubsamplingData.arrN[y];
                 final int sampleLocation = (y * dstWidth + x) * nrChannels;
 
-
                 float sample0 = 0.0f;
                 float sample1 = 0.0f;
                 float sample2 = 0.0f;
@@ -348,10 +325,6 @@ public class ResampleOp extends AdvancedResizeOp {
                 }
 
             }
-            processedItems++;
-            if (start == 0) { // only update progress listener from main thread
-                setProgress();
-            }
         }
     }
 
@@ -362,7 +335,6 @@ public class ResampleOp extends AdvancedResizeOp {
                 final int yTimesNumContributors = y * verticalSubsamplingData.numContributors;
                 final int max = verticalSubsamplingData.arrN[y];
                 final int sampleLocation = (y * dstWidth + x);
-
 
                 float sample0 = 0.0f;
                 int index = yTimesNumContributors;
@@ -376,19 +348,9 @@ public class ResampleOp extends AdvancedResizeOp {
 
                 outPixels[sampleLocation] = toByte(sample0);
             }
-            processedItems++;
-            if (start == 0) { // only update progress listener from main thread
-                setProgress();
-            }
         }
     }
 
-    /**
-     * Apply filter to sample horizontally from Src to Work
-     *
-     * @param srcImg
-     * @param workPixels
-     */
     private void horizontallyFromSrcToWork(BufferedImage srcImg, byte[][] workPixels, int start, int delta) {
         if (nrChannels == 1) {
             horizontallyFromSrcToWorkGray(srcImg, workPixels, start, delta);
@@ -397,7 +359,6 @@ public class ResampleOp extends AdvancedResizeOp {
         final int[] tempPixels = new int[srcWidth];   // Used if we work on int based bitmaps, later used to keep channel values
         final byte[] srcPixels = new byte[srcWidth * nrChannels]; // create reusable row to minimize memory overhead
         final boolean useChannel3 = nrChannels > 3;
-
 
         for (int k = start; k < srcHeight; k = k + delta) {
             ImageUtils.getPixelsBGR(srcImg, k, srcWidth, srcPixels, tempPixels);
@@ -431,19 +392,9 @@ public class ResampleOp extends AdvancedResizeOp {
                     workPixels[k][sampleLocation + 3] = toByte(sample3);
                 }
             }
-            processedItems++;
-            if (start == 0) { // only update progress listener from main thread
-                setProgress();
-            }
         }
     }
 
-    /**
-     * Apply filter to sample horizontally from Src to Work
-     *
-     * @param srcImg
-     * @param workPixels
-     */
     private void horizontallyFromSrcToWorkGray(BufferedImage srcImg, byte[][] workPixels, int start, int delta) {
         final int[] tempPixels = new int[srcWidth];   // Used if we work on int based bitmaps, later used to keep channel values
         final byte[] srcPixels = new byte[srcWidth]; // create reusable row to minimize memory overhead
@@ -467,10 +418,6 @@ public class ResampleOp extends AdvancedResizeOp {
 
                 workPixels[k][sampleLocation] = toByte(sample0);
             }
-            processedItems++;
-            if (start == 0) { // only update progress listener from main thread
-                setProgress();
-            }
         }
     }
 
@@ -482,10 +429,6 @@ public class ResampleOp extends AdvancedResizeOp {
             return (byte) MAX_CHANNEL_VALUE;
         }
         return (byte) (f + 0.5f); // add 0.5 same as Math.round
-    }
-
-    private void setProgress() {
-        fireProgressChanged(processedItems / totalItems);
     }
 
     protected int getResultBufferedImageType(BufferedImage srcImg) {
