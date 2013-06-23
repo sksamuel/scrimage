@@ -2,6 +2,7 @@
 *.log
 .idea
 scrimage.iml
+*.iml
 
 # sbt specific
 dist/*
