@@ -237,11 +237,11 @@ Maven:
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage</artifactId>
-    <version>1.2.3</version>
+    <version>1.2.4</version>
 </dependency>
 ```
 
 If using SBT then you want:
 ```scala
-libraryDependencies += "com.sksamuel.scrimage" % "scrimage" % "1.2.3"
+libraryDependencies += "com.sksamuel.scrimage" % "scrimage" % "1.2.4"
 ```
