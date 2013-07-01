@@ -168,6 +168,20 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
     }
 
     /**
+     * Apply the given image with this image using the given composite.
+     * The original image is unchanged.
+     *
+     * @param composite the composite to use. See com.sksamuel.scrimage.Composite.
+     *
+     * @return A new image with the given image applied using the given composite.
+     */
+    def composite(composite: Composite, applicative: Image): Image = {
+        val copy = this.copy
+        composite.apply(copy, applicative)
+        copy
+    }
+
+    /**
      * Creates a copy of this image with the given filter applied.
      * The original (this) image is unchanged.
      *

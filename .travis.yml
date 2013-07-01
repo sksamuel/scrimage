@@ -4,3 +4,4 @@ scala:
    - 2.9.3
 jdk:
    - oraclejdk7
+script: "mvn clean package"

@@ -4,8 +4,7 @@ package com.sksamuel.scrimage
 trait Composite {
 
     /**
-     * Applies this composite to the given src and dest images.
-     *
+     * Apply the given applicative image onto the given source image using this composite.
      */
-    def apply(src: Image, dest: Image)
+    def apply(src: Image, applicative: Image)
 }
