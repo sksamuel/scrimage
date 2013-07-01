@@ -230,18 +230,25 @@ As you can see, ImgScalr is the fastest for simple rescaling, but Scrimage is mu
 
 ### Including Scrimage in your project
 
-Scrimage is available on maven central. Add the dependency to your pom.xml:
+Scrimage is available on maven central. There are two dependencies. One is the core library, and one is the image filters. They are split because the image filters is a large jar, and most people just want the basic resize/scale/load/save functionality. 
 
 Maven:
 ```xml
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
-    <artifactId>scrimage</artifactId>
-    <version>1.2.4</version>
+    <artifactId>scrimage-core</artifactId>
+    <version>1.3.0</version>
+</dependency>
+<dependency>
+    <groupId>com.sksamuel.scrimage</groupId>
+    <artifactId>scrimage-filters</artifactId>
+    <version>1.3.0</version>
 </dependency>
 ```
 
 If using SBT then you want:
 ```scala
-libraryDependencies += "com.sksamuel.scrimage" % "scrimage" % "1.2.4"
+libraryDependencies += "com.sksamuel.scrimage" % "scrimage-core" % "1.3.0"
+
+libraryDependencies += "com.sksamuel.scrimage" % "scrimage-filters" % "1.3.0"
 ```
