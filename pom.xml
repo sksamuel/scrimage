@@ -63,7 +63,7 @@
         <maven.plugin.release.version>2.3.2</maven.plugin.release.version>
         <maven.plugin.autoinc.version>2.0-SNAPSHOT</maven.plugin.autoinc.version>
         <maven.plugin.surefire.version>2.14.1</maven.plugin.surefire.version>
-        <maven.plugin.scala.version>3.1.4</maven.plugin.scala.version>
+        <maven.plugin.scala.version>3.1.5</maven.plugin.scala.version>
         <maven.plugin.scalatest.version>1.0-M2</maven.plugin.scalatest.version>
         <maven.plugin.source.version>2.2.1</maven.plugin.source.version>
 
@@ -71,7 +71,6 @@
         <compiler.version.target>1.6</compiler.version.target>
 
         <commons.io.version>2.4</commons.io.version>
-        <commons.beanutils.version>1.8.3</commons.beanutils.version>
         <commons.sanselan.version>0.97-incubator</commons.sanselan.version>
 
         <junit.version>4.11</junit.version>
@@ -140,6 +139,7 @@
                 <plugin>
                     <groupId>net.alchim31.maven</groupId>
                     <artifactId>scala-maven-plugin</artifactId>
+                    <version>${maven.plugin.scala.version}</version>
                     <executions>
                         <execution>
                             <goals>
