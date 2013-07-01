@@ -142,6 +142,49 @@ case image => image.writer(Format.PNG).withMaxCompression.write(file)
 })
 ```
 
+### Benchmarks
+
+Some noddy benchmarks comparing the speed of rescaling an image. I've compared the basic getScaledInstance method in java.awt.Image with ImgScalr and Scrimage. ImgScalr delegates to awt.Graphics2D for its rendering. Scrimage adapts the methods implemented by Morten Nobel.
+
+The code is inside src/test/scala/com/sksamuel/scrimage/ScalingBenchmark.scala.
+
+The results are for 100 runs of a resize to a fixed width / height.
+
+| Library | Fast | High Quality (Method) |
+| --------- | --------- | --------- |
+| java.awt.Image.getScaledInstance | 11006ms | 17134ms (Area Averaging) |
+| ImgScalr | 57ms | 5018ms (ImgScalr.Quality) |
+| Scrimage | 113ms | 2730ms (Bicubic) |
+
+As you can see, ImgScalr is the fastest for simple rescaling, but Scrimage is much faster than the rest a high quality scale.
+
+
+
+### Including Scrimage in your project
+
+Scrimage is available on maven central. There are two dependencies. One is the core library, and one is the image filters. They are split because the image filters is a large jar, and most people just want the basic resize/scale/load/save functionality.  Only include the filters dependency if you need the image filters, otherwise just the core one is needed.
+
+Maven:
+```xml
+<dependency>
+    <groupId>com.sksamuel.scrimage</groupId>
+    <artifactId>scrimage-core</artifactId>
+    <version>1.3.0</version>
+</dependency>
+<dependency>
+    <groupId>com.sksamuel.scrimage</groupId>
+    <artifactId>scrimage-filters</artifactId>
+    <version>1.3.0</version>
+</dependency>
+```
+
+If using SBT then you want:
+```scala
+libraryDependencies += "com.sksamuel.scrimage" % "scrimage-core" % "1.3.0"
+
+libraryDependencies += "com.sksamuel.scrimage" % "scrimage-filters" % "1.3.0"
+```
+
 
 ### Filters
 
@@ -209,46 +252,3 @@ Click on the small images to see an enlarged example.
 
 
 
-
-### Benchmarks
-
-Some noddy benchmarks comparing the speed of rescaling an image. I've compared the basic getScaledInstance method in java.awt.Image with ImgScalr and Scrimage. ImgScalr delegates to awt.Graphics2D for its rendering. Scrimage adapts the methods implemented by Morten Nobel.
-
-The code is inside src/test/scala/com/sksamuel/scrimage/ScalingBenchmark.scala.
-
-The results are for 100 runs of a resize to a fixed width / height.
-
-| Library | Fast | High Quality (Method) |
-| --------- | --------- | --------- |
-| java.awt.Image.getScaledInstance | 11006ms | 17134ms (Area Averaging) |
-| ImgScalr | 57ms | 5018ms (ImgScalr.Quality) |
-| Scrimage | 113ms | 2730ms (Bicubic) |
-
-As you can see, ImgScalr is the fastest for simple rescaling, but Scrimage is much faster than the rest a high quality scale.
-
-
-
-### Including Scrimage in your project
-
-Scrimage is available on maven central. There are two dependencies. One is the core library, and one is the image filters. They are split because the image filters is a large jar, and most people just want the basic resize/scale/load/save functionality. 
-
-Maven:
-```xml
-<dependency>
-    <groupId>com.sksamuel.scrimage</groupId>
-    <artifactId>scrimage-core</artifactId>
-    <version>1.3.0</version>
-</dependency>
-<dependency>
-    <groupId>com.sksamuel.scrimage</groupId>
-    <artifactId>scrimage-filters</artifactId>
-    <version>1.3.0</version>
-</dependency>
-```
-
-If using SBT then you want:
-```scala
-libraryDependencies += "com.sksamuel.scrimage" % "scrimage-core" % "1.3.0"
-
-libraryDependencies += "com.sksamuel.scrimage" % "scrimage-filters" % "1.3.0"
-```
