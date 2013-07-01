@@ -48,30 +48,6 @@
         </developer>
     </developers>
 
-    <profiles>
-        <profile>
-            <id>release</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>${maven.plugin.gpg.version}</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -91,8 +67,8 @@
         <maven.plugin.scalatest.version>1.0-M2</maven.plugin.scalatest.version>
         <maven.plugin.source.version>2.2.1</maven.plugin.source.version>
 
-        <compiler.version.source>1.7</compiler.version.source>
-        <compiler.version.target>1.7</compiler.version.target>
+        <compiler.version.source>1.6</compiler.version.source>
+        <compiler.version.target>1.6</compiler.version.target>
 
         <commons.io.version>2.4</commons.io.version>
         <commons.beanutils.version>1.8.3</commons.beanutils.version>
@@ -103,7 +79,7 @@
         <mockito.version>1.9.5</mockito.version>
         <slf4j.version>1.6.6</slf4j.version>
         <scala.test.version>1.9.1</scala.test.version>
-        <scala.version>2.10.1</scala.version>
+        <scala.version>2.10.2</scala.version>
     </properties>
 
     <dependencyManagement>
@@ -166,17 +142,9 @@
                     <artifactId>scala-maven-plugin</artifactId>
                     <executions>
                         <execution>
-                            <id>scala-compile-first</id>
-                            <phase>process-resources</phase>
                             <goals>
                                 <goal>add-source</goal>
                                 <goal>compile</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>scala-test-compile</id>
-                            <phase>process-test-resources</phase>
-                            <goals>
                                 <goal>testCompile</goal>
                             </goals>
                         </execution>
@@ -203,44 +171,66 @@
                             <goals>
                                 <goal>test</goal>
                             </goals>
-                            <configuration>
-                                <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
-                                <junitxml>.</junitxml>
-                                <parallel>true</parallel>
-                                <tagsToExclude>IntegrationTest</tagsToExclude>
-                                <filereports>ScalaTestSuite.txt</filereports>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>${maven.plugin.source.version}</version>
-                    <executions>
-                        <execution>
-                            <id>attach-sources</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>${maven.plugin.javadoc.version}</version>
-                    <executions>
-                        <execution>
-                            <id>attach-javadocs</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
                         </execution>
                     </executions>
                 </plugin>
             </plugins>
         </pluginManagement>
     </build>
+
+    <profiles>
+        <profile>
+            <id>travis</id>
+            <activation>
+                <property>
+                    <name>env.TRAVIS</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.eluder.coveralls</groupId>
+                        <artifactId>coveralls-maven-plugin</artifactId>
+                        <version>1.1.0</version>
+                        <configuration>
+                            <sourceDirectory>src/main/scala</sourceDirectory>
+                            <serviceName>travis-ci</serviceName>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>coveralls-jacoco</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jacoco</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>0.6.3.201306030806</version>
+                        <executions>
+                            <execution>
+                                <id>jacoco-initialize</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>jacoco-report</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
