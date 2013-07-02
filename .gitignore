@@ -3,6 +3,7 @@
 .idea
 scrimage.iml
 *.iml
+filters.md
 
 # sbt specific
 dist/*

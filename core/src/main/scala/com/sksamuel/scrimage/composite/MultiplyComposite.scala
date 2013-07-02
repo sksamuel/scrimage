@@ -26,6 +26,7 @@ class BlenderComposite(mode: BlendingMode, alpha: Double) extends Composite {
         val g2 = src.awt.getGraphics.asInstanceOf[Graphics2D]
         g2.setComposite(BlendComposite.getInstance(mode, alpha.toFloat))
         g2.drawImage(applicative.awt, 0, 0, null)
+        g2.dispose()
     }
 }
 class MultiplyComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.MULTIPLY, alpha.toFloat)

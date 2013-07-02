@@ -33,7 +33,7 @@ import com.sksamuel.scrimage.PixelTools._
   *
   *         RichImage is class that represents an in memory image.
   *
-  **/
+  * */
 class Image(val awt: BufferedImage) extends ImageLike[Image] {
     require(awt != null, "Wrapping image cannot be null")
     val SCALE_THREADS = Runtime.getRuntime.availableProcessors()
@@ -59,13 +59,10 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
         target
     }
 
-    def _mapInPlace(f: (Int, Int, Int) => Int) {
-        points.foreach(p => awt.setRGB(p._1, p._2, f(p._1, p._2, awt.getRGB(p._1, p._2))))
-    }
+    def _mapInPlace(f: (Int, Int, Int) => Int): Unit = points.foreach(p => awt.setRGB(p._1, p._2, f(p._1, p._2, awt.getRGB(p._1, p._2))))
 
-    override def foreach(f: (Int, Int, Int) => Unit) {
-        points.foreach(p => f(p._1, p._2, awt.getRGB(p._1, p._2)))
-    }
+    def forall(f: (Int, Int, Int) => Boolean): Boolean = points.forall(p => f(p._1, p._2, pixel(p)))
+    override def foreach(f: (Int, Int, Int) => Unit): Unit = points.foreach(p => f(p._1, p._2, pixel(p)))
 
     // replace this image's AWT data by drawing the given BufferedImage over the top
     def _draw(target: BufferedImage) {
@@ -75,12 +72,36 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
     }
 
     /**
+     * Removes the given amount of pixels from each edge; like a crop operation.
+     *
+     * @param amount the number of pixels to trim from each edge
+     *
+     * @return a new Image with the dimensions width-trim*2,height-trim*2
+     */
+    def trim(amount: Int): Image = trim(amount, amount, amount, amount)
+    def trim(left: Int, top: Int, right: Int, bottom: Int): Image = {
+        val target = Image._empty(width - left - right, height - bottom - top)
+        val g2 = target.getGraphics.asInstanceOf[Graphics2D]
+        g2.drawImage(awt, -left, -top, null)
+        g2.dispose()
+        new Image(target)
+    }
+
+    /**
+     * Returns the pixel at the given coordinates as a integer in RGB format.
+     *
+     * @param p the pixel as an integer tuple
+     *
+     * @return the ARGB value of the pixel
+     */
+    def pixel(p: (Int, Int)): Int = pixel(p._1, p._2)
+    /**
      * Returns the pixel at the given coordinates as a integer in RGB format.
      *
      * @param x the x coordinate of the pixel to grab
      * @param y the y coordinate of the pixel to grab
      *
-     * @return
+     * @return the ARGB value of the pixel
      */
     def pixel(x: Int, y: Int): Int = {
         val k = width * y + x

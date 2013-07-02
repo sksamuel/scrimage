@@ -44,6 +44,17 @@ class ImageTest extends FunSuite with BeforeAndAfter {
         assert(648 === scaled.height)
     }
 
+    test("when trimming the new image has the trimmed dimensions") {
+        val trimmed = image.trim(3, 4, 5, 6)
+        assert(image.width - 3 - 5 === trimmed.width)
+        assert(image.height - 4 - 6 === trimmed.height)
+    }
+
+    test("when trimming the new image is not empty") {
+        val trimmed = image.trim(3, 4, 5, 6)
+        assert(!trimmed.forall((x,y,p) => p == 0xFF000000 || p == 0xFFFFFFFF))
+    }
+
     test("when resizing by pixels then the output image has the given dimensions") {
         val scaled = image.resizeTo(440, 505)
         assert(440 === scaled.width)
