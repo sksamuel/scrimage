@@ -22,67 +22,67 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import java.awt.Color
 import com.sksamuel.scrimage.io.ImageWriter
 import com.sksamuel.scrimage.ScaleMethod.Bicubic
-import java.io.{InputStream, File}
+import java.io.{ InputStream, File }
 
 /** @author Stephen Samuel */
 class AsyncImage(image: Image) extends ImageLike[Future[AsyncImage]] {
 
-    override def empty = image.empty
-    override def copy = image.copy
-    override def pixels: Array[Int] = image.pixels
+  override def empty = image.empty
+  override def copy = image.copy
+  override def pixels: Array[Int] = image.pixels
 
-    override def map(f: (Int, Int, Int) => Int): Future[AsyncImage] = future {
-        AsyncImage(image.map(f))
-    }
+  override def map(f: (Int, Int, Int) => Int): Future[AsyncImage] = future {
+    AsyncImage(image.map(f))
+  }
 
-    def foreach(f: (Int, Int, Int) => Unit) {
-        image.foreach(f)
-    }
+  def foreach(f: (Int, Int, Int) => Unit) {
+    image.foreach(f)
+  }
 
-    def fit(targetWidth: Int,
-            targetHeight: Int,
-            color: Color = Color.WHITE,
-            scaleMethod: ScaleMethod = Bicubic,
-            position: Position = Position.Center): Future[AsyncImage] = future {
-        AsyncImage(image.fit(targetWidth, targetHeight, color, scaleMethod, position))
-    }
+  def fit(targetWidth: Int,
+    targetHeight: Int,
+    color: Color = Color.WHITE,
+    scaleMethod: ScaleMethod = Bicubic,
+    position: Position = Position.Center): Future[AsyncImage] = future {
+    AsyncImage(image.fit(targetWidth, targetHeight, color, scaleMethod, position))
+  }
 
-    def resizeTo(targetWidth: Int, targetHeight: Int, position: Position = Center): Future[AsyncImage] = future {
-        AsyncImage(image.resizeTo(targetWidth, targetHeight, position))
-    }
+  def resizeTo(targetWidth: Int, targetHeight: Int, position: Position = Center): Future[AsyncImage] = future {
+    AsyncImage(image.resizeTo(targetWidth, targetHeight, position))
+  }
 
-    def scaleTo(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): Future[AsyncImage] = future {
-        AsyncImage(image.scaleTo(targetWidth, targetHeight, scaleMethod))
-    }
+  def scaleTo(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): Future[AsyncImage] = future {
+    AsyncImage(image.scaleTo(targetWidth, targetHeight, scaleMethod))
+  }
 
-    /**
-     * Creates a copy of this image with the given filter applied.
-     * The original (this) image is unchanged.
-     *
-     * @param filter the filter to apply. See com.sksamuel.scrimage.Filter.
-     *
-     * @return A new image with the given filter applied.
-     */
-    def filter(filter: Filter): Future[AsyncImage] = future {
-        AsyncImage(image.filter(filter))
-    }
+  /**
+   * Creates a copy of this image with the given filter applied.
+   * The original (this) image is unchanged.
+   *
+   * @param filter the filter to apply. See com.sksamuel.scrimage.Filter.
+   *
+   * @return A new image with the given filter applied.
+   */
+  def filter(filter: Filter): Future[AsyncImage] = future {
+    AsyncImage(image.filter(filter))
+  }
 
-    /**
-     * Returns the underlying image.
-     *
-     * @return the image that was wrapped when creating this async.
-     */
-    def toImage: Image = image
+  /**
+   * Returns the underlying image.
+   *
+   * @return the image that was wrapped when creating this async.
+   */
+  def toImage: Image = image
 
-    def writer[T <: ImageWriter](format: Format[T]): T = format.writer(image)
-    def height: Int = image.height
-    def width: Int = image.width
+  def writer[T <: ImageWriter](format: Format[T]): T = format.writer(image)
+  def height: Int = image.height
+  def width: Int = image.width
 }
 
 object AsyncImage {
 
-    def apply(bytes: Array[Byte]): AsyncImage = Image(bytes).toAsync
-    def apply(in: InputStream): AsyncImage = Image(in).toAsync
-    def apply(file: File): AsyncImage = Image(file).toAsync
-    def apply(image: Image) = new AsyncImage(image)
+  def apply(bytes: Array[Byte]): AsyncImage = Image(bytes).toAsync
+  def apply(in: InputStream): AsyncImage = Image(in).toAsync
+  def apply(file: File): AsyncImage = Image(file).toAsync
+  def apply(image: Image) = new AsyncImage(image)
 }
