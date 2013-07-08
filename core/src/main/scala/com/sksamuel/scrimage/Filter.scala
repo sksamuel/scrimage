@@ -20,7 +20,7 @@ import java.awt.Graphics2D
 
 /** @author Stephen Samuel */
 trait Filter {
-    def apply(image: Image)
+  def apply(image: Image)
 }
 
 /**
@@ -29,10 +29,10 @@ trait Filter {
  * Filters that wish to provide an awt BufferedImageOp need to simply extend this class.
  */
 abstract class BufferedOpFilter extends Filter {
-    val op: BufferedImageOp
-    def apply(image: Image) {
-        val g2 = image.awt.getGraphics.asInstanceOf[Graphics2D]
-        g2.drawImage(image.awt, op, 0, 0)
-        g2.dispose()
-    }
+  val op: BufferedImageOp
+  def apply(image: Image) {
+    val g2 = image.awt.getGraphics.asInstanceOf[Graphics2D]
+    g2.drawImage(image.awt, op, 0, 0)
+    g2.dispose()
+  }
 }

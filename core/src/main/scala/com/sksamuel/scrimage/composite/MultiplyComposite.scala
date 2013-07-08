@@ -15,19 +15,19 @@
  */
 package com.sksamuel.scrimage.composite
 
-import com.sksamuel.scrimage.{Image, Composite}
+import com.sksamuel.scrimage.{ Image, Composite }
 import java.awt.Graphics2D
 import thirdparty.romainguy.BlendComposite.BlendingMode
 import thirdparty.romainguy.BlendComposite
 
 /** @author Stephen Samuel */
 class BlenderComposite(mode: BlendingMode, alpha: Double) extends Composite {
-    def apply(src: Image, applicative: Image) {
-        val g2 = src.awt.getGraphics.asInstanceOf[Graphics2D]
-        g2.setComposite(BlendComposite.getInstance(mode, alpha.toFloat))
-        g2.drawImage(applicative.awt, 0, 0, null)
-        g2.dispose()
-    }
+  def apply(src: Image, applicative: Image) {
+    val g2 = src.awt.getGraphics.asInstanceOf[Graphics2D]
+    g2.setComposite(BlendComposite.getInstance(mode, alpha.toFloat))
+    g2.drawImage(applicative.awt, 0, 0, null)
+    g2.dispose()
+  }
 }
 class MultiplyComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.MULTIPLY, alpha.toFloat)
 class AverageComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.AVERAGE, alpha.toFloat)

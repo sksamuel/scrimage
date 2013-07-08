@@ -19,6 +19,6 @@ import com.sksamuel.scrimage.BufferedOpFilter
 
 /** @author Stephen Samuel */
 object SolarizeFilter extends BufferedOpFilter {
-    val op = new thirdparty.jhlabs.image.SolarizeFilter()
+  val op = new thirdparty.jhlabs.image.SolarizeFilter()
 }
 
