@@ -19,5 +19,5 @@ import thirdparty.marvin.image.restoration.NoiseReduction
 
 /** @author Stephen Samuel */
 object NoiseReductionFilter extends MarvinFilter {
-    val plugin = new NoiseReduction()
+  val plugin = new NoiseReduction()
 }

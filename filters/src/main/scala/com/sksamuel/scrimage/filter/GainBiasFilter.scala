@@ -21,10 +21,10 @@ import thirdparty.jhlabs.image.GainFilter
 
 /** @author Stephen Samuel */
 class GainBiasFilter(gain: Double, bias: Double) extends BufferedOpFilter {
-    val op = new GainFilter
-    op.setGain(gain.toFloat)
-    op.setBias(bias.toFloat)
+  val op = new GainFilter
+  op.setGain(gain.toFloat)
+  op.setBias(bias.toFloat)
 }
 object GainBiasFilter {
-    def apply(gain: Double = 0.5, bias: Double = 0.5): GainBiasFilter = new GainBiasFilter(gain, bias)
+  def apply(gain: Double = 0.5, bias: Double = 0.5): GainBiasFilter = new GainBiasFilter(gain, bias)
 }
