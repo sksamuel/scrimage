@@ -41,6 +41,10 @@ class MutableImage(awt: BufferedImage) extends Image(awt) {
         super._fill(color)
         this
     }
+    
+    def setPixel(x: Int, y: Int, pixel: Int) {
+        awt.setRGB(x, y, pixel)
+    }
 }
 
 object MutableImage {
