@@ -22,7 +22,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import java.awt.Color
 import com.sksamuel.scrimage.io.ImageWriter
 import com.sksamuel.scrimage.ScaleMethod.Bicubic
-import java.io.{ InputStream, File }
+import java.io.{InputStream, File}
 
 /** @author Stephen Samuel */
 class AsyncImage(image: Image) extends ImageLike[Future[AsyncImage]] {
@@ -40,14 +40,17 @@ class AsyncImage(image: Image) extends ImageLike[Future[AsyncImage]] {
   }
 
   def fit(targetWidth: Int,
-    targetHeight: Int,
-    color: Color = Color.WHITE,
-    scaleMethod: ScaleMethod = Bicubic,
-    position: Position = Position.Center): Future[AsyncImage] = future {
+          targetHeight: Int,
+          color: Color = Color.WHITE,
+          scaleMethod: ScaleMethod = Bicubic,
+          position: Position = Position.Center): Future[AsyncImage] = future {
     AsyncImage(image.fit(targetWidth, targetHeight, color, scaleMethod, position))
   }
 
-  def resizeTo(targetWidth: Int, targetHeight: Int, position: Position = Center): Future[AsyncImage] = future {
+  def resizeTo(targetWidth: Int,
+               targetHeight: Int,
+               position: Position = Center,
+               background: Color = Color.WHITE): Future[AsyncImage] = future {
     AsyncImage(image.resizeTo(targetWidth, targetHeight, position))
   }
 

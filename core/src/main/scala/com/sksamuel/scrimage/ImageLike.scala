@@ -16,12 +16,13 @@
 
 package com.sksamuel.scrimage
 
-import java.io.{ OutputStream, File }
+import java.io.{OutputStream, File}
 import org.apache.commons.io.FileUtils
 import com.sksamuel.scrimage.Format.PNG
 import com.sksamuel.scrimage.io.ImageWriter
 import com.sksamuel.scrimage.ScaleMethod.Bicubic
 import com.sksamuel.scrimage.Position.Center
+import java.awt.Color
 
 /** @author Stephen Samuel */
 trait ImageLike[R] {
@@ -29,7 +30,7 @@ trait ImageLike[R] {
   def width: Int
   def height: Int
   def dimensions: (Int, Int) = (width, height)
-  lazy val points: Seq[(Int, Int)] = for (x <- 0 until width; y <- 0 until height) yield (x, y)
+  lazy val points: Seq[(Int, Int)] = for ( x <- 0 until width; y <- 0 until height ) yield (x, y)
 
   /**
    * Creates an empty Image with the same dimensions of this image.
@@ -78,14 +79,14 @@ trait ImageLike[R] {
   def fit(targetWidth: Int, targetHeight: Int, color: java.awt.Color, scaleMethod: ScaleMethod, position: Position): R
 
   def fitToHeight(targetHeight: Int, color: java.awt.Color = java.awt.Color.WHITE,
-    scaleMethod: ScaleMethod = Bicubic, position: Position = Center): R =
+                  scaleMethod: ScaleMethod = Bicubic, position: Position = Center): R =
     fit((targetHeight / height.toDouble * height).toInt, targetHeight, color, scaleMethod, position)
 
   def fitToWidth(targetWidth: Int, color: java.awt.Color = java.awt.Color.WHITE,
-    scaleMethod: ScaleMethod = Bicubic, position: Position = Center): R =
+                 scaleMethod: ScaleMethod = Bicubic, position: Position = Center): R =
     fit(targetWidth, (targetWidth / width.toDouble * height).toInt, color, scaleMethod, position)
 
-  def resizeTo(targetWidth: Int, targetHeight: Int, position: Position): R
+  def resizeTo(targetWidth: Int, targetHeight: Int, position: Position, background: Color = Color.WHITE): R
 
   /**
    *
@@ -97,8 +98,8 @@ trait ImageLike[R] {
    *
    * @return a new Image that is the result of resizing the canvas.
    */
-  def resize(scaleFactor: Double, position: Position = Center): R =
-    resizeTo((width * scaleFactor).toInt, (height * scaleFactor).toInt, position)
+  def resize(scaleFactor: Double, position: Position = Center, background: Color = Color.WHITE): R =
+    resizeTo((width * scaleFactor).toInt, (height * scaleFactor).toInt, position, background)
 
   /**
    *
@@ -109,8 +110,8 @@ trait ImageLike[R] {
    *
    * @return a new Image that is the result of resizing the canvas.
    */
-  def resizeToHeight(targetHeight: Int, position: Position = Center): R =
-    resizeTo((targetHeight / height.toDouble * height).toInt, targetHeight, position)
+  def resizeToHeight(targetHeight: Int, position: Position = Center, background: Color = Color.WHITE): R =
+    resizeTo((targetHeight / height.toDouble * height).toInt, targetHeight, position, background)
 
   /**
    *
@@ -121,8 +122,8 @@ trait ImageLike[R] {
    *
    * @return a new Image that is the result of resizing the canvas.
    */
-  def resizeToWidth(targetWidth: Int, position: Position = Center): R =
-    resizeTo(targetWidth, (targetWidth / width.toDouble * height).toInt, position)
+  def resizeToWidth(targetWidth: Int, position: Position = Center, background: Color = Color.WHITE): R =
+    resizeTo(targetWidth, (targetWidth / width.toDouble * height).toInt, position, background)
 
   /**
    *

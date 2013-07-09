@@ -115,6 +115,14 @@
         </dependencies>
     </dependencyManagement>
 
+    <dependencies>
+        <dependency>
+            <groupId>scales</groupId>
+            <artifactId>scales</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
     <build>
         <finalName>${project.artifactId}</finalName>
         <pluginManagement>
@@ -172,15 +180,26 @@
                             <goals>
                                 <goal>add-source</goal>
                                 <goal>compile</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>test-scalac</id>
-                            <goals>
                                 <goal>testCompile</goal>
                             </goals>
                         </execution>
                     </executions>
+                    <configuration>
+                        <compilerPlugins>
+                            <compilerPlugin>
+                                <groupId>scales</groupId>
+                                <artifactId>scales</artifactId>
+                                <version>0.1.0-SNAPSHOT</version>
+                            </compilerPlugin>
+                        </compilerPlugins>
+                        <dependencies>
+                            <dependency>
+                                <groupId>scales</groupId>
+                                <artifactId>scales</artifactId>
+                                <version>0.1.0-SNAPSHOT</version>
+                            </dependency>
+                        </dependencies>
+                    </configuration>
                 </plugin>
                 <!-- disable surefire -->
                 <plugin>
@@ -209,7 +228,6 @@
             </plugins>
         </pluginManagement>
     </build>
-
 
 
 </project>

@@ -28,7 +28,12 @@ sealed trait Position {
    * Returns the y coordinate for where an image should be placed inside the canvas.
    */
   def calculateY(canvasWidth: Int, canvasHeight: Int, imageWidth: Int, imageHeight: Int): Int
+
+  def calculateXY(canvasWidth: Int, canvasHeight: Int, imageWidth: Int, imageHeight: Int): (Int, Int) =
+    (calculateX(canvasWidth, canvasHeight, imageWidth, imageHeight),
+      calculateY(canvasWidth, canvasHeight, imageWidth, imageHeight))
 }
+
 trait Left extends Position {
   def calculateX(canvasWidth: Int, canvasHeight: Int, imageWidth: Int, imageHeight: Int): Int = 0
 }
@@ -39,7 +44,10 @@ trait Top extends Position {
   def calculateY(canvasWidth: Int, canvasHeight: Int, imageWidth: Int, imageHeight: Int): Int = 0
 }
 trait Bottom extends Position {
-  def calculateY(canvasWidth: Int, canvasHeight: Int, imageWidth: Int, imageHeight: Int): Int = canvasHeight - imageHeight
+  def calculateY(canvasWidth: Int,
+                 canvasHeight: Int,
+                 imageWidth: Int,
+                 imageHeight: Int): Int = canvasHeight - imageHeight
 }
 trait CenterX extends Position {
   def calculateX(canvasWidth: Int, canvasHeight: Int, imageWidth: Int, imageHeight: Int): Int =
@@ -49,6 +57,7 @@ trait CenterY extends Position {
   def calculateY(canvasWidth: Int, canvasHeight: Int, imageWidth: Int, imageHeight: Int): Int =
     ((canvasHeight - imageHeight) / 2.0).toInt
 }
+
 object Position {
   object TopLeft extends Top with Left
   object TopCenter extends Top with CenterX

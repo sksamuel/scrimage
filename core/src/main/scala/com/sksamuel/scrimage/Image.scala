@@ -16,14 +16,14 @@
 
 package com.sksamuel.scrimage
 
-import java.awt.{ RenderingHints, Graphics2D }
+import java.awt.{Color, RenderingHints, Graphics2D}
 import java.awt.geom.AffineTransform
-import java.io.{ ByteArrayInputStream, InputStream, File }
+import java.io.{ByteArrayInputStream, InputStream, File}
 import com.sksamuel.scrimage.ScaleMethod._
 import javax.imageio.ImageIO
-import org.apache.commons.io.{ IOUtils, FileUtils }
-import java.awt.image.{ DataBufferInt, AffineTransformOp, BufferedImage }
-import thirdparty.mortennobel.{ ResampleFilters, ResampleOp }
+import org.apache.commons.io.{IOUtils, FileUtils}
+import java.awt.image.{DataBufferInt, AffineTransformOp, BufferedImage}
+import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.io.ImageWriter
 import scala.Array
@@ -60,7 +60,8 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
     target
   }
 
-  def _mapInPlace(f: (Int, Int, Int) => Int): Unit = points.foreach(p => awt.setRGB(p._1, p._2, f(p._1, p._2, awt.getRGB(p._1, p._2))))
+  def _mapInPlace(f: (Int, Int, Int) => Int): Unit = points
+    .foreach(p => awt.setRGB(p._1, p._2, f(p._1, p._2, awt.getRGB(p._1, p._2))))
 
   def forall(f: (Int, Int, Int) => Boolean): Boolean = points.forall(p => f(p._1, p._2, pixel(p)))
   override def foreach(f: (Int, Int, Int) => Unit): Unit = points.foreach(p => f(p._1, p._2, pixel(p)))
@@ -287,10 +288,10 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
    * @return a new Image with the original image scaled to fit inside
    */
   def fit(targetWidth: Int,
-    targetHeight: Int,
-    color: java.awt.Color = java.awt.Color.WHITE,
-    scaleMethod: ScaleMethod = Bicubic,
-    position: Position = Center): Image = {
+          targetHeight: Int,
+          color: java.awt.Color = java.awt.Color.WHITE,
+          scaleMethod: ScaleMethod = Bicubic,
+          position: Position = Center): Image = {
     val fittedDimensions = ImageTools.dimensionsToFit((targetWidth, targetHeight), (width, height))
     val scaled = scaleTo(fittedDimensions._1, fittedDimensions._2, scaleMethod)
     val target = Image.filled(targetWidth, targetHeight, color)
@@ -319,7 +320,10 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
    *
    * @return a new Image with the original image scaled to cover the new dimensions
    */
-  def cover(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod = Bicubic, position: Position = Center): Image = {
+  def cover(targetWidth: Int,
+            targetHeight: Int,
+            scaleMethod: ScaleMethod = Bicubic,
+            position: Position = Center): Image = {
     val coveredDimensions = ImageTools.dimensionsToCover((targetWidth, targetHeight), (width, height))
     val scaled = scaleTo(coveredDimensions._1, coveredDimensions._2, scaleMethod)
     val target = Image.empty(targetWidth, targetHeight)
@@ -333,7 +337,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
 
   /**
    *
-   * Scale will resize the canvas and the image.
+   * Scale will resize both the canvas and the image.
    * This is like a "image resize" in Photoshop.
    *
    * The size of the scaled instance are taken from the given
@@ -379,18 +383,29 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
    * If the dimensions are smaller than the current canvas size
    * then the image will be cropped.
    *
+   * The position parameter determines how the original image will be positioned on the new
+   * canvas.
+   *
    * @param targetWidth the target width
    * @param targetHeight the target height
    * @param position where to position the original image after the canvas size change
+   * @param background the background color if the canvas was enlarged
    *
    * @return a new Image that is the result of resizing the canvas.
    */
-  def resizeTo(targetWidth: Int, targetHeight: Int, position: Position = Center): Image = {
-    val target = Image.empty(targetWidth, targetHeight)
-    val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
-    g2.drawImage(awt, 0, 0, null)
-    g2.dispose()
-    target
+  def resizeTo(targetWidth: Int,
+               targetHeight: Int,
+               position: Position = Center,
+               background: Color = Color.WHITE): Image = {
+    if (targetWidth == width && targetHeight == height) this
+    else {
+      val target = Image.filled(targetWidth, targetHeight, background)
+      val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
+      val (x, y) = position.calculateXY(targetWidth, targetHeight, width, height)
+      g2.drawImage(awt, x, y, null)
+      g2.dispose()
+      target
+    }
   }
 
   /**
@@ -406,7 +421,8 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
    *
    * @return A new image that is the result of the padding
    */
-  def pad(size: Int, color: java.awt.Color = java.awt.Color.WHITE): Image = padTo(width + size * 2, height + size * 2, color)
+  def pad(size: Int, color: java.awt.Color = java.awt.Color.WHITE): Image =
+    padTo(width + size * 2, height + size * 2, color)
 
   /**
    *
@@ -532,7 +548,8 @@ object Image {
   def apply(image: Image): Image = _copy(image.awt)
 
   private[scrimage] def _empty(awt: java.awt.Image): BufferedImage = _empty(awt.getWidth(null), awt.getHeight(null))
-  private[scrimage] def _empty(width: Int, height: Int): BufferedImage = new BufferedImage(width, height, CANONICAL_DATA_TYPE)
+  private[scrimage] def _empty(width: Int, height: Int): BufferedImage = new
+      BufferedImage(width, height, CANONICAL_DATA_TYPE)
 
   private[scrimage] def _copy(awt: java.awt.Image) = {
     require(awt != null, "Input image cannot be null")
