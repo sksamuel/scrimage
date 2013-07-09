@@ -20,53 +20,6 @@
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
                 <version>${maven.plugin.scala.version}</version>
-                <executions>
-                    <execution>
-                        <id>main-scalac</id>
-                        <goals>
-                            <goal>add-source</goal>
-                            <goal>compile</goal>
-                        </goals>
-                        <configuration>
-                            <compilerPlugins>
-                                <compilerPlugin>
-                                    <groupId>scales</groupId>
-                                    <artifactId>scales</artifactId>
-                                    <version>0.1.0-SNAPSHOT</version>
-                                </compilerPlugin>
-                            </compilerPlugins>
-                            <dependencies>
-                                <dependency>
-                                    <groupId>scales</groupId>
-                                    <artifactId>scales</artifactId>
-                                    <version>0.1.0-SNAPSHOT</version>
-                                </dependency>
-                            </dependencies>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>test-scalac</id>
-                        <goals>
-                            <goal>testCompile</goal>
-                        </goals>
-                        <configuration>
-                            <compilerPlugins>
-                                <compilerPlugin>
-                                    <groupId>scales</groupId>
-                                    <artifactId>scales</artifactId>
-                                    <version>0.1.0-SNAPSHOT</version>
-                                </compilerPlugin>
-                            </compilerPlugins>
-                            <dependencies>
-                                <dependency>
-                                    <groupId>scales</groupId>
-                                    <artifactId>scales</artifactId>
-                                    <version>0.1.0-SNAPSHOT</version>
-                                </dependency>
-                            </dependencies>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.scalatest</groupId>
