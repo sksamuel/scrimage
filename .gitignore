@@ -4,6 +4,7 @@
 scrimage.iml
 *.iml
 filters.md
+pom.xml.versionsBackup
 
 # sbt specific
 dist/*
