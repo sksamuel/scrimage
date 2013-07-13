@@ -518,9 +518,32 @@ object Image {
   def apply(in: InputStream): Image = {
     require(in != null)
     require(in.available > 0)
-    val image = apply(ImageIO.read(in))
+
+    val bytes = IOUtils.toByteArray(in) // lets buffer in case we have to repeat
     IOUtils.closeQuietly(in)
-    image
+
+    try {
+      apply(ImageIO.read(new ByteArrayInputStream(bytes)))
+    } catch {
+      case e: Exception =>
+
+        val readers = ImageIO.getImageReaders(new ByteArrayInputStream(bytes))
+        val reader = readers.next()
+        reader.setInput(new ByteArrayInputStream(bytes), true, true)
+
+        val params = reader.getDefaultReadParam
+        val imageTypes = reader.getImageTypes(0)
+        while (imageTypes.hasNext) {
+          val imageTypeSpecifier = imageTypes.next()
+          val bufferedImageType = imageTypeSpecifier.getBufferedImageType
+          if (bufferedImageType == BufferedImage.TYPE_BYTE_GRAY) {
+            params.setDestinationType(imageTypeSpecifier)
+          }
+        }
+
+        val bufferedImage = reader.read(0, params)
+        apply(bufferedImage)
+    }
   }
 
   def apply(file: File): Image = {
