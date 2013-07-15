@@ -425,7 +425,6 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
     padTo(width + size * 2, height + size * 2, color)
 
   /**
-   *
    * Creates a new image which is the result of this image padded to the canvas size specified.
    * If this image is already larger than the specified pad then the sizes of the existing
    * image will be used instead.
@@ -452,6 +451,29 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
     g.drawImage(awt, x, y, null)
     g.dispose()
     filled
+  }
+
+  /**
+   * Creates a new image which is this image scaled so that it does not
+   * exceed the given bounds. The resultant image will retain the aspect ratio.
+   *
+   * Eg, requesting a bound of 200,200 on an image of 300,600 will
+   * result in a scale to 100,200.
+   *
+   * Eg2, requesting a bound of 150,200 on an image of 150,50 will
+   * result in a scale to 35,50
+   *
+   * Eg3, requesting a bound of 300,300 on an image of 100,150 will
+   * result in a scale to 200,300
+   *
+   * @param boundedWidth the maximum width
+   * @param boundedHeight the maximum height
+   *
+   * @return A new image that is the result of the padding
+   */
+  def bound(boundedWidth: Int, boundedHeight: Int): Image = {
+    val dimensions = ImageTools.dimensionsToFit((boundedWidth, boundedHeight), (width, height))
+    scaleTo(dimensions._1, dimensions._2)
   }
 
   /**
