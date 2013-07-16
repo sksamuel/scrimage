@@ -4,6 +4,7 @@ import org.scalatest.{BeforeAndAfter, FunSuite}
 import java.awt.image.BufferedImage
 import java.awt.Color
 import com.sksamuel.scrimage.Position.{TopRight, BottomRight, Center, TopLeft}
+import java.io.File
 
 /** @author Stephen Samuel */
 class ImageTest extends FunSuite with BeforeAndAfter {
@@ -360,5 +361,26 @@ class ImageTest extends FunSuite with BeforeAndAfter {
     val resized = scaled.resizeTo(200, 200, Center, Color.BLUE)
     for ( x <- 0 until 200; y <- 0 until 50 ) assert(0xFF0000FF === resized.pixel(x, y))
     for ( x <- 0 until 200; y <- 150 until 200 ) assert(0xFF0000FF === resized.pixel(x, y))
+  }
+
+  test("when bounding an image the dimensions should not exceed the bounds") {
+    val bounded = image.bound(20, 20)
+    assert(bounded.width <= 20)
+    assert(bounded.height <= 20)
+  }
+
+  test("when bounding an image vertically the height should equal the target height parameter") {
+    val bounded = image.bound(200, 20)
+    assert(20 === bounded.height)
+  }
+
+  test("when bounding an image horizontally the width should equal the target width parameter") {
+    val bounded = image.bound(20, 156)
+    assert(20 === bounded.width)
+  }
+
+  test("bound operation happy path") {
+    val bounded = image.bound(200, 200)
+    assert(bounded === Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird_bound_200x200.png")))
   }
 }
