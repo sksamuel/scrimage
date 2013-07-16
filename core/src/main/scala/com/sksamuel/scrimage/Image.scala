@@ -326,10 +326,11 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
             position: Position = Center): Image = {
     val coveredDimensions = ImageTools.dimensionsToCover((targetWidth, targetHeight), (width, height))
     val scaled = scaleTo(coveredDimensions._1, coveredDimensions._2, scaleMethod)
-    val target = Image.empty(targetWidth, targetHeight)
-    val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
     val x = ((targetWidth - coveredDimensions._1) / 2.0).toInt
     val y = ((targetHeight - coveredDimensions._2) / 2.0).toInt
+
+    val target = Image.empty(targetWidth, targetHeight)
+    val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
     g2.drawImage(scaled.awt, x, y, null)
     g2.dispose()
     target

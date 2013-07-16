@@ -261,12 +261,6 @@ class ImageTest extends FunSuite with BeforeAndAfter {
     assert(scaled.ratio - image.ratio < 0.01)
   }
 
-  test("when covering an image the output image should have the specified dimensions") {
-    val covered = image.cover(51, 66)
-    assert(51 === covered.width)
-    assert(66 === covered.height)
-  }
-
   test("argb returns array of ARGB bytes") {
     val image = Image.filled(20, 20, Color.YELLOW)
     val components = image.argb
@@ -382,5 +376,16 @@ class ImageTest extends FunSuite with BeforeAndAfter {
   test("bound operation happy path") {
     val bounded = image.bound(200, 200)
     assert(bounded === Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird_bound_200x200.png")))
+  }
+
+  test("when covering an image the output image should have the specified dimensions") {
+    val covered = image.cover(51, 66)
+    assert(51 === covered.width)
+    assert(66 === covered.height)
+  }
+
+  test("cover operation happy path") {
+    val covered = image.cover(200, 200)
+    assert(covered === Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird_cover_200x200.png")))
   }
 }

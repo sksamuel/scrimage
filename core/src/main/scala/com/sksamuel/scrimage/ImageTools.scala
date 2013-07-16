@@ -36,16 +36,14 @@ object ImageTools {
 
   def dimensionsToCover(target: (Int, Int), source: (Int, Int)): (Int, Int) = {
 
-    val minWidth = if (target._1 < source._1) source._1 else target._1
-    val minHeight = if (target._2 < source._2) source._2 else target._2
+    val xscale = target._1 / source._1.toDouble
+    val yscale = target._2 / source._2.toDouble
 
-    val wscale = minWidth / source._1.toDouble
-    val hscale = minHeight / source._2.toDouble
-
-    if (wscale < hscale)
-      ((source._1 * hscale).toInt, (source._2 * hscale).toInt)
-    else
-      ((source._1 * wscale).toInt, (source._2 * wscale).toInt)
+    if (xscale > yscale) {
+      ((source._1 * xscale).toInt, (source._2 * xscale).toInt)
+    } else {
+      ((source._1 * yscale).toInt, (source._2 * yscale).toInt)
+    }
   }
 
   /**
