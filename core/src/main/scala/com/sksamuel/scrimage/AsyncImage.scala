@@ -27,6 +27,7 @@ import java.io.{InputStream, File}
 /** @author Stephen Samuel */
 class AsyncImage(image: Image) extends ImageLike[Future[AsyncImage]] {
 
+  override def clear(color: Color = Color.WHITE) = image.clear(color)
   override def empty = image.empty
   override def copy = image.copy
   override def pixels: Array[Int] = image.pixels
