@@ -24,5 +24,11 @@ object PixelTools {
   def alpha(pixel: Int): Int = pixel >> 24 & 0xFF
   def red(pixel: Int): Int = pixel >> 16 & 0xFF
   def green(pixel: Int): Int = pixel >> 8 & 0xFF
+
+  /**
+   * Returns the blue component of a pixel as a value between 0 and 255.
+   * @param pixel
+   * @return
+   */
   def blue(pixel: Int): Int = pixel & 0xFF
 }

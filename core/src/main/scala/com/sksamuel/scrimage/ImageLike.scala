@@ -226,6 +226,13 @@ trait ImageLike[R] {
 
   def pixels: Array[Int]
 
+  /**
+   *
+   * @param pixel the pixel colour to look for.
+   * @return true if there exists at least one pixel that has the given pixels color
+   */
+  def exists(pixel: Int) = pixels.exists(_ == pixel)
+
   override def equals(obj: Any): Boolean = obj match {
     case other: ImageLike[_] => other.pixels.sameElements(pixels)
     case _ => false
