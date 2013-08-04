@@ -153,7 +153,7 @@ The results are for 100 runs of a resize to a fixed width / height.
 | ImgScalr | 57ms | 5018ms (ImgScalr.Quality) |
 | Scrimage | 113ms | 2730ms (Bicubic) |
 
-As you can see, ImgScalr is the fastest for simple rescaling, but Scrimage is much faster than the rest a high quality scale.
+As you can see, ImgScalr is the fastest for a simple rescale, but Scrimage is much faster than the rest for a high quality scale.
 
 
 
