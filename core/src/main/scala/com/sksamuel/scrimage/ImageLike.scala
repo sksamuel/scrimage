@@ -27,6 +27,10 @@ import java.awt.Color
 /** @author Stephen Samuel */
 trait ImageLike[R] {
 
+  /**
+   * Clears all image data to the given color
+   */
+  def clear(color: Color = Color.WHITE): Image
   def width: Int
   def height: Int
   def dimensions: (Int, Int) = (width, height)
@@ -57,7 +61,7 @@ trait ImageLike[R] {
   def copy: Image
 
   /**
-   * @return Returns the ratio for this image.
+   * @return Returns the aspect ratio for this image.
    */
   def ratio: Double = if (height == 0) 0 else width / height.toDouble
 

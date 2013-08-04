@@ -529,7 +529,10 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
    * @return an AsyncImage wrapping this image.
    */
   def toAsync: AsyncImage = AsyncImage(this)
-
+  /**
+   * Clears all image data to the given color
+   */
+  def clear(color: Color): Image = filled(color)
 }
 
 object Image {
