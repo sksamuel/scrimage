@@ -40,6 +40,14 @@ trait ImageLike[R] {
   def empty: Image
 
   /**
+   * Counts the number of pixels with the given colour.
+   *
+   * @param pixel the colour to detect.
+   * @return the number of pixels that matched the colour of the given pixel
+   */
+  def count(pixel: Int) = pixels.find(_ == pixel).size
+
+  /**
    * Creates a new image with the same data as this image.
    * Any operations to the copied image will not write back to the original.
    * Images can be copied multiple times as well as copies copied etc.
@@ -59,7 +67,7 @@ trait ImageLike[R] {
    * The function accepts three parameters: x,y,p where x and y are the coordinates of the pixel
    * being transformed and p is the current pixel value in ABGR format.
    *
-   * @param f the function to transform pixel x,y with existing value p into a new pixel p'
+   * @param f the function to transform pixel x,y with existing value p into new pixel value p' (p prime)
    * @return
    */
   def map(f: (Int, Int, Int) => Int): R
@@ -94,7 +102,8 @@ trait ImageLike[R] {
    * This is like a "canvas resize" in Photoshop.
    *
    * @param scaleFactor the scaleFactor. 1 retains original size. 0.5 is half. 2 double. etc
-   * @param position where to position the original image after the canvas size change
+   * @param position where to position the original image after the canvas size change. Defaults to centre.
+   * @param background the color to use for expande background areas. Defaults to White.
    *
    * @return a new Image that is the result of resizing the canvas.
    */
