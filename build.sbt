@@ -1,6 +1,5 @@
 import _root_.sbt.Credentials
 import _root_.sbt.Keys._
-import java.nio.file.Path
 
 name := "scrimage"
 

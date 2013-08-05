@@ -19,6 +19,8 @@ publishTo <<= version {
       Some("releases" at nexus + "service/local/staging/deploy/maven2")
 }
 
+credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
+
 libraryDependencies ++= Seq(
   "org.apache.sanselan" % "sanselan" % "0.97-incubator",
   "log4j" % "log4j" % "1.2.17",
