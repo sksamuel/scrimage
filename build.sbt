@@ -1,3 +1,6 @@
+import _root_.sbt.Credentials
+import _root_.sbt.Keys._
+
 name := "scrimage"
 
 version := "1.3.4-SNAPSHOT"
@@ -13,6 +16,7 @@ publishMavenStyle := true
 publishArtifact in Test := false
 
 parallelExecution in Test := false
+
 
 publishTo <<= version {
   (v: String) =>

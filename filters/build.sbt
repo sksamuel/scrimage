@@ -1,3 +1,5 @@
+import java.lang.String
+
 scalaVersion := "2.10.2"
 
 organization := "com.sksamuel.scrimage"
@@ -5,6 +7,17 @@ organization := "com.sksamuel.scrimage"
 name := "scrimage-filters"
 
 version := "1.3.4-SNAPSHOT"
+
+publishMavenStyle := true
+
+publishTo <<= version {
+  (v: String) =>
+    val nexus = "https://oss.sonatype.org/"
+    if (v.trim.endsWith("SNAPSHOT"))
+      Some("snapshots" at nexus + "content/repositories/snapshots")
+    else
+      Some("releases" at nexus + "service/local/staging/deploy/maven2")
+}
 
 libraryDependencies ++= Seq(
   "org.apache.sanselan" % "sanselan" % "0.97-incubator",
