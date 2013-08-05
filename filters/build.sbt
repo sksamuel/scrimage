@@ -1,5 +1,4 @@
 import java.lang.String
-import java.nio.file.Path
 
 scalaVersion := "2.10.2"
 
