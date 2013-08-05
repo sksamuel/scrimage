@@ -1,5 +1,6 @@
 import _root_.sbt.Credentials
 import _root_.sbt.Keys._
+import java.nio.file.Path
 
 name := "scrimage"
 
@@ -17,6 +18,7 @@ publishArtifact in Test := false
 
 parallelExecution in Test := false
 
+credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
 
 publishTo <<= version {
   (v: String) =>
