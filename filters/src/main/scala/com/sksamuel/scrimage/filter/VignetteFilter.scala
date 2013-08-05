@@ -15,13 +15,13 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.{ Image, Filter }
-import java.awt.{ RadialGradientPaint, Color, Graphics2D }
+import com.sksamuel.scrimage.{Image, Filter}
+import java.awt.{RadialGradientPaint, Color, Graphics2D}
 import java.awt.geom.Point2D
 import thirdparty.romainguy.BlendComposite
 
 /** @author Stephen Samuel */
-class VignetteFilter(start: Double, end: Double, blur: Double) extends Filter {
+class VignetteFilter(start: Double, end: Double, blur: Double, color: Color = Color.BLACK) extends Filter {
   require(start >= 0)
   require(start <= 1)
   require(blur >= 0)
@@ -35,7 +35,7 @@ class VignetteFilter(start: Double, end: Double, blur: Double) extends Filter {
     val p = new RadialGradientPaint(new Point2D.Float(blend.center._1, blend.center._2),
       radius.toInt,
       Array(0.0f, if (start == 0) 0.01f else if (start == 1) 0.999f else start.toFloat, 1f),
-      Array(Color.WHITE, Color.WHITE, Color.BLACK))
+      Array(Color.WHITE, Color.WHITE, color))
     g2.setPaint(p)
     g2.fillRect(0, 0, blend.width, blend.height)
     g2.dispose()
@@ -51,5 +51,6 @@ class VignetteFilter(start: Double, end: Double, blur: Double) extends Filter {
 
 object VignetteFilter {
   def apply(): VignetteFilter = apply(0.85f, 0.95f, 0.3)
-  def apply(start: Double, end: Double, blur: Double): VignetteFilter = new VignetteFilter(start, end, blur)
+  def apply(start: Double, end: Double, blur: Double, color: Color = Color.BLACK): VignetteFilter =
+    new VignetteFilter(start, end, blur, color)
 }
