@@ -1,4 +1,3 @@
-import java.lang.String
 
 scalaVersion := "2.10.2"
 
@@ -21,7 +20,6 @@ publishTo <<= version {
       Some("releases" at nexus + "service/local/staging/deploy/maven2")
 }
 
-
 libraryDependencies ++= Seq(
   "org.apache.sanselan" % "sanselan" % "0.97-incubator",
   "log4j" % "log4j" % "1.2.17",
@@ -33,7 +31,6 @@ libraryDependencies ++= Seq(
   "junit" % "junit" % "4.11" % "test",
   "org.mockito" % "mockito-all" % "1.9.5" % "test"
 )
-
 
 pomExtra := {
   <licenses>
