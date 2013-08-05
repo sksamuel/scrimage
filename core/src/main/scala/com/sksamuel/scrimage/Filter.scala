@@ -36,3 +36,7 @@ abstract class BufferedOpFilter extends Filter {
     g2.dispose()
   }
 }
+
+class PipelineFilter(filters: Filter*) extends Filter {
+  def apply(image: Image): Unit = filters.foreach(_.apply(image))
+}

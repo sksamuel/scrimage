@@ -17,7 +17,7 @@
 package com.sksamuel.scrimage
 
 import java.io.{OutputStream, File}
-import org.apache.commons.io.FileUtils
+import org.apache.commons.io.{IOUtils, FileUtils}
 import com.sksamuel.scrimage.Format.PNG
 import com.sksamuel.scrimage.io.ImageWriter
 import com.sksamuel.scrimage.ScaleMethod.Bicubic
@@ -219,7 +219,9 @@ trait ImageLike[R] {
     write(file, Format.PNG)
   }
   def write(file: File, format: Format[_ <: ImageWriter]) {
-    write(FileUtils.openOutputStream(file), format)
+    val fos = FileUtils.openOutputStream(file)
+    write(fos, format)
+    IOUtils.closeQuietly(fos)
   }
   def write(out: OutputStream) {
     write(out, PNG)

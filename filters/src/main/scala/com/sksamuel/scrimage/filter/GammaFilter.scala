@@ -23,6 +23,5 @@ class GammaFilter(gamma: Double) extends BufferedOpFilter {
   op.setGamma(gamma.toFloat)
 }
 object GammaFilter {
-  def apply(): GammaFilter = apply(1.0f)
-  def apply(gamma: Double): GammaFilter = new GammaFilter(gamma)
+  def apply(gamma: Double = 1.0f): GammaFilter = new GammaFilter(gamma)
 }

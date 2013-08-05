@@ -218,6 +218,8 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
     target
   }
 
+  def filter(filters: Filter*): Image = filters.foldLeft(this)((image, filter) => image.filter(filter))
+
   def removeTransparency(color: java.awt.Color): Image = {
     val rgb = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
     val g = rgb.createGraphics()

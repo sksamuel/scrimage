@@ -30,5 +30,5 @@ class ColorizeFilter(color: Color) extends Filter {
 
 object ColorizeFilter {
   def apply(color: Color) = new ColorizeFilter(color)
-  def apply(a: Int, r: Int, g: Int, b: Int) = new ColorizeFilter(new Color(r, g, b, a))
+  def apply(r: Int, g: Int, b: Int, a: Int = 255) = new ColorizeFilter(new Color(r, g, b, a))
 }
