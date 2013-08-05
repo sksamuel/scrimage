@@ -6,6 +6,23 @@ organization := "com.sksamuel.scrimage"
 
 scalaVersion := "2.10.2"
 
+scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
+
+publishMavenStyle := true
+
+publishArtifact in Test := false
+
+parallelExecution in Test := false
+
+publishTo <<= version {
+  (v: String) =>
+    val nexus = "https://oss.sonatype.org/"
+    if (v.trim.endsWith("SNAPSHOT"))
+      Some("snapshots" at nexus + "content/repositories/snapshots")
+    else
+      Some("releases" at nexus + "service/local/staging/deploy/maven2")
+}
+
 pomExtra := {
   <licenses>
     <license>
