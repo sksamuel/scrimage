@@ -28,5 +28,6 @@ class HSBFilter(hue: Double, saturation: Double, brightness: Double) extends Buf
   op.setBFactor(brightness.toFloat)
 }
 object HSBFilter {
-  def apply(hue: Double = 0, saturation: Double = 0, brightness: Double = 0): HSBFilter = new HSBFilter(hue, saturation, brightness)
+  def apply(hue: Double = 0, saturation: Double = 0, brightness: Double = 0): HSBFilter = new
+      HSBFilter(hue, saturation, brightness)
 }
