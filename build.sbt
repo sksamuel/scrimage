@@ -29,13 +29,14 @@ publishTo <<= version {
 }
 
 pomExtra := {
-  <licenses>
-    <license>
-      <name>The Apache Software License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
+  <url>https://github.com/sksamuel/scrimage</url>
+    <licenses>
+      <license>
+        <name>The Apache Software License, Version 2.0</name>
+        <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        <distribution>repo</distribution>
+      </license>
+    </licenses>
     <scm>
       <connection>scm:git:git@github.com:sksamuel/scrimage.git</connection>
       <developerConnection>scm:git:git@github.com:sksamuel/scrimage.git</developerConnection>

@@ -33,6 +33,7 @@ libraryDependencies ++= Seq(
 )
 
 pomExtra := {
+  <url>https://github.com/sksamuel/scrimage</url>
   <licenses>
     <license>
       <name>The Apache Software License, Version 2.0</name>
