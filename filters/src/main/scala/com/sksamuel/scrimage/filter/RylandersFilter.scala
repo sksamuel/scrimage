@@ -19,5 +19,5 @@ import thirdparty.marvin.image.halftone.Rylanders
 
 /** @author Stephen Samuel */
 object RylandersFilter extends MarvinFilter {
-    val plugin = new Rylanders()
+  val plugin = new Rylanders()
 }

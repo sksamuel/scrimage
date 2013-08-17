@@ -22,47 +22,47 @@ import org.apache.commons.io.FileUtils
 /** @author Stephen Samuel */
 trait ImageWriter {
 
-    /**
-     * Writes out this image to the given stream.
-     *
-     * @param out the stream to write out to
-     */
-    def write(out: OutputStream)
+  /**
+   * Writes out this image to the given stream.
+   *
+   * @param out the stream to write out to
+   */
+  def write(out: OutputStream)
 
-    /**
-     * Writes out this image to the given filepath.
-     *
-     * @param path the path to write out to.
-     */
-    def write(path: String) {
-        write(new File(path))
-    }
+  /**
+   * Writes out this image to the given filepath.
+   *
+   * @param path the path to write out to.
+   */
+  def write(path: String) {
+    write(new File(path))
+  }
 
-    /**
-     * Writes out this image to the given file.
-     *
-     * @param file the file to write out to.
-     */
-    def write(file: File) {
-        write(FileUtils.openOutputStream(file))
-    }
+  /**
+   * Writes out this image to the given file.
+   *
+   * @param file the file to write out to.
+   */
+  def write(file: File) {
+    write(FileUtils.openOutputStream(file))
+  }
 
-    /**
-     * Writes out this image to a byte array.
-     *
-     * @return the byte array
-     */
-    def write(): Array[Byte] = {
-        val baos = new ByteArrayOutputStream()
-        write(baos)
-        baos.toByteArray
-    }
+  /**
+   * Writes out this image to a byte array.
+   *
+   * @return the byte array
+   */
+  def write(): Array[Byte] = {
+    val baos = new ByteArrayOutputStream()
+    write(baos)
+    baos.toByteArray
+  }
 
-    /**
-     * Returns an input stream that reads from this image.
-     */
-    def toStream: InputStream = {
-        val bytes = write()
-        new ByteArrayInputStream(bytes)
-    }
+  /**
+   * Returns an input stream that reads from this image.
+   */
+  def toStream: InputStream = {
+    val bytes = write()
+    new ByteArrayInputStream(bytes)
+  }
 }

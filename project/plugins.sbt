@@ -1,2 +1,1 @@
-// https://github.com/shivawu/sbt-maven-plugin
-addSbtPlugin("com.github.shivawu" % "sbt-maven-plugin" % "0.1.2")
+addSbtPlugin("com.jsuereth" % "xsbt-gpg-plugin" % "0.6")

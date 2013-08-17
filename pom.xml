@@ -12,7 +12,8 @@
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage</artifactId>
     <packaging>pom</packaging>
-    <version>1.3.1-SNAPSHOT</version>
+    <version>1.3.4-SNAPSHOT</version>
+
     <name>Scrimage</name>
     <description>A scala library for image manipulation and processing.</description>
     <url>https://github.com/sksamuel/scrimage</url>
@@ -121,32 +122,6 @@
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>${maven.plugin.source.version}</version>
-                    <executions>
-                        <execution>
-                            <id>attach-sources</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>${maven.plugin.javadoc.version}</version>
-                    <executions>
-                        <execution>
-                            <id>attach-javadocs</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${maven.plugin.compiler.version}</version>
                     <configuration>
@@ -172,11 +147,6 @@
                             <goals>
                                 <goal>add-source</goal>
                                 <goal>compile</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>test-scalac</id>
-                            <goals>
                                 <goal>testCompile</goal>
                             </goals>
                         </execution>
@@ -209,7 +179,6 @@
             </plugins>
         </pluginManagement>
     </build>
-
 
 
 </project>

@@ -19,6 +19,6 @@ import thirdparty.marvin.image.television.Television
 
 /** @author Stephen Samuel */
 object TelevisionFilter extends MarvinFilter {
-    val plugin = new Television()
+  val plugin = new Television()
 }
 

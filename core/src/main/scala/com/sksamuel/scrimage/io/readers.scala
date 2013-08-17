@@ -22,9 +22,9 @@ import org.apache.sanselan.Sanselan
 
 /** @author Stephen Samuel */
 trait JavaImageIOReader extends ImageReader {
-    def read(in: InputStream): Image = Image(ImageIO.read(in))
+  def read(in: InputStream): Image = Image(ImageIO.read(in))
 }
 
 trait SanselanReader extends ImageReader {
-    def read(in: InputStream): Image = Image(Sanselan.getBufferedImage(in))
+  def read(in: InputStream): Image = Image(Sanselan.getBufferedImage(in))
 }

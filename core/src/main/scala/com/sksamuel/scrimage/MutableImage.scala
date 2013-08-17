@@ -19,37 +19,46 @@ package com.sksamuel.scrimage
 import java.awt.image.{AffineTransformOp, BufferedImage}
 import java.io.{File, InputStream}
 import java.awt.geom.AffineTransform
+import java.awt.Color
 
 /** @author Stephen Samuel */
 class MutableImage(awt: BufferedImage) extends Image(awt) {
 
-    override def _flip(tx: AffineTransform): MutableImage = {
-        val op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR)
-        val output = op.createCompatibleDestImage(awt, null)
-        op.filter(awt, output)
-        awt.setData(output.getData)
-        this
-    }
+  override def clear(color: Color = Color.WHITE): Image = {
+    val g2 = awt.getGraphics
+    g2.setColor(color)
+    g2.fillRect(0, 0, width, height)
+    g2.dispose()
+    this
+  }
 
-    override def filter(filter: Filter): MutableImage = {
-        filter.apply(this)
-        this
-    }
+  override def _flip(tx: AffineTransform): MutableImage = {
+    val op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR)
+    val output = op.createCompatibleDestImage(awt, null)
+    op.filter(awt, output)
+    awt.setData(output.getData)
+    this
+  }
 
-    override def filled(color: Int): MutableImage = filled(new java.awt.Color(color))
-    override def filled(color: java.awt.Color): MutableImage = {
-        super._fill(color)
-        this
-    }
-    
-    def setPixel(x: Int, y: Int, pixel: Int) {
-        awt.setRGB(x, y, pixel)
-    }
+  override def filter(filter: Filter): MutableImage = {
+    filter.apply(this)
+    this
+  }
+
+  override def filled(color: Int): MutableImage = filled(new java.awt.Color(color))
+  override def filled(color: java.awt.Color): MutableImage = {
+    super._fill(color)
+    this
+  }
+
+  def setPixel(x: Int, y: Int, pixel: Int) {
+    awt.setRGB(x, y, pixel)
+  }
 }
 
 object MutableImage {
-    def apply(in: InputStream): MutableImage = Image(in).toMutable
-    def apply(file: File): MutableImage = Image(file).toMutable
-    def apply(image: Image): MutableImage = image.toMutable
-    def apply(buff: BufferedImage): MutableImage = Image(buff).toMutable
+  def apply(in: InputStream): MutableImage = Image(in).toMutable
+  def apply(file: File): MutableImage = Image(file).toMutable
+  def apply(image: Image): MutableImage = image.toMutable
+  def apply(buff: BufferedImage): MutableImage = Image(buff).toMutable
 }

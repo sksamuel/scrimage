@@ -20,5 +20,5 @@ import com.sksamuel.scrimage.Image
 
 /** @author Stephen Samuel */
 trait ImageReader {
-    def read(in: InputStream): Image
+  def read(in: InputStream): Image
 }
