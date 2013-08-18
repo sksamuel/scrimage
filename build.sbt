@@ -17,7 +17,8 @@ publishArtifact in Test := false
 
 parallelExecution in Test := false
 
-credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
+// TODO: This is a user-specific setting and should go in ~/.sbt/credentials.sbt or similar.
+//credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
 
 publishTo <<= version {
   (v: String) =>
