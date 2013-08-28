@@ -165,12 +165,12 @@ Maven:
 ```xml
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
-    <artifactId>scrimage-core</artifactId>
+    <artifactId>scrimage-core_2.10</artifactId>
     <version>1.3.5</version>
 </dependency>
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
-    <artifactId>scrimage-filters</artifactId>
+    <artifactId>scrimage-filters_2.10</artifactId>
     <version>1.3.5</version>
 </dependency>
 ```
