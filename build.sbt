@@ -3,7 +3,7 @@ import _root_.sbt.Keys._
 
 name := "scrimage"
 
-version := "1.3.4"
+version := "1.3.5"
 
 organization := "com.sksamuel.scrimage"
 
