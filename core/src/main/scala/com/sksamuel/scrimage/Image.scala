@@ -257,18 +257,25 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
    *
    * @return
    */
-  def rotateLeft = _rotate(Math.PI)
+  def rotateLeft = _rotate(Math.PI/2)
 
   /**
    * Returns a copy of this image rotated 90 degrees clockwise.
    *
    * @return
    */
-  def rotateRight = _rotate(-Math.PI)
+  def rotateRight = _rotate(-Math.PI/2)
 
   def _rotate(angle: Double): Image = {
     val target = new BufferedImage(height, width, awt.getType)
     val g2 = target.getGraphics.asInstanceOf[Graphics2D]
+    val offset = angle match {
+      case a if a < 0 => ( 0, width )
+      case a if a > 0 => ( height, 0 )
+      case _ => ( 0, 0 )
+    }
+
+    g2.translate( offset._1, offset._2 )
     g2.rotate(angle)
     g2.drawImage(awt, 0, 0, null)
     g2.dispose()
