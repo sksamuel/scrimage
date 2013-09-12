@@ -87,6 +87,12 @@ val image = Image(in)
 println(s"Width: ${image.width} Height: ${image.height} Ratio: ${image.ratio}")
 ```
 
+Converting a byte array in JPEG to a byte array in PNG
+```
+val in : Array[Byte] = ... // array of bytes in JPEG say
+val out = Image(in).write // default is PNG
+val out2 = Image(in).write(Format.PNG) // to be explicit about the output format
+```
 
 ### Input / Output
 
