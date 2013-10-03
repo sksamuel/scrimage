@@ -7,7 +7,7 @@ version := "1.3.6-SNAPSHOT"
 
 organization := "com.sksamuel.scrimage"
 
-scalaVersion := "2.10.2"
+scalaVersion := "2.10.3"
 
 scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
 
