@@ -1,5 +1,5 @@
 
-scalaVersion := "2.10.2"
+scalaVersion := "2.10.3"
 
 organization := "com.sksamuel.scrimage"
 
