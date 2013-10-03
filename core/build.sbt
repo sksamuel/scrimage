@@ -5,11 +5,12 @@ organization := "com.sksamuel.scrimage"
 
 name := "scrimage-core"
 
-version := "1.3.5"
+version := "1.3.6-SNAPSHOT"
 
 publishMavenStyle := true
 
-credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
+// TODO: This is a user-specific setting and should go in ~/.sbt/credentials.sbt or similar.
+//credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
 
 publishTo <<= version {
   (v: String) =>
