@@ -6,7 +6,7 @@ converting between formats and applying filters. It is not intended to provide f
 more "serious" image application - such as face recognition or movement tracking.
 
 A typical use case for this library would be creating thumbnails of images uploaded by users in a web app, or resizing a
-set of images to have a consistent size, or applying a grayscale filter in a print application.
+set of images to have a consistent size, or optimizing PNG uploads by users to apply maximum compression, or applying a grayscale filter in a print application.
 
 Scrimage has a consistent, idiomatic scala, and mostly immutable API that builds on the java.awt.Image methods.
 I say mostly immutable because for some operations creating a copy of the underlying image
@@ -72,6 +72,7 @@ val in = ... // input stream
 val out = ... // output stream
 Image(in).scale(300, 200, FastScale)
 ```
+
 Writing out a heavily compressed Jpeg thumbnail
 ```scala
 val in = ... // input stream
@@ -87,6 +88,19 @@ val image = Image(in)
 println(s"Width: ${image.width} Height: ${image.height} Ratio: ${image.ratio}")
 ```
 
+Converting a byte array in JPEG to a byte array in PNG
+```
+val in : Array[Byte] = ... // array of bytes in JPEG say
+val out = Image(in).write // default is PNG
+val out2 = Image(in).write(Format.PNG) // to be explicit about the output format
+```
+
+Coverting an input stream to a maximum compressed PNG
+```
+val in : InputStream = ... // some input stream
+val out : OutputStream = ... // some output stream
+val compressed = Image(in).writer(Format.PNG).withMaxCompression.write(out)
+```
 
 ### Input / Output
 
@@ -165,21 +179,21 @@ Maven:
 ```xml
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
-    <artifactId>scrimage-core</artifactId>
-    <version>1.3.1</version>
+    <artifactId>scrimage-core_2.10</artifactId>
+    <version>1.3.5</version>
 </dependency>
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
-    <artifactId>scrimage-filters</artifactId>
-    <version>1.3.1</version>
+    <artifactId>scrimage-filters_2.10</artifactId>
+    <version>1.3.5</version>
 </dependency>
 ```
 
 If using SBT then you want:
 ```scala
-libraryDependencies += "com.sksamuel.scrimage" % "scrimage-core" % "1.3.3"
+libraryDependencies += "com.sksamuel.scrimage" % "scrimage-core_2.10" % "1.3.5"
 
-libraryDependencies += "com.sksamuel.scrimage" % "scrimage-filters" % "1.3.3"
+libraryDependencies += "com.sksamuel.scrimage" % "scrimage-filters_2.10" % "1.3.5"
 ```
 
 
