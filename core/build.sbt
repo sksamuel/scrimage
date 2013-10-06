@@ -1,4 +1,3 @@
-import java.nio.file.Path
 
 scalaVersion := "2.10.3"
 
