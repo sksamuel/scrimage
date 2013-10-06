@@ -1,9 +1,10 @@
 import _root_.sbt.Credentials
 import _root_.sbt.Keys._
+import java.nio.file.Path
 
 name := "scrimage"
 
-version := "1.3.6-SNAPSHOT"
+version := "1.3.6"
 
 organization := "com.sksamuel.scrimage"
 

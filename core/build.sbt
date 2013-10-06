@@ -1,3 +1,4 @@
+import java.nio.file.Path
 
 scalaVersion := "2.10.3"
 
@@ -5,7 +6,7 @@ organization := "com.sksamuel.scrimage"
 
 name := "scrimage-core"
 
-version := "1.3.6-SNAPSHOT"
+version := "1.3.6"
 
 publishMavenStyle := true
 
