@@ -1,5 +1,3 @@
-import _root_.sbt.Credentials
-import _root_.sbt.Keys._
 
 name := "scrimage"
 
@@ -18,7 +16,7 @@ publishArtifact in Test := false
 parallelExecution in Test := false
 
 // TODO: This is a user-specific setting and should go in ~/.sbt/credentials.sbt or similar.
-//credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
+credentials += Credentials(Path.userHome / ".sbt" / ".credentials")
 
 publishTo <<= version {
   (v: String) =>
