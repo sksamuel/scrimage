@@ -9,6 +9,8 @@ version := "1.3.7"
 
 publishMavenStyle := true
 
+javacOptions ++= Seq("-source", "1.6", "-target", "1.6")
+
 publishTo <<= version {
   (v: String) =>
     val nexus = "https://oss.sonatype.org/"
