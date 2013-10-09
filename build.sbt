@@ -1,4 +1,3 @@
-import java.nio.file.Path
 
 name := "scrimage"
 
