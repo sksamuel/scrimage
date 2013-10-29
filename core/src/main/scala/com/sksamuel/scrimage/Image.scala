@@ -380,25 +380,25 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
    *
    * @return
    */
-  def rotateLeft = _rotate(Math.PI/2)
+  def rotateLeft = _rotate(Math.PI / 2)
 
   /**
    * Returns a copy of this image rotated 90 degrees clockwise.
    *
    * @return
    */
-  def rotateRight = _rotate(-Math.PI/2)
+  def rotateRight = _rotate(-Math.PI / 2)
 
   def _rotate(angle: Double): Image = {
     val target = new BufferedImage(height, width, awt.getType)
     val g2 = target.getGraphics.asInstanceOf[Graphics2D]
     val offset = angle match {
-      case a if a < 0 => ( 0, width )
-      case a if a > 0 => ( height, 0 )
-      case _ => ( 0, 0 )
+      case a if a < 0 => (0, width)
+      case a if a > 0 => (height, 0)
+      case _ => (0, 0)
     }
 
-    g2.translate( offset._1, offset._2 )
+    g2.translate(offset._1, offset._2)
     g2.rotate(angle)
     g2.drawImage(awt, 0, 0, null)
     g2.dispose()
@@ -627,7 +627,23 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
 
   def writer[T <: ImageWriter](format: Format[T]): T = format.writer(this)
 
-  override def hashCode(): Int = awt.hashCode
+  // This tuple contains all the state that identifies this particular image.
+  private[scrimage] def imageState = {
+    (awt.getWidth,
+      awt.getHeight,
+      awt.getType,
+      pixels.toList)
+  }
+
+  // See this Stack Overflow question to see why this is implemented this way.
+  // http://stackoverflow.com/questions/7370925/what-is-the-standard-idiom-for-implementing-equals-and-hashcode-in-scala
+  override def hashCode = imageState.hashCode
+
+  override def equals(other: Any): Boolean =
+    other match {
+      case that: Image => imageState == that.imageState
+      case _ => false
+    }
 
   // -- mutable operations -- //
 
