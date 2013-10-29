@@ -28,7 +28,6 @@ import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.io.ImageWriter
 import scala.Array
 import com.sksamuel.scrimage.PixelTools._
-import java.awt.image.DataBufferByte
 
 /**
  * @author Stephen Samuel
