@@ -17,8 +17,10 @@ package com.sksamuel.scrimage
 
 /** @author Stephen Samuel */
 object PixelTools {
+
   def rgb(r: Int, g: Int, b: Int): Int =
     0xFF << 24 | (r & 0xFF) << 16 | (g & 0xFF) << 8 | (b & 0xFF) << 0
+
   def argb(a: Int, r: Int, g: Int, b: Int): Int =
     (a & 0xFF) << 24 | (r & 0xFF) << 16 | (g & 0xFF) << 8 | (b & 0xFF) << 0
 
@@ -49,7 +51,7 @@ object PixelTools {
    * @return
    */
   def blue(pixel: Int): Int = pixel & 0xFF
-  
+
   /**
    * Returns the gray value of a pixel as a value between 0 and 255.
    */
@@ -58,9 +60,11 @@ object PixelTools {
 
   /**
    * Scales the brightness of a pixel.
-   */  
+   */
   def scale(factor: Double, pixel: Int): Int = rgb(
     (factor * red(pixel)).round.toInt,
     (factor * green(pixel)).round.toInt,
     (factor * blue(pixel)).round.toInt)
+
+  def coordinateToOffset(x: Int, y: Int, w: Int): Int = y * w + x
 }

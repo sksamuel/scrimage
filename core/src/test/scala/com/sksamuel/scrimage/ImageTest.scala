@@ -398,4 +398,24 @@ class ImageTest extends FunSuite with BeforeAndAfter {
     val covered = image.cover(200, 200)
     assert(covered === Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird_cover_200x200.png")))
   }
+
+  test("pixels region") {
+    val striped = Image.empty(200, 100).map((x, y, p) => if (y % 2 == 0) 255 else 0)
+    val pixels = striped.pixels(10, 10, 10, 10)
+    for ( k <- 0 until 10 )
+      assert(255 === pixels(k))
+    for ( k <- 10 until 19 )
+      assert(0 === pixels(k))
+    for ( k <- 20 until 29 )
+      assert(255 === pixels(k))
+    for ( k <- 30 until 39 )
+      assert(0 === pixels(k))
+  }
+
+  test("subimage has right dimensions") {
+    val covered = image.cover(200, 200)
+    val subimage = covered.subimage(10, 10, 50, 100)
+    assert(50 === subimage.width)
+    assert(100 === subimage.height)
+  }
 }

@@ -16,14 +16,14 @@
 
 package com.sksamuel.scrimage
 
-import java.awt.{ Color, RenderingHints, Graphics2D }
+import java.awt.{Color, RenderingHints, Graphics2D}
 import java.awt.geom.AffineTransform
-import java.io.{ ByteArrayInputStream, InputStream, File }
+import java.io.{ByteArrayInputStream, InputStream, File}
 import com.sksamuel.scrimage.ScaleMethod._
 import javax.imageio.ImageIO
-import org.apache.commons.io.{ IOUtils, FileUtils }
-import java.awt.image.{ DataBufferInt, AffineTransformOp, BufferedImage }
-import thirdparty.mortennobel.{ ResampleFilters, ResampleOp }
+import org.apache.commons.io.{IOUtils, FileUtils}
+import java.awt.image.{DataBufferInt, AffineTransformOp, BufferedImage}
+import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.io.ImageWriter
 import scala.Array
@@ -90,6 +90,36 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
   }
 
   /**
+   * Returns a new Image that is a subimage or region of the original image.
+   *
+   * @param x the start x coordinate
+   * @param y the start y coordinate
+   * @param w the width of the subimage
+   * @param h the height of the subimage
+   * @return a new Image that is the subimage
+   */
+  def subimage(x: Int, y: Int, w: Int, h: Int): Image = Image(w, h, pixels(x, y, w, h))
+
+  /**
+   * Returns a rectangular region within the given boundaries as a single
+   * dimensional array of integers.
+   *
+   * Eg, pixels(10, 10, 30, 20) would result in an array of size 600 with
+   * the first row of the region in indexes 0,..,29, second row 30,..,59 etc.
+   *
+   * @param x the start x coordinate
+   * @param y the start y coordinate
+   * @param w the width of the region
+   * @param h the height of the region
+   * @return an Array of pixels for the region
+   */
+  def pixels(x: Int, y: Int, w: Int, h: Int): Array[Int] = {
+    for ( y1 <- Array.range(y, y + h);
+          x1 <- Array.range(x, x + w) )
+    yield pixel(x1, y1)
+  }
+
+  /**
    * Returns the pixel at the given coordinates as a integer in RGB format.
    *
    * @param p the pixel as an integer tuple
@@ -139,8 +169,8 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
     // get in the weighted average.
     // Operates on one dimension at a time.
     def integerPixelCoordinatesAndWeights(
-      double: Double,
-      numPixels: Int): List[Tuple2[Int, Double]] = {
+                                           double: Double,
+                                           numPixels: Int): List[Tuple2[Int, Double]] = {
       if (double <= 0.5) List((0, 1.0))
       else if (double >= numPixels - 0.5) List((numPixels - 1, 1.0))
       else {
@@ -188,10 +218,10 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
    * Extracts a subimage, but using subpixel interpolation.
    */
   def subpixelSubimage(
-    x: Double,
-    y: Double,
-    subWidth: Int,
-    subHeight: Int): Image = {
+                        x: Double,
+                        y: Double,
+                        subWidth: Int,
+                        subHeight: Int): Image = {
     require(x >= 0)
     require(x + subWidth < width)
     require(y >= 0)
@@ -216,14 +246,14 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
    * Extract a patch, centered at a subpixel point.
    */
   def subpixelSubimageCenteredAtPoint(
-    x: Double,
-    y: Double,
-    xRadius: Double,
-    yRadius: Double): Image = {
+                                       x: Double,
+                                       y: Double,
+                                       xRadius: Double,
+                                       yRadius: Double): Image = {
     val xWidth = 2 * xRadius
     val yWidth = 2 * yRadius
 
-    // The dimensions of the extracted patch must be integral. 
+    // The dimensions of the extracted patch must be integral.
     require(xWidth == xWidth.round)
     require(yWidth == yWidth.round)
 
@@ -244,8 +274,9 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
     for (
       row <- 0 to height - patchHeight;
       col <- 0 to width - patchWidth
-    ) yield { () =>
-      new Image(awt.getSubimage(col, row, patchWidth, patchHeight))
+    ) yield {
+      () =>
+        new Image(awt.getSubimage(col, row, patchWidth, patchHeight))
     }
 
   /**
@@ -420,10 +451,10 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
    * @return a new Image with the original image scaled to fit inside
    */
   def fit(targetWidth: Int,
-    targetHeight: Int,
-    color: java.awt.Color = java.awt.Color.WHITE,
-    scaleMethod: ScaleMethod = Bicubic,
-    position: Position = Center): Image = {
+          targetHeight: Int,
+          color: java.awt.Color = java.awt.Color.WHITE,
+          scaleMethod: ScaleMethod = Bicubic,
+          position: Position = Center): Image = {
     val fittedDimensions = ImageTools.dimensionsToFit((targetWidth, targetHeight), (width, height))
     val scaled = scaleTo(fittedDimensions._1, fittedDimensions._2, scaleMethod)
     val target = Image.filled(targetWidth, targetHeight, color)
@@ -453,9 +484,9 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
    * @return a new Image with the original image scaled to cover the new dimensions
    */
   def cover(targetWidth: Int,
-    targetHeight: Int,
-    scaleMethod: ScaleMethod = Bicubic,
-    position: Position = Center): Image = {
+            targetHeight: Int,
+            scaleMethod: ScaleMethod = Bicubic,
+            position: Position = Center): Image = {
     val coveredDimensions = ImageTools.dimensionsToCover((targetWidth, targetHeight), (width, height))
     val scaled = scaleTo(coveredDimensions._1, coveredDimensions._2, scaleMethod)
     val x = ((targetWidth - coveredDimensions._1) / 2.0).toInt
@@ -527,9 +558,9 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
    * @return a new Image that is the result of resizing the canvas.
    */
   def resizeTo(targetWidth: Int,
-    targetHeight: Int,
-    position: Position = Center,
-    background: Color = Color.WHITE): Image = {
+               targetHeight: Int,
+               position: Position = Center,
+               background: Color = Color.WHITE): Image = {
     if (targetWidth == width && targetHeight == height) this
     else {
       val target = Image.filled(targetWidth, targetHeight, background)
@@ -687,6 +718,24 @@ object Image {
 
   val CANONICAL_DATA_TYPE = BufferedImage.TYPE_INT_ARGB
 
+  /**
+   * Create a new Image from an array of pixels. The specified
+   * width and height must match the number of pixels.
+   *
+   * @return a new Image
+   */
+  def apply(w: Int, h: Int, pixels: Array[Int]): Image = {
+    require(w * h == pixels.size)
+    Image.empty(w, h).map((x, y, p) => pixels(PixelTools.coordinateToOffset(x, y, w)))
+  }
+
+  /**
+   * Create a new Image from a byte stream. This is intended to create
+   * an image from an image format eg PNG, not from a stream of pixels.
+   *
+   * @param bytes the bytes from the format stream
+   * @return a new Image
+   */
   def apply(bytes: Array[Byte]): Image = apply(new ByteArrayInputStream(bytes))
 
   def apply(in: InputStream): Image = {
@@ -745,7 +794,8 @@ object Image {
   def apply(image: Image): Image = _copy(image.awt)
 
   private[scrimage] def _empty(awt: java.awt.Image): BufferedImage = _empty(awt.getWidth(null), awt.getHeight(null))
-  private[scrimage] def _empty(width: Int, height: Int): BufferedImage = new BufferedImage(width, height, CANONICAL_DATA_TYPE)
+  private[scrimage] def _empty(width: Int, height: Int): BufferedImage = new
+      BufferedImage(width, height, CANONICAL_DATA_TYPE)
 
   private[scrimage] def _copy(awt: java.awt.Image) = {
     require(awt != null, "Input image cannot be null")

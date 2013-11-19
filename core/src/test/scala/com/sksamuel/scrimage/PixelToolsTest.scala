@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage
 
-import org.scalatest.{ OneInstancePerTest, BeforeAndAfter, FunSuite }
+import org.scalatest.{OneInstancePerTest, BeforeAndAfter, FunSuite}
 import java.awt.Color
 
 /** @author Stephen Samuel */
@@ -42,4 +42,9 @@ class PixelToolsTest extends FunSuite with BeforeAndAfter with OneInstancePerTes
     assert(0xFF556677 === PixelTools.rgb(85, 102, 119))
   }
 
+  test("coordinate to offset") {
+    assert(160 === PixelTools.coordinateToOffset(10, 3, 50))
+    assert(10 === PixelTools.coordinateToOffset(10, 0, 50))
+    assert(99 === PixelTools.coordinateToOffset(49, 1, 50))
+  }
 }
