@@ -89,6 +89,9 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
     new Image(target)
   }
 
+  def row(y: Int): Array[Int] = pixels(0, y, width, 1)
+  def col(x: Int): Array[Int] = pixels(x, 0, 1, height)
+
   /**
    * Returns a new Image that is a subimage or region of the original image.
    *

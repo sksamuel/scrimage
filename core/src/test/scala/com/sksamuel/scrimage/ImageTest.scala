@@ -1,10 +1,9 @@
 package com.sksamuel.scrimage
 
-import org.scalatest.{ BeforeAndAfter, FunSuite }
+import org.scalatest.{BeforeAndAfter, FunSuite}
 import java.awt.image.BufferedImage
 import java.awt.Color
-import com.sksamuel.scrimage.Position.{ TopRight, BottomRight, Center, TopLeft }
-import java.io.File
+import com.sksamuel.scrimage.Position.{TopRight, BottomRight, Center, TopLeft}
 
 /** @author Stephen Samuel */
 class ImageTest extends FunSuite with BeforeAndAfter {
@@ -122,7 +121,7 @@ class ImageTest extends FunSuite with BeforeAndAfter {
       val in = getClass.getResourceAsStream("/bird.jpg")
       Image(in)
     }
-    
+
     assert(image.hashCode === bird.hashCode)
     assert(image === bird)
 
@@ -275,7 +274,7 @@ class ImageTest extends FunSuite with BeforeAndAfter {
     val image = Image.filled(20, 20, Color.YELLOW)
     val components = image.argb
     assert(400 === components.size)
-    for (component <- components)
+    for ( component <- components )
       assert(component === Array(255, 255, 255, 0))
   }
 
@@ -283,7 +282,7 @@ class ImageTest extends FunSuite with BeforeAndAfter {
     val image = Image.filled(20, 20, Color.YELLOW)
     val components = image.rgb
     assert(400 === components.size)
-    for (component <- components)
+    for ( component <- components )
       assert(component === Array(255, 255, 0))
   }
 
@@ -315,7 +314,7 @@ class ImageTest extends FunSuite with BeforeAndAfter {
   test("map modifies each pixel and returns new image") {
     val image = Image.empty(100, 100)
     val mapped = image.map((_, _, _) => 0xFF00FF00)
-    for (component <- mapped.argb)
+    for ( component <- mapped.argb )
       assert(component === Array(255, 0, 255, 0))
   }
 
@@ -324,9 +323,9 @@ class ImageTest extends FunSuite with BeforeAndAfter {
     val resized = scaled.resizeTo(200, 200, TopLeft)
     assert(200 === resized.width)
     assert(200 === resized.height)
-    for (x <- 0 until 100; y <- 0 until 100) assert(scaled.pixel(x, y) === resized.pixel(x, y))
-    for (x <- 0 until 200; y <- 100 until 200) assert(0xFFFFFFFF === resized.pixel(x, y))
-    for (x <- 100 until 200; y <- 0 until 100) assert(0xFFFFFFFF === resized.pixel(x, y))
+    for ( x <- 0 until 100; y <- 0 until 100 ) assert(scaled.pixel(x, y) === resized.pixel(x, y))
+    for ( x <- 0 until 200; y <- 100 until 200 ) assert(0xFFFFFFFF === resized.pixel(x, y))
+    for ( x <- 100 until 200; y <- 0 until 100 ) assert(0xFFFFFFFF === resized.pixel(x, y))
   }
 
   test("enlarging a canvas with BottomRight should position the image to the bottom and to the right") {
@@ -334,9 +333,9 @@ class ImageTest extends FunSuite with BeforeAndAfter {
     val resized = scaled.resizeTo(200, 200, BottomRight)
     assert(200 === resized.width)
     assert(200 === resized.height)
-    for (x <- 0 until 100; y <- 0 until 200) assert(0xFFFFFFFF === resized.pixel(x, y))
-    for (x <- 100 until 200; y <- 0 until 100) assert(0xFFFFFFFF === resized.pixel(x, y))
-    for (x <- 100 until 200; y <- 100 until 200) assert(scaled.pixel(x - 100, y - 100) === resized.pixel(x, y))
+    for ( x <- 0 until 100; y <- 0 until 200 ) assert(0xFFFFFFFF === resized.pixel(x, y))
+    for ( x <- 100 until 200; y <- 0 until 100 ) assert(0xFFFFFFFF === resized.pixel(x, y))
+    for ( x <- 100 until 200; y <- 100 until 200 ) assert(scaled.pixel(x - 100, y - 100) === resized.pixel(x, y))
   }
 
   test("enlarging a canvas with TopRight should position the image to the top and to the right") {
@@ -345,9 +344,9 @@ class ImageTest extends FunSuite with BeforeAndAfter {
     assert(200 === resized.width)
     assert(200 === resized.height)
 
-    for (x <- 0 until 100; y <- 0 until 200) assert(0xFFFFFFFF === resized.pixel(x, y))
-    for (x <- 100 until 200; y <- 100 until 200) assert(0xFFFFFFFF === resized.pixel(x, y))
-    for (x <- 100 until 200; y <- 0 until 100) assert(scaled.pixel(x - 100, y) === resized.pixel(x, y))
+    for ( x <- 0 until 100; y <- 0 until 200 ) assert(0xFFFFFFFF === resized.pixel(x, y))
+    for ( x <- 100 until 200; y <- 100 until 200 ) assert(0xFFFFFFFF === resized.pixel(x, y))
+    for ( x <- 100 until 200; y <- 0 until 100 ) assert(scaled.pixel(x - 100, y) === resized.pixel(x, y))
   }
 
   test("enlarging a canvas with Centre should position the image in the center") {
@@ -355,16 +354,16 @@ class ImageTest extends FunSuite with BeforeAndAfter {
     val resized = scaled.resizeTo(200, 200, Center)
     assert(200 === resized.width)
     assert(200 === resized.height)
-    for (x <- 0 until 50; y <- 0 until 50) assert(0xFFFFFFFF === resized.pixel(x, y))
-    for (x <- 50 until 150; y <- 50 until 150) assert(scaled.pixel(x - 50, y - 50) === resized.pixel(x, y))
-    for (x <- 150 until 200; y <- 150 until 200) assert(0xFFFFFFFF === resized.pixel(x, y))
+    for ( x <- 0 until 50; y <- 0 until 50 ) assert(0xFFFFFFFF === resized.pixel(x, y))
+    for ( x <- 50 until 150; y <- 50 until 150 ) assert(scaled.pixel(x - 50, y - 50) === resized.pixel(x, y))
+    for ( x <- 150 until 200; y <- 150 until 200 ) assert(0xFFFFFFFF === resized.pixel(x, y))
   }
 
   test("when enlarging the background should be set to the specified parameter") {
     val scaled = image.scaleTo(100, 100)
     val resized = scaled.resizeTo(200, 200, Center, Color.BLUE)
-    for (x <- 0 until 200; y <- 0 until 50) assert(0xFF0000FF === resized.pixel(x, y))
-    for (x <- 0 until 200; y <- 150 until 200) assert(0xFF0000FF === resized.pixel(x, y))
+    for ( x <- 0 until 200; y <- 0 until 50 ) assert(0xFF0000FF === resized.pixel(x, y))
+    for ( x <- 0 until 200; y <- 150 until 200 ) assert(0xFF0000FF === resized.pixel(x, y))
   }
 
   test("when bounding an image the dimensions should not exceed the bounds") {
@@ -397,6 +396,26 @@ class ImageTest extends FunSuite with BeforeAndAfter {
   test("cover operation happy path") {
     val covered = image.cover(200, 200)
     assert(covered === Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird_cover_200x200.png")))
+  }
+
+  test("column") {
+    val striped = Image.empty(200, 100).map((x, y, p) => if (y % 2 == 0) 255 else 0)
+    val col = striped.col(51)
+    assert(striped.height === col.size)
+    for ( y <- 0 until striped.height ) {
+      if (y % 2 == 0) assert(255 === col(y), "col was " + col(y))
+      else assert(0 === col(y), "col was " + col(y))
+    }
+  }
+
+  test("row") {
+    val striped = Image.empty(200, 100).map((x, y, p) => if (y % 2 == 0) 255 else 0)
+    val row1 = striped.row(44)
+    assert(striped.width === row1.size)
+    assert(row1.forall(_ == 255))
+    val row2 = striped.row(45)
+    assert(striped.width === row2.size)
+    assert(row2.forall(_ == 0))
   }
 
   test("pixels region") {
