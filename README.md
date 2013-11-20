@@ -16,7 +16,9 @@ instance where operations that can be performed in place mutate the original ins
 
 [![Build Status](https://travis-ci.org/sksamuel/scrimage.png)](https://travis-ci.org/sksamuel/scrimage)
 
-### API
+### Image Operations
+
+These operations all operate on an existing image, returning a copy of that image.
 
 | Operation        | Description |
 | ------------- |-------------|
