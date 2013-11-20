@@ -29,13 +29,11 @@ These operations all operate on an existing image, returning a copy of that imag
 | empty | Creates a new image but without initializing the data buffer to any specific values.|
 | filled | Creates a new image and initializes the data buffer to the given color. |
 | [fit](https://github.com/sksamuel/scrimage/blob/master/guide/fit.md) | Resizes the canvas to the given dimensions and scales the original image so that it is the maximum possible size inside the canvas while maintaining aspect ratio.<br/><br/>This operation is useful if you want a group of images to all have the same canvas dimensions while maintaining the original aspect ratios. Think thumbnails on a site like amazon where they are padded with white background. |
-| flip x | Flips the image horizontally. Left becomes right. | 
-| flip y | Flips the image vertically. Top becomes bottom. |
+| flip | Flips the image either horizontally or vertically |
 | filter | Returns a new image with the given filter applied. See the filters section for examples of the filters available. Filters can be chained and are applied in sequence. |
 | pad | Resizes the canvas by adding a number of pixels around the image in a given color. |
 | resize | Resizes the canvas to the given dimensions. This does not scale the image but simply changes the dimensions of the canvas on which the image is sitting. Specifying a larger size will pad the image with a background color and specifying a smaller size will crop the image. |
-| rotate left | Rotates the image anti clockwise. Results in width and height being flipped.|
-| rotate right | Rotates the image clockwise. Results in width and height being flipped. |
+| rotate | Rotates the image clockwise or anti-clockwise. |
 | scale | Scales the image to given dimensions. This operation will change both the canvas and the image. This is what most people think of when they want a "resize" operation. |
 
 
