@@ -1,6 +1,6 @@
 ## Fit
 
-The fit operation will create an image that is exactly the specified dimensions, and the given image is scaled to fit inside, such that none of the original image is lost. If the target dimensions do not have the same aspect ratio as the source image then the excess "space" will be set to a default background color.
+The fit operation will create an image that is exactly the specified dimensions, and the given image is scaled to fit inside, such that none of the original image is lost. If the target dimensions do not have the same aspect ratio as the source image then because the original image cannot be scaled eactly to fit, then it will be "over scaled" and the excess "space" will be set to a default background color.
 
 Compare this operation with cover.
 
@@ -15,7 +15,7 @@ or to create 240x160 with black background.
 image.cover(240,160, Color.BLACK)
 ```
 
-As always a picture is worth a thousand lines of code. In this example, the original bird image was invoked with `bird.fit(300,150, Color.WHITE)`. As you can see, the output image is of course 300x150, but because the original image had a different aspect ratio, there is no way to exactly scale the image. So the original image is scaled to fit inside and the excess space is set to the given background color (in this case white. Perhaps a different color would have been a more effective demo).
+As always a picture is worth a thousand lines of code. In this example, the original bird image was invoked with `bird.fit(300,150, Color.WHITE)`. As you can see, the output image is of course 300x150, but because the original image had a different aspect ratio, there is no way to exactly scale the image. So the original image is scaled to fit inside without any loss. Then the excess background is set to the given background color (in this case red).
 
 <table>
 <tr>
