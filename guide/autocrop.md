@@ -16,7 +16,7 @@ or to remove a background of a custom color you could do:
 image.autocrop(new Color(255,235,10))
 ```
 
-As always a picture is worth a thousand bytecodes. It's hard to see the white background example (obviously) so I've placed it inside gray table cells so the result is more obvious.
+As always a picture is worth a thousand bytecodes. It's hard to see the white background in this example so I've added a 1 pixel black border around the output so its clearer to see how the white space was removed.
 
 <table>
 <tr>
@@ -28,11 +28,11 @@ As always a picture is worth a thousand bytecodes. It's hard to see the white ba
 </th>
 </tr>
 <tr>
-<th>
+<td>
     <img src="https://raw.github.com/sksamuel/scrimage/master/examples/images/dyson.png"/>
-</th>
-<th>
+</td>
+<td>
     <img src="https://raw.github.com/sksamuel/scrimage/master/examples/images/dyson_autocropped.png"/>
-</th>
+</td>
 </tr>
 </table>

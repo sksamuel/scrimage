@@ -4,7 +4,6 @@ import org.scalatest.{BeforeAndAfter, FunSuite}
 import java.awt.image.BufferedImage
 import java.awt.Color
 import com.sksamuel.scrimage.Position.{TopRight, BottomRight, Center, TopLeft}
-import java.io.File
 
 /** @author Stephen Samuel */
 class ImageTest extends FunSuite with BeforeAndAfter {
