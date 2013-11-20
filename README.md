@@ -171,30 +171,34 @@ The results are for 100 runs of a resize to a fixed width / height.
 As you can see, ImgScalr is the fastest for a simple rescale, but Scrimage is much faster than the rest for a high quality scale.
 
 
-
 ### Including Scrimage in your project
 
-Scrimage is available on maven central. There are two dependencies. One is the core library, and one is the image filters. They are split because the image filters is a large jar, and most people just want the basic resize/scale/load/save functionality.  Only include the filters dependency if you need the image filters, otherwise just the core one is needed.
+Scrimage is available on maven central. 
+There are two dependencies. 
+One is the core library, and one is the image filters. 
+They are split because the image filters is a large jar, 
+and most people just want the basic resize/scale/load/save functionality. 
+Only include the filters dependency if you need the image filters, otherwise just the core one is needed.
 
 Maven:
 ```xml
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage-core_2.10</artifactId>
-    <version>1.3.5</version>
+    <version>1.3.9</version>
 </dependency>
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage-filters_2.10</artifactId>
-    <version>1.3.5</version>
+    <version>1.3.9</version>
 </dependency>
 ```
 
 If using SBT then you want:
 ```scala
-libraryDependencies += "com.sksamuel.scrimage" % "scrimage-core_2.10" % "1.3.5"
+libraryDependencies += "com.sksamuel.scrimage" % "scrimage-core_2.10" % "1.3.9"
 
-libraryDependencies += "com.sksamuel.scrimage" % "scrimage-filters_2.10" % "1.3.5"
+libraryDependencies += "com.sksamuel.scrimage" % "scrimage-filters_2.10" % "1.3.9"
 ```
 
 
