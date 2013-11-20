@@ -18,7 +18,7 @@ instance where operations that can be performed in place mutate the original ins
 
 ### Image Operations
 
-These operations all operate on an existing image, returning a copy of that image.
+These operations all operate on an existing image, returning a copy of that image. The more complicated operations have a link to more detailed documentation.
 
 | Operation        | Description |
 | ------------- |-------------|
