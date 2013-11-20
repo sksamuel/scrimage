@@ -576,17 +576,6 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
   }
 
   /**
-   * Returns a new Image that is this image but resized equally on all sides.
-   *
-   * @param size the number of pixels to add on each side.
-   * @param background the color to use for the new space.
-   * @return
-   */
-  def grow(size: Int, background: Color = Color.WHITE): Image = {
-    resizeTo(width+size*2, height+size*2, Position.Center, background)
-  }
-
-  /**
    *
    * Creates a new image which is the result of this image
    * padded with the given number of pixels on each edge.
@@ -599,8 +588,9 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
    *
    * @return A new image that is the result of the padding
    */
-  def pad(size: Int, color: java.awt.Color = java.awt.Color.WHITE): Image =
+  def pad(size: Int, color: java.awt.Color = java.awt.Color.WHITE): Image = {
     padTo(width + size * 2, height + size * 2, color)
+  }
 
   /**
    * Crops an image by removing cols and rows that are composed only of a single
