@@ -32,7 +32,7 @@ import com.sksamuel.scrimage.PixelTools._
 /**
  * @author Stephen Samuel
  *
- *         RichImage is class that represents an in memory image.
+ *         Image is class that represents an in memory image.
  *
  */
 class Image(val awt: BufferedImage) extends ImageLike[Image] {
@@ -590,6 +590,44 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
    */
   def pad(size: Int, color: java.awt.Color = java.awt.Color.WHITE): Image =
     padTo(width + size * 2, height + size * 2, color)
+
+  /**
+   * Crops an image by removing cols and rows that are composed only of a single
+   * given color.
+   *
+   * Eg, if an image had a 20 pixel border of white at the top, and this method was
+   * invoked with Color.White then the image returned would have that 20 pixel border
+   * removed.
+   *
+   * This method is useful when images have an abudance of
+   *
+   * @param color the color to match
+   * @return
+   */
+  def autocrop(color: Color): Image = {
+    def uniform(color: Color, pixels: Array[Int]) = pixels.forall(p => p == color.getRGB)
+    def scanright(col: Int, image: Image): Int = {
+      if (uniform(color, pixels(col, 0, 1, height))) scanright(col + 1, image)
+      else col
+    }
+    def scanleft(col: Int, image: Image): Int = {
+      if (uniform(color, pixels(col, 0, 1, height))) scanleft(col - 1, image)
+      else col
+    }
+    def scandown(row: Int, image: Image): Int = {
+      if (uniform(color, pixels(0, row, width, 1))) scandown(row + 1, image)
+      else row
+    }
+    def scanup(row: Int, image: Image): Int = {
+      if (uniform(color, pixels(0, row, width, 1))) scanup(row - 1, image)
+      else row
+    }
+    val x1 = scanright(0, this)
+    val x2 = scanleft(width - 1, this)
+    val y1 = scandown(0, this)
+    val y2 = scanup(height - 1, this)
+    subimage(x1, y1, x2 - x1, y2 - y1)
+  }
 
   /**
    * Creates a new image which is the result of this image padded to the canvas size specified.

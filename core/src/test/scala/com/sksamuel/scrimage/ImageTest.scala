@@ -4,6 +4,7 @@ import org.scalatest.{BeforeAndAfter, FunSuite}
 import java.awt.image.BufferedImage
 import java.awt.Color
 import com.sksamuel.scrimage.Position.{TopRight, BottomRight, Center, TopLeft}
+import java.io.File
 
 /** @author Stephen Samuel */
 class ImageTest extends FunSuite with BeforeAndAfter {
@@ -436,5 +437,14 @@ class ImageTest extends FunSuite with BeforeAndAfter {
     val subimage = covered.subimage(10, 10, 50, 100)
     assert(50 === subimage.width)
     assert(100 === subimage.height)
+  }
+
+  test("autocrop removes background") {
+    val image = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/dyson.png"))
+    val autocropped = image.autocrop(Color.WHITE)
+    assert(282 === autocropped.width)
+    assert(193 === autocropped.height)
+    val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/dyson_autocropped.png"))
+    assert(expected == autocropped)
   }
 }
