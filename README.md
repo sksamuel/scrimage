@@ -32,7 +32,7 @@ These operations all operate on an existing image, returning a copy of that imag
 | flip | Flips the image either horizontally or vertically. |
 | filter | Returns a new image with the given filter applied. See the filters section for examples of the filters available. Filters can be chained and are applied in sequence. |
 | pad | Resizes the canvas by adding a number of pixels around the image in a given color. |
-| resize | Resizes the canvas to the given dimensions. This does not scale the image but simply changes the dimensions of the canvas on which the image is sitting. Specifying a larger size will pad the image with a background color and specifying a smaller size will crop the image. |
+| resize | Resizes the canvas to the given dimensions. This does not scale the image but simply changes the dimensions of the canvas on which the image is sitting. Specifying a larger size will pad the image with a background color and specifying a smaller size will crop the image. This is the operation most people want when they think of crop. |
 | rotate | Rotates the image clockwise or anti-clockwise. |
 | scale | Scales the image to given dimensions. This operation will change both the canvas and the image. This is what most people think of when they want a "resize" operation. |
 | trim | Removes a specified amount of pixels from each edge, like a crop operation. |
