@@ -18,8 +18,8 @@ instance where operations that can be performed in place mutate the original ins
 
 ### API
 
-| Operation        | Description | Example |
-| ------------- |-------------|-------------|
+| Operation        | Description |
+| ------------- |-------------|
 | [autocrop](https://github.com/sksamuel/scrimage/blob/master/guide/autocrop.md) | Removes any "excess" background, returning just the image proper |
 | bound | Scales the image maintaining the aspect ratio so that it fits inside the given dimensions. There is no padding included so the resultant image might not have the exact dimensions specified, but it will be as large as possible without overflowing the bounds (hence the name).<br/><br/>This is useful when you want to ensure images do not exceed a certain size, but you don't any padding.|
 | copy | Creates a new clone of this image with a new pixel buffer. Any operations on the copy do not write back to the original.|
