@@ -23,7 +23,7 @@ These operations all operate on an existing image, returning a copy of that imag
 | Operation        | Description |
 | ------------- |-------------|
 | [autocrop](https://github.com/sksamuel/scrimage/blob/master/guide/autocrop.md) | Removes any "excess" background, returning just the image proper |
-| bound | Ensures that the image is no larger than specified dimensions. If the original is bigger, it will be scaled down, otherwise the original is returned |
+| bound | Ensures that the image is no larger than specified dimensions. If the original is bigger, it will be scaled down, otherwise the original is returned. <br/><br/>This is useful when you want to ensure images do need exceed a certain size but you don't want to scale up if smaller. |
 | copy | Creates a new clone of this image with a new pixel buffer. Any operations on the copy do not write back to the original.|
 | [cover](https://github.com/sksamuel/scrimage/blob/master/guide/cover.md) | Resizes the canvas to the given dimensions and scales the original image so that it is the minimum size needed to cover the new dimensions without leaving any background visible.<br/><br/>This operation is useful if you want to generate an avatar/thumbnail style image from a larger image where having no background is more important than cropping part of the image. Think a facebook style profile thumbnail. |
 | empty | Creates a new image but without initializing the data buffer to any specific values.|
