@@ -35,6 +35,7 @@ import scala.Array
  *
  */
 class Image(val awt: BufferedImage) extends ImageLike[Image] {
+
   require(awt != null, "Wrapping image cannot be null")
   val SCALE_THREADS = Runtime.getRuntime.availableProcessors()
 
@@ -469,15 +470,13 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
         g2.dispose()
         target
       case _ =>
-        val op = new ResampleOp(targetWidth, targetHeight)
-        op.setNumberOfThreads(SCALE_THREADS)
-        scaleMethod match {
-          case Bicubic => op.setFilter(ResampleFilters.getBiCubicFilter)
-          case Bilinear => op.setFilter(ResampleFilters.getTriangleFilter)
-          case BSpline => op.setFilter(ResampleFilters.getBSplineFilter)
-          case Lanczos3 => op.setFilter(ResampleFilters.getLanczos3Filter)
-          case _ =>
+        val method = scaleMethod match {
+          case Bilinear => ResampleFilters.triangleFilter
+          case BSpline => ResampleFilters.bSplineFilter
+          case Lanczos3 => ResampleFilters.lanczos3Filter
+          case _ => ResampleFilters.biCubicFilter
         }
+        val op = new ResampleOp(SCALE_THREADS, method, targetWidth, targetHeight)
         val scaled = op.filter(awt, null)
         Image(scaled)
     }
