@@ -23,9 +23,15 @@ import com.sksamuel.scrimage.io.ImageWriter
 import com.sksamuel.scrimage.ScaleMethod.Bicubic
 import com.sksamuel.scrimage.Position.Center
 import java.awt.Color
+import scala.Array
+import com.sksamuel.scrimage.PixelTools._
 
 /** @author Stephen Samuel */
 trait ImageLike[R] {
+
+  lazy val points: Seq[(Int, Int)] = for ( x <- 0 until width; y <- 0 until height ) yield (x, y)
+  lazy val center: (Int, Int) = (width / 2, height / 2)
+  lazy val radius: Int = Math.sqrt(Math.pow(width / 2.0, 2) + Math.pow(height / 2.0, 2)).toInt
 
   /**
    * Clears all image data to the given color
@@ -34,7 +40,117 @@ trait ImageLike[R] {
   def width: Int
   def height: Int
   def dimensions: (Int, Int) = (width, height)
-  lazy val points: Seq[(Int, Int)] = for ( x <- 0 until width; y <- 0 until height ) yield (x, y)
+
+  def forall(f: (Int, Int, Int) => Boolean): Boolean = points.forall(p => f(p._1, p._2, pixel(p)))
+  def foreach(f: (Int, Int, Int) => Unit): Unit = points.foreach(p => f(p._1, p._2, pixel(p)))
+
+  def row(y: Int): Array[Int] = pixels(0, y, width, 1)
+  def col(x: Int): Array[Int] = pixels(x, 0, 1, height)
+
+  /**
+   * Returns the pixel at the given coordinates as a integer in RGB format.
+   *
+   * @param x the x coordinate of the pixel to grab
+   * @param y the y coordinate of the pixel to grab
+   *
+   * @return the ARGB value of the pixel
+   */
+  def pixel(x: Int, y: Int): Int
+
+  /**
+   * Returns the ARGB components for the pixel at the given coordinates
+   *
+   * @param x the x coordinate of the pixel component to grab
+   * @param y the y coordinate of the pixel component to grab
+   *
+   * @return an array containing ARGB components in that order.
+   */
+  def argb(x: Int, y: Int): Array[Int] = {
+    val p = pixel(x, y)
+    Array(alpha(p), red(p), green(p), blue(p))
+  }
+
+  /**
+   * Returns the ARGB components for all pixels in this image
+   *
+   * @return an array containing ARGB components in that order.
+   */
+  def argb: Array[Array[Int]] = {
+    pixels.map(p => Array(alpha(p), red(p), green(p), blue(p)))
+  }
+
+  def rgb(x: Int, y: Int): Array[Int] = {
+    val p = pixel(x, y)
+    Array(red(p), green(p), blue(p))
+  }
+
+  def rgb: Array[Array[Int]] = {
+    pixels.map(p => Array(red(p), green(p), blue(p)))
+  }
+
+  /**
+   * Returns the pixel at the given coordinates as a integer in RGB format.
+   *
+   * @param p the pixel as an integer tuple
+   *
+   * @return the ARGB value of the pixel
+   */
+  def pixel(p: (Int, Int)): Int = pixel(p._1, p._2)
+
+  /**
+   * Returns a rectangular region within the given boundaries as a single
+   * dimensional array of integers.
+   *
+   * Eg, pixels(10, 10, 30, 20) would result in an array of size 600 with
+   * the first row of the region in indexes 0,..,29, second row 30,..,59 etc.
+   *
+   * @param x the start x coordinate
+   * @param y the start y coordinate
+   * @param w the width of the region
+   * @param h the height of the region
+   * @return an Array of pixels for the region
+   */
+  def pixels(x: Int, y: Int, w: Int, h: Int): Array[Int] = {
+    for ( y1 <- Array.range(y, y + h);
+          x1 <- Array.range(x, x + w) )
+    yield pixel(x1, y1)
+  }
+
+  /**
+   *
+   * Creates a new image which is the result of this image
+   * padded with the given number of pixels on each edge.
+   *
+   * Eg, requesting a pad of 30 on an image of 250,300 will result
+   * in a new image with a canvas size of 310,360
+   *
+   * @param size the number of pixels to add on each edge
+   * @param color the background of the padded area.
+   *
+   * @return A new image that is the result of the padding
+   */
+  def pad(size: Int, color: java.awt.Color = java.awt.Color.WHITE): R = {
+    padTo(width + size * 2, height + size * 2, color)
+  }
+
+  /**
+   * Creates a new image which is the result of this image padded to the canvas size specified.
+   * If this image is already larger than the specified pad then the sizes of the existing
+   * image will be used instead.
+   *
+   * Eg, requesting a pad of 200,200 on an image of 250,300 will result
+   * in keeping the 250,300.
+   *
+   * Eg2, requesting a pad of 300,300 on an image of 400,250 will result
+   * in the width staying at 400 and the height padded to 300.
+   *
+   * @param targetWidth the size of the output canvas width
+   * @param targetHeight the size of the output canvas height
+   * @param color the background of the padded area.
+   *
+   * @return A new image that is the result of the padding
+   */
+  def padTo(targetWidth: Int, targetHeight: Int, color: java.awt.Color = java.awt.Color.WHITE): R
 
   /**
    * Creates an empty Image with the same dimensions of this image.
@@ -75,8 +191,6 @@ trait ImageLike[R] {
    * @return
    */
   def map(f: (Int, Int, Int) => Int): R
-
-  def foreach(f: (Int, Int, Int) => Unit)
 
   /**
    * Creates a copy of this image with the given filter applied.

@@ -27,7 +27,6 @@ import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.io.ImageWriter
 import scala.Array
-import com.sksamuel.scrimage.PixelTools._
 
 /**
  * @author Stephen Samuel
@@ -41,8 +40,6 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
 
   lazy val width: Int = awt.getWidth(null)
   lazy val height: Int = awt.getHeight(null)
-  lazy val center: (Int, Int) = (width / 2, height / 2)
-  lazy val radius: Int = Math.sqrt(Math.pow(width / 2.0, 2) + Math.pow(height / 2.0, 2)).toInt
 
   /**
    * Returns the underlying bufferd image. Changes to this buffered image will write back to this image.
@@ -62,9 +59,6 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
 
   def _mapInPlace(f: (Int, Int, Int) => Int): Unit = points
     .foreach(p => awt.setRGB(p._1, p._2, f(p._1, p._2, awt.getRGB(p._1, p._2))))
-
-  def forall(f: (Int, Int, Int) => Boolean): Boolean = points.forall(p => f(p._1, p._2, pixel(p)))
-  override def foreach(f: (Int, Int, Int) => Unit): Unit = points.foreach(p => f(p._1, p._2, pixel(p)))
 
   // replace this image's AWT data by drawing the given BufferedImage over the top
   def _draw(target: BufferedImage) {
@@ -89,9 +83,6 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
     new Image(target)
   }
 
-  def row(y: Int): Array[Int] = pixels(0, y, width, 1)
-  def col(x: Int): Array[Int] = pixels(x, 0, 1, height)
-
   /**
    * Returns a new Image that is a subimage or region of the original image.
    *
@@ -103,33 +94,6 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
    */
   def subimage(x: Int, y: Int, w: Int, h: Int): Image = Image(w, h, pixels(x, y, w, h))
 
-  /**
-   * Returns a rectangular region within the given boundaries as a single
-   * dimensional array of integers.
-   *
-   * Eg, pixels(10, 10, 30, 20) would result in an array of size 600 with
-   * the first row of the region in indexes 0,..,29, second row 30,..,59 etc.
-   *
-   * @param x the start x coordinate
-   * @param y the start y coordinate
-   * @param w the width of the region
-   * @param h the height of the region
-   * @return an Array of pixels for the region
-   */
-  def pixels(x: Int, y: Int, w: Int, h: Int): Array[Int] = {
-    for ( y1 <- Array.range(y, y + h);
-          x1 <- Array.range(x, x + w) )
-    yield pixel(x1, y1)
-  }
-
-  /**
-   * Returns the pixel at the given coordinates as a integer in RGB format.
-   *
-   * @param p the pixel as an integer tuple
-   *
-   * @return the ARGB value of the pixel
-   */
-  def pixel(p: (Int, Int)): Int = pixel(p._1, p._2)
   /**
    * Returns the pixel at the given coordinates as a integer in RGB format.
    *
@@ -220,11 +184,10 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
   /**
    * Extracts a subimage, but using subpixel interpolation.
    */
-  def subpixelSubimage(
-                        x: Double,
-                        y: Double,
-                        subWidth: Int,
-                        subHeight: Int): Image = {
+  def subpixelSubimage(x: Double,
+                       y: Double,
+                       subWidth: Int,
+                       subHeight: Int): Image = {
     require(x >= 0)
     require(x + subWidth < width)
     require(y >= 0)
@@ -248,11 +211,10 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
   /**
    * Extract a patch, centered at a subpixel point.
    */
-  def subpixelSubimageCenteredAtPoint(
-                                       x: Double,
-                                       y: Double,
-                                       xRadius: Double,
-                                       yRadius: Double): Image = {
+  def subpixelSubimageCenteredAtPoint(x: Double,
+                                      y: Double,
+                                      xRadius: Double,
+                                      yRadius: Double): Image = {
     val xWidth = 2 * xRadius
     val yWidth = 2 * yRadius
 
@@ -281,37 +243,6 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
       () =>
         new Image(awt.getSubimage(col, row, patchWidth, patchHeight))
     }
-
-  /**
-   * Returns the ARGB components for the pixel at the given coordinates
-   *
-   * @param x the x coordinate of the pixel component to grab
-   * @param y the y coordinate of the pixel component to grab
-   *
-   * @return an array containing ARGB components in that order.
-   */
-  def argb(x: Int, y: Int): Array[Int] = {
-    val p = pixel(x, y)
-    Array(alpha(p), red(p), green(p), blue(p))
-  }
-
-  /**
-   * Returns the ARGB components for all pixels in this image
-   *
-   * @return an array containing ARGB components in that order.
-   */
-  def argb: Array[Array[Int]] = {
-    pixels.map(p => Array(alpha(p), red(p), green(p), blue(p)))
-  }
-
-  def rgb(x: Int, y: Int): Array[Int] = {
-    val p = pixel(x, y)
-    Array(red(p), green(p), blue(p))
-  }
-
-  def rgb: Array[Array[Int]] = {
-    pixels.map(p => Array(red(p), green(p), blue(p)))
-  }
 
   /**
    * Returns the pixels of this image represented as an array of Integers.
@@ -352,6 +283,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
    * The original image is unchanged.
    *
    * @param composite the composite to use. See com.sksamuel.scrimage.Composite.
+   * @param applicative the image to apply with the composite.
    *
    * @return A new image with the given image applied using the given composite.
    */
@@ -375,6 +307,13 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
     target
   }
 
+  /**
+   * Apply a sequence of filters in sequence.
+   * This is sugar for image.filter(filter1).filter(filter2)....
+   *
+   * @param filters the sequence filters to apply
+   * @return the result of applying each filter in turn
+   */
   def filter(filters: Filter*): Image = filters.foldLeft(this)((image, filter) => image.filter(filter))
 
   def removeTransparency(color: java.awt.Color): Image = {
@@ -385,7 +324,9 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
   }
 
   /**
-   * @return A new image that is the result of flipping this image horizontally.
+   * Flips this image horizontally.
+   *
+   * @return The result of flipping this image horizontally.
    */
   def flipX: Image = {
     val tx = AffineTransform.getScaleInstance(-1, 1)
@@ -394,8 +335,9 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
   }
 
   /**
+   * Flips this image vertically.
    *
-   * @return A new image that is the result of flipping this image vertically.
+   * @return The result of flipping this image vertically.
    */
   def flipY: Image = {
     val tx = AffineTransform.getScaleInstance(1, -1)
@@ -576,23 +518,6 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
   }
 
   /**
-   *
-   * Creates a new image which is the result of this image
-   * padded with the given number of pixels on each edge.
-   *
-   * Eg, requesting a pad of 30 on an image of 250,300 will result
-   * in a new image with a canvas size of 310,360
-   *
-   * @param size the number of pixels to add on each edge
-   * @param color the background of the padded area.
-   *
-   * @return A new image that is the result of the padding
-   */
-  def pad(size: Int, color: java.awt.Color = java.awt.Color.WHITE): Image = {
-    padTo(width + size * 2, height + size * 2, color)
-  }
-
-  /**
    * Crops an image by removing cols and rows that are composed only of a single
    * given color.
    *
@@ -750,6 +675,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
    * @return an AsyncImage wrapping this image.
    */
   def toAsync: AsyncImage = AsyncImage(this)
+
   /**
    * Clears all image data to the given color
    */

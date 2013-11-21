@@ -36,7 +36,7 @@ class AsyncImage(image: Image) extends ImageLike[Future[AsyncImage]] {
     AsyncImage(image.map(f))
   }
 
-  def foreach(f: (Int, Int, Int) => Unit) {
+  override def foreach(f: (Int, Int, Int) => Unit) {
     image.foreach(f)
   }
 
@@ -46,6 +46,14 @@ class AsyncImage(image: Image) extends ImageLike[Future[AsyncImage]] {
           scaleMethod: ScaleMethod = Bicubic,
           position: Position = Position.Center): Future[AsyncImage] = future {
     AsyncImage(image.fit(targetWidth, targetHeight, color, scaleMethod, position))
+  }
+
+  def pixel(x: Int, y: Int): Int = image.pixel(x, y)
+
+  def padTo(targetWidth: Int,
+            targetHeight: Int,
+            color: java.awt.Color = java.awt.Color.WHITE): Future[AsyncImage] = future {
+    AsyncImage(image.padTo(targetWidth, targetHeight, color))
   }
 
   def resizeTo(targetWidth: Int,
