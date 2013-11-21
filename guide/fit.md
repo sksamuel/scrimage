@@ -7,11 +7,11 @@ Compare this operation with [cover](https://github.com/sksamuel/scrimage/blob/ma
 To use, invoke with the target dimenions and optionally, a background color (defaults to Color.WHITE), a scale method (defaults to ScaleMethod.Bicubic), and the position of the source image in the target (defaults to Position.Center). That last parameter has no effect if the aspect ratios are the same (because in that case the image would fit exactly inside anyway).
 
 Eg, to fit an image into 600 x 400 using defaults:
-```
+```scala
 image.fit(600,400)
 ```
 or to fit into 240 x 160 with black background.
-```
+```scala
 image.cover(240,160, Color.BLACK)
 ```
 
