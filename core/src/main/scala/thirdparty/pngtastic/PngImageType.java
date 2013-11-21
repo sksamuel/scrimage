@@ -15,65 +15,64 @@ package thirdparty.pngtastic;
  * @author rayvanderborght
  */
 public enum PngImageType {
-	GREYSCALE(0),
-	TRUECOLOR(2),
-	INDEXED_COLOR(3),
-	GREYSCALE_ALPHA(4),
-	TRUECOLOR_ALPHA(6);
 
-	private int colorType;
+  GREYSCALE(0),
+  TRUECOLOR(2),
+  INDEXED_COLOR(3),
+  GREYSCALE_ALPHA(4),
+  TRUECOLOR_ALPHA(6);
 
-	/** */
-	private PngImageType(int colorType) {
-		this.colorType = colorType;
-	}
+  private int colorType;
 
-	/** */
-	public static PngImageType forColorType(int colorType) {
-		switch (colorType) {
-			case 0:
-				return PngImageType.GREYSCALE;
+  private PngImageType(int colorType) {
+    this.colorType = colorType;
+  }
 
-			case 2:
-				return PngImageType.TRUECOLOR;
+  public static PngImageType forColorType(int colorType) {
+    switch (colorType) {
+      case 0:
+        return PngImageType.GREYSCALE;
 
-			case 3:
-				return PngImageType.INDEXED_COLOR;
+      case 2:
+        return PngImageType.TRUECOLOR;
 
-			case 4:
-				return PngImageType.GREYSCALE_ALPHA;
+      case 3:
+        return PngImageType.INDEXED_COLOR;
 
-			case 6:
-				return PngImageType.TRUECOLOR_ALPHA;
+      case 4:
+        return PngImageType.GREYSCALE_ALPHA;
 
-			default:
-				throw new IllegalArgumentException();
-		}
-	}
+      case 6:
+        return PngImageType.TRUECOLOR_ALPHA;
 
-	/**
-	 * The number of channels for this color type.
-	 * For example truecolor is RGB and therefore has 3 channels.
-	 *
-	 * @return The number of channels for this image color type
-	 */
-	public int channelCount() {
-		switch (this.colorType) {
-			case 0:
-			case 3:
-				return 1;
+      default:
+        throw new IllegalArgumentException();
+    }
+  }
 
-			case 4:
-				return 2;
+  /**
+   * The number of channels for this color type.
+   * For example truecolor is RGB and therefore has 3 channels.
+   *
+   * @return The number of channels for this image color type
+   */
+  public int channelCount() {
+    switch (this.colorType) {
+      case 0:
+      case 3:
+        return 1;
 
-			case 2:
-				return 3;
+      case 4:
+        return 2;
 
-			case 6:
-				return 4;
+      case 2:
+        return 3;
 
-			default:
-				throw new IllegalArgumentException();
-		}
-	}
+      case 6:
+        return 4;
+
+      default:
+        throw new IllegalArgumentException();
+    }
+  }
 }

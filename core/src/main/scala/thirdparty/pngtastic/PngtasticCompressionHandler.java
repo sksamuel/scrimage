@@ -96,7 +96,6 @@ public class PngtasticCompressionHandler implements PngCompressionHandler {
         return new ArrayList<byte[]>(results);
     }
 
-    /* */
     private List<byte[]> deflateImageDataSerially(byte[] inflatedImageData, Integer compressionLevel, Integer compressionStrategy) {
         List<byte[]> results = new ArrayList<byte[]>();
 
@@ -113,10 +112,8 @@ public class PngtasticCompressionHandler implements PngCompressionHandler {
         return results;
     }
 
-    /* */
     private byte[] deflateImageData(byte[] inflatedImageData, int strategy, Integer compressionLevel) throws IOException {
         byte[] result = null;
-        int bestCompression = Deflater.BEST_COMPRESSION;
 
         if (compressionLevel == null || compressionLevel > Deflater.BEST_COMPRESSION || compressionLevel < Deflater.NO_COMPRESSION) {
             for (int compression = Deflater.BEST_COMPRESSION; compression > Deflater.NO_COMPRESSION; compression--) {
@@ -124,17 +121,14 @@ public class PngtasticCompressionHandler implements PngCompressionHandler {
 
                 if (result == null || (result.length > deflatedOut.size())) {
                     result = deflatedOut.toByteArray();
-                    bestCompression = compression;
                 }
             }
         } else {
             result = this.deflate(inflatedImageData, strategy, compressionLevel).toByteArray();
-            bestCompression = compressionLevel;
         }
         return result;
     }
 
-    /* */
     private ByteArrayOutputStream deflate(byte[] inflatedImageData, int strategy, int compression) throws IOException {
         ByteArrayOutputStream deflatedOut = new ByteArrayOutputStream();
         Deflater deflater = new Deflater(compression);

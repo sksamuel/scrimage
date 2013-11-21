@@ -7,16 +7,15 @@ package thirdparty.pngtastic;
  */
 @SuppressWarnings("serial")
 public class PngException extends Exception {
-	/** */
-	public PngException() {  }
 
-	/** */
-	public PngException(String message) {
-		super(message);
-	}
+  public PngException() {
+  }
 
-	/** */
-	public PngException(String message, Throwable cause) {
-		super(message, cause);
-	}
+  public PngException(String message) {
+    super(message);
+  }
+
+  public PngException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }
