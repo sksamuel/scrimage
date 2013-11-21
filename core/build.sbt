@@ -22,10 +22,9 @@ publishTo <<= version {
 
 libraryDependencies ++= Seq(
   "org.apache.sanselan" % "sanselan" % "0.97-incubator",
-  "log4j" % "log4j" % "1.2.17",
-  "org.slf4j" % "slf4j-api" % "1.6.6",
+  "org.slf4j" % "slf4j-api" % "1.7.5" % "provided",
   "commons-io" % "commons-io" % "2.4",
-  "org.scalatest" % "scalatest_2.10" % "1.9.1",
+  "org.scalatest" % "scalatest_2.10" % "2.0",
   "org.imgscalr" % "imgscalr-lib" % "4.2" % "test",
   "junit" % "junit" % "4.11" % "test",
   "org.mockito" % "mockito-all" % "1.9.5" % "test"
