@@ -35,7 +35,7 @@ These operations all operate on an existing image, returning a copy of that imag
 | resize | Resizes the canvas to the given dimensions. This does not scale the image but simply changes the dimensions of the canvas on which the image is sitting. Specifying a larger size will pad the image with a background color and specifying a smaller size will crop the image. This is the operation most people want when they think of crop. |
 | rotate | Rotates the image clockwise or anti-clockwise. |
 | scale | Scales the image to given dimensions. This operation will change both the canvas and the image. This is what most people think of when they want a "resize" operation. |
-| trim | Removes a specified amount of pixels from each edge, like a crop operation. |
+| [trim](https://github.com/sksamuel/scrimage/blob/master/guide/trim.md) | Removes a specified amount of pixels from each edge, essentially sugar to a crop operation. |
 
 ### Quick Examples
 
