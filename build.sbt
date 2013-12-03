@@ -1,7 +1,7 @@
 
 name := "scrimage"
 
-version := "1.3.10-snaphot"
+version := "1.3.11"
 
 organization := "com.sksamuel.scrimage"
 
