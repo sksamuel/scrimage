@@ -196,9 +196,9 @@ Maven:
 
 If using SBT then you want:
 ```scala
-libraryDependencies += "com.sksamuel.scrimage" % "scrimage-core_2.10" % "1.3.9"
+libraryDependencies += "com.sksamuel.scrimage" % "scrimage-core_2.10" % "1.3.11"
 
-libraryDependencies += "com.sksamuel.scrimage" % "scrimage-filters_2.10" % "1.3.9"
+libraryDependencies += "com.sksamuel.scrimage" % "scrimage-filters_2.10" % "1.3.11"
 ```
 
 
