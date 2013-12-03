@@ -12,8 +12,8 @@ class Pixel(pixel: Int) {
   def blue: Int = pixel & 0xFF
 
   def hue = Color.RGBtoHSB(red, green, blue, null)(0)
-  def saturation = Color.RGBtoHSB(red, green, blue, null)(0)
-  def brightness = Color.RGBtoHSB(red, green, blue, null)(0)
+  def saturation = Color.RGBtoHSB(red, green, blue, null)(1)
+  def brightness = Color.RGBtoHSB(red, green, blue, null)(2)
 }
 
 object Pixel {
