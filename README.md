@@ -185,12 +185,12 @@ Maven:
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage-core_2.10</artifactId>
-    <version>1.3.9</version>
+    <version>1.3.11</version>
 </dependency>
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage-filters_2.10</artifactId>
-    <version>1.3.9</version>
+    <version>1.3.11</version>
 </dependency>
 ```
 
