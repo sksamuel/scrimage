@@ -32,6 +32,8 @@ libraryDependencies ++= Seq(
 
 ScoverageSbtPlugin.instrumentSettings
 
+CoverallsPlugin.coverallsSettings
+
 pomExtra := {
   <url>https://github.com/sksamuel/scrimage</url>
     <licenses>
