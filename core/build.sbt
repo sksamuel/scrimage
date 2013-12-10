@@ -1,9 +1,9 @@
 
 scalaVersion := "2.10.3"
 
-organization := "com.sksamuel.scrimage"
-
 name := "scrimage-core"
+
+organization := "com.sksamuel.scrimage"
 
 version := "1.3.11"
 
@@ -21,14 +21,16 @@ publishTo <<= version {
 }
 
 libraryDependencies ++= Seq(
-  "org.apache.sanselan" % "sanselan" % "0.97-incubator",
-  "org.slf4j" % "slf4j-api" % "1.7.5" % "provided",
-  "commons-io" % "commons-io" % "2.4",
-  "org.scalatest" % "scalatest_2.10" % "2.0",
-  "org.imgscalr" % "imgscalr-lib" % "4.2" % "test",
-  "junit" % "junit" % "4.11" % "test",
-  "org.mockito" % "mockito-all" % "1.9.5" % "test"
+  "org.apache.sanselan"       % "sanselan"          % "0.97-incubator",
+  "org.slf4j"                 % "slf4j-api"         % "1.7.5"           % "provided",
+  "commons-io"                % "commons-io"        % "2.4",
+  "org.scalatest"             %% "scalatest"        % "2.0",
+  "org.imgscalr"              % "imgscalr-lib"      % "4.2"             % "test",
+  "junit"                     % "junit" % "4.11"    % "test",
+  "org.mockito"               % "mockito-all"       % "1.9.5"           % "test"
 )
+
+ScoverageSbtPlugin.instrumentSettings
 
 pomExtra := {
   <url>https://github.com/sksamuel/scrimage</url>

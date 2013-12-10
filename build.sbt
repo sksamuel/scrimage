@@ -17,9 +17,6 @@ parallelExecution in Test := false
 
 javacOptions ++= Seq("-source", "1.6", "-target", "1.6")
 
-// TODO: This is a user-specific setting and should go in ~/.sbt/credentials.sbt or similar.
-credentials += Credentials(Path.userHome / ".sbt" / ".credentials")
-
 publishTo <<= version {
   (v: String) =>
     val nexus = "https://oss.sonatype.org/"
