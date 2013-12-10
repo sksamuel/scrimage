@@ -247,7 +247,7 @@ class ImageTest extends FunSuite with BeforeAndAfter {
 
   test("when fitting an image the output image should match as expected") {
     val fitted = image.fit(900, 300, java.awt.Color.RED)
-    val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird_fitted_900_300.png"))
+    val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird_fitted2.png"))
     assert(fitted.pixels.length === fitted.pixels.length)
     assert(expected === fitted)
   }
