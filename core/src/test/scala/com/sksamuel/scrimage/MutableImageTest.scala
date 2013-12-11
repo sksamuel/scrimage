@@ -5,7 +5,7 @@ import org.scalatest.{ OneInstancePerTest, BeforeAndAfter, FunSuite }
 /** @author Stephen Samuel */
 class MutableImageTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
 
-  val in = getClass.getResourceAsStream("/bird.jpg")
+  val in = getClass.getResourceAsStream("/com/sksamuel/scrimage/bird.jpg")
   val image = MutableImage(in)
 
   test("when flipping on x axis a new image is not created") {

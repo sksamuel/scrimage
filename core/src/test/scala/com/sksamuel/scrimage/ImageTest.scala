@@ -8,7 +8,7 @@ import com.sksamuel.scrimage.Position.{TopRight, BottomRight, Center, TopLeft}
 /** @author Stephen Samuel */
 class ImageTest extends FunSuite with BeforeAndAfter {
 
-  val in = getClass.getResourceAsStream("/bird.jpg")
+  val in = getClass.getResourceAsStream("/com/sksamuel/scrimage/bird.jpg")
   val image = Image(in)
 
   test("ratio happy path") {
@@ -118,7 +118,7 @@ class ImageTest extends FunSuite with BeforeAndAfter {
 
   test("hashCode and equals reflects proper object equality") {
     val bird = {
-      val in = getClass.getResourceAsStream("/bird.jpg")
+      val in = getClass.getResourceAsStream("/com/sksamuel/scrimage/bird.jpg")
       Image(in)
     }
 

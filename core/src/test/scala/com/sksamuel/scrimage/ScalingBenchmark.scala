@@ -12,7 +12,7 @@ object ScalingBenchmark extends App {
 
   val COUNT = 100
 
-  val bird = IOUtils.toByteArray(getClass.getResourceAsStream("/bird.jpg"))
+  val bird = IOUtils.toByteArray(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird.jpg"))
   val awt = ImageIO.read(new ByteArrayInputStream(bird))
   val scrimage = Image(bird)
   val width = scrimage.width
