@@ -55,7 +55,7 @@ object CompositeExampleGenerator extends App {
       sb.append(
         s"<a href='https://raw.github.com/sksamuel/scrimage/master/examples/composite/${name}_${alpha}_large.jpeg'>")
       sb.append(
-        s"<img src='https://raw.github.com/sksamuel/scrimage/master/examples/filters/${name}_${alpha}_small.png'><a/> |")
+        s"<img src='https://raw.github.com/sksamuel/scrimage/master/examples/composite/${name}_${alpha}_small.png'><a/> |")
     }
   }
 
