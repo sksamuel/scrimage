@@ -35,8 +35,8 @@ object CompositeExampleGenerator extends App {
 
   val l1 = Image(getClass.getResourceAsStream("/mailbox.jpg")).scaleTo(1200, 800)
   val l2 = Image(getClass.getResourceAsStream("/palm.jpg")).scaleTo(1200, 800)
-  val s1 = l1.scaleToWidth(300)
-  val s2 = l2.scaleToWidth(300)
+  val s1 = l1.scaleToWidth(200)
+  val s2 = l2.scaleToWidth(200)
 
   val sb = new StringBuffer()
   for ( (name, composite) <- composites ) {
