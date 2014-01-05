@@ -71,11 +71,11 @@ public final class BlendComposite implements Composite {
     private float alpha;
     private BlendingMode mode;
 
-    private BlendComposite(BlendingMode mode) {
+    public BlendComposite(BlendingMode mode) {
         this(mode, 1.0f);
     }
 
-    private BlendComposite(BlendingMode mode, float alpha) {
+    public BlendComposite(BlendingMode mode, float alpha) {
         this.mode = mode;
         setAlpha(alpha);
     }

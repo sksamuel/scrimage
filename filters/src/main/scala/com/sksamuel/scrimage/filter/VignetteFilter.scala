@@ -19,6 +19,7 @@ import com.sksamuel.scrimage.{Image, Filter}
 import java.awt.{RadialGradientPaint, Color, Graphics2D}
 import java.awt.geom.Point2D
 import thirdparty.romainguy.BlendComposite
+import thirdparty.romainguy.BlendComposite.BlendingMode
 
 /** @author Stephen Samuel */
 class VignetteFilter(start: Double, end: Double, blur: Double, color: Color = Color.BLACK) extends Filter {
@@ -43,7 +44,7 @@ class VignetteFilter(start: Double, end: Double, blur: Double, color: Color = Co
     blend.filter(GaussianBlurFilter((image.radius * blur).toInt))
 
     val g3 = image.awt.getGraphics.asInstanceOf[Graphics2D]
-    g3.setComposite(BlendComposite.Multiply)
+    g3.setComposite(new BlendComposite(BlendingMode.MULTIPLY, 1.0f))
     g3.drawImage(blend.awt, 0, 0, null)
     g3.dispose()
   }
