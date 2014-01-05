@@ -5,7 +5,7 @@ organization := "com.sksamuel.scrimage"
 
 name := "scrimage-filters"
 
-version := "1.3.11"
+version := "1.3.12"
 
 publishMavenStyle := true
 
