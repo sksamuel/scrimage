@@ -26,7 +26,7 @@ libraryDependencies ++= Seq(
   "commons-io"                % "commons-io"        % "2.4",
   "org.scalatest"             %% "scalatest"        % "2.0",
   "org.imgscalr"              % "imgscalr-lib"      % "4.2"             % "test",
-  "junit"                     % "junit" % "4.11"    % "test",
+  "junit"                     % "junit"             % "4.11"            % "test",
   "org.mockito"               % "mockito-all"       % "1.9.5"           % "test"
 )
 

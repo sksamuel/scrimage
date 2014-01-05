@@ -68,38 +68,6 @@ public final class BlendComposite implements Composite {
         LUMINOSITY
     }
 
-    public static final BlendComposite Normal = new BlendComposite(BlendingMode.NORMAL);
-    public static final BlendComposite Average = new BlendComposite(BlendingMode.AVERAGE);
-    public static final BlendComposite Multiply = new BlendComposite(BlendingMode.MULTIPLY);
-    public static final BlendComposite Screen = new BlendComposite(BlendingMode.SCREEN);
-    public static final BlendComposite Darken = new BlendComposite(BlendingMode.DARKEN);
-    public static final BlendComposite Lighten = new BlendComposite(BlendingMode.LIGHTEN);
-    public static final BlendComposite Overlay = new BlendComposite(BlendingMode.OVERLAY);
-    public static final BlendComposite HardLight = new BlendComposite(BlendingMode.HARD_LIGHT);
-    public static final BlendComposite Difference = new BlendComposite(BlendingMode.DIFFERENCE);
-    public static final BlendComposite Negation = new BlendComposite(BlendingMode.NEGATION);
-    public static final BlendComposite Exclusion = new BlendComposite(BlendingMode.EXCLUSION);
-    public static final BlendComposite ColorDodge = new BlendComposite(BlendingMode.COLOR_DODGE);
-    public static final BlendComposite InverseColorDodge = new BlendComposite(BlendingMode.INVERSE_COLOR_DODGE);
-    public static final BlendComposite SoftDodge = new BlendComposite(BlendingMode.SOFT_DODGE);
-    public static final BlendComposite ColorBurn = new BlendComposite(BlendingMode.COLOR_BURN);
-    public static final BlendComposite InverseColorBurn = new BlendComposite(BlendingMode.INVERSE_COLOR_BURN);
-    public static final BlendComposite SoftBurn = new BlendComposite(BlendingMode.SOFT_BURN);
-    public static final BlendComposite Reflect = new BlendComposite(BlendingMode.REFLECT);
-    public static final BlendComposite Glow = new BlendComposite(BlendingMode.GLOW);
-    public static final BlendComposite Freeze = new BlendComposite(BlendingMode.FREEZE);
-    public static final BlendComposite Heat = new BlendComposite(BlendingMode.HEAT);
-    public static final BlendComposite Add = new BlendComposite(BlendingMode.ADD);
-    public static final BlendComposite Subtract = new BlendComposite(BlendingMode.SUBTRACT);
-    public static final BlendComposite Stamp = new BlendComposite(BlendingMode.STAMP);
-    public static final BlendComposite Red = new BlendComposite(BlendingMode.RED);
-    public static final BlendComposite Green = new BlendComposite(BlendingMode.GREEN);
-    public static final BlendComposite Blue = new BlendComposite(BlendingMode.BLUE);
-    public static final BlendComposite Hue = new BlendComposite(BlendingMode.HUE);
-    public static final BlendComposite Saturation = new BlendComposite(BlendingMode.SATURATION);
-    public static final BlendComposite Color = new BlendComposite(BlendingMode.COLOR);
-    public static final BlendComposite Luminosity = new BlendComposite(BlendingMode.LUMINOSITY);
-
     private float alpha;
     private BlendingMode mode;
 
@@ -118,14 +86,6 @@ public final class BlendComposite implements Composite {
 
     public static BlendComposite getInstance(BlendingMode mode, float alpha) {
         return new BlendComposite(mode, alpha);
-    }
-
-    public BlendComposite derive(BlendingMode mode) {
-        return this.mode == mode ? this : new BlendComposite(mode, getAlpha());
-    }
-
-    public BlendComposite derive(float alpha) {
-        return this.alpha == alpha ? this : new BlendComposite(getMode(), alpha);
     }
 
     public float getAlpha() {
@@ -158,11 +118,7 @@ public final class BlendComposite implements Composite {
 
         BlendComposite bc = (BlendComposite) obj;
 
-        if (mode != bc.mode) {
-            return false;
-        }
-
-        return alpha == bc.alpha;
+        return mode == bc.mode && alpha == bc.alpha;
     }
 
     public CompositeContext createContext(ColorModel srcColorModel,
