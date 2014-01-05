@@ -679,6 +679,9 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
    * Clears all image data to the given color
    */
   def clear(color: Color): Image = filled(color)
+
+  def watermark(text: String): Image = watermark(text, 24, 0.5)
+  def watermark(text: String, fontSize: Int, alpha: Double): Image = filter(new Watermark(text, fontSize, alpha))
 }
 
 object Image {

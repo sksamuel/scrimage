@@ -446,4 +446,12 @@ class ImageTest extends FunSuite with BeforeAndAfter {
     val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/dyson_autocropped.png"))
     assert(expected == autocropped)
   }
+
+  test("watermark happy path") {
+    val watermarked = image.scaleTo(400, 250).watermark("copyright birds of the planet 2014")
+    val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/watermark.png"))
+    assert(400 === watermarked.width)
+    assert(250 === watermarked.height)
+    assert(expected === watermarked)
+  }
 }
