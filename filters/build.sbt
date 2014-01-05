@@ -1,6 +1,8 @@
 
 scalaVersion := "2.10.3"
 
+crossScalaVersions := Seq("2.9.2", "2.10.0")
+
 organization := "com.sksamuel.scrimage"
 
 name := "scrimage-filters"

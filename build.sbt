@@ -7,6 +7,8 @@ organization := "com.sksamuel.scrimage"
 
 scalaVersion := "2.10.3"
 
+crossScalaVersions := Seq("2.9.2", "2.10.0")
+
 scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
 
 publishMavenStyle := true
