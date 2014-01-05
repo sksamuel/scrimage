@@ -16,6 +16,8 @@ instance where operations that can be performed in place mutate the original ins
 
 [![Build Status](https://travis-ci.org/sksamuel/scrimage.png)](https://travis-ci.org/sksamuel/scrimage)
 
+[![Coverage Status](https://coveralls.io/repos/sksamuel/scrimage/badge.png?branch=master)](https://coveralls.io/r/sksamuel/scrimage?branch=master)
+
 ### Image Operations
 
 These operations all operate on an existing image, returning a copy of that image. The more complicated operations have a link to more detailed documentation.
