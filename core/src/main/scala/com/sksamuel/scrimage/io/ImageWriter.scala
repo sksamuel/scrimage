@@ -17,7 +17,7 @@
 package com.sksamuel.scrimage.io
 
 import java.io._
-import org.apache.commons.io.FileUtils
+import org.apache.commons.io.{IOUtils, FileUtils}
 
 /** @author Stephen Samuel */
 trait ImageWriter {
@@ -44,7 +44,9 @@ trait ImageWriter {
    * @param file the file to write out to.
    */
   def write(file: File) {
-    write(FileUtils.openOutputStream(file))
+    val out = FileUtils.openOutputStream(file)
+    write(out)
+    IOUtils.closeQuietly(out)
   }
 
   /**
