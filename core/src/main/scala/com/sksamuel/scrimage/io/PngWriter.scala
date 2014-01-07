@@ -24,21 +24,29 @@ import org.apache.commons.io.output.ByteArrayOutputStream
 import thirdparty.pngtastic.{ PngOptimizer, PngImage }
 
 /** @author Stephen Samuel */
-class PngWriter(image: Image, compressionLevel: Int) extends ImageWriter {
+class PngWriter(image: Image, compressionLevel: Int, _optimized: Boolean = true) extends ImageWriter {
 
   def withMaxCompression = withCompression(9)
-  def withCompression(compressionLevel: Int): PngWriter = new PngWriter(image, compressionLevel)
+  def withCompression(c: Int): PngWriter = new PngWriter(image, c, _optimized)
+  def optimized: PngWriter = new PngWriter(image, compressionLevel, true)
+  def unoptimized: PngWriter = new PngWriter(image, compressionLevel, false)
 
   def write(out: OutputStream) {
 
-    // todo need to adapt pngtastic to accept raw image
-    val ba = new ByteArrayOutputStream()
-    ImageIO.write(image.awt, "png", ba)
-    val png = new PngImage(new ByteArrayInputStream(ba.toByteArray))
+    if (_optimized) {
+      // todo need to adapt pngtastic to accept raw image
+      val ba = new ByteArrayOutputStream()
+      ImageIO.write(image.awt, "png", ba)
+      val png = new PngImage(new ByteArrayInputStream(ba.toByteArray))
 
-    val optimizer = new PngOptimizer()
-    val optimized = optimizer.optimize(png, false, compressionLevel)
-    optimized.writeDataOutputStream(out)
+      val optimizer = new PngOptimizer()
+      val optimized = optimizer.optimize(png, false, compressionLevel)
+      optimized.writeDataOutputStream(out)
+
+    } else {
+      val ba = new ByteArrayOutputStream()
+      ImageIO.write(image.awt, "png", ba)
+    }
 
     IOUtils.closeQuietly(out)
   }
