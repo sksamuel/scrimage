@@ -19,6 +19,8 @@ parallelExecution in Test := false
 
 javacOptions ++= Seq("-source", "1.6", "-target", "1.6")
 
+org.scalastyle.sbt.ScalastylePlugin.Settings
+
 publishTo <<= version {
   (v: String) =>
     val nexus = "https://oss.sonatype.org/"
