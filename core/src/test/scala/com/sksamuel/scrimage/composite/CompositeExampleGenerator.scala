@@ -8,6 +8,7 @@ import org.apache.commons.io.FileUtils
 object CompositeExampleGenerator extends App {
 
   val composites: List[(String, (Double => Composite))] = List(
+    ("alpha", new AlphaComposite(_)),
     ("average", new AverageComposite(_)),
     ("blue", new BlueComposite(_)),
     ("color", new ColorComposite(_)),
@@ -24,7 +25,6 @@ object CompositeExampleGenerator extends App {
     ("luminosity", new LuminosityComposite(_)),
     ("multiply", new MultiplyComposite(_)),
     ("negation", new NegationComposite(_)),
-    ("normal", new NormalComposite(_)),
     ("overlay", new OverlayComposite(_)),
     ("red", new RedComposite(_)),
     ("reflect", new ReflectComposite(_)),
