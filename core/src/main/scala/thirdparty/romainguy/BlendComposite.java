@@ -35,7 +35,6 @@ import java.awt.image.WritableRaster;
 
 public final class BlendComposite implements Composite {
     public enum BlendingMode {
-        NORMAL,
         AVERAGE,
         MULTIPLY,
         SCREEN,
@@ -300,13 +299,6 @@ public final class BlendComposite implements Composite {
 
         public static Blender getBlenderFor(BlendComposite composite) {
             switch (composite.getMode()) {
-                case NORMAL:
-                    return new Blender() {
-                        @Override
-                        public int[] blend(int[] src, int[] dst) {
-                            return src;
-                        }
-                    };
                 case ADD:
                     return new Blender() {
                         @Override
