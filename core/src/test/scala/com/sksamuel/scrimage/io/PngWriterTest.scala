@@ -20,7 +20,7 @@ class PngWriterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest
   }
 
   test("png compression happy path") {
-    for (i <- 0 to 10) {
+    for (i <- 0 to 9) {
 
       val out = new ByteArrayOutputStream()
       original.writer(Format.PNG).withCompression(i).write(out)
