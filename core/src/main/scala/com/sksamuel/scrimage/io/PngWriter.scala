@@ -16,41 +16,54 @@
 
 package com.sksamuel.scrimage.io
 
-import java.io.{ ByteArrayInputStream, OutputStream }
-import javax.imageio.ImageIO
+import java.io.OutputStream
 import com.sksamuel.scrimage.Image
-import org.apache.commons.io.IOUtils
-import org.apache.commons.io.output.ByteArrayOutputStream
-import thirdparty.pngtastic.{ PngOptimizer, PngImage }
+import ar.com.hjg.pngj.{ImageLineInt, FilterType, ImageInfo}
+import java.awt.image.{DataBufferInt, BufferedImage, SinglePixelPackedSampleModel}
+import javax.imageio.ImageIO
 
 /** @author Stephen Samuel */
-class PngWriter(image: Image, compressionLevel: Int, _optimized: Boolean = true) extends ImageWriter {
+class PngWriter(image: Image, compressionLevel: Int) extends ImageWriter {
 
   def withMaxCompression = withCompression(9)
-  def withCompression(c: Int): PngWriter = new PngWriter(image, c, _optimized)
-  def optimized: PngWriter = new PngWriter(image, compressionLevel, true)
-  def unoptimized: PngWriter = new PngWriter(image, compressionLevel, false)
+  def withCompression(c: Int): PngWriter = new PngWriter(image, c)
 
   def write(out: OutputStream) {
 
-    if (_optimized) {
-      // todo need to adapt pngtastic to accept raw image
-      val ba = new ByteArrayOutputStream()
-      ImageIO.write(image.awt, "png", ba)
-      val png = new PngImage(new ByteArrayInputStream(ba.toByteArray))
-
-      val optimizer = new PngOptimizer()
-      val optimized = optimizer.optimize(png, false, compressionLevel)
-      optimized.writeDataOutputStream(out)
-
+    if (image.awt.getType == BufferedImage.TYPE_INT_ARGB) {
+      val imi = new ImageInfo(image.width, image.height, 8, true)
+      val writer = new ar.com.hjg.pngj.PngWriter(out, imi)
+      writer.setCompLevel(compressionLevel)
+      writer.setFilterType(FilterType.FILTER_DEFAULT)
+      val db = image.awt.getRaster.getDataBuffer.asInstanceOf[DataBufferInt]
+      if (db.getNumBanks != 1) throw new RuntimeException("This method expects one bank")
+      val samplemodel = image.awt.getSampleModel.asInstanceOf[SinglePixelPackedSampleModel]
+      val line = new ImageLineInt(imi)
+      val dbbuf = db.getData
+      for ( row <- 0 until imi.rows ) {
+        var elem = samplemodel.getOffset(0, row)
+        var j = 0
+        for ( col <- 0 until imi.cols ) {
+          val sample = dbbuf(elem)
+          elem = elem + 1
+          line.getScanline()(j) = (sample & 0xFF0000) >> 16; // R
+          j = j + 1
+          line.getScanline()(j) = (sample & 0xFF00) >> 8; // G
+          j = j + 1
+          line.getScanline()(j) = sample & 0xFF; // B
+          j = j + 1
+          line.getScanline()(j) = ((sample & 0xFF000000) >> 24) & 0xFF; // A
+          j = j + 1
+        }
+        writer.writeRow(line, row)
+      }
+      writer.end()
     } else {
-      val ba = new ByteArrayOutputStream()
-      ImageIO.write(image.awt, "png", ba)
+      ImageIO.write(image.awt, "png", out)
     }
-
-    IOUtils.closeQuietly(out)
   }
 }
+
 object PngWriter {
-  def apply(image: Image) = new PngWriter(image, 0)
+  def apply(image: Image) = new PngWriter(image, 5)
 }

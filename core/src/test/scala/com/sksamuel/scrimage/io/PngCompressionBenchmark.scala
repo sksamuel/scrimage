@@ -10,8 +10,8 @@ object PngCompressionBenchmark extends App {
   val image = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird.jpg"))
 
   for ( c <- 0 to 9 ) {
-    benchmarkN(5, string => println(s"Compression level $c took " + string)) {
-      image.writer(Format.PNG).withCompression(c).unoptimized.write(File.createTempFile("compressiontest", "png"))
+    benchmarkN(1, string => println(s"Compression level $c took " + string)) {
+      image.writer(Format.PNG).withCompression(c).write(File.createTempFile(s"compressiontest$c", ".png"))
     }
   }
 
