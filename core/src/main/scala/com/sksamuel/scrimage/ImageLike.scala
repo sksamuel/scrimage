@@ -22,9 +22,9 @@ import com.sksamuel.scrimage.Format.PNG
 import com.sksamuel.scrimage.io.ImageWriter
 import com.sksamuel.scrimage.ScaleMethod.Bicubic
 import com.sksamuel.scrimage.Position.Center
-import java.awt.Color
 import scala.Array
 import com.sksamuel.scrimage.PixelTools._
+import java.awt.Color
 
 /** @author Stephen Samuel */
 trait ImageLike[R] {
