@@ -325,6 +325,23 @@ trait ImageLike[R] {
   def scale(scaleFactor: Double, scaleMethod: ScaleMethod = Bicubic): R =
     scaleTo((width * scaleFactor).toInt, (height * scaleFactor).toInt, scaleMethod)
 
+  def pixels: Array[Int]
+
+  /**
+   *
+   * @param pixel the pixel colour to look for.
+   * @return true if there exists at least one pixel that has the given pixels color
+   */
+  def exists(pixel: Int) = pixels.exists(_ == pixel)
+
+  override def equals(obj: Any): Boolean = obj match {
+    case other: ImageLike[_] => other.pixels.sameElements(pixels)
+    case _ => false
+  }
+}
+
+trait WritableImageLike {
+
   def writer[T <: ImageWriter](format: Format[T]): T
 
   def write: Array[Byte] = write(Format.PNG)
@@ -351,17 +368,4 @@ trait ImageLike[R] {
     writer(format).write(out)
   }
 
-  def pixels: Array[Int]
-
-  /**
-   *
-   * @param pixel the pixel colour to look for.
-   * @return true if there exists at least one pixel that has the given pixels color
-   */
-  def exists(pixel: Int) = pixels.exists(_ == pixel)
-
-  override def equals(obj: Any): Boolean = obj match {
-    case other: ImageLike[_] => other.pixels.sameElements(pixels)
-    case _ => false
-  }
 }

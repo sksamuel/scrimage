@@ -7,6 +7,8 @@ import scala.concurrent.duration._
 /** @author Stephen Samuel */
 class AsyncImageTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
 
+  import scala.concurrent.ExecutionContext.Implicits.global
+
   val in = getClass.getResourceAsStream("/com/sksamuel/scrimage/bird.jpg")
   val image = Image(in)
 

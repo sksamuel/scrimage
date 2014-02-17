@@ -27,6 +27,7 @@ import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.io.ImageWriter
 import scala.Array
+import scala.concurrent.ExecutionContext
 
 /**
  * @author Stephen Samuel
@@ -34,7 +35,7 @@ import scala.Array
  *         Image is class that represents an in memory image.
  *
  */
-class Image(val awt: BufferedImage) extends ImageLike[Image] {
+class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageLike {
 
   require(awt != null, "Wrapping image cannot be null")
   val SCALE_THREADS = Runtime.getRuntime.availableProcessors()
@@ -673,7 +674,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] {
    *
    * @return an AsyncImage wrapping this image.
    */
-  def toAsync: AsyncImage = AsyncImage(this)
+  def toAsync(implicit executionContext: ExecutionContext): AsyncImage = AsyncImage(this)
 
   /**
    * Clears all image data to the given color
