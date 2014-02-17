@@ -18,21 +18,20 @@ package com.sksamuel.scrimage
 
 import scala.concurrent._
 import com.sksamuel.scrimage.Position.Center
-import scala.concurrent.ExecutionContext.Implicits.global
 import java.awt.Color
-import com.sksamuel.scrimage.io.ImageWriter
+import com.sksamuel.scrimage.io.{AsyncImageWriter, ImageWriter}
 import com.sksamuel.scrimage.ScaleMethod.Bicubic
 import java.io.{InputStream, File}
 
 /** @author Stephen Samuel */
-class AsyncImage(image: Image) extends ImageLike[Future[AsyncImage]] {
+class AsyncImage(image: Image)(implicit executionContext: ExecutionContext) extends ImageLike[Future[AsyncImage]] {
 
   override def clear(color: Color = Color.WHITE) = image.clear(color)
   override def empty = image.empty
   override def copy = image.copy
   override def pixels: Array[Int] = image.pixels
 
-  override def map(f: (Int, Int, Int) => Int): Future[AsyncImage] = future {
+  override def map(f: (Int, Int, Int) => Int): Future[AsyncImage] = Future {
     AsyncImage(image.map(f))
   }
 
@@ -44,7 +43,7 @@ class AsyncImage(image: Image) extends ImageLike[Future[AsyncImage]] {
           targetHeight: Int,
           color: Color = Color.WHITE,
           scaleMethod: ScaleMethod = Bicubic,
-          position: Position = Position.Center): Future[AsyncImage] = future {
+          position: Position = Position.Center): Future[AsyncImage] = Future {
     AsyncImage(image.fit(targetWidth, targetHeight, color, scaleMethod, position))
   }
 
@@ -52,18 +51,18 @@ class AsyncImage(image: Image) extends ImageLike[Future[AsyncImage]] {
 
   def padTo(targetWidth: Int,
             targetHeight: Int,
-            color: java.awt.Color = java.awt.Color.WHITE): Future[AsyncImage] = future {
+            color: java.awt.Color = java.awt.Color.WHITE): Future[AsyncImage] = Future {
     AsyncImage(image.padTo(targetWidth, targetHeight, color))
   }
 
   def resizeTo(targetWidth: Int,
                targetHeight: Int,
                position: Position = Center,
-               background: Color = Color.WHITE): Future[AsyncImage] = future {
+               background: Color = Color.WHITE): Future[AsyncImage] = Future {
     AsyncImage(image.resizeTo(targetWidth, targetHeight, position))
   }
 
-  def scaleTo(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): Future[AsyncImage] = future {
+  def scaleTo(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): Future[AsyncImage] = Future {
     AsyncImage(image.scaleTo(targetWidth, targetHeight, scaleMethod))
   }
 
@@ -75,7 +74,7 @@ class AsyncImage(image: Image) extends ImageLike[Future[AsyncImage]] {
    *
    * @return A new image with the given filter applied.
    */
-  def filter(filter: Filter): Future[AsyncImage] = future {
+  def filter(filter: Filter): Future[AsyncImage] = Future {
     AsyncImage(image.filter(filter))
   }
 
@@ -86,15 +85,22 @@ class AsyncImage(image: Image) extends ImageLike[Future[AsyncImage]] {
    */
   def toImage: Image = image
 
-  def writer[T <: ImageWriter](format: Format[T]): T = format.writer(image)
+  def writer[T <: ImageWriter](format: Format[T]): AsyncImageWriter[T] = new AsyncImageWriter[T](format.writer(image))
+
   def height: Int = image.height
   def width: Int = image.width
 }
 
 object AsyncImage {
 
-  def apply(bytes: Array[Byte]): AsyncImage = Image(bytes).toAsync
-  def apply(in: InputStream): AsyncImage = Image(in).toAsync
-  def apply(file: File): AsyncImage = Image(file).toAsync
-  def apply(image: Image) = new AsyncImage(image)
+  def apply(bytes: Array[Byte])(implicit executionContext: ExecutionContext):  Future[AsyncImage] = Future {
+    Image(bytes).toAsync
+  }
+  def apply(in: InputStream)(implicit executionContext: ExecutionContext): Future[AsyncImage] = Future {
+    Image(in).toAsync
+  }
+  def apply(file: File)(implicit executionContext: ExecutionContext):  Future[AsyncImage] = Future {
+    Image(file).toAsync
+  }
+  def apply(image: Image)(implicit executionContext: ExecutionContext) = new AsyncImage(image)
 }
