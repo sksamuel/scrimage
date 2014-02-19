@@ -1,7 +1,7 @@
 
 name := "scrimage"
 
-version := "1.3.13"
+version := "1.3.15"
 
 organization := "com.sksamuel.scrimage"
 
