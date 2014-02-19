@@ -185,20 +185,20 @@ Maven:
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage-core_2.10</artifactId>
-    <version>1.3.14</version>
+    <version>1.3.15</version>
 </dependency>
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage-filters_2.10</artifactId>
-    <version>1.3.14</version>
+    <version>1.3.15</version>
 </dependency>
 ```
 
 If using SBT then you want:
 ```scala
-libraryDependencies += "com.sksamuel.scrimage" % "scrimage-core_2.10" % "1.3.14"
+libraryDependencies += "com.sksamuel.scrimage" % "scrimage-core_2.10" % "1.3.15"
 
-libraryDependencies += "com.sksamuel.scrimage" % "scrimage-filters_2.10" % "1.3.14"
+libraryDependencies += "com.sksamuel.scrimage" % "scrimage-filters_2.10" % "1.3.15"
 ```
 
 
