@@ -35,11 +35,11 @@ libraryDependencies ++= Seq(
 )
 
 
-ScoverageSbtPlugin.instrumentSettings
-
-CoverallsPlugin.coverallsSettings
-
-org.scalastyle.sbt.ScalastylePlugin.Settings
+//ScoverageSbtPlugin.instrumentSettings
+//
+//CoverallsPlugin.coverallsSettings
+//
+//org.scalastyle.sbt.ScalastylePlugin.Settings
 
 pomExtra := {
   <url>https://github.com/sksamuel/scrimage</url>
