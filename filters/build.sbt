@@ -1,13 +1,13 @@
 
 scalaVersion := "2.10.3"
 
-crossScalaVersions := Seq("2.9.2", "2.10.0")
+crossScalaVersions := Seq("2.10.3", "2.11.0-RC1")
 
 organization := "com.sksamuel.scrimage"
 
 name := "scrimage-filters"
 
-version := "1.3.15"
+version := "1.3.16"
 
 publishMavenStyle := true
 
@@ -23,14 +23,13 @@ publishTo <<= version {
 }
 
 libraryDependencies ++= Seq(
-  "org.apache.sanselan" % "sanselan" % "0.97-incubator",
-  "log4j" % "log4j" % "1.2.17",
-  "org.slf4j" % "slf4j-api" % "1.6.6",
-  "commons-io" % "commons-io" % "2.4",
-  "org.scalatest"             %% "scalatest"        % "2.0"             % "test",
-  "org.imgscalr" % "imgscalr-lib" % "4.2" % "test",
-  "junit" % "junit" % "4.11" % "test",
-  "org.mockito" % "mockito-all" % "1.9.5" % "test"
+  "org.apache.sanselan"             % "sanselan"              % "0.97-incubator",
+  "org.slf4j"                       % "slf4j-api"             % "1.6.6",
+  "commons-io"                      % "commons-io"            % "2.4",
+  "org.scalatest"                   %% "scalatest"            % "2.1.0"                   % "test",
+  "org.imgscalr"                    % "imgscalr-lib"          % "4.2"                     % "test",
+  "junit"                           % "junit"                 % "4.11" % "test",
+  "org.mockito"                     % "mockito-all"           % "1.9.5" % "test"
 )
 
 pomExtra := {
