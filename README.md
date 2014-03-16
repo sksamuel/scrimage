@@ -180,26 +180,30 @@ They are split because the image filters is a large jar,
 and most people just want the basic resize/scale/load/save functionality. 
 Only include the filters dependency if you need the image filters, otherwise just the core one is needed.
 
+
+If using SBT then you want:
+```scala
+libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-core" % "1.3.16"
+
+libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-filters" % "1.3.16"
+```
+
 Maven:
 ```xml
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage-core_2.10</artifactId>
-    <version>1.3.15</version>
+    <version>1.3.16</version>
 </dependency>
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage-filters_2.10</artifactId>
-    <version>1.3.15</version>
+    <version>1.3.16</version>
 </dependency>
 ```
 
-If using SBT then you want:
-```scala
-libraryDependencies += "com.sksamuel.scrimage" % "scrimage-core_2.10" % "1.3.15"
 
-libraryDependencies += "com.sksamuel.scrimage" % "scrimage-filters_2.10" % "1.3.15"
-```
+Scrimage is available for both 2.10 and 2.11 RC1 onwards. If you're using maven you'll have to adjust the artifact id with the correct scala version. SBT will do this automatically when you use %% like in the example above.
 
 
 ### Filters
