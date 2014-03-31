@@ -1,13 +1,13 @@
 
 scalaVersion := "2.10.3"
 
-crossScalaVersions := Seq("2.10.3", "2.11.0-RC1")
+crossScalaVersions := Seq("2.10.3", "2.11.0-RC3")
 
 name := "scrimage-core"
 
 organization := "com.sksamuel.scrimage"
 
-version := "1.3.16"
+version := "1.3.17"
 
 publishMavenStyle := true
 
