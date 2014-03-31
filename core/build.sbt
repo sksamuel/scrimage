@@ -26,12 +26,12 @@ libraryDependencies ++= Seq(
   "org.apache.sanselan"           % "sanselan"                % "0.97-incubator",
   "org.slf4j"                     % "slf4j-api"               % "1.7.5"           % "provided",
   "commons-io"                    % "commons-io"              % "2.4",
-  "org.scalatest"                 %% "scalatest"              % "2.1.0"             % "test",
   "com.drewnoakes"                % "metadata-extractor"      % "2.6.2",
   "ar.com.hjg"                    % "pngj"                    % "2.0.1",
+  "org.scalatest"                 %% "scalatest"              % "2.1.2"           % "test",
   "org.imgscalr"                  % "imgscalr-lib"            % "4.2"             % "test",
   "junit"                         % "junit"                   % "4.11"            % "test",
-  "org.mockito"                   % "mockito-all"             % "1.9.5" % "test"
+  "org.mockito"                   % "mockito-all"             % "1.9.5"           % "test"
 )
 
 

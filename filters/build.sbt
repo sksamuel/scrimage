@@ -26,10 +26,10 @@ libraryDependencies ++= Seq(
   "org.apache.sanselan"             % "sanselan"              % "0.97-incubator",
   "org.slf4j"                       % "slf4j-api"             % "1.6.6",
   "commons-io"                      % "commons-io"            % "2.4",
-  "org.scalatest"                   %% "scalatest"            % "2.1.0"                   % "test",
+  "junit"                           % "junit"                 % "4.11"                    % "test",
   "org.imgscalr"                    % "imgscalr-lib"          % "4.2"                     % "test",
-  "junit"                           % "junit"                 % "4.11" % "test",
-  "org.mockito"                     % "mockito-all"           % "1.9.5" % "test"
+  "org.scalatest"                   %% "scalatest"            % "2.1.2"                   % "test",
+  "org.mockito"                     % "mockito-all"           % "1.9.5"                   % "test"
 )
 
 pomExtra := {
