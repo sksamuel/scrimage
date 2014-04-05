@@ -7,7 +7,7 @@ name := "scrimage-core"
 
 organization := "com.sksamuel.scrimage"
 
-version := "1.3.17"
+version := "1.3.18"
 
 publishMavenStyle := true
 
