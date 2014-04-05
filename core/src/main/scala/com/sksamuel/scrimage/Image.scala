@@ -19,15 +19,17 @@ package com.sksamuel.scrimage
 import java.awt.{Color, RenderingHints, Graphics2D}
 import java.awt.geom.AffineTransform
 import java.io.{ByteArrayInputStream, InputStream, File}
-import com.sksamuel.scrimage.ScaleMethod._
 import javax.imageio.ImageIO
-import org.apache.commons.io.{IOUtils, FileUtils}
-import java.awt.image.{DataBufferInt, AffineTransformOp, BufferedImage}
-import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
-import com.sksamuel.scrimage.Position.Center
+import org.apache.commons.io.{FileUtils, IOUtils}
+import java.awt.image.{AffineTransformOp, DataBufferInt, BufferedImage}
+import thirdparty.mortennobel.{ResampleOp, ResampleFilters}
 import com.sksamuel.scrimage.io.ImageWriter
 import scala.Array
 import scala.concurrent.ExecutionContext
+import com.sksamuel.scrimage.ScaleMethod._
+import com.sksamuel.scrimage.Position.Center
+import scala.Some
+import scala.Tuple2
 
 /**
  * @author Stephen Samuel
@@ -687,6 +689,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
 
 object Image {
 
+  ImageIO.scanForPlugins()
   val CANONICAL_DATA_TYPE = BufferedImage.TYPE_INT_ARGB
 
   /**
@@ -721,22 +724,25 @@ object Image {
     } catch {
       case e: Exception =>
 
-        val readers = ImageIO.getImageReaders(new ByteArrayInputStream(bytes))
-        val reader = readers.next()
-        reader.setInput(new ByteArrayInputStream(bytes), true, true)
-
-        val params = reader.getDefaultReadParam
-        val imageTypes = reader.getImageTypes(0)
-        while (imageTypes.hasNext) {
-          val imageTypeSpecifier = imageTypes.next()
-          val bufferedImageType = imageTypeSpecifier.getBufferedImageType
-          if (bufferedImageType == BufferedImage.TYPE_BYTE_GRAY) {
-            params.setDestinationType(imageTypeSpecifier)
+        import scala.collection.JavaConverters._
+        ImageIO.getImageReaders(new ByteArrayInputStream(bytes)).asScala.foldLeft(None: Option[Image]) {
+          (value, reader) => try {
+            reader.setInput(new ByteArrayInputStream(bytes), true, true)
+            val params = reader.getDefaultReadParam
+            val imageTypes = reader.getImageTypes(0)
+            while (imageTypes.hasNext) {
+              val imageTypeSpecifier = imageTypes.next()
+              val bufferedImageType = imageTypeSpecifier.getBufferedImageType
+              if (bufferedImageType == BufferedImage.TYPE_BYTE_GRAY) {
+                params.setDestinationType(imageTypeSpecifier)
+              }
+            }
+            val bufferedImage = reader.read(0, params)
+            Some(apply(bufferedImage))
+          } catch {
+            case e: Exception => None
           }
-        }
-
-        val bufferedImage = reader.read(0, params)
-        apply(bufferedImage)
+        }.getOrElse(throw new RuntimeException("Unparsable image"))
     }
   }
 

@@ -24,10 +24,16 @@ publishTo <<= version {
 
 libraryDependencies ++= Seq(
   "org.apache.sanselan"           % "sanselan"                % "0.97-incubator",
-  "org.slf4j"                     % "slf4j-api"               % "1.7.5"           % "provided",
+  "com.twelvemonkeys.imageio"     % "imageio-core"            % "3.0-rc5",
+  "com.twelvemonkeys.imageio"     % "imageio-metadata"        % "3.0-rc5",
+  "com.twelvemonkeys.imageio"     % "imageio-jpeg"            % "3.0-rc5",
+  "com.twelvemonkeys.common"      % "common-lang"             % "3.0-rc5",
+  "com.twelvemonkeys.common"      % "common-io"               % "3.0-rc5",
+  "com.twelvemonkeys.common"      % "common-image"            % "3.0-rc5",
   "commons-io"                    % "commons-io"              % "2.4",
   "com.drewnoakes"                % "metadata-extractor"      % "2.6.2",
   "ar.com.hjg"                    % "pngj"                    % "2.0.1",
+  "org.slf4j"                     % "slf4j-api"               % "1.7.5"           % "provided",
   "org.scalatest"                 %% "scalatest"              % "2.1.2"           % "test",
   "org.imgscalr"                  % "imgscalr-lib"            % "4.2"             % "test",
   "junit"                         % "junit"                   % "4.11"            % "test",
