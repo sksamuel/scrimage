@@ -1,5 +1,4 @@
 language: scala
-script: "sbt clean scoverage:test coveralls"
 scala:
    - 2.10.3
 jdk:
