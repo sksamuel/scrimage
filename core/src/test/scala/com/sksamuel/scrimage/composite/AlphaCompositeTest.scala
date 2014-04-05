@@ -13,11 +13,13 @@ class AlphaCompositeTest extends FunSuite with BeforeAndAfter with OneInstancePe
 
   test("alpha composite uses transparency of application image") {
     val actual = source.composite(AlphaComposite(1f), transparent)
+    actual.write("alpha_composite.png")
     assert(expected1 === actual)
   }
 
   test("alpha composite uses transparency of application image combined with alpha") {
     val actual = source.composite(AlphaComposite(0.5f), transparent)
+    actual.write("alpha_composite_0.5f.png")
     assert(expected2 === actual)
   }
 }
