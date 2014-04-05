@@ -16,7 +16,7 @@ class GifWriterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest
 
     val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_compressed.gif"))
     assert(expected.pixels.length === actual.pixels.length)
-    assert(expected === actual)
+    assert(expected == actual)
 
   }
 
@@ -27,7 +27,7 @@ class GifWriterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest
 
     val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_progressive.gif"))
     assert(expected.pixels.length === actual.pixels.length)
-    assert(expected === actual)
+    assert(expected == actual)
 
   }
 }

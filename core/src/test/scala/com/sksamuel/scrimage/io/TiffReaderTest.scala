@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.io
 
-import org.scalatest.{ OneInstancePerTest, BeforeAndAfter, FunSuite }
+import org.scalatest.{OneInstancePerTest, BeforeAndAfter, FunSuite}
 
 /** @author Stephen Samuel */
 class TiffReaderTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {

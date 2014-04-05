@@ -21,6 +21,7 @@ import com.sksamuel.scrimage.Image
 import ar.com.hjg.pngj.{ImageLineInt, FilterType, ImageInfo}
 import java.awt.image.{DataBufferInt, BufferedImage, SinglePixelPackedSampleModel}
 import javax.imageio.ImageIO
+import sun.awt.resources.awt
 
 /** @author Stephen Samuel */
 class PngWriter(image: Image, compressionLevel: Int) extends ImageWriter {
@@ -57,7 +58,7 @@ class PngWriter(image: Image, compressionLevel: Int) extends ImageWriter {
         }
         writer.writeRow(line, row)
       }
-      writer.end()
+      writer.end() // end calls close
     } else {
       ImageIO.write(image.awt, "png", out)
     }

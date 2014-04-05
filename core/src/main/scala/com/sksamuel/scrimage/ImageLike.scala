@@ -164,7 +164,7 @@ trait ImageLike[R] {
    *
    * @return the number of pixels
    */
-  def count : Int = pixels.size
+  def count: Int = pixels.size
 
   /**
    * Counts the number of pixels with the given colour.
