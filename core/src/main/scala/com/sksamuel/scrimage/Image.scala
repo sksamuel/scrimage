@@ -40,7 +40,6 @@ import scala.Tuple2
 class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageLike {
 
   require(awt != null, "Wrapping image cannot be null")
-  val SCALE_THREADS = Runtime.getRuntime.availableProcessors()
 
   lazy val width: Int = awt.getWidth(null)
   lazy val height: Int = awt.getHeight(null)
@@ -479,7 +478,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
           case Lanczos3 => ResampleFilters.lanczos3Filter
           case _ => ResampleFilters.biCubicFilter
         }
-        val op = new ResampleOp(SCALE_THREADS, method, targetWidth, targetHeight)
+        val op = new ResampleOp(Image.SCALE_THREADS, method, targetWidth, targetHeight)
         val scaled = op.filter(awt, null)
         Image(scaled)
     }
@@ -686,6 +685,7 @@ object Image {
 
   ImageIO.scanForPlugins()
   val CANONICAL_DATA_TYPE = BufferedImage.TYPE_INT_ARGB
+  val SCALE_THREADS = Runtime.getRuntime.availableProcessors()
 
   /**
    * Create a new Image from an array of pixels. The specified
