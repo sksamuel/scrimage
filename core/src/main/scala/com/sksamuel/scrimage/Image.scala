@@ -1,5 +1,5 @@
 /*
-   Copyright 2013 Stephen K Samuel
+   Copyright 2013-2014 Stephen K Samuel
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -24,12 +24,9 @@ import org.apache.commons.io.{FileUtils, IOUtils}
 import java.awt.image.{AffineTransformOp, DataBufferInt, BufferedImage}
 import thirdparty.mortennobel.{ResampleOp, ResampleFilters}
 import com.sksamuel.scrimage.io.ImageWriter
-import scala.Array
 import scala.concurrent.ExecutionContext
 import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.Position.Center
-import scala.Some
-import scala.Tuple2
 
 /**
  * @author Stephen Samuel
@@ -718,7 +715,6 @@ object Image {
       apply(ImageIO.read(new ByteArrayInputStream(bytes)))
     } catch {
       case e: Exception =>
-
         import scala.collection.JavaConverters._
         ImageIO.getImageReaders(new ByteArrayInputStream(bytes)).asScala.foldLeft(None: Option[Image]) {
           (value, reader) => try {
@@ -736,7 +732,7 @@ object Image {
             Some(apply(bufferedImage))
           } catch {
             case e: Exception => None
-          }
+              }
         }.getOrElse(throw new RuntimeException("Unparsable image"))
     }
   }
