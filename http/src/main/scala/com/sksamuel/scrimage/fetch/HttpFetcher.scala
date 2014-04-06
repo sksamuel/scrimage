@@ -9,8 +9,12 @@ trait Fetcher
 class HttpFetcher(client: ScruffyClient) extends Fetcher {
 
   def fetch(url: String)(implicit executionContext: ExecutionContext): Future[Image] = {
-    client.prepareGet(url).execute().map(resp => {
-      Image(resp.bodyAsBytes)
+    client.prepareGet(url).execute().flatMap(resp => {
+      try {
+        Future successful Image(resp.bodyAsBytes)
+      } catch {
+        case e: Exception => Future.failed(e)
+      }
     })
   }
 
