@@ -1,13 +1,4 @@
-
-scalaVersion := "2.10.3"
-
-crossScalaVersions := Seq("2.10.3", "2.11.0-RC3")
-
-organization := "com.sksamuel.scrimage"
-
 name := "scrimage-filters"
-
-version := "1.3.18"
 
 publishMavenStyle := true
 

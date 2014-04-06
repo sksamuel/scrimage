@@ -1,13 +1,5 @@
 name := "scrimage"
 
-version := "1.3.18"
-
-organization := "com.sksamuel.scrimage"
-
-scalaVersion := "2.10.3"
-
-crossScalaVersions := Seq("2.10.3", "2.11.0-RC3")
-
 scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
 
 publishMavenStyle := true
