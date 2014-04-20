@@ -12,7 +12,9 @@ trait Raster {
   val height: Int
   def read(x: Int, y: Int): Pixel
   def write(x: Int, y: Int, pixel: Pixel): Unit
-  def subraster(x: Int, y: Int, w: Int, y: Int): Raster = null
+  def subraster(x: Int, y: Int, w: Int, h: Int): Raster = null
+  def map(function: Pixel => Pixel): Raster = null
+  def setAll(pixel: Pixel): Raster = map(p => pixel)
 }
 
 object Raster {

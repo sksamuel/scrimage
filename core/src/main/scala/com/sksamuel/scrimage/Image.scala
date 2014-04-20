@@ -610,15 +610,11 @@ class Image(raster: Raster) extends ImageLike[Image] with WritableImageLike {
       case _ => false
     }
 
-  // -- mutable operations -- //
-
-  def _fill(color: java.awt.Color): Image = {
-    val g2 = awt.getGraphics
-    g2.setColor(color)
-    g2.fillRect(0, 0, awt.getWidth, awt.getHeight)
-    g2.dispose()
-    this
-  }
+  /**
+   * Creates a new Image which has the same dimensions as this image, but with all pixels set to the given
+   * pixel value.
+   */
+  def fill(color: java.awt.Color): Image = new Image(raster.map(pixel => Pixel.int2pixel(color.getRGB)))
 
   /**
    * Creates a MutableImage instance backed by this image.
@@ -629,7 +625,7 @@ class Image(raster: Raster) extends ImageLike[Image] with WritableImageLike {
    *
    * @return
    */
-  def toMutable: MutableImage = new MutableImage(copy.awt)
+  def toMutable: MutableImage = new MutableImage(null)
 
   /**
    * Creates an AsyncImage instance backed by this image.
@@ -733,27 +729,18 @@ object Image {
    *
    * @return a new Image object.
    */
-  def apply(image: Image): Image = _copy(image.awt)
+  def apply(image: Image): Image = new Image(image.raster.copy)
 
   private[scrimage] def _empty(awt: java.awt.Image): BufferedImage = _empty(awt.getWidth(null), awt.getHeight(null))
   private[scrimage] def _empty(width: Int, height: Int): BufferedImage = new
       BufferedImage(width, height, CANONICAL_DATA_TYPE)
 
-  private[scrimage] def _copy(awt: java.awt.Image) = {
-    require(awt != null, "Input image cannot be null")
-    val copy = _empty(awt)
-    val g2 = copy.getGraphics
-    g2.drawImage(awt, 0, 0, null)
-    g2.dispose()
-    new Image(copy)
-  }
-
+  /**
+   * Creates new images with the given width and height and the specified colour
+   */
   def filled(width: Int, height: Int, color: Int): Image = filled(width, height, new java.awt.Color(color))
   def filled(width: Int, height: Int, color: java.awt.Color): Image = {
-    val awt = new BufferedImage(width, height, Image.CANONICAL_DATA_TYPE)
-    val filled = new Image(awt)
-    filled._fill(color)
-    filled
+    new Image(Raster.apply(width, height).setAll(Pixel.int2pixel(color.getRGB)))
   }
 
   /**
@@ -765,7 +752,7 @@ object Image {
    *
    * @return the new Image with the given width and height
    */
-  def empty(width: Int, height: Int): Image = new Image(new BufferedImage(width, height, CANONICAL_DATA_TYPE))
+  def empty(width: Int, height: Int): Image = new Image(Raster.apply(width, height))
 }
 
 sealed trait ScaleMethod
