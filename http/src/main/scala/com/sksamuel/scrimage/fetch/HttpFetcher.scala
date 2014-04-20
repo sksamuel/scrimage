@@ -18,6 +18,9 @@ class HttpFetcher(client: ScruffyClient) extends Fetcher {
     })
   }
 
+  val futures: List[Future[String]] = null
+  val future = Future.sequence(futures)
+
   def fetch(urls: String*)(implicit executionContext: ExecutionContext): Seq[Future[Image]] = urls.map(fetch)
 }
 
