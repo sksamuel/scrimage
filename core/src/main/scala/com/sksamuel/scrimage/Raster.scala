@@ -10,6 +10,7 @@ package com.sksamuel.scrimage
 trait Raster {
   val width: Int
   val height: Int
+  def copy: Raster
   def read(x: Int, y: Int): Pixel
   def write(x: Int, y: Int, pixel: Pixel): Unit
   def subraster(x: Int, y: Int, w: Int, h: Int): Raster = null
@@ -29,6 +30,7 @@ class IntARGBRaster(val width: Int, val height: Int) extends Raster {
   val pixels = Array(width * height)
   override def read(x: Int, y: Int): Pixel = null
   override def write(x: Int, y: Int, pixel: Pixel): Unit = ()
+  override def copy: Raster = new IntARGBRaster(width, height)
 }
 
 // raster that uses a single byte per sample
@@ -36,5 +38,6 @@ class ByteARGBRaster(val width: Int, val height: Int) extends Raster {
   val pixels = Array(width * height * 4)
   override def read(x: Int, y: Int): Pixel = null
   override def write(x: Int, y: Int, pixel: Pixel): Unit = ()
+  override def copy: Raster = new ByteARGBRaster(width, height)
 }
 

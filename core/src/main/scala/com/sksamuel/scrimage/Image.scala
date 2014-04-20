@@ -36,14 +36,14 @@ import sun.awt.image.ByteInterleavedRaster
  *         Image is class that represents an in memory image.
  *
  */
-class Image(raster: Raster) extends ImageLike[Image] with WritableImageLike {
+class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike {
   require(raster != null, "Raster cannot be null")
 
   val width: Int = raster.width
   val height: Int = raster.height
 
   override def empty: Image = Image.empty(width, height)
-  override def copy = Image._copy(awt)
+  override def copy: Image = new Image(raster.copy)
 
   override def map(f: (Int, Int, Int) => Int): Image = {
     val target = copy
@@ -60,6 +60,7 @@ class Image(raster: Raster) extends ImageLike[Image] with WritableImageLike {
     g2.drawImage(target, 0, 0, null)
     g2.dispose()
   }
+
 
   /**
    * Removes the given amount of pixels from each edge; like a crop operation.
@@ -598,7 +599,7 @@ class Image(raster: Raster) extends ImageLike[Image] with WritableImageLike {
   def writer[T <: ImageWriter](format: Format[T]): T = format.writer(this)
 
   // This tuple contains all the state that identifies this particular image.
-  private[scrimage] def imageState = (awt.getWidth, awt.getHeight, awt.getType, pixels.toList)
+  private[scrimage] def imageState = (width, height, pixels.toList)
 
   // See this Stack Overflow question to see why this is implemented this way.
   // http://stackoverflow.com/questions/7370925/what-is-the-standard-idiom-for-implementing-equals-and-hashcode-in-scala
@@ -736,7 +737,7 @@ object Image {
       BufferedImage(width, height, CANONICAL_DATA_TYPE)
 
   /**
-   * Creates new images with the given width and height and the specified colour
+   * Creates a new image with the given width and height all all pixels set the given pixel value.
    */
   def filled(width: Int, height: Int, color: Int): Image = filled(width, height, new java.awt.Color(color))
   def filled(width: Int, height: Int, color: java.awt.Color): Image = {
