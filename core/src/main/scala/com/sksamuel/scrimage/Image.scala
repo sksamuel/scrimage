@@ -16,17 +16,17 @@
 
 package com.sksamuel.scrimage
 
-import java.awt.{Color, RenderingHints, Graphics2D}
-import java.awt.geom.AffineTransform
-import java.io.{File, InputStream}
-import javax.imageio.ImageIO
-import org.apache.commons.io.IOUtils
-import java.awt.image.{DataBufferInt, AffineTransformOp, BufferedImage}
+import java.awt.Color
+import java.awt.image.{AffineTransformOp, BufferedImage}
 import thirdparty.mortennobel.{ResampleOp, ResampleFilters}
-import com.sksamuel.scrimage.ScaleMethod._
+import sun.awt.resources.awt
+import javax.imageio.ImageIO
+import java.io.{File, ByteArrayInputStream, InputStream}
+import org.apache.commons.io.{IOUtils, FileUtils}
+import com.sksamuel.scrimage.ScaleMethod.Bicubic
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.io.ImageWriter
-import sun.awt.resources.awt
+import scala.concurrent.ExecutionContext
 
 /**
  * @author Stephen Samuel
@@ -45,22 +45,11 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
 
   override def map(f: (Int, Int, Int) => Int): Image = {
     val target = copy
-    target._mapInPlace(f)
     target
   }
 
-  private def _mapInPlace(f: (Int, Int, Int) => Int): Unit = points
-    .foreach(p => awt.setRGB(p._1, p._2, f(p._1, p._2, awt.getRGB(p._1, p._2))))
-
-  // replace this image's AWT data by drawing the given BufferedImage over the top
-  def _draw(target: BufferedImage) {
-    val g2 = awt.getGraphics.asInstanceOf[Graphics2D]
-    g2.drawImage(target, 0, 0, null)
-    g2.dispose()
-  }
-
   /**
-   * Create a new image by drawing the given images pixels over the top of the current image.
+   * Create a new image by drawing the specified image over the top of the current image.
    * If the given image is larger then the excess pixels will be ignored.
    * If the given image is smaller than the current image will be used for the remaining space.
    */
@@ -77,13 +66,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
    * @return a new Image with the dimensions width-trim*2,height-trim*2
    */
   def trim(amount: Int): Image = trim(amount, amount, amount, amount)
-  def trim(left: Int, top: Int, right: Int, bottom: Int): Image = {
-    val target = Image._empty(width - left - right, height - bottom - top)
-    val g2 = target.getGraphics.asInstanceOf[Graphics2D]
-    g2.drawImage(awt, -left, -top, null)
-    g2.dispose()
-    new Image(target)
-  }
+  def trim(left: Int, top: Int, right: Int, bottom: Int): Image = draw(-left, -top, this)
 
   /**
    * Returns a new Image that is a subimage or region of the original image.
@@ -94,7 +77,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
    * @param h the height of the subimage
    * @return a new Image that is the subimage
    */
-  def subimage(x: Int, y: Int, w: Int, h: Int): Image = Image(w, h, pixels(x, y, w, h))
+  def subimage(x: Int, y: Int, w: Int, h: Int): Image = new Image(raster.subraster(x, y, w, h))
 
   /**
    * Returns the pixel at the given coordinates as a integer in RGB format.
@@ -104,25 +87,8 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
    *
    * @return the ARGB value of the pixel
    */
-  def pixel(x: Int, y: Int): Int = {
-    val k = width * y + x
-    awt.getRaster.getDataBuffer match {
-      //     case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_RGB => buffer.getData()(k)
-      case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_ARGB => buffer.getData()(k)
-      //            case buffer: DataBufferByte if awt.getType == BufferedImage.TYPE_3BYTE_BGR =>
-      //                val blue = buffer.getData()(k * 3)
-      //                val green = buffer.getData()(k * 3 + 1)
-      //                val red = buffer.getData()(k * 3 + 2)
-      //                red << 16 | green << 8 | blue << 0
-      //            case buffer: DataBufferByte if awt.getType == BufferedImage.TYPE_4BYTE_ABGR =>
-      //                val alpha = buffer.getData()(k * 4)
-      //                val blue = buffer.getData()(k * 4 + 1)
-      //                val green = buffer.getData()(k * 4 + 2)
-      //                val red = buffer.getData()(k * 4 + 3)
-      //                alpha << 24 | red << 16 | green << 8 | blue << 0
-      case _ => throw new UnsupportedOperationException
-    }
-  }
+  @deprecated("use pixel method on raster", "2.0")
+  def pixel(x: Int, y: Int): Int = raster.pixel(x, y)
 
   /**
    * Uses linear interpolation to get a sub-pixel.
@@ -194,10 +160,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     require(x + subWidth < width)
     require(y >= 0)
     require(y + subHeight < height)
-    val subimage = new Image(new BufferedImage(
-      subWidth,
-      subHeight,
-      BufferedImage.TYPE_INT_ARGB)).toMutable
+    val subimage = new Image(Raster.apply(subWidth, subHeight)).toMutable
 
     // Simply copy the pixels over, one by one.
     for (
@@ -244,10 +207,6 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     ) yield {
       () => subimage(col, row, patchWidth, patchHeight)
     }
-
-  def subimage(x: Int, y: Int, w: Int, h: Int): Image = {
-    new Image(raster.subraster(x, y, w, h))
-  }
 
   /**
    * Returns the pixels of this image represented as an array of Integers.
@@ -310,28 +269,14 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
    *
    * @return The result of flipping this image horizontally.
    */
-  def flipX: Image = {
-    val tx = AffineTransform.getScaleInstance(-1, 1)
-    tx.translate(-width, 0)
-    _flip(tx)
-  }
+  def flipX: Image = new Image(raster.flipX)
 
   /**
    * Flips this image vertically.
    *
    * @return The result of flipping this image vertically.
    */
-  def flipY: Image = {
-    val tx = AffineTransform.getScaleInstance(1, -1)
-    tx.translate(0, -height)
-    _flip(tx)
-  }
-
-  def _flip(tx: AffineTransform): Image = {
-    val op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR)
-    val flipped = op.filter(awt, null)
-    new Image(flipped)
-  }
+  def flipY: Image = new Image(raster.flipY)
 
   /**
    * Returns a copy of this image rotated 90 degrees anti-clockwise (counter clockwise to US English speakers).
@@ -348,19 +293,20 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
   def rotateRight = _rotate(-Math.PI / 2)
 
   def _rotate(angle: Double): Image = {
-    val target = new BufferedImage(height, width, awt.getType)
-    val g2 = target.getGraphics.asInstanceOf[Graphics2D]
-    val offset = angle match {
-      case a if a < 0 => (0, width)
-      case a if a > 0 => (height, 0)
-      case _ => (0, 0)
-    }
-
-    g2.translate(offset._1, offset._2)
-    g2.rotate(angle)
-    g2.drawImage(awt, 0, 0, null)
-    g2.dispose()
-    new Image(target)
+    throw new UnsupportedOperationException("need to update to not use awt")
+    //    val target = new BufferedImage(height, width, awt.getType)
+    //    val g2 = target.getGraphics.asInstanceOf[Graphics2D]
+    //    val offset = angle match {
+    //      case a if a < 0 => (0, width)
+    //      case a if a > 0 => (height, 0)
+    //      case _ => (0, 0)
+    //    }
+    //
+    //    g2.translate(offset._1, offset._2)
+    //    g2.rotate(angle)
+    //    g2.drawImage(awt, 0, 0, null)
+    //    g2.dispose()
+    //    new Image(target)
   }
 
   /**
@@ -385,11 +331,9 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     val fittedDimensions = ImageTools.dimensionsToFit((targetWidth, targetHeight), (width, height))
     val scaled = scaleTo(fittedDimensions._1, fittedDimensions._2, scaleMethod)
     val target = Image.filled(targetWidth, targetHeight, color)
-    val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
     val x = ((targetWidth - fittedDimensions._1) / 2.0).toInt
     val y = ((targetHeight - fittedDimensions._2) / 2.0).toInt
     g2.drawImage(scaled.awt, x, y, null)
-    g2.dispose()
     target
   }
 
@@ -420,7 +364,6 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     val y = ((targetHeight - coveredDimensions._2) / 2.0).toInt
 
     val target = Image.empty(targetWidth, targetHeight)
-    val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
     g2.drawImage(scaled.awt, x, y, null)
     g2.dispose()
     target
@@ -441,27 +384,26 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
    * @return a new Image that is the result of scaling this image
    */
   def scaleTo(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): Image = {
-
-    scaleMethod match {
-      case FastScale =>
-        val target = Image.empty(targetWidth, targetHeight)
-        val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
-        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR)
-        g2.drawImage(awt, 0, 0, targetWidth, targetHeight, null)
-        g2.dispose()
-        target
-      case _ =>
-        val method = scaleMethod match {
-          case Bilinear => ResampleFilters.triangleFilter
-          case BSpline => ResampleFilters.bSplineFilter
-          case Lanczos3 => ResampleFilters.lanczos3Filter
-          case _ => ResampleFilters.biCubicFilter
-        }
-        val op = new ResampleOp(Image.SCALE_THREADS, method, targetWidth, targetHeight)
-        val scaled = op.filter(awt, null)
-        Image(scaled)
-    }
-
+    throw new UnsupportedOperationException("need to update to not use AWT methods")
+    //    scaleMethod match {
+    //      case FastScale =>
+    //        val target = Image.empty(targetWidth, targetHeight)
+    //        val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
+    //        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR)
+    //        g2.drawImage(awt, 0, 0, targetWidth, targetHeight, null)
+    //        g2.dispose()
+    //        target
+    //      case _ =>
+    //        val method = scaleMethod match {
+    //          case Bilinear => ResampleFilters.triangleFilter
+    //          case BSpline => ResampleFilters.bSplineFilter
+    //          case Lanczos3 => ResampleFilters.lanczos3Filter
+    //          case _ => ResampleFilters.biCubicFilter
+    //        }
+    //        val op = new ResampleOp(Image.SCALE_THREADS, method, targetWidth, targetHeight)
+    //        val scaled = op.filter(awt, null)
+    //        Image(scaled)
+    //    }
   }
 
   /**
@@ -489,11 +431,8 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     if (targetWidth == width && targetHeight == height) this
     else {
       val target = Image.filled(targetWidth, targetHeight, background)
-      val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
       val (x, y) = position.calculateXY(targetWidth, targetHeight, width, height)
-      g2.drawImage(awt, x, y, null)
-      g2.dispose()
-      target
+      target.draw(x, y, this)
     }
   }
 
@@ -556,11 +495,9 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     val w = if (width < targetWidth) targetWidth else width
     val h = if (height < targetHeight) targetHeight else height
     val filled = Image.filled(w, h, color)
-    val g = filled.awt.getGraphics
     val x = ((w - width) / 2.0).toInt
     val y = ((h - height) / 2.0).toInt
-    g.drawImage(awt, x, y, null)
-    g.dispose()
+    filled.draw(x, y, this)
     filled
   }
 
@@ -725,7 +662,7 @@ object Image {
     require(awt != null, "Input image cannot be null")
     awt match {
       case buff: BufferedImage if buff.getType == CANONICAL_DATA_TYPE => new Image(buff)
-      case _ => _copy(awt)
+      case _ => Image.empty(10, 10) // todo
     }
   }
 

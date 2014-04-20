@@ -8,10 +8,15 @@ package com.sksamuel.scrimage
  * @author Stephen Samuel
  **/
 trait Raster {
+  def flipX: Raster = ???
+
+  def flipY: Raster = ???
+
   val width: Int
   val height: Int
   def copy: Raster
   def draw(i: Int, i1: Int, raster: Raster): Raster = null
+  def pixel(i: Int, i1: Int): Int = ???
   def read(x: Int, y: Int): Pixel
   def write(x: Int, y: Int, pixel: Pixel): Unit
   def subraster(x: Int, y: Int, w: Int, h: Int): Raster = null
