@@ -179,27 +179,41 @@ They are split because the image filters is a large jar,
 and most people just want the basic resize/scale/load/save functionality. 
 Only include the filters dependency if you need the image filters, otherwise just the core one is needed.
 
-The latest release is now available for Scala 2.11 RC3 as well as Scala 2.10.3
+The latest release is now available for Scala 2.11 as well as Scala 2.10
 
 
 If using SBT then you want:
 ```scala
-libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-core" % "1.3.17"
+libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-core" % "1.3.20"
 
-libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-filters" % "1.3.17"
+libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-filters" % "1.3.20"
 ```
 
-Maven:
+Maven for Scala 2.10
 ```xml
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage-core_2.10</artifactId>
-    <version>1.3.17</version>
+    <version>1.3.20</version>
 </dependency>
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage-filters_2.10</artifactId>
-    <version>1.3.17</version>
+    <version>1.3.20</version>
+</dependency>
+```
+
+or for Scala 2.11
+```xml
+<dependency>
+    <groupId>com.sksamuel.scrimage</groupId>
+    <artifactId>scrimage-core_2.11</artifactId>
+    <version>1.3.20</version>
+</dependency>
+<dependency>
+    <groupId>com.sksamuel.scrimage</groupId>
+    <artifactId>scrimage-filters_2.11</artifactId>
+    <version>1.3.20</version>
 </dependency>
 ```
 
