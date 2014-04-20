@@ -8,8 +8,8 @@ object Build extends Build {
     scalaVersion := "2.10.4",
     crossScalaVersions := Seq("2.10.4", "2.11.0")
   )
-  lazy val root = Project("scrimage", file(".")).settings(scrimageSettings: _*).aggregate(core, filters, http)
+  lazy val root = Project("scrimage", file(".")).settings(scrimageSettings: _*).aggregate(core, filters)
   lazy val core = Project("scrimage-core", file("core")).settings(scrimageSettings: _*)
   lazy val filters = Project("scrimage-filters", file("filters")).dependsOn(core).settings(scrimageSettings: _*)
-  lazy val http = Project("scrimage-http", file("http")).dependsOn(core).settings(scrimageSettings: _*)
+  //lazy val http = Project("scrimage-http", file("http")).dependsOn(core).settings(scrimageSettings: _*)
 }
