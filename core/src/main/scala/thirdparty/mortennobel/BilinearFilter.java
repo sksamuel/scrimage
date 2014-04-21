@@ -9,7 +9,7 @@ package thirdparty.mortennobel;
 /**
  * A triangle filter (also known as linear or bilinear filter).
  */
-final class TriangleFilter implements ResampleFilter {
+final class BilinearFilter implements ResampleFilter {
 
   public float getSamplingRadius() {
     return 1.0f;

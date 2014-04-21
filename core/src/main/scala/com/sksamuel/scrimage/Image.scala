@@ -170,7 +170,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
       subimage.setPixel(xIndex, yIndex, subpixel(xIndex + x, yIndex + y))
     }
 
-    new Image(subimage.awt)
+    new Image(null) // todo update mutable images to not use AWT
   }
 
   /**
@@ -559,7 +559,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
    * Creates a new Image which has the same dimensions as this image, but with all pixels set to the given
    * pixel value.
    */
-  def fill(color: java.awt.Color): Image = new Image(raster.map(pixel => Pixel.int2pixel(color.getRGB)))
+  def fill(color: java.awt.Color): Image = new Image(raster.map(pixel => ARGBPixel.int2pixel(color.getRGB)))
 
   /**
    * Creates a MutableImage instance backed by this image.
@@ -685,7 +685,7 @@ object Image {
    */
   def filled(width: Int, height: Int, color: Int): Image = filled(width, height, new java.awt.Color(color))
   def filled(width: Int, height: Int, color: java.awt.Color): Image = {
-    new Image(Raster.apply(width, height).setAll(Pixel.int2pixel(color.getRGB)))
+    new Image(Raster.apply(width, height).setAll(ARGBPixel.int2pixel(color.getRGB)))
   }
 
   /**
