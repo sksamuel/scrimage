@@ -11,7 +11,6 @@ trait Raster {
   val width: Int
   val height: Int
   def copy: Raster
-  def draw(i: Int, i1: Int, raster: Raster): Raster = null
   def read(x: Int, y: Int): Pixel
   def write(x: Int, y: Int, pixel: Pixel): Unit
   def subraster(x: Int, y: Int, w: Int, h: Int): Raster = null

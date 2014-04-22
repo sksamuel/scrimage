@@ -18,15 +18,17 @@ package com.sksamuel.scrimage
 
 import java.awt.{Color, RenderingHints, Graphics2D}
 import java.awt.geom.AffineTransform
-import java.io.{File, InputStream}
+import java.io.{File, InputStream, ByteArrayInputStream}
 import javax.imageio.ImageIO
-import org.apache.commons.io.IOUtils
+import org.apache.commons.io.{FileUtils, IOUtils}
 import java.awt.image.{DataBufferInt, AffineTransformOp, BufferedImage}
 import thirdparty.mortennobel.{ResampleOp, ResampleFilters}
 import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.Position.Center
+import scala.concurrent.ExecutionContext
 import com.sksamuel.scrimage.io.ImageWriter
 import sun.awt.resources.awt
+import sun.awt.image.ByteInterleavedRaster
 
 /**
  * @author Stephen Samuel
@@ -59,15 +61,6 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     g2.dispose()
   }
 
-  /**
-   * Create a new image by drawing the given images pixels over the top of the current image.
-   * If the given image is larger then the excess pixels will be ignored.
-   * If the given image is smaller than the current image will be used for the remaining space.
-   */
-  def draw(image: Image): Image = draw(0, 0, image)
-  def draw(x: Int, y: Int, image: Image): Image = {
-    new Image(raster.draw(x, y, image.raster))
-  }
 
   /**
    * Removes the given amount of pixels from each edge; like a crop operation.
