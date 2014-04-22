@@ -18,17 +18,15 @@ package com.sksamuel.scrimage
 
 import java.awt.{Color, RenderingHints, Graphics2D}
 import java.awt.geom.AffineTransform
-import java.io.{File, InputStream, ByteArrayInputStream}
+import java.io.{ByteArrayInputStream, InputStream, File}
 import javax.imageio.ImageIO
 import org.apache.commons.io.{FileUtils, IOUtils}
-import java.awt.image.{DataBufferInt, AffineTransformOp, BufferedImage}
+import java.awt.image.{AffineTransformOp, DataBufferInt, BufferedImage}
 import thirdparty.mortennobel.{ResampleOp, ResampleFilters}
+import com.sksamuel.scrimage.io.ImageWriter
+import scala.concurrent.ExecutionContext
 import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.Position.Center
-import scala.concurrent.ExecutionContext
-import com.sksamuel.scrimage.io.ImageWriter
-import sun.awt.resources.awt
-import sun.awt.image.ByteInterleavedRaster
 
 /**
  * @author Stephen Samuel
@@ -36,11 +34,19 @@ import sun.awt.image.ByteInterleavedRaster
  *         Image is class that represents an in memory image.
  *
  */
-class Image(raster: Raster) extends ImageLike[Image] with WritableImageLike {
-  require(raster != null, "Raster cannot be null")
+class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageLike {
 
-  val width: Int = raster.width
-  val height: Int = raster.height
+  require(awt != null, "Wrapping image cannot be null")
+
+  lazy val width: Int = awt.getWidth(null)
+  lazy val height: Int = awt.getHeight(null)
+
+  /**
+   * Returns the underlying bufferd image. Changes to this buffered image will write back to this image.
+   *
+   * @return the underlying buffered image
+   */
+  def toBufferedImage = awt
 
   override def empty: Image = Image.empty(width, height)
   override def copy = Image._copy(awt)
@@ -51,7 +57,7 @@ class Image(raster: Raster) extends ImageLike[Image] with WritableImageLike {
     target
   }
 
-  private def _mapInPlace(f: (Int, Int, Int) => Int): Unit = points
+  def _mapInPlace(f: (Int, Int, Int) => Int): Unit = points
     .foreach(p => awt.setRGB(p._1, p._2, f(p._1, p._2, awt.getRGB(p._1, p._2))))
 
   // replace this image's AWT data by drawing the given BufferedImage over the top
@@ -234,22 +240,42 @@ class Image(raster: Raster) extends ImageLike[Image] with WritableImageLike {
       row <- 0 to height - patchHeight;
       col <- 0 to width - patchWidth
     ) yield {
-      () => subimage(col, row, patchWidth, patchHeight)
+      () =>
+        new Image(awt.getSubimage(col, row, patchWidth, patchHeight))
     }
-
-  def subimage(x: Int, y: Int, w: Int, h: Int): Image = {
-    new Image(raster.subraster(x, y, w, h))
-  }
 
   /**
    * Returns the pixels of this image represented as an array of Integers.
    *
    * @return
    */
-  @deprecated("use the raster to get pixel level information")
-  def pixels: Array[Int] = raster match {
-    case iraster: IntARGBRaster => iraster.pixels
-    case braster: ByteARGBRaster => null
+  def pixels: Array[Int] = {
+    awt.getRaster.getDataBuffer match {
+      //        case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_RGB => buffer.getData
+      case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_ARGB => buffer.getData
+      //            case buffer: DataBufferByte if awt.getType == BufferedImage.TYPE_3BYTE_BGR =>
+      //                val array = new Array[Int](buffer.getData.length / 3)
+      //                for ( k <- 0 until array.length ) {
+      //                    val blue = array(k * 3)
+      //                    val green = array(k * 3 + 1)
+      //                    val red = array(k * 3 + 2)
+      //                    val pixel = red << 16 | green << 8 | blue << 0
+      //                    array(k) = pixel
+      //                }
+      //                array
+      //            case buffer: DataBufferByte if awt.getType == BufferedImage.TYPE_4BYTE_ABGR =>
+      //                val array = new Array[Int](buffer.getData.length / 4)
+      //                for ( k <- 0 until array.length ) {
+      //                    val alpha = array(k * 4)
+      //                    val blue = array(k * 4 + 1)
+      //                    val green = array(k * 4 + 2)
+      //                    val red = array(k * 4 + 3)
+      //                    val pixel = alpha << 24 | red << 16 | green << 8 | blue << 0
+      //                    array(k) = pixel
+      //                }
+      //                array
+      case _ => throw new UnsupportedOperationException
+    }
   }
 
   /**
@@ -670,8 +696,8 @@ object Image {
   }
 
   /**
-   * Create a new Image from an array of bytes. This is intended to create
-   * an image from an image format eg PNG, not from raw pixels.
+   * Create a new Image from a byte stream. This is intended to create
+   * an image from an image format eg PNG, not from a stream of pixels.
    *
    * @param bytes the bytes from the format stream
    * @return a new Image
