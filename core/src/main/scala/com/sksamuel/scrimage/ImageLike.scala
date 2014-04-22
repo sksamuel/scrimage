@@ -29,9 +29,6 @@ import java.awt.Color
 /** @author Stephen Samuel */
 trait ImageLike[R] {
 
-  /**
-   * An sequence of x,y coordinates that represent all coordinates in this image.
-   */
   lazy val points: Seq[(Int, Int)] = for ( x <- 0 until width; y <- 0 until height ) yield (x, y)
   lazy val center: (Int, Int) = (width / 2, height / 2)
   lazy val radius: Int = Math.sqrt(Math.pow(width / 2.0, 2) + Math.pow(height / 2.0, 2)).toInt
@@ -39,7 +36,6 @@ trait ImageLike[R] {
   /**
    * Clears all image data to the given color
    */
-  @deprecated("use filled", "2.0")
   def clear(color: Color = Color.WHITE): Image
   def width: Int
   def height: Int
