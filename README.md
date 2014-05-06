@@ -14,7 +14,8 @@ would prove expensive (think an in place filter on a 8000 x 6000 image where you
 keeping the original in memory). For these kinds of operations Scrimage supports a MutableImage
 instance where operations that can be performed in place mutate the original instead of returning a copy.
 
-[![Build Status](https://travis-ci.org/sksamuel/scrimage.png)](https://travis-ci.org/sksamuel/scrimage) [![Coverage Status](https://coveralls.io/repos/sksamuel/scrimage/badge.png?branch=master)](https://coveralls.io/r/sksamuel/scrimage?branch=master)
+[![Build Status](https://travis-ci.org/sksamuel/scrimage.png)](https://travis-ci.org/sksamuel/scrimage) 
+[![Coverage Status](https://coveralls.io/repos/sksamuel/scrimage/badge.png?branch=master)](https://coveralls.io/r/sksamuel/scrimage?branch=master)
 
 ### Image Operations
 
