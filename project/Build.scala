@@ -4,7 +4,7 @@ import sbt.Keys._
 object Build extends Build {
   val scrimageSettings = Seq(
     organization := "com.sksamuel.scrimage",
-    version := "1.3.20",
+    version := "1.3.21-SNAPSHOT",
     scalaVersion := "2.10.4",
     crossScalaVersions := Seq("2.10.4", "2.11.0")
   )
