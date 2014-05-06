@@ -18,7 +18,6 @@ package com.sksamuel.scrimage.io
 
 import java.io.{ByteArrayInputStream, InputStream, File, OutputStream}
 import scala.concurrent.{Future, ExecutionContext}
-import org.apache.commons.io.{IOUtils, FileUtils}
 
 class AsyncImageWriter[T <: ImageWriter](writer: T) {
 
