@@ -16,7 +16,7 @@
 
 package com.sksamuel.scrimage
 
-import java.awt.{Color, RenderingHints, Graphics2D}
+import java.awt._
 import java.awt.geom.AffineTransform
 import java.io.{ByteArrayInputStream, InputStream, File}
 import javax.imageio.ImageIO
@@ -27,6 +27,9 @@ import com.sksamuel.scrimage.io.ImageWriter
 import scala.concurrent.ExecutionContext
 import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.Position.Center
+import scala.Some
+import scala.Tuple2
+import scala.List
 
 /**
  * @author Stephen Samuel
@@ -648,10 +651,29 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
     copy
   }
 
-  def drawString(color: Color, x: Int, y: Int, text: String): Image = {
+  def fillPoly(color: Color, points: Seq[Point]): Image = {
     val copy = empty
     val g2 = copy.awt.getGraphics
     g2.setColor(color)
+    g2.fillPolygon(points.map(_.x).toArray, points.map(_.y).toArray, points.size)
+    g2.dispose()
+    copy
+  }
+
+  def drawPoly(color: Color, points: Seq[Point]): Image = {
+    val copy = empty
+    val g2 = copy.awt.getGraphics
+    g2.setColor(color)
+    g2.drawPolygon(points.map(_.x).toArray, points.map(_.y).toArray, points.size)
+    g2.dispose()
+    copy
+  }
+
+  def drawString(font: Font, color: Color, x: Int, y: Int, text: String): Image = {
+    val copy = empty
+    val g2 = copy.awt.getGraphics
+    g2.setColor(color)
+    g2.setFont(font)
     g2.drawString(text, x, y)
     g2.dispose()
     copy
