@@ -646,6 +646,24 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
     this
   }
 
+  def drawRect(color: Color, x: Int, y: Int, w: Int, h: Int): Image = {
+    val copy = empty
+    val g2 = copy.awt.getGraphics
+    g2.setColor(color)
+    g2.drawRect(x, y, w, h)
+    g2.dispose()
+    copy
+  }
+
+  def drawString(color: Color, x: Int, y: Int, text: String): Image = {
+    val copy = empty
+    val g2 = copy.awt.getGraphics
+    g2.setColor(color)
+    g2.drawString(text, x, y)
+    g2.dispose()
+    copy
+  }
+
   /**
    * Creates a MutableImage instance backed by this image.
    *
