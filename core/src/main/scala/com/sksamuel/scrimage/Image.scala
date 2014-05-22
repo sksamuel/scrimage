@@ -630,6 +630,33 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
   // http://stackoverflow.com/questions/7370925/what-is-the-standard-idiom-for-implementing-equals-and-hashcode-in-scala
   override def hashCode = imageState.hashCode
 
+  def drawRect(color: Color, x: Int, y: Int, w: Int, h: Int): Image = {
+    val copy = empty
+    val g2 = copy.awt.getGraphics
+    g2.setColor(color)
+    g2.drawRect(x, y, w, h)
+    g2.dispose()
+    copy
+  }
+
+  def fillRect(color: Color, x: Int, y: Int, w: Int, h: Int): Image = {
+    val copy = empty
+    val g2 = copy.awt.getGraphics
+    g2.setColor(color)
+    g2.fillRect(x, y, w, h)
+    g2.dispose()
+    copy
+  }
+
+  def drawString(color: Color, x: Int, y: Int, text: String): Image = {
+    val copy = empty
+    val g2 = copy.awt.getGraphics
+    g2.setColor(color)
+    g2.drawString(text, x, y)
+    g2.dispose()
+    copy
+  }
+
   override def equals(other: Any): Boolean =
     other match {
       case that: Image => imageState == that.imageState
@@ -644,24 +671,6 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
     g2.fillRect(0, 0, awt.getWidth, awt.getHeight)
     g2.dispose()
     this
-  }
-
-  def drawRect(color: Color, x: Int, y: Int, w: Int, h: Int): Image = {
-    val copy = empty
-    val g2 = copy.awt.getGraphics
-    g2.setColor(color)
-    g2.drawRect(x, y, w, h)
-    g2.dispose()
-    copy
-  }
-
-  def drawString(color: Color, x: Int, y: Int, text: String): Image = {
-    val copy = empty
-    val g2 = copy.awt.getGraphics
-    g2.setColor(color)
-    g2.drawString(text, x, y)
-    g2.dispose()
-    copy
   }
 
   /**
