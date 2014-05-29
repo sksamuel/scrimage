@@ -185,9 +185,9 @@ The latest release is now available for Scala 2.11 as well as Scala 2.10
 
 If using SBT then you want:
 ```scala
-libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-core" % "1.3.20"
+libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-core" % "1.3.21"
 
-libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-filters" % "1.3.20"
+libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-filters" % "1.3.21"
 ```
 
 Maven for Scala 2.10
@@ -195,12 +195,12 @@ Maven for Scala 2.10
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage-core_2.10</artifactId>
-    <version>1.3.20</version>
+    <version>1.3.21</version>
 </dependency>
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage-filters_2.10</artifactId>
-    <version>1.3.20</version>
+    <version>1.3.21</version>
 </dependency>
 ```
 
@@ -209,12 +209,12 @@ or for Scala 2.11
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage-core_2.11</artifactId>
-    <version>1.3.20</version>
+    <version>1.3.21</version>
 </dependency>
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage-filters_2.11</artifactId>
-    <version>1.3.20</version>
+    <version>1.3.21</version>
 </dependency>
 ```
 
