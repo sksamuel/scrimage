@@ -79,7 +79,7 @@ Writing out a heavily compressed Jpeg thumbnail
 ```scala
 val in = ... // input stream
 val out = ... // output stream
-Image(in).fit(180,120).writer(Format.JPEG).withCompression(0.5).write(out)
+Image(in).fit(180,120).writer(Format.JPEG).withCompression(50).write(out)
 ```
 
 Printing the sizes and ratio of the image
