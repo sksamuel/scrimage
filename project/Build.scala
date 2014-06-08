@@ -12,12 +12,21 @@ object Build extends Build {
     publishArtifact in Test := false,
     parallelExecution in Test := false,
     scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8"),
-    javacOptions ++= Seq("-source", "1.6", "-target", "1.6")
+    javacOptions ++= Seq("-source", "1.7", "-target", "1.7")
   )
 
-  lazy val root = Project("scrimage", file(".")).settings(scrimageSettings: _*).aggregate(core, filters)
-  lazy val core = Project("scrimage-core", file("core")).settings(scrimageSettings: _*)
-  lazy val filters = Project("scrimage-filters", file("filters")).dependsOn(core).settings(scrimageSettings: _*)
-  lazy val samples = Project("scrimage-samples", file("samples")).dependsOn(core).settings(scrimageSettings: _*)
-  //lazy val http = Project("scrimage-http", file("http")).dependsOn(core).settings(scrimageSettings: _*)
+  lazy val root = Project("scrimage", file("."))
+    .settings(scrimageSettings: _*)
+    .aggregate(core, filters)
+
+  lazy val core = Project("scrimage-core", file("core"))
+    .settings(scrimageSettings: _*)
+
+  lazy val filters = Project("scrimage-filters", file("filters"))
+    .dependsOn(core)
+    .settings(scrimageSettings: _*)
+
+  lazy val samples = Project("scrimage-samples", file("samples"))
+    .dependsOn(core)
+    .settings(scrimageSettings: _*)
 }

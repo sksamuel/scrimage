@@ -26,6 +26,7 @@ libraryDependencies ++= Seq(
   "com.drewnoakes"                % "metadata-extractor"      % "2.6.2",
   "ar.com.hjg"                    % "pngj"                    % "2.0.1",
   "org.slf4j"                     % "slf4j-api"               % "1.7.5"           % "provided",
+  "org.apache.commons"            % "commons-lang3"           % "3.3.2"           % "test",
   "org.scalatest"                 %% "scalatest"              % "2.1.3"           % "test",
   "org.imgscalr"                  % "imgscalr-lib"            % "4.2"             % "test",
   "junit"                         % "junit"                   % "4.11"            % "test",
