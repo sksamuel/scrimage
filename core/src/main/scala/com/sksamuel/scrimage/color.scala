@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage
 
-import java.awt.{GradientPaint, Paint}
+import java.awt.{RadialGradientPaint, GradientPaint, Paint}
 
 /** @author Stephen Samuel */
 trait Painter {
@@ -14,6 +14,14 @@ object Painter {
 
 case class LinearGradient(x1: Int, y1: Int, color1: Color, x2: Int, y2: Int, color2: Color) extends Painter {
   private[scrimage] def paint = new GradientPaint(x1, y1, color1, x2, y2, color2)
+}
+
+case class RadialGradient(cx: Float,
+                          cy: Float,
+                          radius: Float,
+                          fractions: Array[Float],
+                          colors: Array[Color]) extends Painter {
+  private[scrimage] def paint = new RadialGradientPaint(cx, cy, radius, fractions, colors.map(c => c.toRGB.toAWT))
 }
 
 object LinearGradient {
@@ -51,12 +59,14 @@ object Color {
 }
 
 case class RGBColor(red: Int, green: Int, blue: Int, alpha: Int = 255) extends Color {
+
   require(0 <= red && red <= 255, "Red component is invalid")
   require(0 <= green && green <= 255, "Green component is invalid")
   require(0 <= blue && blue <= 255, "Blue component is invalid")
   require(0 <= alpha && alpha <= 255, "Alpha component is invalid")
 
   def toRGB: RGBColor = this
+  def toAWT: java.awt.Color = new java.awt.Color(red, green, blue, alpha)
 
   /**
    * Returns as an int the value of this color. The RGB and alpha components are packed
