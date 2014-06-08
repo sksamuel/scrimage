@@ -14,6 +14,7 @@ trait Color {
 object Color {
   implicit def color2rgb(color: Color): RGBColor = color.toRGB
   implicit def color2awt(color: Color): java.awt.Color = new java.awt.Color(color.toRGB.rgba)
+  implicit def awt2color(awt: java.awt.Color): RGBColor = RGBColor(awt.getRed, awt.getBlue, awt.getGreen, awt.getAlpha)
 }
 
 case class RGBColor(red: Int, green: Int, blue: Int, alpha: Int = 0) extends Color {
