@@ -24,11 +24,16 @@ object Build extends Build {
 
   lazy val root = Project("scrimage", file("."))
     .settings(scrimageSettings: _*)
-    .aggregate(core, filters)
+    .aggregate(core, canvas, filters)
 
   lazy val core = Project("scrimage-core", file("core"))
     .settings(scrimageSettings: _*)
     .settings(name := "scrimage-core")
+
+  lazy val canvas = Project("scrimage-canvas", file("canvas"))
+    .dependsOn(core)
+    .settings(scrimageSettings: _*)
+    .settings(name := "scrimage-canvas")
 
   lazy val filters = Project("scrimage-filters", file("filters"))
     .dependsOn(core)
