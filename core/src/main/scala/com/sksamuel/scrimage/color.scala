@@ -35,6 +35,7 @@ trait Color extends Painter {
 }
 
 object Color {
+  implicit def int2color(argb: Int): RGBColor = apply(argb)
   implicit def color2rgb(color: Color): RGBColor = color.toRGB
   implicit def color2awt(color: Color): java.awt.Color = new java.awt.Color(color.toRGB.argb)
   implicit def awt2color(awt: java.awt.Color): RGBColor = RGBColor(awt.getRed, awt.getGreen, awt.getBlue, awt.getAlpha)

@@ -44,9 +44,8 @@ class MutableImage(awt: BufferedImage) extends Image(awt) {
     this
   }
 
-  override def filled(color: Int): MutableImage = filled(new java.awt.Color(color))
-  override def filled(color: Color): MutableImage = {
-    super._fill(color)
+  override def filled(painter: Painter): MutableImage = {
+    super._fill(painter)
     this
   }
 
