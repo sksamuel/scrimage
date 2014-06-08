@@ -608,11 +608,11 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
 
   /**
    * Creates a new Image with the same dimensions of this image and with
-   * all the pixels initialized by the given painter.
+   * all the pixels initialized by the given color.
    *
    * @return a new Image with the same dimensions as this
    */
-  def filled(painter: Painter): Image = Image.filled(width, height, painter)
+  def filled(color: Color): Image = Image.filled(width, height, color)
 
   def writer[T <: ImageWriter](format: Format[T]): T = format.writer(this)
 
@@ -623,85 +623,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
   // http://stackoverflow.com/questions/7370925/what-is-the-standard-idiom-for-implementing-equals-and-hashcode-in-scala
   override def hashCode = imageState.hashCode
 
-  def drawRect(painter: Painter, x: Int, y: Int, w: Int, h: Int): Image = {
-    val copy = empty
-    val g2 = copy.awt.getGraphics.asInstanceOf[Graphics2D]
-    g2.setPaint(painter.paint)
-    g2.drawRect(x, y, w, h)
-    g2.dispose()
-    copy
-  }
 
-  def fillRect(painter: Painter, x: Int, y: Int, w: Int, h: Int): Image = {
-    val copy = empty
-    val g2 = copy.awt.getGraphics.asInstanceOf[Graphics2D]
-    g2.setPaint(painter.paint)
-    g2.fillRect(x, y, w, h)
-    g2.dispose()
-    copy
-  }
-
-  def fillPoly(painter: Painter, points: Seq[Point]): Image = {
-    val copy = empty
-    val g2 = copy.awt.getGraphics.asInstanceOf[Graphics2D]
-    g2.setPaint(painter.paint)
-    g2.fillPolygon(points.map(_.x).toArray, points.map(_.y).toArray, points.size)
-    g2.dispose()
-    copy
-  }
-
-  def drawRoundedRect(painter: Painter,
-                      x: Int,
-                      y: Int,
-                      width: Int,
-                      height: Int,
-                      arcWidth: Int,
-                      arcHeight: Int): Image = {
-    val copy = empty
-    val g2 = copy.awt.getGraphics.asInstanceOf[Graphics2D]
-    g2.setPaint(painter.paint)
-    g2.drawRoundRect(x, y, width, height, arcWidth, arcHeight)
-    g2.dispose()
-    copy
-  }
-
-  def fillRoundedRect(painter: Painter, x: Int, y: Int, width: Int, height: Int, arcWidth: Int,
-                      arcHeight: Int): Image = {
-    val copy = empty
-    val g2 = copy.awt.getGraphics.asInstanceOf[Graphics2D]
-    g2.setPaint(painter.paint)
-    g2.fillRoundRect(x, y, width, height, arcWidth, arcHeight)
-    g2.dispose()
-    copy
-  }
-
-  def drawOval(painter: Painter, x: Int, y: Int, width: Int, height: Int): Image = {
-    val copy = empty
-    val g2 = copy.awt.getGraphics.asInstanceOf[Graphics2D]
-    g2.setPaint(painter.paint)
-    g2.drawOval(x, y, width, height)
-    g2.dispose()
-    copy
-  }
-
-  def drawPoly(painter: Painter, points: Seq[Point]): Image = {
-    val copy = empty
-    val g2 = copy.awt.getGraphics.asInstanceOf[Graphics2D]
-    g2.setPaint(painter.paint)
-    g2.drawPolygon(points.map(_.x).toArray, points.map(_.y).toArray, points.size)
-    g2.dispose()
-    copy
-  }
-
-  def drawString(painter: Painter, font: Font, x: Int, y: Int, text: String): Image = {
-    val copy = empty
-    val g2 = copy.awt.getGraphics.asInstanceOf[Graphics2D]
-    g2.setPaint(painter.paint)
-    g2.setFont(font)
-    g2.drawString(text, x, y)
-    g2.dispose()
-    copy
-  }
 
   override def equals(other: Any): Boolean =
     other match {
@@ -711,9 +633,9 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
 
   // -- mutable operations -- //
 
-  def _fill(painter: Painter): Image = {
+  def _fill(color: Color): Image = {
     val g2 = awt.getGraphics.asInstanceOf[Graphics2D]
-    g2.setPaint(painter.paint)
+    g2.setColor(color)
     g2.fillRect(0, 0, awt.getWidth, awt.getHeight)
     g2.dispose()
     this
@@ -852,13 +774,6 @@ object Image {
     val awt = new BufferedImage(width, height, Image.CANONICAL_DATA_TYPE)
     val filled = new Image(awt)
     filled._fill(color)
-    filled
-  }
-
-  def filled(width: Int, height: Int, painter: Painter): Image = {
-    val awt = new BufferedImage(width, height, Image.CANONICAL_DATA_TYPE)
-    val filled = new Image(awt)
-    filled._fill(painter)
     filled
   }
 
