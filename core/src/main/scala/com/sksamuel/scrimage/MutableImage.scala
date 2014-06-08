@@ -19,12 +19,12 @@ package com.sksamuel.scrimage
 import java.awt.image.{AffineTransformOp, BufferedImage}
 import java.io.{File, InputStream}
 import java.awt.geom.AffineTransform
-import java.awt.Color
+import java.awt.{Color => AWTColor}
 
 /** @author Stephen Samuel */
 class MutableImage(awt: BufferedImage) extends Image(awt) {
 
-  override def clear(color: Color = Color.WHITE): Image = {
+  override def clear(color: AWTColor = AWTColor.WHITE): Image = {
     val g2 = awt.getGraphics
     g2.setColor(color)
     g2.fillRect(0, 0, width, height)

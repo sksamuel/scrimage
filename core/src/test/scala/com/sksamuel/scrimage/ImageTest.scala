@@ -271,7 +271,7 @@ class ImageTest extends FunSuite with BeforeAndAfter {
   }
 
   test("argb returns array of ARGB bytes") {
-    val image = Image.filled(20, 20, Color.YELLOW)
+    val image = Image.filled(20, 20, java.awt.Color.YELLOW)
     val components = image.argb
     assert(400 === components.size)
     for ( component <- components )
@@ -279,7 +279,7 @@ class ImageTest extends FunSuite with BeforeAndAfter {
   }
 
   test("rgb returns array of RGB bytes") {
-    val image = Image.filled(20, 20, Color.YELLOW)
+    val image = Image.filled(20, 20, java.awt.Color.YELLOW)
     val components = image.rgb
     assert(400 === components.size)
     for ( component <- components )
@@ -287,19 +287,19 @@ class ImageTest extends FunSuite with BeforeAndAfter {
   }
 
   test("argb pixel returns an array for the ARGB components") {
-    val image = Image.filled(20, 20, Color.YELLOW)
+    val image = Image.filled(20, 20, java.awt.Color.YELLOW)
     val rgb = image.argb(10, 10)
     assert(rgb === Array(255, 255, 255, 0))
   }
 
   test("rgb pixel returns an array for the RGB components") {
-    val image = Image.filled(20, 20, Color.YELLOW)
+    val image = Image.filled(20, 20, java.awt.Color.YELLOW)
     val argb = image.rgb(10, 10)
     assert(argb === Array(255, 255, 0))
   }
 
   test("pixel coordinate returns an ARGB integer for the pixel at that coordinate") {
-    val image = Image.filled(20, 20, Color.YELLOW)
+    val image = Image.filled(20, 20, java.awt.Color.YELLOW)
     val pixel = image.pixel(10, 10)
     assert(0xFFFFFF00 === pixel)
   }
@@ -361,7 +361,7 @@ class ImageTest extends FunSuite with BeforeAndAfter {
 
   test("when enlarging the background should be set to the specified parameter") {
     val scaled = image.scaleTo(100, 100)
-    val resized = scaled.resizeTo(200, 200, Center, Color.BLUE)
+    val resized = scaled.resizeTo(200, 200, Center, java.awt.Color.BLUE)
     for ( x <- 0 until 200; y <- 0 until 50 ) assert(0xFF0000FF === resized.pixel(x, y))
     for ( x <- 0 until 200; y <- 150 until 200 ) assert(0xFF0000FF === resized.pixel(x, y))
   }
@@ -446,7 +446,7 @@ class ImageTest extends FunSuite with BeforeAndAfter {
 
   test("autocrop removes background") {
     val image = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/dyson.png"))
-    val autocropped = image.autocrop(Color.WHITE)
+    val autocropped = image.autocrop(java.awt.Color.WHITE)
     assert(282 === autocropped.width)
     assert(193 === autocropped.height)
     val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/dyson_autocropped.png"))

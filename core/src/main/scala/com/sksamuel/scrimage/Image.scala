@@ -27,7 +27,7 @@ import com.sksamuel.scrimage.io.ImageWriter
 import scala.concurrent.ExecutionContext
 import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.Position.Center
-import scala.Some
+import java.awt.{Color => AWTColor}
 import scala.Tuple2
 import scala.List
 
@@ -506,7 +506,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
   def resizeTo(targetWidth: Int,
                targetHeight: Int,
                position: Position = Center,
-               background: Color = Color.WHITE): Image = {
+               background: AWTColor = AWTColor.WHITE): Image = {
     if (targetWidth == width && targetHeight == height) this
     else {
       val target = Image.filled(targetWidth, targetHeight, background)
@@ -531,8 +531,8 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
    * @param color the color to match
    * @return
    */
-  def autocrop(color: Color): Image = {
-    def uniform(color: Color, pixels: Array[Int]) = pixels.forall(p => p == color.getRGB)
+  def autocrop(color: AWTColor): Image = {
+    def uniform(color: AWTColor, pixels: Array[Int]) = pixels.forall(p => p == color.getRGB)
     def scanright(col: Int, image: Image): Int = {
       if (uniform(color, pixels(col, 0, 1, height))) scanright(col + 1, image)
       else col
@@ -633,7 +633,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
   // http://stackoverflow.com/questions/7370925/what-is-the-standard-idiom-for-implementing-equals-and-hashcode-in-scala
   override def hashCode = imageState.hashCode
 
-  def drawRect(color: Color, x: Int, y: Int, w: Int, h: Int): Image = {
+  def drawRect(color: AWTColor, x: Int, y: Int, w: Int, h: Int): Image = {
     val copy = empty
     val g2 = copy.awt.getGraphics
     g2.setColor(color)
@@ -642,7 +642,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
     copy
   }
 
-  def fillRect(color: Color, x: Int, y: Int, w: Int, h: Int): Image = {
+  def fillRect(color: AWTColor, x: Int, y: Int, w: Int, h: Int): Image = {
     val copy = empty
     val g2 = copy.awt.getGraphics
     g2.setColor(color)
@@ -651,7 +651,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
     copy
   }
 
-  def fillPoly(color: Color, points: Seq[Point]): Image = {
+  def fillPoly(color: AWTColor, points: Seq[Point]): Image = {
     val copy = empty
     val g2 = copy.awt.getGraphics
     g2.setColor(color)
@@ -660,7 +660,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
     copy
   }
 
-  def drawPoly(color: Color, points: Seq[Point]): Image = {
+  def drawPoly(color: AWTColor, points: Seq[Point]): Image = {
     val copy = empty
     val g2 = copy.awt.getGraphics
     g2.setColor(color)
@@ -669,7 +669,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
     copy
   }
 
-  def drawString(font: Font, color: Color, x: Int, y: Int, text: String): Image = {
+  def drawString(font: Font, color: AWTColor, x: Int, y: Int, text: String): Image = {
     val copy = empty
     val g2 = copy.awt.getGraphics
     g2.setColor(color)
@@ -721,7 +721,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
   /**
    * Clears all image data to the given color
    */
-  def clear(color: Color): Image = filled(color)
+  def clear(color: AWTColor): Image = filled(color)
 
   def watermark(text: String): Image = watermark(text, 24, 0.5)
   def watermark(text: String, fontSize: Int, alpha: Double): Image = filter(new Watermark(text, fontSize, alpha))

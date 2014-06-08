@@ -25,7 +25,7 @@ class Watermark(text: String, fontSize: Int, alpha: Double) extends Filter {
   def apply(image: Image): Unit = {
 
     val g2 = image.awt.getGraphics.asInstanceOf[Graphics2D]
-    g2.setColor(Color.white)
+    g2.setColor(java.awt.Color.white)
     g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
 
     val alphaComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha.toFloat)

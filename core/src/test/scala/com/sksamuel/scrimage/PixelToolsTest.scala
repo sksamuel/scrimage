@@ -1,7 +1,6 @@
 package com.sksamuel.scrimage
 
 import org.scalatest.{OneInstancePerTest, BeforeAndAfter, FunSuite}
-import java.awt.Color
 
 /** @author Stephen Samuel */
 class PixelToolsTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
@@ -11,7 +10,7 @@ class PixelToolsTest extends FunSuite with BeforeAndAfter with OneInstancePerTes
   val pink = 0xFFFFAFAF
 
   test("non transparent alpha component") {
-    assert(white === Color.WHITE.getRGB)
+    assert(white === java.awt.Color.WHITE.getRGB)
     assert(PixelTools.alpha(white) === 255)
   }
 
@@ -20,19 +19,19 @@ class PixelToolsTest extends FunSuite with BeforeAndAfter with OneInstancePerTes
   }
 
   test("red component") {
-    assert(pink === Color.PINK.getRGB)
+    assert(pink === java.awt.Color.PINK.getRGB)
     assert(PixelTools.red(yellow) === 255)
     assert(PixelTools.red(pink) === 255)
   }
 
   test("blue component") {
-    assert(pink === Color.PINK.getRGB)
+    assert(pink === java.awt.Color.PINK.getRGB)
     assert(PixelTools.blue(yellow) === 0)
     assert(PixelTools.blue(pink) === 175)
   }
 
   test("green component") {
-    assert(yellow === Color.YELLOW.getRGB)
+    assert(yellow === java.awt.Color.YELLOW.getRGB)
     assert(PixelTools.green(yellow) === 255)
     assert(PixelTools.green(pink) === 175)
   }

@@ -23,8 +23,8 @@ import com.sksamuel.scrimage.io.ImageWriter
 import com.sksamuel.scrimage.ScaleMethod.Bicubic
 import com.sksamuel.scrimage.Position.Center
 import scala.Array
+import java.awt.{Color => AWTColor}
 import com.sksamuel.scrimage.PixelTools._
-import java.awt.Color
 
 /** @author Stephen Samuel */
 trait ImageLike[R] {
@@ -36,7 +36,7 @@ trait ImageLike[R] {
   /**
    * Clears all image data to the given color
    */
-  def clear(color: Color = Color.WHITE): Image
+  def clear(color: AWTColor = AWTColor.WHITE): Image
   def width: Int
   def height: Int
   def dimensions: (Int, Int) = (width, height)
@@ -219,7 +219,7 @@ trait ImageLike[R] {
                  scaleMethod: ScaleMethod = Bicubic, position: Position = Center): R =
     fit(targetWidth, (targetWidth / width.toDouble * height).toInt, color, scaleMethod, position)
 
-  def resizeTo(targetWidth: Int, targetHeight: Int, position: Position, background: Color = Color.WHITE): R
+  def resizeTo(targetWidth: Int, targetHeight: Int, position: Position, background: AWTColor = AWTColor.WHITE): R
 
   /**
    *
@@ -232,7 +232,7 @@ trait ImageLike[R] {
    *
    * @return a new Image that is the result of resizing the canvas.
    */
-  def resize(scaleFactor: Double, position: Position = Center, background: Color = Color.WHITE): R =
+  def resize(scaleFactor: Double, position: Position = Center, background: AWTColor = AWTColor.WHITE): R =
     resizeTo((width * scaleFactor).toInt, (height * scaleFactor).toInt, position, background)
 
   /**
@@ -244,7 +244,7 @@ trait ImageLike[R] {
    *
    * @return a new Image that is the result of resizing the canvas.
    */
-  def resizeToHeight(targetHeight: Int, position: Position = Center, background: Color = Color.WHITE): R =
+  def resizeToHeight(targetHeight: Int, position: Position = Center, background: AWTColor = AWTColor.WHITE): R =
     resizeTo((targetHeight / height.toDouble * height).toInt, targetHeight, position, background)
 
   /**
@@ -256,7 +256,7 @@ trait ImageLike[R] {
    *
    * @return a new Image that is the result of resizing the canvas.
    */
-  def resizeToWidth(targetWidth: Int, position: Position = Center, background: Color = Color.WHITE): R =
+  def resizeToWidth(targetWidth: Int, position: Position = Center, background: AWTColor = AWTColor.WHITE): R =
     resizeTo(targetWidth, (targetWidth / width.toDouble * height).toInt, position, background)
 
   /**

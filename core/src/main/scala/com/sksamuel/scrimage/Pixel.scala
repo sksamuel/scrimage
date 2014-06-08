@@ -1,7 +1,5 @@
 package com.sksamuel.scrimage
 
-import java.awt.Color
-
 /** @author Stephen Samuel */
 class Pixel(pixel: Int) {
 
@@ -11,9 +9,9 @@ class Pixel(pixel: Int) {
   def green: Int = pixel >> 8 & 0xFF
   def blue: Int = pixel & 0xFF
 
-  def hue = Color.RGBtoHSB(red, green, blue, null)(0)
-  def saturation = Color.RGBtoHSB(red, green, blue, null)(1)
-  def brightness = Color.RGBtoHSB(red, green, blue, null)(2)
+  def hue = java.awt.Color.RGBtoHSB(red, green, blue, null)(0)
+  def saturation = java.awt.Color.RGBtoHSB(red, green, blue, null)(1)
+  def brightness = java.awt.Color.RGBtoHSB(red, green, blue, null)(2)
 }
 
 object Pixel {

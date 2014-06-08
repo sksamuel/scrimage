@@ -18,15 +18,15 @@ package com.sksamuel.scrimage
 
 import scala.concurrent._
 import com.sksamuel.scrimage.Position.Center
-import java.awt.Color
-import com.sksamuel.scrimage.io.{AsyncImageWriter, ImageWriter}
+import java.awt.{Color => AWTColor}
 import com.sksamuel.scrimage.ScaleMethod.Bicubic
 import java.io.{InputStream, File}
+import com.sksamuel.scrimage.io.{ImageWriter, AsyncImageWriter}
 
 /** @author Stephen Samuel */
 class AsyncImage(image: Image)(implicit executionContext: ExecutionContext) extends ImageLike[Future[AsyncImage]] {
 
-  override def clear(color: Color = Color.WHITE) = image.clear(color)
+  override def clear(color: AWTColor = AWTColor.WHITE) = image.clear(color)
   override def empty = image.empty
   override def copy = image.copy
   override def pixels: Array[Int] = image.pixels
@@ -41,7 +41,7 @@ class AsyncImage(image: Image)(implicit executionContext: ExecutionContext) exte
 
   def fit(targetWidth: Int,
           targetHeight: Int,
-          color: Color = Color.WHITE,
+          color: AWTColor = AWTColor.WHITE,
           scaleMethod: ScaleMethod = Bicubic,
           position: Position = Position.Center): Future[AsyncImage] = Future {
     AsyncImage(image.fit(targetWidth, targetHeight, color, scaleMethod, position))
@@ -58,7 +58,7 @@ class AsyncImage(image: Image)(implicit executionContext: ExecutionContext) exte
   def resizeTo(targetWidth: Int,
                targetHeight: Int,
                position: Position = Center,
-               background: Color = Color.WHITE): Future[AsyncImage] = Future {
+               background: AWTColor = AWTColor.WHITE): Future[AsyncImage] = Future {
     AsyncImage(image.resizeTo(targetWidth, targetHeight, position))
   }
 
