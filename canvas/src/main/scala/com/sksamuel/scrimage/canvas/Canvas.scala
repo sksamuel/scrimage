@@ -6,7 +6,6 @@ import java.awt.{Font, Point, Graphics2D}
 /** @author Stephen Samuel */
 class Canvas(val image: Image, val painter: Painter = X11Colorlist.Black) {
 
-  implicit def canvas2image(canvas: Canvas): Image = canvas.image
   def withPainter(painter: Painter): Canvas = new Canvas(image, painter)
 
   def fill(painter: Painter): Image = {
@@ -101,4 +100,5 @@ class Canvas(val image: Image, val painter: Painter = X11Colorlist.Black) {
 
 object Canvas {
   implicit def image2canvas(image: Image): Canvas = new Canvas(image)
+  implicit def canvas2image(canvas: Canvas): Image = canvas.image
 }

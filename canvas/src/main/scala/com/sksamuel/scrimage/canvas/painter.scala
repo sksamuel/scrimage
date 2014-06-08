@@ -9,8 +9,15 @@ trait Painter {
 }
 
 object Painter {
-  implicit def color2painter(color: java.awt.Color): RGBColor = color
-  implicit def int2painter(argb: Int): RGBColor = argb
+  implicit def color2painter(color: java.awt.Color): RGBColor = {
+    Color(color.getRed, color.getGreen, color.getBlue, color.getAlpha)
+  }
+  implicit def color2painter(color: Color): ColorPainter = ColorPainter(color)
+  implicit def int2painter(argb: Int): ColorPainter = ColorPainter(argb)
+}
+
+case class ColorPainter(color: Color) extends Painter {
+  private[scrimage] def paint: Paint = color.toRGB.toAWT
 }
 
 case class LinearGradient(x1: Int, y1: Int, color1: Color, x2: Int, y2: Int, color2: Color) extends Painter {
