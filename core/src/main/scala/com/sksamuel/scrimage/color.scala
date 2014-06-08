@@ -1,7 +1,22 @@
 package com.sksamuel.scrimage
 
+import java.awt.{GradientPaint, Paint}
+
 /** @author Stephen Samuel */
-trait Color {
+trait Painter {
+  protected def paint: Paint
+}
+
+case class LinearGradient(x1: Int, y1: Int, color1: Color, x2: Int, y2: Int, color2: Color) extends Painter {
+  protected def paint = new GradientPaint(x1, y1, color1, x2, y2, color2)
+}
+
+object LinearGradient {
+  def horizontal(color1: Color, color2: Color): LinearGradient = LinearGradient(0, 0, color1, 10, 0, color2)
+  def vertical(color1: Color, color2: Color): LinearGradient = LinearGradient(0, 10, color1, 0, 0, color2)
+}
+
+trait Color extends Painter {
 
   /**
    * Returns a conversion of this Color into an RGBColor.
@@ -11,6 +26,8 @@ trait Color {
    * @return an RGBColor conversion of this color.
    */
   def toRGB: RGBColor
+
+  protected def paint: Paint = new java.awt.Color(this.toRGB.toInt)
 }
 
 object Color {

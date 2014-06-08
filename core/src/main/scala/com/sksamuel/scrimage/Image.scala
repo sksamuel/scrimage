@@ -658,6 +658,34 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
     copy
   }
 
+  def drawRoundedRect(color: Color, x: Int, y: Int, width: Int, height: Int, arcWidth: Int, arcHeight: Int): Image = {
+    val copy = empty
+    val g2 = copy.awt.getGraphics
+    g2.setColor(color)
+    g2.drawRoundRect(x, y, width, height, arcWidth, arcHeight)
+    g2.dispose()
+    copy
+  }
+
+  def fillRoundedRect(color: Color, x: Int, y: Int, width: Int, height: Int, arcWidth: Int, arcHeight: Int): Image = {
+    val copy = empty
+    val g2 = copy.awt.getGraphics.asInstanceOf[Graphics2D]
+    g2.setColor(color)
+    g2.setPaint(paint)
+    g2.fillRoundRect(x, y, width, height, arcWidth, arcHeight)
+    g2.dispose()
+    copy
+  }
+
+  def drawOval(color: Color, x: Int, y: Int, width: Int, height: Int): Image = {
+    val copy = empty
+    val g2 = copy.awt.getGraphics
+    g2.setColor(color)
+    g2.drawOval(x, y, width, height)
+    g2.dispose()
+    copy
+  }
+
   def drawPoly(color: Color, points: Seq[Point]): Image = {
     val copy = empty
     val g2 = copy.awt.getGraphics
