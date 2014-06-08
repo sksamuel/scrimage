@@ -9,9 +9,7 @@ publishTo <<= version {
 
 libraryDependencies ++= Seq(
   "org.apache.sanselan"             % "sanselan"              % "0.97-incubator",
-  "org.slf4j"                       % "slf4j-api"             % "1.6.6",
-  "commons-io"                      % "commons-io"            % "2.4",
-  "org.imgscalr"                    % "imgscalr-lib"          % "4.2"                     % "test",
+  "commons-io"                      % "commons-io"            % "2.4"
 )
 
 pomExtra := {
