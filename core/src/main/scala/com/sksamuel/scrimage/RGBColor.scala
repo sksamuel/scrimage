@@ -33,9 +33,9 @@ case class RGBColor(red: Int, green: Int, blue: Int, alpha: Int = 0) extends Col
   def rgba: Int = red & 0xFF | green >> 8 & 0xFF | blue >> 16 & 0xFF | alpha >> 24 & 0xFF
 
   /**
-   * Returns a HEX String of this colour. Eg for 0,255,0, this method will return 00FF00
+   * Returns a HEX String of this colour. Eg for 0,255,0, this method will return 00FF00.
    */
-  def toHex: String = ""
+  def toHex: String = String.format("%02x%02x%02x", red, green, blue)
 }
 
 /**
