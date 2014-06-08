@@ -51,6 +51,11 @@ case class RGBColor(red: Int, green: Int, blue: Int, alpha: Int = 0) extends Col
  * @param value
  */
 case class HSVColor(hue: Float, saturation: Float, value: Float, alpha: Float) extends Color {
+  require(0 <= hue && hue <= 360f, "Hue component is invalid")
+  require(0 <= saturation && saturation <= 1f, "Saturation component is invalid")
+  require(0 <= value && value <= 1f, "Value component is invalid")
+  require(0 <= alpha && alpha <= 1f, "Alpha component is invalid")
+
   override def toRGB: RGBColor = {
 
     def toRGB(r: Float, g: Float, b: Float): RGBColor = {
@@ -86,6 +91,10 @@ case class HSVColor(hue: Float, saturation: Float, value: Float, alpha: Float) e
  * @param lightness
  */
 case class HSLColor(hue: Float, saturation: Float, lightness: Float, alpha: Float) extends Color {
+  require(0 <= hue && hue <= 360f, "Hue component is invalid")
+  require(0 <= saturation && saturation <= 1f, "Saturation component is invalid")
+  require(0 <= lightness && lightness <= 1f, "Lightness component is invalid")
+  require(0 <= alpha && alpha <= 1f, "Alpha component is invalid")
 
   override def toRGB: RGBColor = {
     val h = (hue % 360f) / 360f
