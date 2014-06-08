@@ -60,7 +60,7 @@ object ExampleGenerator extends App {
     ("swim", SwimFilter()),
     ("television", TelevisionFilter),
     ("threshold", ThresholdFilter(127)),
-    ("tritone", TritoneFilter(new RGBColor(0xFF000044), new RGBColor(0xFF0066FF), RGBColor.WHITE)),
+    ("tritone", TritoneFilter(new java.awt.Color(0xFF000044), new java.awt.Color(0xFF0066FF), java.awt.Color.WHITE)),
     ("twirl", TwirlFilter(75)),
     ("unsharp", UnsharpFilter()),
     ("vignette", VignetteFilter()),
