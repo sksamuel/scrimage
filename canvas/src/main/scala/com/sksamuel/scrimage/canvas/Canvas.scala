@@ -1,12 +1,21 @@
 package com.sksamuel.scrimage.canvas
 
-import com.sksamuel.scrimage.{X11Colorlist, Painter, Image}
+import com.sksamuel.scrimage.{X11Colorlist, Image}
 import java.awt.{Font, Point, Graphics2D}
 
 /** @author Stephen Samuel */
 class Canvas(val image: Image, val painter: Painter = X11Colorlist.Black) {
 
   def withPainter(painter: Painter): Canvas = new Canvas(image, painter)
+
+  def fill(painter: Painter): Image = {
+    val copy = image.empty
+    val g2 = copy.awt.getGraphics.asInstanceOf[Graphics2D]
+    g2.setPaint(painter.paint)
+    g2.fillRect(0, 0, copy.width, copy.height)
+    g2.dispose()
+    copy
+  }
 
   def drawRect(painter: Painter, x: Int, y: Int, w: Int, h: Int): Image = {
     val copy = image.empty
