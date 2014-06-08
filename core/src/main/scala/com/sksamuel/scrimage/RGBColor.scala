@@ -13,11 +13,12 @@ trait Color {
 
 object Color {
   implicit def color2rgb(color: Color): RGBColor = color.toRGB
-  implicit def color2awt(color: Color): java.awt.Color = new java.awt.Color(color.toRGB.rgba)
+  implicit def color2awt(color: Color): java.awt.Color = new java.awt.Color(color.toRGB.argb)
   implicit def awt2color(awt: java.awt.Color): RGBColor = RGBColor(awt.getRed, awt.getBlue, awt.getGreen, awt.getAlpha)
+  def apply(red: Int, green: Int, blue: Int, alpha: Int = 255): RGBColor = RGBColor(red, green, blue, alpha)
 }
 
-case class RGBColor(red: Int, green: Int, blue: Int, alpha: Int = 0) extends Color {
+case class RGBColor(red: Int, green: Int, blue: Int, alpha: Int = 255) extends Color {
   require(0 <= red && red <= 255, "Red component is invalid")
   require(0 <= green && green <= 255, "Green component is invalid")
   require(0 <= blue && blue <= 255, "Blue component is invalid")
@@ -30,12 +31,13 @@ case class RGBColor(red: Int, green: Int, blue: Int, alpha: Int = 0) extends Col
    * into the int as byes.
    * @return
    */
-  def rgba: Int = red & 0xFF | green >> 8 & 0xFF | blue >> 16 & 0xFF | alpha >> 24 & 0xFF
+  def argb: Int = ((alpha & 0xFF) << 24) | ((red & 0xFF) << 16) | ((green & 0xFF) << 8) | blue & 0xFF
+  def toInt: Int = argb
 
   /**
    * Returns a HEX String of this colour. Eg for 0,255,0, this method will return 00FF00.
    */
-  def toHex: String = String.format("%02x%02x%02x", red, green, blue)
+  def toHex: String = Integer.toHexString(argb & 0xffffff).toUpperCase.reverse.padTo(6, '0').reverse
 }
 
 /**
