@@ -4,11 +4,15 @@ import java.awt.{GradientPaint, Paint}
 
 /** @author Stephen Samuel */
 trait Painter {
-  protected def paint: Paint
+  private[scrimage] def paint: Paint
+}
+
+object Painter {
+  implicit def color2painter(color: java.awt.Color): RGBColor = color
 }
 
 case class LinearGradient(x1: Int, y1: Int, color1: Color, x2: Int, y2: Int, color2: Color) extends Painter {
-  protected def paint = new GradientPaint(x1, y1, color1, x2, y2, color2)
+  private[scrimage] def paint = new GradientPaint(x1, y1, color1, x2, y2, color2)
 }
 
 object LinearGradient {
@@ -27,7 +31,7 @@ trait Color extends Painter {
    */
   def toRGB: RGBColor
 
-  protected def paint: Paint = new java.awt.Color(this.toRGB.toInt)
+  private[scrimage] def paint: Paint = new java.awt.Color(this.toRGB.toInt)
 }
 
 object Color {
