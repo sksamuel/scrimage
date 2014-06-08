@@ -17,19 +17,17 @@
 package com.sksamuel.scrimage
 
 import java.awt._
-import java.awt.geom.AffineTransform
 import java.io.{ByteArrayInputStream, InputStream, File}
-import javax.imageio.ImageIO
-import org.apache.commons.io.{FileUtils, IOUtils}
+import org.apache.commons.io.{IOUtils, FileUtils}
 import java.awt.image.{AffineTransformOp, DataBufferInt, BufferedImage}
 import thirdparty.mortennobel.{ResampleOp, ResampleFilters}
 import com.sksamuel.scrimage.io.ImageWriter
-import scala.concurrent.ExecutionContext
 import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.Position.Center
-import java.awt.{Color => AWTColor}
-import scala.Tuple2
 import scala.List
+import java.awt.geom.AffineTransform
+import scala.concurrent.ExecutionContext
+import javax.imageio.ImageIO
 
 /**
  * @author Stephen Samuel
@@ -400,7 +398,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
    */
   def fit(targetWidth: Int,
           targetHeight: Int,
-          color: java.awt.Color = java.awt.Color.WHITE,
+          color: Color = X11Colorlist.White,
           scaleMethod: ScaleMethod = Bicubic,
           position: Position = Center): Image = {
     val fittedDimensions = ImageTools.dimensionsToFit((targetWidth, targetHeight), (width, height))
@@ -506,7 +504,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
   def resizeTo(targetWidth: Int,
                targetHeight: Int,
                position: Position = Center,
-               background: AWTColor = AWTColor.WHITE): Image = {
+               background: Color = X11Colorlist.White): Image = {
     if (targetWidth == width && targetHeight == height) this
     else {
       val target = Image.filled(targetWidth, targetHeight, background)
@@ -531,8 +529,8 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
    * @param color the color to match
    * @return
    */
-  def autocrop(color: AWTColor): Image = {
-    def uniform(color: AWTColor, pixels: Array[Int]) = pixels.forall(p => p == color.getRGB)
+  def autocrop(color: Color): Image = {
+    def uniform(color: Color, pixels: Array[Int]) = pixels.forall(p => p == color.argb)
     def scanright(col: Int, image: Image): Int = {
       if (uniform(color, pixels(col, 0, 1, height))) scanright(col + 1, image)
       else col
@@ -573,7 +571,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
    *
    * @return A new image that is the result of the padding
    */
-  def padTo(targetWidth: Int, targetHeight: Int, color: java.awt.Color = java.awt.Color.WHITE): Image = {
+  def padTo(targetWidth: Int, targetHeight: Int, color: Color = X11Colorlist.White): Image = {
     val w = if (width < targetWidth) targetWidth else width
     val h = if (height < targetHeight) targetHeight else height
     val filled = Image.filled(w, h, color)
@@ -622,7 +620,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
    *
    * @return a new Image with the same dimensions as this
    */
-  def filled(color: java.awt.Color): Image = Image.filled(width, height, color)
+  def filled(color: Color): Image = Image.filled(width, height, color)
 
   def writer[T <: ImageWriter](format: Format[T]): T = format.writer(this)
 
@@ -633,7 +631,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
   // http://stackoverflow.com/questions/7370925/what-is-the-standard-idiom-for-implementing-equals-and-hashcode-in-scala
   override def hashCode = imageState.hashCode
 
-  def drawRect(color: AWTColor, x: Int, y: Int, w: Int, h: Int): Image = {
+  def drawRect(color: Color, x: Int, y: Int, w: Int, h: Int): Image = {
     val copy = empty
     val g2 = copy.awt.getGraphics
     g2.setColor(color)
@@ -642,7 +640,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
     copy
   }
 
-  def fillRect(color: AWTColor, x: Int, y: Int, w: Int, h: Int): Image = {
+  def fillRect(color: Color, x: Int, y: Int, w: Int, h: Int): Image = {
     val copy = empty
     val g2 = copy.awt.getGraphics
     g2.setColor(color)
@@ -651,7 +649,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
     copy
   }
 
-  def fillPoly(color: AWTColor, points: Seq[Point]): Image = {
+  def fillPoly(color: Color, points: Seq[Point]): Image = {
     val copy = empty
     val g2 = copy.awt.getGraphics
     g2.setColor(color)
@@ -660,7 +658,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
     copy
   }
 
-  def drawPoly(color: AWTColor, points: Seq[Point]): Image = {
+  def drawPoly(color: Color, points: Seq[Point]): Image = {
     val copy = empty
     val g2 = copy.awt.getGraphics
     g2.setColor(color)
@@ -669,7 +667,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
     copy
   }
 
-  def drawString(font: Font, color: AWTColor, x: Int, y: Int, text: String): Image = {
+  def drawString(font: Font, color: Color, x: Int, y: Int, text: String): Image = {
     val copy = empty
     val g2 = copy.awt.getGraphics
     g2.setColor(color)
@@ -687,7 +685,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
 
   // -- mutable operations -- //
 
-  def _fill(color: java.awt.Color): Image = {
+  def _fill(color: Color): Image = {
     val g2 = awt.getGraphics
     g2.setColor(color)
     g2.fillRect(0, 0, awt.getWidth, awt.getHeight)
@@ -721,7 +719,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
   /**
    * Clears all image data to the given color
    */
-  def clear(color: AWTColor): Image = filled(color)
+  def clear(color: Color): Image = filled(color)
 
   def watermark(text: String): Image = watermark(text, 24, 0.5)
   def watermark(text: String, fontSize: Int, alpha: Double): Image = filter(new Watermark(text, fontSize, alpha))
@@ -823,8 +821,8 @@ object Image {
     new Image(copy)
   }
 
-  def filled(width: Int, height: Int, color: Int): Image = filled(width, height, new java.awt.Color(color))
-  def filled(width: Int, height: Int, color: java.awt.Color): Image = {
+  def filled(width: Int, height: Int, color: Int): Image = filled(width, height, Color(color))
+  def filled(width: Int, height: Int, color: Color): Image = {
     val awt = new BufferedImage(width, height, Image.CANONICAL_DATA_TYPE)
     val filled = new Image(awt)
     filled._fill(color)

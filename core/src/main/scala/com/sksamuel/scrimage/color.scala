@@ -2,8 +2,10 @@ package com.sksamuel.scrimage
 
 /** @author Stephen Samuel */
 trait Color {
+
   /**
    * Returns a conversion of this Color into an RGBColor.
+   *
    * If this colour is already an instance of RGBColor then the same instance will be returned.
    *
    * @return an RGBColor conversion of this color.
@@ -16,6 +18,13 @@ object Color {
   implicit def color2awt(color: Color): java.awt.Color = new java.awt.Color(color.toRGB.argb)
   implicit def awt2color(awt: java.awt.Color): RGBColor = RGBColor(awt.getRed, awt.getBlue, awt.getGreen, awt.getAlpha)
   def apply(red: Int, green: Int, blue: Int, alpha: Int = 255): RGBColor = RGBColor(red, green, blue, alpha)
+  def apply(argb: Int): RGBColor = {
+    val alpha = argb & 0xFF
+    val red = (argb << 8) & 0xFF
+    val green = (argb << 16) & 0xFF
+    val blue = (argb << 24) & 0xFF
+    RGBColor(red, green, blue, alpha)
+  }
 }
 
 case class RGBColor(red: Int, green: Int, blue: Int, alpha: Int = 255) extends Color {

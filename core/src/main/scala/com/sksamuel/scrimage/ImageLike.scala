@@ -23,7 +23,6 @@ import com.sksamuel.scrimage.io.ImageWriter
 import com.sksamuel.scrimage.ScaleMethod.Bicubic
 import com.sksamuel.scrimage.Position.Center
 import scala.Array
-import java.awt.{Color => AWTColor}
 import com.sksamuel.scrimage.PixelTools._
 
 /** @author Stephen Samuel */
@@ -36,7 +35,7 @@ trait ImageLike[R] {
   /**
    * Clears all image data to the given color
    */
-  def clear(color: AWTColor = AWTColor.WHITE): Image
+  def clear(color: Color = X11Colorlist.White): Image
   def width: Int
   def height: Int
   def dimensions: (Int, Int) = (width, height)
@@ -129,7 +128,7 @@ trait ImageLike[R] {
    *
    * @return A new image that is the result of the padding
    */
-  def pad(size: Int, color: java.awt.Color = java.awt.Color.WHITE): R = {
+  def pad(size: Int, color: Color = X11Colorlist.White): R = {
     padTo(width + size * 2, height + size * 2, color)
   }
 
@@ -150,7 +149,7 @@ trait ImageLike[R] {
    *
    * @return A new image that is the result of the padding
    */
-  def padTo(targetWidth: Int, targetHeight: Int, color: java.awt.Color = java.awt.Color.WHITE): R
+  def padTo(targetWidth: Int, targetHeight: Int, color: Color = X11Colorlist.White): R
 
   /**
    * Creates an empty Image with the same dimensions of this image.
@@ -209,17 +208,17 @@ trait ImageLike[R] {
    */
   def filter(filter: Filter): R
 
-  def fit(targetWidth: Int, targetHeight: Int, color: java.awt.Color, scaleMethod: ScaleMethod, position: Position): R
+  def fit(targetWidth: Int, targetHeight: Int, color: Color, scaleMethod: ScaleMethod, position: Position): R
 
-  def fitToHeight(targetHeight: Int, color: java.awt.Color = java.awt.Color.WHITE,
+  def fitToHeight(targetHeight: Int, color: Color = X11Colorlist.White,
                   scaleMethod: ScaleMethod = Bicubic, position: Position = Center): R =
     fit((targetHeight / height.toDouble * height).toInt, targetHeight, color, scaleMethod, position)
 
-  def fitToWidth(targetWidth: Int, color: java.awt.Color = java.awt.Color.WHITE,
+  def fitToWidth(targetWidth: Int, color: Color = X11Colorlist.White,
                  scaleMethod: ScaleMethod = Bicubic, position: Position = Center): R =
     fit(targetWidth, (targetWidth / width.toDouble * height).toInt, color, scaleMethod, position)
 
-  def resizeTo(targetWidth: Int, targetHeight: Int, position: Position, background: AWTColor = AWTColor.WHITE): R
+  def resizeTo(targetWidth: Int, targetHeight: Int, position: Position, background: Color = X11Colorlist.White): R
 
   /**
    *
@@ -232,7 +231,7 @@ trait ImageLike[R] {
    *
    * @return a new Image that is the result of resizing the canvas.
    */
-  def resize(scaleFactor: Double, position: Position = Center, background: AWTColor = AWTColor.WHITE): R =
+  def resize(scaleFactor: Double, position: Position = Center, background: Color = X11Colorlist.White): R =
     resizeTo((width * scaleFactor).toInt, (height * scaleFactor).toInt, position, background)
 
   /**
@@ -244,7 +243,7 @@ trait ImageLike[R] {
    *
    * @return a new Image that is the result of resizing the canvas.
    */
-  def resizeToHeight(targetHeight: Int, position: Position = Center, background: AWTColor = AWTColor.WHITE): R =
+  def resizeToHeight(targetHeight: Int, position: Position = Center, background: Color = X11Colorlist.White): R =
     resizeTo((targetHeight / height.toDouble * height).toInt, targetHeight, position, background)
 
   /**
@@ -256,7 +255,7 @@ trait ImageLike[R] {
    *
    * @return a new Image that is the result of resizing the canvas.
    */
-  def resizeToWidth(targetWidth: Int, position: Position = Center, background: AWTColor = AWTColor.WHITE): R =
+  def resizeToWidth(targetWidth: Int, position: Position = Center, background: Color = X11Colorlist.White): R =
     resizeTo(targetWidth, (targetWidth / width.toDouble * height).toInt, position, background)
 
   /**

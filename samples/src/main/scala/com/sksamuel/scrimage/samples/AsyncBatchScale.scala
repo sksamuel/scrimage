@@ -9,6 +9,8 @@ import java.io.File
  * @author Stephen Samuel */
 object AsyncBatchScale extends App {
 
+  import scala.concurrent.ExecutionContext.Implicits.global
+
   val dir = new File(args(0)) // use the first argument as the location of the files
   for ( file <- dir.listFiles;
         image <- AsyncImage(file);
