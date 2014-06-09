@@ -6,7 +6,7 @@ import java.awt.{Font, Graphics2D}
 /** @author Stephen Samuel */
 case class Canvas(image: Image,
                   painter: Painter = X11Colorlist.Black,
-                  font: Font = Font.SERIF) {
+                  font: Font = new Font(Font.SERIF, 0, 24)) {
 
   def withPainter(painter: Painter): Canvas = copy(painter = painter)
   def withFont(font: Font): Canvas = copy(font = font)

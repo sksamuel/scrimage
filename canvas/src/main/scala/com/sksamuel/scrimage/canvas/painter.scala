@@ -1,15 +1,12 @@
 package com.sksamuel.scrimage.canvas
 
 import java.awt._
-import com.sksamuel.scrimage.{Color, RGBColor}
-import java.awt.image.{WritableRaster, Raster, ColorModel}
+import com.sksamuel.scrimage.Color
+import java.awt.image.{Raster, ColorModel}
 import java.awt.geom.{AffineTransform, Rectangle2D}
 import com.sksamuel.scrimage.RGBColor
 import sun.awt.image.IntegerComponentRaster
-import java.util.Arrays
-import scala.math
 import scala.util.Random
-import java.util
 
 /** @author Stephen Samuel */
 trait Painter {
