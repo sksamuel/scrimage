@@ -9,7 +9,7 @@ class ImplicitTest extends FlatSpec {
 
   "an image" should "be implicitly convertable to a canvas" in {
     val image = Image.empty(100, 100)
-    val canvas = image.fillRect(X11Colorlist.Azure3, 0, 0, 10, 10)
+    val canvas = image.fillRect(0, 0, 10, 10)
   }
 
   "a canvas" should "be implicitly convertable to an image" in {
