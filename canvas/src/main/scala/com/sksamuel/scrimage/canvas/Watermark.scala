@@ -21,7 +21,7 @@ import java.awt.geom.AffineTransform
 import com.sksamuel.scrimage.{Image, Filter}
 
 /** @author Stephen Samuel */
-class Watermark(text: String, fontSize: Int, alpha: Double) extends Filter {
+class Watermark(text: String, font: Font, alpha: Double) extends Filter {
 
   def apply(image: Image): Unit = {
 
@@ -32,8 +32,7 @@ class Watermark(text: String, fontSize: Int, alpha: Double) extends Filter {
     val alphaComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha.toFloat)
     g2.setComposite(alphaComposite)
 
-    val f1 = new Font("Arial", Font.BOLD, fontSize)
-    g2.setFont(f1)
+    g2.setFont(font)
 
     val fontMetrics = g2.getFontMetrics
     val bounds = fontMetrics.getStringBounds(text, g2)
