@@ -44,8 +44,8 @@ class MutableImage(awt: BufferedImage) extends Image(awt) {
     this
   }
 
-  override def filled(painter: Painter): MutableImage = {
-    super._fill(painter)
+  override def filled(color: Color): MutableImage = {
+    super._fill(color)
     this
   }
 
