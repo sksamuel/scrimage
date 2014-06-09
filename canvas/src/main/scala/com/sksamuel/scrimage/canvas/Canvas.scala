@@ -29,6 +29,15 @@ case class Canvas(image: Image,
     this.copy(image = copy)
   }
 
+  def drawImage(x: Int, y: Int, imageToDraw: Image): Canvas = {
+    val copy = image.copy
+    val g2 = copy.awt.getGraphics.asInstanceOf[Graphics2D]
+    g2.setPaint(painter.paint)
+    g2.drawImage(imageToDraw.awt, x, y, null)
+    g2.dispose()
+    this.copy(image = copy)
+  }
+
   def fillRect(x: Int, y: Int, w: Int, h: Int): Canvas = fillPoly(Polygon.rectange(x, y, w, h))
   def fillPoly(polygon: Polygon): Canvas = {
     val copy = image.copy
