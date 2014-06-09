@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage.canvas
 
 import com.sksamuel.scrimage.{X11Colorlist, Image}
-import java.awt.{Font, Point, Graphics2D}
+import java.awt.{Font, Graphics2D}
 
 /** @author Stephen Samuel */
 case class Canvas(image: Image,
@@ -29,29 +29,12 @@ case class Canvas(image: Image,
     this.copy(image = copy)
   }
 
-  def drawRect(x: Int, y: Int, w: Int, h: Int): Canvas = {
+  def fillRect(x: Int, y: Int, w: Int, h: Int): Canvas = fillPoly(Polygon.rectange(x, y, w, h))
+  def fillPoly(polygon: Polygon): Canvas = {
     val copy = image.copy
     val g2 = copy.awt.getGraphics.asInstanceOf[Graphics2D]
     g2.setPaint(painter.paint)
-    g2.drawRect(x, y, w, h)
-    g2.dispose()
-    this.copy(image = copy)
-  }
-
-  def fillRect(x: Int, y: Int, w: Int, h: Int): Canvas = {
-    val copy = image.copy
-    val g2 = copy.awt.getGraphics.asInstanceOf[Graphics2D]
-    g2.setPaint(painter.paint)
-    g2.fillRect(x, y, w, h)
-    g2.dispose()
-    this.copy(image = copy)
-  }
-
-  def fillPoly(points: Seq[Point]): Canvas = {
-    val copy = image.copy
-    val g2 = copy.awt.getGraphics.asInstanceOf[Graphics2D]
-    g2.setPaint(painter.paint)
-    g2.fillPolygon(points.map(_.x).toArray, points.map(_.y).toArray, points.size)
+    g2.fillPolygon(polygon.points.map(_.x).toArray, polygon.points.map(_.y).toArray, polygon.points.size)
     g2.dispose()
     this.copy(image = copy)
   }
@@ -97,11 +80,12 @@ case class Canvas(image: Image,
     this.copy(image = copy)
   }
 
-  def drawPoly(points: Seq[Point]): Canvas = {
+  def drawRect(x: Int, y: Int, w: Int, h: Int): Canvas = drawPoly(Polygon.rectange(x, y, w, h))
+  def drawPoly(polygon: Polygon): Canvas = {
     val copy = image.copy
     val g2 = copy.awt.getGraphics.asInstanceOf[Graphics2D]
     g2.setPaint(painter.paint)
-    g2.drawPolygon(points.map(_.x).toArray, points.map(_.y).toArray, points.size)
+    g2.drawPolygon(polygon.points.map(_.x).toArray, polygon.points.map(_.y).toArray, polygon.points.size)
     g2.dispose()
     this.copy(image = copy)
   }
@@ -125,4 +109,16 @@ object Canvas {
   implicit def canvas2image(canvas: Canvas): Image = canvas.image
 }
 
+case class Point(x: Int, y: Int)
+
+object Point {
+  implicit def tuple2point(p: (Int, Int)): Point = Point(p._1, p._2)
+}
+
 case class Polygon(points: Seq[Point])
+object Polygon {
+  def apply(points: Point*): Polygon = Polygon(points)
+  def rectange(x: Int, y: Int, width: Int, height: Int) = {
+    Polygon(x -> y, (x + width) -> y, (x + width) -> (y + height), x -> (y + height))
+  }
+}
