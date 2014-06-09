@@ -14,10 +14,11 @@
    limitations under the License.
  */
 
-package com.sksamuel.scrimage
+package com.sksamuel.scrimage.canvas
 
 import java.awt._
 import java.awt.geom.AffineTransform
+import com.sksamuel.scrimage.{Image, Filter}
 
 /** @author Stephen Samuel */
 class Watermark(text: String, fontSize: Int, alpha: Double) extends Filter {

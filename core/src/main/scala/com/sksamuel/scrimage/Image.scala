@@ -25,9 +25,9 @@ import com.sksamuel.scrimage.io.ImageWriter
 import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.Position.Center
 import scala.List
-import java.awt.geom.AffineTransform
 import scala.concurrent.ExecutionContext
 import javax.imageio.ImageIO
+import java.awt.geom.AffineTransform
 
 /**
  * @author Stephen Samuel
@@ -668,9 +668,6 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
    * Clears all image data to the given color
    */
   def clear(color: Color): Image = filled(color)
-
-  def watermark(text: String): Image = watermark(text, 24, 0.5)
-  def watermark(text: String, fontSize: Int, alpha: Double): Image = filter(new Watermark(text, fontSize, alpha))
 }
 
 object Image {
