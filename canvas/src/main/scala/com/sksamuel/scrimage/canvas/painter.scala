@@ -1,7 +1,15 @@
 package com.sksamuel.scrimage.canvas
 
-import java.awt.{RadialGradientPaint, GradientPaint, Paint}
+import java.awt._
 import com.sksamuel.scrimage.{Color, RGBColor}
+import java.awt.image.{WritableRaster, Raster, ColorModel}
+import java.awt.geom.{AffineTransform, Rectangle2D}
+import com.sksamuel.scrimage.RGBColor
+import sun.awt.image.IntegerComponentRaster
+import java.util.Arrays
+import scala.math
+import scala.util.Random
+import java.util
 
 /** @author Stephen Samuel */
 trait Painter {
@@ -18,6 +26,31 @@ object Painter {
 
 case class ColorPainter(color: Color) extends Painter {
   private[scrimage] def paint: Paint = color.toRGB.toAWT
+}
+
+object RandomPainter extends Painter {
+  override private[scrimage] def paint: Paint = new Paint {
+    override def createContext(cm: ColorModel,
+                               deviceBounds: Rectangle,
+                               userBounds: Rectangle2D,
+                               xform: AffineTransform,
+                               hints: RenderingHints): PaintContext = new PaintContext {
+      override def getRaster(x: Int,
+                             y: Int,
+                             w: Int,
+                             h: Int): Raster = {
+        val raster = getColorModel.createCompatibleWritableRaster(w, h).asInstanceOf[IntegerComponentRaster]
+        for ( x <- x until x + w; y <- y until y + h ) {
+          val color = Color(Random.nextInt(256), Random.nextInt(256), Random.nextInt(256)).toInt
+          raster.getDataStorage()(x + x * y) = color
+        }
+        raster
+      }
+      override def getColorModel: ColorModel = ColorModel.getRGBdefault
+      override def dispose(): Unit = ()
+    }
+    override def getTransparency: Int = Transparency.OPAQUE
+  }
 }
 
 case class LinearGradient(x1: Int, y1: Int, color1: Color, x2: Int, y2: Int, color2: Color) extends Painter {

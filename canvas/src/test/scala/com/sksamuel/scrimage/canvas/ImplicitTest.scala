@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage.canvas
 
 import org.scalatest.FlatSpec
-import com.sksamuel.scrimage.{X11Colorlist, Image}
+import com.sksamuel.scrimage.Image
 import com.sksamuel.scrimage.canvas.Canvas._
 
 /** @author Stephen Samuel */
