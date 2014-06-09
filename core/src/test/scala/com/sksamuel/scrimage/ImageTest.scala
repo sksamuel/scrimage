@@ -2,7 +2,6 @@ package com.sksamuel.scrimage
 
 import org.scalatest.{BeforeAndAfter, FunSuite}
 import java.awt.image.BufferedImage
-import java.awt.Color
 import com.sksamuel.scrimage.Position.{TopRight, BottomRight, Center, TopLeft}
 
 /** @author Stephen Samuel */
@@ -451,11 +450,5 @@ class ImageTest extends FunSuite with BeforeAndAfter {
     assert(193 === autocropped.height)
     val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/dyson_autocropped.png"))
     assert(expected == autocropped)
-  }
-
-  test("watermark happy path") {
-    val watermarked = image.scaleTo(400, 250).watermark("copyright birds of the planet 2014")
-    assert(400 === watermarked.width)
-    assert(250 === watermarked.height)
   }
 }
