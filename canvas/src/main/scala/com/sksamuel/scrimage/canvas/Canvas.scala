@@ -1,16 +1,20 @@
 package com.sksamuel.scrimage.canvas
 
 import com.sksamuel.scrimage.{Color, X11Colorlist, Image}
-import java.awt.{Font, Graphics2D}
+import java.awt.{RenderingHints, Font, Graphics2D}
 
 /** @author Stephen Samuel */
 case class Canvas(image: Image,
                   painter: Painter = X11Colorlist.Black,
-                  font: Font = new Font(Font.SERIF, 0, 24)) {
+                  font: Font = new Font(Font.SERIF, 0, 24),
+                  aliasing: Boolean) {
 
   def withPainter(painter: Painter): Canvas = copy(painter = painter)
   def withPainter(color: Color): Canvas = copy(painter = color)
   def withFont(font: Font): Canvas = copy(font = font)
+  def withAliasing(aliasing: Boolean) = copy(aliasing = aliasing)
+
+
 
   def fill: Canvas = {
     val copy = image.copy
@@ -34,6 +38,8 @@ case class Canvas(image: Image,
     val copy = image.copy
     val g2 = copy.awt.getGraphics.asInstanceOf[Graphics2D]
     g2.setPaint(painter.paint)
+    if (aliasing)
+      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
     g2.drawImage(imageToDraw.awt, x, y, null)
     g2.dispose()
     this.copy(image = copy)
