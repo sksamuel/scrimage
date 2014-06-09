@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.canvas
 
-import com.sksamuel.scrimage.{X11Colorlist, Image}
+import com.sksamuel.scrimage.{Color, X11Colorlist, Image}
 import java.awt.{Font, Graphics2D}
 
 /** @author Stephen Samuel */
@@ -9,6 +9,7 @@ case class Canvas(image: Image,
                   font: Font = new Font(Font.SERIF, 0, 24)) {
 
   def withPainter(painter: Painter): Canvas = copy(painter = painter)
+  def withPainter(color: Color): Canvas = copy(painter = color)
   def withFont(font: Font): Canvas = copy(font = font)
 
   def fill: Canvas = {
