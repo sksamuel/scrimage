@@ -17,6 +17,15 @@ class Canvas(val image: Image, val painter: Painter = X11Colorlist.Black) {
     copy
   }
 
+  def drawLine(painter: Painter, x1: Int, y1: Int, x2: Int, y2: Int): Image = {
+    val copy = image.empty
+    val g2 = copy.awt.getGraphics.asInstanceOf[Graphics2D]
+    g2.setPaint(painter.paint)
+    g2.drawLine(x1, y1, x2, y2)
+    g2.dispose()
+    copy
+  }
+
   def drawRect(painter: Painter, x: Int, y: Int, w: Int, h: Int): Image = {
     val copy = image.empty
     val g2 = copy.awt.getGraphics.asInstanceOf[Graphics2D]
@@ -74,6 +83,15 @@ class Canvas(val image: Image, val painter: Painter = X11Colorlist.Black) {
     val g2 = copy.awt.getGraphics.asInstanceOf[Graphics2D]
     g2.setPaint(painter.paint)
     g2.drawOval(x, y, width, height)
+    g2.dispose()
+    copy
+  }
+
+  def fillOval(painter: Painter, x: Int, y: Int, width: Int, height: Int): Image = {
+    val copy = image.empty
+    val g2 = copy.awt.getGraphics.asInstanceOf[Graphics2D]
+    g2.setPaint(painter.paint)
+    g2.fillOval(x, y, width, height)
     g2.dispose()
     copy
   }
