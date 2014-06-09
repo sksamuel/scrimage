@@ -117,8 +117,7 @@ object Point {
 
 case class Polygon(points: Seq[Point])
 object Polygon {
-  def apply(points: Point*): Polygon = Polygon(points)
   def rectange(x: Int, y: Int, width: Int, height: Int) = {
-    Polygon(x -> y, (x + width) -> y, (x + width) -> (y + height), x -> (y + height))
+    Polygon(Seq(x -> y, (x + width) -> y, (x + width) -> (y + height), x -> (y + height)))
   }
 }
