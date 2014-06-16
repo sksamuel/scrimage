@@ -574,11 +574,20 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
   def padTo(targetWidth: Int, targetHeight: Int, color: Color = X11Colorlist.White): Image = {
     val w = if (width < targetWidth) targetWidth else width
     val h = if (height < targetHeight) targetHeight else height
-    val filled = Image.filled(w, h, color)
-    val g = filled.awt.getGraphics
     val x = ((w - width) / 2.0).toInt
     val y = ((h - height) / 2.0).toInt
-    g.drawImage(awt, x, y, null)
+    padWith(x, y, w-width-x, h-height-y)
+  }
+
+  /**
+  * Creates a new image by adding the given number of columns/rows on left, top, right and bottom
+  */
+  def padWith(left: Int, top: Int, right: Int, bottom: Int, color: Color = RGBColor(255, 255, 255)): Image = {
+    val w = width + left + right
+    val h = height + top + bottom
+    val filled = Image.filled(w, h, color)
+    val g = filled.awt.getGraphics
+    g.drawImage(awt, left, top, null)
     g.dispose()
     filled
   }
