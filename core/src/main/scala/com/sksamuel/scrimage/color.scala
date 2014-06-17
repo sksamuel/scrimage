@@ -19,10 +19,12 @@ trait Color {
 }
 
 object Color {
+
   implicit def int2color(argb: Int): RGBColor = apply(argb)
   implicit def color2rgb(color: Color): RGBColor = color.toRGB
   implicit def color2awt(color: Color): java.awt.Color = new java.awt.Color(color.toRGB.argb)
   implicit def awt2color(awt: java.awt.Color): RGBColor = RGBColor(awt.getRed, awt.getGreen, awt.getBlue, awt.getAlpha)
+
   def apply(red: Int, green: Int, blue: Int, alpha: Int = 255): RGBColor = RGBColor(red, green, blue, alpha)
   def apply(argb: Int): RGBColor = {
     val alpha = argb & 0xFF
@@ -31,6 +33,9 @@ object Color {
     val blue = (argb << 24) & 0xFF
     RGBColor(red, green, blue, alpha)
   }
+
+  val White = RGBColor(255, 255, 255)
+  val Black = RGBColor(0, 0, 0)
 }
 
 case class RGBColor(red: Int, green: Int, blue: Int, alpha: Int = 255) extends Color {
