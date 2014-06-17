@@ -185,6 +185,13 @@ class ImageTest extends FunSuite with BeforeAndAfter {
     assert(1304 === padded.height)
   }
 
+  test("trim should revert padWith") {
+    val image = Image.empty(85, 56)
+    val same = image.padWith(10, 2, 5, 7).trim(10, 2, 5, 7)
+    assert(image.width === same.width)
+    assert(image.height === same.height)
+  }
+
   test("when flipping on x axis the dimensions are retained") {
     val flipped = image.flipX
     assert(1944 === flipped.width)
