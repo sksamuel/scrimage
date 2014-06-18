@@ -16,4 +16,19 @@ class RGBColorTest extends FlatSpec with OneInstancePerTest {
   it should "convert to an integer using correct bit shifting" in {
     assert(0xFFEFDFCF === Color(239, 223, 207).argb)
   }
+
+  it should "convert to awt.color" in {
+    assert(new java.awt.Color(255, 0, 255) === Color(255, 0, 255).toAWT)
+    assert(new java.awt.Color(255, 250, 255) === Color(255, 250, 255).toAWT)
+    assert(new java.awt.Color(14, 250, 255) === Color(14, 250, 255).toAWT)
+    assert(new java.awt.Color(255, 0, 0) === Color(255, 0, 0).toAWT)
+  }
+
+  it should "convert from awt.color" in {
+    import Color._
+    assert(awt2color(new java.awt.Color(255, 0, 255)) === Color(255, 0, 255))
+    assert(awt2color(new java.awt.Color(255, 250, 255)) === Color(255, 250, 255))
+    assert(awt2color(new java.awt.Color(14, 250, 255)) === Color(14, 250, 255))
+    assert(awt2color(new java.awt.Color(255, 0, 0)) === Color(255, 0, 0))
+  }
 }
