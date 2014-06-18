@@ -103,6 +103,17 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
   }
 
   /**
+   * Returns an image that is the result of translating the image while keeping the same
+   * view window. Eg, if translating by 10,5 then all pixels will move 10 to the right, and 5 down.
+   * This would mean 10 columns and 5 rows of background added to the left and top.
+   *
+   *  @return a new Image with this image translated.
+   */
+  def translate(x: Int, y: Int, background: Color = Color.White): Image = {
+    filled(background).overlay(this, x, y)
+  }
+
+  /**
    * Returns a new Image that is a subimage or region of the original image.
    *
    * @param x the start x coordinate
