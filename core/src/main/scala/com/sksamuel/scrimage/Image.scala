@@ -165,9 +165,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
     // of the pixel's neighbors, as well as the amount of weight each should
     // get in the weighted average.
     // Operates on one dimension at a time.
-    def integerPixelCoordinatesAndWeights(
-                                           double: Double,
-                                           numPixels: Int): List[Tuple2[Int, Double]] = {
+    def integerPixelCoordinatesAndWeights(double: Double, numPixels: Int): List[(Int, Double)] = {
       if (double <= 0.5) List((0, 1.0))
       else if (double >= numPixels - 0.5) List((numPixels - 1, 1.0))
       else {
@@ -706,6 +704,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
   /**
    * Clears all image data to the given color
    */
+  @deprecated("use filled", "1.4")
   def clear(color: Color): Image = filled(color)
 }
 

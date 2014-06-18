@@ -16,14 +16,14 @@
 
 package com.sksamuel.scrimage
 
-import java.io.{OutputStream, File}
-import org.apache.commons.io.{IOUtils, FileUtils}
+import java.io.{File, OutputStream}
+
 import com.sksamuel.scrimage.Format.PNG
-import com.sksamuel.scrimage.io.ImageWriter
-import com.sksamuel.scrimage.ScaleMethod.Bicubic
-import com.sksamuel.scrimage.Position.Center
-import scala.Array
 import com.sksamuel.scrimage.PixelTools._
+import com.sksamuel.scrimage.Position.Center
+import com.sksamuel.scrimage.ScaleMethod.Bicubic
+import com.sksamuel.scrimage.io.ImageWriter
+import org.apache.commons.io.{FileUtils, IOUtils}
 
 /** @author Stephen Samuel */
 trait ImageLike[R] {
@@ -31,14 +31,20 @@ trait ImageLike[R] {
   lazy val points: Seq[(Int, Int)] = for ( x <- 0 until width; y <- 0 until height ) yield (x, y)
   lazy val center: (Int, Int) = (width / 2, height / 2)
   lazy val radius: Int = Math.sqrt(Math.pow(width / 2.0, 2) + Math.pow(height / 2.0, 2)).toInt
+  lazy val dimensions: (Int, Int) = (width, height)
+
+  /**
+   * @return Returns the aspect ratio for this image.
+   */
+  lazy val ratio: Double = if (height == 0) 0 else width / height.toDouble
 
   /**
    * Clears all image data to the given color
    */
+  @deprecated("use filled", "1.4")
   def clear(color: Color = X11Colorlist.White): Image
   def width: Int
   def height: Int
-  def dimensions: (Int, Int) = (width, height)
 
   def forall(f: (Int, Int, Int) => Boolean): Boolean = points.forall(p => f(p._1, p._2, pixel(p)))
   def foreach(f: (Int, Int, Int) => Unit): Unit = points.foreach(p => f(p._1, p._2, pixel(p)))
@@ -166,12 +172,27 @@ trait ImageLike[R] {
   def count: Int = pixels.size
 
   /**
+   * Returns a set of the distinct colours used in this image.
+   *
+   * @return the set of distinct Colors
+   */
+  def colours: Set[Color] = pixels.map(argb => Color(argb)).toSet
+
+  /**
    * Counts the number of pixels with the given colour.
    *
    * @param pixel the colour to detect.
    * @return the number of pixels that matched the colour of the given pixel
    */
   def count(pixel: Int) = pixels.find(_ == pixel).size
+
+  /**
+   * Counts the number of pixels with the given colour.
+   *
+   * @param color the colour to detect.
+   * @return the number of pixels that matched the colour of the given pixel
+   */
+  def count(color: Color) = pixels.find(_ == color.toInt).size
 
   /**
    * Creates a new image with the same data as this image.
@@ -181,11 +202,6 @@ trait ImageLike[R] {
    * @return A copy of this image.
    */
   def copy: Image
-
-  /**
-   * @return Returns the aspect ratio for this image.
-   */
-  def ratio: Double = if (height == 0) 0 else width / height.toDouble
 
   /**
    * Maps the pixels of this image into another image by applying the given function to each point.
