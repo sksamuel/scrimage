@@ -32,7 +32,7 @@ class OpacityFilter(amount: Double) extends Filter {
   }
 
   def apply(image: Image) {
-    image._mapInPlace((x, y, p) => filter(x, y, p))
+    image.mapInPlace((x, y, p) => filter(x, y, p))
   }
 }
 

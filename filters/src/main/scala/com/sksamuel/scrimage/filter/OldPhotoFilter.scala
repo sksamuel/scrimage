@@ -14,7 +14,7 @@ object OldPhotoFilter extends Filter {
 
     val daisy = new DaisyFilter()
     val filtered = daisy.filter(image.awt)
-    image._draw(filtered)
+    image.draw(filtered)
 
     val g2 = image.awt.getGraphics.asInstanceOf[Graphics2D]
     g2.setComposite(BlendComposite.getInstance(BlendComposite.BlendingMode.INVERSE_COLOR_DODGE, 0.30f))

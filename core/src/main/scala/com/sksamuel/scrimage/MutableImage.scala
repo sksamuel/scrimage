@@ -16,6 +16,7 @@
 
 package com.sksamuel.scrimage
 
+import java.awt.Graphics2D
 import java.awt.image.{AffineTransformOp, BufferedImage}
 import java.io.{File, InputStream}
 import java.awt.geom.AffineTransform
@@ -31,7 +32,7 @@ class MutableImage(awt: BufferedImage) extends Image(awt) {
     this
   }
 
-  override def _flip(tx: AffineTransform): MutableImage = {
+  override protected[scrimage] def flip(tx: AffineTransform): MutableImage = {
     val op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR)
     val output = op.createCompatibleDestImage(awt, null)
     op.filter(awt, output)
@@ -45,7 +46,10 @@ class MutableImage(awt: BufferedImage) extends Image(awt) {
   }
 
   override def filled(color: Color): MutableImage = {
-    super._fill(color)
+    val g2 = awt.getGraphics.asInstanceOf[Graphics2D]
+    g2.setColor(color)
+    g2.fillRect(0, 0, awt.getWidth, awt.getHeight)
+    g2.dispose()
     this
   }
 

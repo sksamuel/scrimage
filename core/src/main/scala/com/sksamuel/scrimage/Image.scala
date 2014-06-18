@@ -54,15 +54,15 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
 
   override def map(f: (Int, Int, Int) => Int): Image = {
     val target = copy
-    target._mapInPlace(f)
+    target.mapInPlace(f)
     target
   }
 
-  def _mapInPlace(f: (Int, Int, Int) => Int): Unit = points
+  private[scrimage] def mapInPlace(f: (Int, Int, Int) => Int): Unit = points
     .foreach(p => awt.setRGB(p._1, p._2, f(p._1, p._2, awt.getRGB(p._1, p._2))))
 
   // replace this image's AWT data by drawing the given BufferedImage over the top
-  def _draw(target: BufferedImage) {
+  private[scrimage] def draw(target: BufferedImage) {
     val g2 = awt.getGraphics.asInstanceOf[Graphics2D]
     g2.drawImage(target, 0, 0, null)
     g2.dispose()
@@ -73,9 +73,20 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
    *
    * @param amount the number of pixels to trim from each edge
    *
-   * @return a new Image with the dimensions width-trim*2,height-trim*2
+   * @return a new Image with the dimensions width-trim*2, height-trim*2
    */
   def trim(amount: Int): Image = trim(amount, amount, amount, amount)
+
+  /**
+   * Removes the given amount of pixels from each edge; like a crop operation.
+   *
+   * @param left the number of pixels to trim from the left
+   * @param top the number of pixels to trim from the top
+   * @param right the number of pixels to trim from the right
+   * @param bottom the number of pixels to trim from the bottom
+   *
+   * @return a new Image with the dimensions width-trim*2, height-trim*2
+   */
   def trim(left: Int, top: Int, right: Int, bottom: Int): Image = {
     val target = Image._empty(width - left - right, height - bottom - top)
     val g2 = target.getGraphics.asInstanceOf[Graphics2D]
@@ -332,7 +343,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
   def flipX: Image = {
     val tx = AffineTransform.getScaleInstance(-1, 1)
     tx.translate(-width, 0)
-    _flip(tx)
+    flip(tx)
   }
 
   /**
@@ -343,10 +354,10 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
   def flipY: Image = {
     val tx = AffineTransform.getScaleInstance(1, -1)
     tx.translate(0, -height)
-    _flip(tx)
+    flip(tx)
   }
 
-  def _flip(tx: AffineTransform): Image = {
+  protected[scrimage] def flip(tx: AffineTransform): Image = {
     val op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR)
     val flipped = op.filter(awt, null)
     new Image(flipped)
@@ -357,16 +368,16 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
    *
    * @return
    */
-  def rotateLeft = _rotate(Math.PI / 2)
+  def rotateLeft = rotate(Math.PI / 2)
 
   /**
    * Returns a copy of this image rotated 90 degrees clockwise.
    *
    * @return
    */
-  def rotateRight = _rotate(-Math.PI / 2)
+  def rotateRight = rotate(-Math.PI / 2)
 
-  def _rotate(angle: Double): Image = {
+  def rotate(angle: Double): Image = {
     val target = new BufferedImage(height, width, awt.getType)
     val g2 = target.getGraphics.asInstanceOf[Graphics2D]
     val offset = angle match {
@@ -647,7 +658,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
    *
    * @return a new Image with the same dimensions as this
    */
-  def filled(color: Color): Image = Image.filled(width, height, color)
+  def filled(color: Color = Color.White): Image = Image.filled(width, height, color)
 
   def writer[T <: ImageWriter](format: Format[T]): T = format.writer(this)
 
@@ -663,16 +674,6 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
       case that: Image => imageState == that.imageState
       case _ => false
     }
-
-  // -- mutable operations -- //
-
-  def _fill(color: Color): Image = {
-    val g2 = awt.getGraphics.asInstanceOf[Graphics2D]
-    g2.setColor(color)
-    g2.fillRect(0, 0, awt.getWidth, awt.getHeight)
-    g2.dispose()
-    this
-  }
 
   /**
    * Creates a MutableImage instance backed by this image.
@@ -812,9 +813,11 @@ object Image {
    */
   def filled(width: Int, height: Int, color: Color = Color.White): Image = {
     val awt = new BufferedImage(width, height, Image.CANONICAL_DATA_TYPE)
-    val filled = new Image(awt)
-    filled._fill(color)
-    filled
+    val g2 = awt.getGraphics.asInstanceOf[Graphics2D]
+    g2.setColor(color)
+    g2.fillRect(0, 0, awt.getWidth, awt.getHeight)
+    g2.dispose()
+    new Image(awt)
   }
 
   /**

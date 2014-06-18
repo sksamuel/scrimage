@@ -23,6 +23,6 @@ object VintageFilter extends Filter {
   def apply(image: Image) {
     val thistle = new ThistleFilter()
     val filtered = thistle.filter(image.awt)
-    image._draw(filtered)
+    image.draw(filtered)
   }
 }
