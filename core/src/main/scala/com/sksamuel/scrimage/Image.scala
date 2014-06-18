@@ -17,17 +17,19 @@
 package com.sksamuel.scrimage
 
 import java.awt._
-import java.io.{ByteArrayInputStream, InputStream, File}
-import org.apache.commons.io.{IOUtils, FileUtils}
-import java.awt.image.{AffineTransformOp, DataBufferInt, BufferedImage}
-import thirdparty.mortennobel.{ResampleOp, ResampleFilters}
-import com.sksamuel.scrimage.io.ImageWriter
-import com.sksamuel.scrimage.ScaleMethod._
+import java.awt.geom.AffineTransform
+import java.awt.image.{AffineTransformOp, BufferedImage, DataBufferInt}
+import java.io.{ByteArrayInputStream, File, InputStream}
+import javax.imageio.ImageIO
+
 import com.sksamuel.scrimage.Position.Center
+import com.sksamuel.scrimage.ScaleMethod._
+import com.sksamuel.scrimage.io.ImageWriter
+import org.apache.commons.io.{FileUtils, IOUtils}
+import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
+
 import scala.List
 import scala.concurrent.ExecutionContext
-import javax.imageio.ImageIO
-import java.awt.geom.AffineTransform
 
 /**
  * @author Stephen Samuel
@@ -773,22 +775,6 @@ object Image {
    * @return a new Image object.
    */
   def apply(image: Image): Image = image.copy
-
-  @deprecated
-  private[scrimage] def _empty(awt: java.awt.Image): BufferedImage = _empty(awt.getWidth(null), awt.getHeight(null))
-
-  @deprecated
-  private[scrimage] def _empty(width: Int, height: Int): BufferedImage = new
-      BufferedImage(width, height, CANONICAL_DATA_TYPE)
-
-  private[scrimage] def _copy(awt: java.awt.Image) = {
-    require(awt != null, "Input image cannot be null")
-    val copy = _empty(awt)
-    val g2 = copy.getGraphics
-    g2.drawImage(awt, 0, 0, null)
-    g2.dispose()
-    new Image(copy)
-  }
 
   /**
    * Return a new Image with the given width and height, with all pixels set to the supplied colour.
