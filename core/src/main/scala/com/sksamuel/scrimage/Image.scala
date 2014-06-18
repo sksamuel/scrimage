@@ -52,7 +52,13 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
   def toBufferedImage = awt
 
   override def empty: Image = Image.empty(width, height)
-  override def copy = empty.overlay(this)
+  override def copy = {
+    val _copy = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
+    val g2 = _copy.getGraphics.asInstanceOf[Graphics2D]
+    g2.drawImage(awt, 0, 0, null)
+    g2.dispose()
+    Image(_copy)
+  }
 
   override def map(f: (Int, Int, Int) => Int): Image = {
     val target = copy
@@ -393,7 +399,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
    */
   def rotateRight = rotate(-Math.PI / 2)
 
-  def rotate(angle: Double): Image = {
+  private def rotate(angle: Double): Image = {
     val target = new BufferedImage(height, width, awt.getType)
     val g2 = target.getGraphics.asInstanceOf[Graphics2D]
     val offset = angle match {
