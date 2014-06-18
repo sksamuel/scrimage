@@ -63,13 +63,6 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
   private[scrimage] def mapInPlace(f: (Int, Int, Int) => Int): Unit = points
     .foreach(p => awt.setRGB(p._1, p._2, f(p._1, p._2, awt.getRGB(p._1, p._2))))
 
-  // replace this image's AWT data by drawing the given BufferedImage over the top
-  private[scrimage] def draw(target: BufferedImage) {
-    val g2 = awt.getGraphics.asInstanceOf[Graphics2D]
-    g2.drawImage(target, 0, 0, null)
-    g2.dispose()
-  }
-
   /**
    * Removes the given amount of pixels from each edge; like a crop operation.
    *

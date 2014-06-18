@@ -1,6 +1,7 @@
 package com.sksamuel.scrimage.filter
 
 import com.sksamuel.scrimage.{ Image, Filter }
+import sun.awt.resources.awt
 import thirdparty.misc.DaisyFilter
 import java.awt.Graphics2D
 import thirdparty.romainguy.BlendComposite
@@ -14,9 +15,11 @@ object OldPhotoFilter extends Filter {
 
     val daisy = new DaisyFilter()
     val filtered = daisy.filter(image.awt)
-    image.draw(filtered)
 
     val g2 = image.awt.getGraphics.asInstanceOf[Graphics2D]
+    g2.drawImage(filtered, 0, 0, null)
+    g2.dispose()
+
     g2.setComposite(BlendComposite.getInstance(BlendComposite.BlendingMode.INVERSE_COLOR_DODGE, 0.30f))
     g2.drawImage(film.scaleTo(image.width, image.height).awt, 0, 0, null)
     g2.dispose()
