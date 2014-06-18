@@ -507,12 +507,8 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
                background: Color = X11Colorlist.White): Image = {
     if (targetWidth == width && targetHeight == height) this
     else {
-      val target = Image.filled(targetWidth, targetHeight, background)
-      val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
       val (x, y) = position.calculateXY(targetWidth, targetHeight, width, height)
-      g2.drawImage(awt, x, y, null)
-      g2.dispose()
-      target
+      Image.filled(targetWidth, targetHeight, background).overlay(this, x, y)
     }
   }
 
