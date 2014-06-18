@@ -576,12 +576,12 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
     val h = if (height < targetHeight) targetHeight else height
     val x = ((w - width) / 2.0).toInt
     val y = ((h - height) / 2.0).toInt
-    padWith(x, y, w-width-x, h-height-y)
+    padWith(x, y, w - width - x, h - height - y)
   }
 
   /**
-  * Creates a new image by adding the given number of columns/rows on left, top, right and bottom
-  */
+   * Creates a new image by adding the given number of columns/rows on left, top, right and bottom
+   */
   def padWith(left: Int, top: Int, right: Int, bottom: Int, color: Color = Color.White): Image = {
     val w = width + left + right
     val h = height + top + bottom
@@ -593,22 +593,25 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
   }
 
   /**
-   * Creates a new image which is this image scaled so that it does not
-   * exceed the given bounds. The resultant image will retain the aspect ratio.
+   * Returns a new image that is scaled to fit the specified bounds while retaining the same aspect ratio
+   * as the original image. The dimensions of the returned image will be the same as the result of the
+   * scaling operation. That is, no extra padding will be added to match the bounded width and height. For an
+   * operation that will scale an image as well as add padding to fit the dimensions perfectly, then use fit()
    *
-   * Eg, requesting a bound of 200,200 on an image of 300,600 will
-   * result in a scale to 100,200.
+   * Requesting a bound of 200,200 on an image of 300,600 will result in a scale to 100,200.
+   * Eg, the original image will be scaled down to fit the bounds.
    *
-   * Eg2, requesting a bound of 150,200 on an image of 150,50 will
-   * result in a scale to 35,50
+   * Requesting a bound of 150,200 on an image of 150,150 will result in the same image being returned.
+   * Eg, the original image cannot be scaled up any further without exceeding the bounds.
    *
-   * Eg3, requesting a bound of 300,300 on an image of 100,150 will
-   * result in a scale to 200,300
+   * Requesting a bound of 300,300 on an image of 100,150 will result in a scale to 200,300.
+   *
+   * Requesting a bound of 100,1000 on an image of 50,50 will result in a scale to 100,100.
    *
    * @param boundedWidth the maximum width
    * @param boundedHeight the maximum height
    *
-   * @return A new image that is the result of the padding
+   * @return A new image that is the result of the binding.
    */
   def bound(boundedWidth: Int, boundedHeight: Int): Image = {
     val dimensions = ImageTools.dimensionsToFit((boundedWidth, boundedHeight), (width, height))
@@ -631,8 +634,6 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
   // See this Stack Overflow question to see why this is implemented this way.
   // http://stackoverflow.com/questions/7370925/what-is-the-standard-idiom-for-implementing-equals-and-hashcode-in-scala
   override def hashCode = imageState.hashCode
-
-
 
   override def equals(other: Any): Boolean =
     other match {
@@ -733,7 +734,7 @@ object Image {
             Some(apply(bufferedImage))
           } catch {
             case e: Exception => None
-              }
+          }
         }.getOrElse(throw new RuntimeException("Unparsable image"))
     }
   }
