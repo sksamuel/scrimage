@@ -6,7 +6,7 @@ object Build extends Build {
   val scrimageSettings = Seq(
     organization := "com.sksamuel.scrimage",
     version := "1.4.0",
-    scalaVersion := "2.11.0",
+    scalaVersion := "2.11.1",
     crossScalaVersions := Seq("2.10.4", "2.11.1"),
     publishMavenStyle := true,
     publishArtifact in Test := false,
