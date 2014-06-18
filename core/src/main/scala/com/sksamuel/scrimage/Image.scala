@@ -107,7 +107,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
    * view window. Eg, if translating by 10,5 then all pixels will move 10 to the right, and 5 down.
    * This would mean 10 columns and 5 rows of background added to the left and top.
    *
-   *  @return a new Image with this image translated.
+   * @return a new Image with this image translated.
    */
   def translate(x: Int, y: Int, background: Color = Color.White): Image = {
     filled(background).overlay(this, x, y)
@@ -778,7 +778,12 @@ object Image {
     require(awt != null, "Input image cannot be null")
     awt match {
       case buff: BufferedImage if buff.getType == CANONICAL_DATA_TYPE => new Image(buff)
-      case _ => Image(awt).copy
+      case _ =>
+        val buff = new BufferedImage(awt.getWidth(null), awt.getHeight(null), Image.CANONICAL_DATA_TYPE)
+        val g2 = buff.getGraphics.asInstanceOf[Graphics2D]
+        g2.drawImage(buff, 0, 0, null)
+        g2.dispose()
+        Image(buff)
     }
   }
 
