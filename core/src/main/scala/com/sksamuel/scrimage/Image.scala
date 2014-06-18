@@ -672,7 +672,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
   def writer[T <: ImageWriter](format: Format[T]): T = format.writer(this)
 
   // This tuple contains all the state that identifies this particular image.
-  private[scrimage] def imageState = (awt.getWidth, awt.getHeight, awt.getType, pixels.toList)
+  private[scrimage] def imageState = (width, height, awt.getType, pixels.toList)
 
   // See this Stack Overflow question to see why this is implemented this way.
   // http://stackoverflow.com/questions/7370925/what-is-the-standard-idiom-for-implementing-equals-and-hashcode-in-scala
