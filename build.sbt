@@ -1,13 +1,16 @@
 name := "scrimage"
 
-publishTo <<= version {
-  (v: String) =>
-    val nexus = "https://oss.sonatype.org/"
-    if (v.trim.endsWith("SNAPSHOT"))
-      Some("snapshots" at nexus + "content/repositories/snapshots")
-    else
-      Some("releases" at nexus + "service/local/staging/deploy/maven2")
+publishTo := {
+  val nexus = "https://oss.sonatype.org/"
+  if (isSnapshot.value)
+    Some("snapshots" at nexus + "content/repositories/snapshots")
+  else
+    Some("releases" at nexus + "service/local/staging/deploy/maven2")
 }
+
+useGpg := true
+
+pomIncludeRepository := { _ => false}
 
 pomExtra := {
   <url>https://github.com/sksamuel/scrimage</url>

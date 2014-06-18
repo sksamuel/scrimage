@@ -662,6 +662,18 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
   }
 
   /**
+   * Returns a new image that is the result of scaling this image but without changing the canvas size.
+   *
+   * This can be thought of as zooming in on a camera - the viewpane does not change but the image increases
+   * in size with the outer columns/rows being dropped as required.
+   *
+   * @param factor how much to zoom by
+   * @param method how to apply the scaling method
+   * @return the zoomed image
+   */
+  def zoom(factor: Double, method: ScaleMethod = ScaleMethod.Bicubic) = scale(factor, method).resizeTo(width, height)
+
+  /**
    * Creates a new Image with the same dimensions of this image and with
    * all the pixels initialized by the given color.
    *
