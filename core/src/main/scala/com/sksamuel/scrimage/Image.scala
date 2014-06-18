@@ -50,7 +50,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
   def toBufferedImage = awt
 
   override def empty: Image = Image.empty(width, height)
-  override def copy = Image._copy(awt)
+  override def copy = empty.overlay(this)
 
   override def map(f: (Int, Int, Int) => Int): Image = {
     val target = copy
@@ -769,7 +769,7 @@ object Image {
     require(awt != null, "Input image cannot be null")
     awt match {
       case buff: BufferedImage if buff.getType == CANONICAL_DATA_TYPE => new Image(buff)
-      case _ => _copy(awt)
+      case _ => Image(awt).copy
     }
   }
 
@@ -781,7 +781,7 @@ object Image {
    *
    * @return a new Image object.
    */
-  def apply(image: Image): Image = _copy(image.awt)
+  def apply(image: Image): Image = image.copy
 
   @deprecated
   private[scrimage] def _empty(awt: java.awt.Image): BufferedImage = _empty(awt.getWidth(null), awt.getHeight(null))
