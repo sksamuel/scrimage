@@ -88,11 +88,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
    * @return a new Image with the dimensions width-trim*2, height-trim*2
    */
   def trim(left: Int, top: Int, right: Int, bottom: Int): Image = {
-    val target = Image._empty(width - left - right, height - bottom - top)
-    val g2 = target.getGraphics.asInstanceOf[Graphics2D]
-    g2.drawImage(awt, -left, -top, null)
-    g2.dispose()
-    new Image(target)
+    Image.empty(width - left - right, height - bottom - top).overlay(this, -left, -top)
   }
 
   /**
@@ -787,7 +783,10 @@ object Image {
    */
   def apply(image: Image): Image = _copy(image.awt)
 
+  @deprecated
   private[scrimage] def _empty(awt: java.awt.Image): BufferedImage = _empty(awt.getWidth(null), awt.getHeight(null))
+
+  @deprecated
   private[scrimage] def _empty(width: Int, height: Int): BufferedImage = new
       BufferedImage(width, height, CANONICAL_DATA_TYPE)
 
