@@ -444,12 +444,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
     val scaled = scaleTo(coveredDimensions._1, coveredDimensions._2, scaleMethod)
     val x = ((targetWidth - coveredDimensions._1) / 2.0).toInt
     val y = ((targetHeight - coveredDimensions._2) / 2.0).toInt
-
-    val target = Image.empty(targetWidth, targetHeight)
-    val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
-    g2.drawImage(scaled.awt, x, y, null)
-    g2.dispose()
-    target
+    Image.empty(targetWidth, targetHeight).overlay(scaled, x, y)
   }
 
   /**
