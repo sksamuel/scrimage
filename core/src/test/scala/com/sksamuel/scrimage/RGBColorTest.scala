@@ -1,5 +1,6 @@
 package com.sksamuel.scrimage
 
+import com.sksamuel.scrimage.Color._
 import org.scalatest.{FlatSpec, OneInstancePerTest}
 
 /** @author Stephen Samuel */
@@ -30,5 +31,9 @@ class RGBColorTest extends FlatSpec with OneInstancePerTest {
     assert(awt2color(new java.awt.Color(255, 250, 255)) === Color(255, 250, 255))
     assert(awt2color(new java.awt.Color(14, 250, 255)) === Color(14, 250, 255))
     assert(awt2color(new java.awt.Color(255, 0, 0)) === Color(255, 0, 0))
+  }
+
+  it should "convert from int to color using correct bit shifting" in {
+    assert(Color(1088511) === Color(16, 155, 255, 0))
   }
 }

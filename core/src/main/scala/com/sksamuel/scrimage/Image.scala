@@ -543,14 +543,14 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
    * If the image to render exceeds the boundaries of the source image, then the excess
    * pixels will be ignored.
    *
-   * @param image the image to overlay.
+   * @param overlayImage the image to overlay.
    *
    * @return a new Image with the given image overlaid.
    */
-  def overlay(image: Image, x: Int = 0, y: Int = 0): Image = {
+  def overlay(overlayImage: Image, x: Int = 0, y: Int = 0): Image = {
     val _copy = copy
     val g2 = _copy.awt.getGraphics.asInstanceOf[Graphics2D]
-    g2.drawImage(awt, x, y, null)
+    g2.drawImage(overlayImage.awt, x, y, null)
     g2.dispose()
     _copy
   }

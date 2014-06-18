@@ -1,11 +1,11 @@
 package com.sksamuel.scrimage
 
-import org.scalatest.{BeforeAndAfter, FunSuite}
+import org.scalatest.{Matchers, BeforeAndAfter, FunSuite}
 import java.awt.image.BufferedImage
 import com.sksamuel.scrimage.Position.{TopRight, BottomRight, Center, TopLeft}
 
 /** @author Stephen Samuel */
-class ImageTest extends FunSuite with BeforeAndAfter {
+class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
 
   val in = getClass.getResourceAsStream("/com/sksamuel/scrimage/bird.jpg")
   val image = Image(in)
@@ -332,6 +332,17 @@ class ImageTest extends FunSuite with BeforeAndAfter {
     for ( x <- 0 until 100; y <- 0 until 100 ) assert(scaled.pixel(x, y) === resized.pixel(x, y))
     for ( x <- 0 until 200; y <- 100 until 200 ) assert(0xFFFFFFFF === resized.pixel(x, y))
     for ( x <- 100 until 200; y <- 0 until 100 ) assert(0xFFFFFFFF === resized.pixel(x, y))
+  }
+
+  test("overlay should retain source background") {
+    val image1 = Image.filled(100, 100, X11Colorlist.PaleVioletRed1)
+    val image2 = Image.filled(75, 75, X11Colorlist.GreenYellow)
+    val result = image1.overlay(image2, 10, 10)
+    result.color(0, 0) shouldBe X11Colorlist.PaleVioletRed1
+    result.color(10, 10) shouldBe X11Colorlist.GreenYellow
+    result.color(84, 84) shouldBe X11Colorlist.GreenYellow
+    result.color(85, 85) shouldBe X11Colorlist.PaleVioletRed1
+    result.color(99, 99) shouldBe X11Colorlist.PaleVioletRed1
   }
 
   test("enlarging a canvas with BottomRight should position the image to the bottom and to the right") {

@@ -53,7 +53,7 @@ trait ImageLike[R] {
   def col(x: Int): Array[Int] = pixels(x, 0, 1, height)
 
   /**
-   * Returns the pixel at the given coordinates as a integer in RGB format.
+   * Returns the pixel at the given coordinates as a integer in ARGB format.
    *
    * @param x the x coordinate of the pixel to grab
    * @param y the y coordinate of the pixel to grab
@@ -61,6 +61,13 @@ trait ImageLike[R] {
    * @return the ARGB value of the pixel
    */
   def pixel(x: Int, y: Int): Int
+
+  /**
+   * Returns the color at the given coordinates.
+   *
+   * @return the RGBColor value of the pixel
+   */
+  def color(x: Int, y: Int): RGBColor = pixel(x, y)
 
   /**
    * Returns the ARGB components for the pixel at the given coordinates

@@ -27,10 +27,10 @@ object Color {
 
   def apply(red: Int, green: Int, blue: Int, alpha: Int = 255): RGBColor = RGBColor(red, green, blue, alpha)
   def apply(argb: Int): RGBColor = {
-    val alpha = argb & 0xFF
-    val red = (argb << 8) & 0xFF
-    val green = (argb << 16) & 0xFF
-    val blue = (argb << 24) & 0xFF
+    val alpha = (argb >> 24) & 0xFF
+    val red = (argb >> 16) & 0xFF
+    val green = (argb >> 8) & 0xFF
+    val blue = argb & 0xFF
     RGBColor(red, green, blue, alpha)
   }
 
