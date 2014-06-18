@@ -799,8 +799,6 @@ object Image {
     new Image(copy)
   }
 
-  def filled(width: Int, height: Int, color: Int): Image = filled(width, height, Color(color))
-
   /**
    * Return a new Image with the given width and height, with all pixels set to the supplied colour.
    *
