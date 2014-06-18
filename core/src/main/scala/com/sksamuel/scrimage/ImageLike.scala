@@ -181,14 +181,6 @@ trait ImageLike[R] {
   /**
    * Counts the number of pixels with the given colour.
    *
-   * @param pixel the colour to detect.
-   * @return the number of pixels that matched the colour of the given pixel
-   */
-  def count(pixel: Int) = pixels.find(_ == pixel).size
-
-  /**
-   * Counts the number of pixels with the given colour.
-   *
    * @param color the colour to detect.
    * @return the number of pixels that matched the colour of the given pixel
    */
@@ -343,11 +335,12 @@ trait ImageLike[R] {
   def pixels: Array[Int]
 
   /**
+   * Returns true if a pixel with the given color exists.
    *
-   * @param pixel the pixel colour to look for.
+   * @param color the pixel colour to look for.
    * @return true if there exists at least one pixel that has the given pixels color
    */
-  def exists(pixel: Int) = pixels.exists(_ == pixel)
+  def exists(color: Color) = pixels.exists(argb => Color(argb) == color)
 
   override def equals(obj: Any): Boolean = obj match {
     case other: ImageLike[_] => other.pixels.sameElements(pixels)
