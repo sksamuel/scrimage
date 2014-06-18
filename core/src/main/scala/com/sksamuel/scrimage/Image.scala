@@ -409,14 +409,10 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
           scaleMethod: ScaleMethod = Bicubic,
           position: Position = Center): Image = {
     val fittedDimensions = ImageTools.dimensionsToFit((targetWidth, targetHeight), (width, height))
-    val scaled = scaleTo(fittedDimensions._1, fittedDimensions._2, scaleMethod)
-    val target = Image.filled(targetWidth, targetHeight, color)
-    val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
     val x = ((targetWidth - fittedDimensions._1) / 2.0).toInt
     val y = ((targetHeight - fittedDimensions._2) / 2.0).toInt
-    g2.drawImage(scaled.awt, x, y, null)
-    g2.dispose()
-    target
+    val scaled = scaleTo(fittedDimensions._1, fittedDimensions._2, scaleMethod)
+    Image.filled(targetWidth, targetHeight, color).overlay(scaled, x, y)
   }
 
   /**
