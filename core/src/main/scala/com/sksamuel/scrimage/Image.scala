@@ -517,6 +517,25 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
   }
 
   /**
+   * Returns a new Image that is the result of overlaying the supplied image over this image
+   * The x / y parameters determine where the (0,0) coordinate of the overlay should be placed.
+   *
+   * If the image to render exceeds the boundaries of the source image, then the excess
+   * pixels will be ignored.
+   *
+   * @param image the image to overlay.
+   *
+   * @return a new Image with the given image overlaid.
+   */
+  def overlay(image: Image, x: Int = 0, y: Int = 0): Image = {
+    val _copy = copy
+    val g2 = _copy.awt.getGraphics.asInstanceOf[Graphics2D]
+    g2.drawImage(awt, x, y, null)
+    g2.dispose()
+    _copy
+  }
+
+  /**
    * Crops an image by removing cols and rows that are composed only of a single
    * given color.
    *
@@ -583,9 +602,9 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
    * Creates a new image by adding the given number of columns/rows on left, top, right and bottom.
    *
    * @param left the number of columns/pixels to add on the left
-   * @param top the number of rows/pixesl to add to the top
-   * @param right the number of columns/pixesl to add on the right
-   * @param bottom the number of rows/pixesl to add to the bottom
+   * @param top the number of rows/pixels to add to the top
+   * @param right the number of columns/pixels to add on the right
+   * @param bottom the number of rows/pixels to add to the bottom
    * @param color the background of the padded area.
    *
    * @return A new image that is the result of the padding operation.
@@ -593,11 +612,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
   def padWith(left: Int, top: Int, right: Int, bottom: Int, color: Color = Color.White): Image = {
     val w = width + left + right
     val h = height + top + bottom
-    val filled = Image.filled(w, h, color)
-    val g = filled.awt.getGraphics
-    g.drawImage(awt, left, top, null)
-    g.dispose()
-    filled
+    Image.filled(w, h, color).overlay(this, left, top)
   }
 
   /**
@@ -785,7 +800,17 @@ object Image {
   }
 
   def filled(width: Int, height: Int, color: Int): Image = filled(width, height, Color(color))
-  def filled(width: Int, height: Int, color: Color): Image = {
+
+  /**
+   * Return a new Image with the given width and height, with all pixels set to the supplied colour.
+   *
+   * @param width the width of the new Image
+   * @param height the height of the new Image
+   * @param color the color to set all pixels to
+   *
+   * @return the new Image
+   */
+  def filled(width: Int, height: Int, color: Color = Color.White): Image = {
     val awt = new BufferedImage(width, height, Image.CANONICAL_DATA_TYPE)
     val filled = new Image(awt)
     filled._fill(color)
