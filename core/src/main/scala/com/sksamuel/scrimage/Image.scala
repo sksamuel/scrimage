@@ -64,6 +64,22 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
     .foreach(p => awt.setRGB(p._1, p._2, f(p._1, p._2, awt.getRGB(p._1, p._2))))
 
   /**
+   * Returns an image that is no larger than the given width and height.
+   *
+   * If the current image is already within the given dimensions then the same image will be returned.
+   * If not, then a scaled image, with the same aspect ratio as the original, and with dimensions
+   * inside the constraints will be returned.
+   *
+   * @param width the maximum width
+   * @param height the maximum height
+   * @return the constrained image.
+   */
+  def constrain(width: Int, height: Int): Image = {
+    if (this.width <= width && this.height <= height) this
+    else bound(width, height)
+  }
+
+  /**
    * Removes the given amount of pixels from each edge; like a crop operation.
    *
    * @param amount the number of pixels to trim from each edge
