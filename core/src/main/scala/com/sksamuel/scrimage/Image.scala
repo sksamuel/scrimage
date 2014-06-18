@@ -580,7 +580,15 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
   }
 
   /**
-   * Creates a new image by adding the given number of columns/rows on left, top, right and bottom
+   * Creates a new image by adding the given number of columns/rows on left, top, right and bottom.
+   *
+   * @param left the number of columns/pixels to add on the left
+   * @param top the number of rows/pixesl to add to the top
+   * @param right the number of columns/pixesl to add on the right
+   * @param bottom the number of rows/pixesl to add to the bottom
+   * @param color the background of the padded area.
+   *
+   * @return A new image that is the result of the padding operation.
    */
   def padWith(left: Int, top: Int, right: Int, bottom: Int, color: Color = Color.White): Image = {
     val w = width + left + right
