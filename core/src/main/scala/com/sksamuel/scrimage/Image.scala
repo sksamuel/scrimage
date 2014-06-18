@@ -786,7 +786,7 @@ object Image {
       case _ =>
         val buff = new BufferedImage(awt.getWidth(null), awt.getHeight(null), Image.CANONICAL_DATA_TYPE)
         val g2 = buff.getGraphics.asInstanceOf[Graphics2D]
-        g2.drawImage(buff, 0, 0, null)
+        g2.drawImage(awt, 0, 0, null)
         g2.dispose()
         Image(buff)
     }

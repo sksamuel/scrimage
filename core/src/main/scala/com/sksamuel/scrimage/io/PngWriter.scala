@@ -16,12 +16,12 @@
 
 package com.sksamuel.scrimage.io
 
+import java.awt.image.{BufferedImage, DataBufferInt, SinglePixelPackedSampleModel}
 import java.io.OutputStream
-import com.sksamuel.scrimage.Image
-import ar.com.hjg.pngj.{ImageLineInt, FilterType, ImageInfo}
-import java.awt.image.{DataBufferInt, BufferedImage, SinglePixelPackedSampleModel}
 import javax.imageio.ImageIO
-import sun.awt.resources.awt
+
+import ar.com.hjg.pngj.{FilterType, ImageInfo, ImageLineInt}
+import com.sksamuel.scrimage.Image
 
 /** @author Stephen Samuel */
 class PngWriter(image: Image, compressionLevel: Int) extends ImageWriter {

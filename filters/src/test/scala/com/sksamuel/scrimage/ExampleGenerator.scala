@@ -1,9 +1,9 @@
 package com.sksamuel.scrimage
 
-import com.sksamuel.scrimage.filter._
 import java.io.File
+
+import com.sksamuel.scrimage.filter._
 import org.apache.commons.io.FileUtils
-import java.awt.Color
 
 /** @author Stephen Samuel */
 object ExampleGenerator extends App {
