@@ -174,52 +174,45 @@ As you can see, ImgScalr is the fastest for a simple rescale, but Scrimage is mu
 
 ### Including Scrimage in your project
 
-Scrimage is available on maven central. There are two dependencies. 
-One is the core library, and one is the image filters. 
+Scrimage is available on maven central. There are several dependencies. 
+One is the core library which is required. The others are filters and canvas.
 They are split because the image filters is a large jar, 
 and most people just want the basic resize/scale/load/save functionality. 
-Only include the filters dependency if you need the image filters, otherwise just the core one is needed.
 
-The latest release is now available for Scala 2.11 as well as Scala 2.10
+Include the canvas dependency if you want to be able to do AWT style graphics manipulating (drawRect, etc).
+Include the filters dependency if you need the image filters.
 
+Scrimage is cross compiled for scala 2.11 and 2.10.
 
 If using SBT then you want:
 ```scala
-libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-core" % "1.3.21"
+libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-core" % "1.4.1"
 
-libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-filters" % "1.3.21"
+libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-canvas" % "1.4.1"
+
+libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-filters" % "1.4.1"
 ```
 
-Maven for Scala 2.10
-```xml
-<dependency>
-    <groupId>com.sksamuel.scrimage</groupId>
-    <artifactId>scrimage-core_2.10</artifactId>
-    <version>1.3.21</version>
-</dependency>
-<dependency>
-    <groupId>com.sksamuel.scrimage</groupId>
-    <artifactId>scrimage-filters_2.10</artifactId>
-    <version>1.3.21</version>
-</dependency>
-```
-
-or for Scala 2.11
+Maven:
 ```xml
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage-core_2.11</artifactId>
-    <version>1.3.21</version>
+    <version>1.4.1</version>
+</dependency>
+<dependency>
+    <groupId>com.sksamuel.scrimage</groupId>
+    <artifactId>scrimage-canvas_2.11</artifactId>
+    <version>1.4.1</version>
 </dependency>
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage-filters_2.11</artifactId>
-    <version>1.3.21</version>
+    <version>1.4.1</version>
 </dependency>
 ```
 
-
-Scrimage is available for both 2.10 and 2.11 RC1 onwards. If you're using maven you'll have to adjust the artifact id with the correct scala version. SBT will do this automatically when you use %% like in the example above.
+If you're using maven you'll have to adjust the artifact id with the correct scala version. SBT will do this automatically when you use %% like in the example above.
 
 
 ### Filters
