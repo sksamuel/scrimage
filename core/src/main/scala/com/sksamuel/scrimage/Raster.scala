@@ -50,11 +50,15 @@ trait Raster {
  */
 class IntARGBRaster(val width: Int,
                     val height: Int,
-                    model: Array[Int] = new Array[Int](width * height)) extends Raster {
+                    model: Array[Int]) extends Raster {
   override def read(x: Int, y: Int): Color = model(coordinateToOffset(x, y))
   override def write(x: Int, y: Int, color: Color): Unit = {
     val offset = coordinateToOffset(x, y)
     model(offset) = color.toInt
   }
   def copy: IntARGBRaster = new IntARGBRaster(width, height, model.clone())
+}
+
+object IntARGBRaster {
+  def apply(width: Int, height: Int) = new IntARGBRaster(width, height, new Array[Int](width * height))
 }
