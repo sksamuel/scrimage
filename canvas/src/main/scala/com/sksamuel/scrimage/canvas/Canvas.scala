@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.canvas
 
-import com.sksamuel.scrimage.{Color, X11Colorlist, Image}
+import com.sksamuel.scrimage.{Composite, Color, X11Colorlist, Image}
 import java.awt.{RenderingHints, Font, Graphics2D}
 
 /** @author Stephen Samuel */
@@ -114,6 +114,21 @@ case class Canvas(image: Image,
 
   def watermark(text: String): Canvas = watermark(text, 0.5)
   def watermark(text: String, alpha: Double): Canvas = image.filter(new Watermark(text, font, alpha))
+
+  /**
+   * Apply the given image with this image using the given composite.
+   * The original image is unchanged.
+   *
+   * @param composite the composite to use. See com.sksamuel.scrimage.Composite.
+   * @param applicative the image to apply with the composite.
+   *
+   * @return A new image with the given image applied using the given composite.
+   */
+  def composite(composite: Composite, applicative: Image): Image = {
+    val copy = this.copy
+    composite.apply(copy, applicative)
+    copy
+  }
 }
 
 object Canvas {
