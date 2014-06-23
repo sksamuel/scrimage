@@ -544,7 +544,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     val h = if (height < targetHeight) targetHeight else height
     val x = ((w - width) / 2.0).toInt
     val y = ((h - height) / 2.0).toInt
-    padWith(x, y, w - width - x, h - height - y)
+    padWith(x, y, w - width - x, h - height - y, color)
   }
 
   /**
