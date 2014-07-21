@@ -19,6 +19,11 @@ trait Raster {
   val model: Array[PixelType]
 
   /**
+   * Convert a pixel to a Color
+   */
+  def toColor(pixel: PixelType): Color
+
+  /**
    * Returns the color of the pixel at the given x,y coordinate.
    *
    * @param x x-coordinate
@@ -26,7 +31,12 @@ trait Raster {
    *
    * @return the pixel color
    */
-  def read(x: Int, y: Int): Color
+  def read(x: Int, y: Int): Color = toColor(model(coordinateToOffset(x, y)))
+
+  /**
+   * Convert a Color to a pixel
+   */
+  def fromColor(color: Color): PixelType
 
   /**
    * Updates (mutates) this raster by setting the color of the pixel for the given x,y coordinate.
@@ -35,7 +45,9 @@ trait Raster {
    * @param y y-coordinate
    * @param color the pixel color
    */
-  def write(x: Int, y: Int, color: Color): Unit
+  def write(x: Int, y: Int, color: Color): Unit =
+    model(coordinateToOffset(x, y)) = fromColor(color)
+
 
   protected def coordinateToOffset(x: Int, y: Int): Int = y * width + x
 
@@ -54,6 +66,8 @@ trait Raster {
    *
    */
   def patch(col: Int, row: Int, width: Int, height: Int): Raster
+
+  def extract: Array[Color] = model.map(toColor)
 }
 
 /**
@@ -68,20 +82,20 @@ class IntARGBRaster(val width: Int,
 
   type PixelType = Int
 
-  override def read(x: Int, y: Int): Color = model(coordinateToOffset(x, y))
-  override def write(x: Int, y: Int, color: Color): Unit = {
-    val offset = coordinateToOffset(x, y)
-    model(offset) = color.toInt
-  }
+  override def toColor(pixel: Int): Color = Color(pixel)
+  override def fromColor(color: Color): Int = color.toRGB.toInt
 
   def copy: IntARGBRaster = new IntARGBRaster(width, height, model.clone())
 
   override def patch(col: Int, row: Int, patchWidth: Int, patchHeight: Int): Raster = {
-    val copy = IntARGBRaster(patchWidth, patchHeight)
     // todo optimize by using system array copy to copy row by row instead of this pixel by pixel
-    for ( x1 <- 0 until patchWidth;
-          y1 <- 0 until patchHeight ) {
-      copy.write(x1 + col, y1 + row, read(x1, y1))
+    // for ( x1 <- 0 until patchWidth;
+    //       y1 <- 0 until patchHeight ) {
+    //   copy.write(x1 + col, y1 + row, read(x1, y1))
+    // }
+    val copy = IntARGBRaster(patchWidth, patchHeight)
+    for(y1 <- 0 until patchHeight){
+      System.arraycopy(model, coordinateToOffset(0, y1), copy, y1*patchWidth, patchWidth)
     }
     copy
   }
