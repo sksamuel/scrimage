@@ -25,6 +25,22 @@ case class Canvas(image: Image,
     g2
   }
 
+  def draw(drawables: Drawable*): Canvas = {
+    val copy = image.copy
+    val g = g2(copy)
+    drawables.foreach(d.draw(g))
+    g.dispose()
+    this.copy(image = copy)
+  }
+
+  def draw(drawables: Iterable[Drawable]): Canvas = {
+    val copy = image.copy
+    val g = g2(copy)
+    drawables.foreach(d.draw(g))
+    g.dispose()
+    this.copy(image = copy)
+  }
+
   def fill: Canvas = {
     val copy = image.copy
     val g = g2(copy)
