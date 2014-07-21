@@ -292,10 +292,14 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
   def filter(filters: Filter*): Image = filters.foldLeft(this)((image, filter) => image.filter(filter))
 
   def removeTransparency(color: java.awt.Color): Image = {
-    val rgb = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
-    val g = rgb.createGraphics()
-    g.drawImage(awt, 0, 0, color, null)
-    new Image(rgb)
+    def rmTransparency(c: RGBColor) : RGBColor = {
+      val r = (c.red * c.alpha + color.getRed * color.getAlpha * (255 - c.alpha) / 255) / 255
+      val g = (c.green * c.alpha + color.getGreen * color.getAlpha * (255 - c.alpha) / 255) / 255
+      val b = (c.blue * c.alpha + color.getBlue * color.getAlpha * (255 - c.alpha) / 255) / 255
+      RGBColor(r, g, b)
+    }
+    val rgbColors = raster.extract.map(_.toRGB).map(rmTransparency).map(_.argb)
+    new Image(new IntARGBRaster(width, height, rgbColors))
   }
 
   /**
