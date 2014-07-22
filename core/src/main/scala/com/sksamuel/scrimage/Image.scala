@@ -492,7 +492,6 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
    */
   def overlay(overlayImage: Image, x: Int = 0, y: Int = 0): Image = {
     val copy = raster.copy
-    println(s"$x -> ${x + overlayImage.width}, $y -> ${y + overlayImage.height}")
     for ( x1 <- 0 until overlayImage.width;
           y1 <- 0 until overlayImage.height ) {
       val x2 = x1 + x
@@ -563,7 +562,6 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     val h = if (height < targetHeight) targetHeight else height
     val x = ((w - width) / 2.0).toInt
     val y = ((h - height) / 2.0).toInt
-    println((targetWidth, targetHeight))
     padWith(x, y, w - width - x, h - height - y, color)
   }
 
@@ -581,9 +579,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
   def padWith(left: Int, top: Int, right: Int, bottom: Int, color: Color = Color.White): Image = {
     val w = width + left + right
     val h = height + top + bottom
-    println((w, h))
-    val blank = Image.filled(w, h, color)
-    blank.overlay(this, left, top)
+    Image.filled(w, h, color).overlay(this, left, top)
   }
 
   /**
