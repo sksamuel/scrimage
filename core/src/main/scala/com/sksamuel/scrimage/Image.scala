@@ -308,9 +308,11 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
    * @return The result of flipping this image horizontally.
    */
   def flipX: Image = {
-    val tx = AffineTransform.getScaleInstance(-1, 1)
-    tx.translate(-width, 0)
-    flip(tx)
+    val copy = raster.copy
+    for(x <- 0 until width; y <- 0 until height){
+      copy.write(x, y, raster.read(width - x, y))
+    }
+    new Image(copy)
   }
 
   /**
@@ -319,9 +321,11 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
    * @return The result of flipping this image vertically.
    */
   def flipY: Image = {
-    val tx = AffineTransform.getScaleInstance(1, -1)
-    tx.translate(0, -height)
-    flip(tx)
+    val copy = raster.copy
+    for(x <- 0 until width; y <- 0 until height){
+      copy.write(x, y, raster.read(x, height - y))
+    }
+    new Image(copy)
   }
 
   /**
