@@ -59,6 +59,16 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     Image(buff)
   }
 
+  @deprecated("java.awt is to be removed", "22 Jul 2014")
+  lazy val awt : BufferedImage = {
+    import java.awt.image.{ColorModel, DataBufferInt, Raster}
+    val cm = ColorModel.getRGBdefault()
+    val sm = cm.createCompatibleSampleModel(width, height)
+    val db = new DataBufferInt(raster.extract.map(_.toInt), width * height);
+    val wr = java.awt.image.Raster.createWritableRaster(sm, db, null);
+    new BufferedImage(cm, wr, false, null);
+  }
+
   override def empty: Image = Image.empty(width, height)
   override def copy: Image = new Image(raster.copy)
 
@@ -482,8 +492,9 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
    */
   def overlay(overlayImage: Image, x: Int = 0, y: Int = 0): Image = {
     val copy = raster.copy
-    for ( x1 <- 0 until raster.width;
-          y1 <- 0 until raster.height ) {
+    println(s"$x -> ${x + overlayImage.width}, $y -> ${y + overlayImage.height}")
+    for ( x1 <- 0 until overlayImage.width;
+          y1 <- 0 until overlayImage.height ) {
       val x2 = x1 + x
       val y2 = y1 + y
       if (0 <= x2 && x2 <= width && 0 <= y2 && y2 <= height)
@@ -552,6 +563,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     val h = if (height < targetHeight) targetHeight else height
     val x = ((w - width) / 2.0).toInt
     val y = ((h - height) / 2.0).toInt
+    println((targetWidth, targetHeight))
     padWith(x, y, w - width - x, h - height - y, color)
   }
 
@@ -569,7 +581,9 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
   def padWith(left: Int, top: Int, right: Int, bottom: Int, color: Color = Color.White): Image = {
     val w = width + left + right
     val h = height + top + bottom
-    Image.filled(w, h, color).overlay(this, left, top)
+    println((w, h))
+    val blank = Image.filled(w, h, color)
+    blank.overlay(this, left, top)
   }
 
   /**

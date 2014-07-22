@@ -22,7 +22,7 @@ import java.io.{File, InputStream}
 import java.awt.geom.AffineTransform
 
 /** @author Stephen Samuel */
-class MutableImage(awt: BufferedImage) extends Image(awt) {
+class MutableImage(raster: Raster) extends Image(raster) {
 
   override def clear(color: Color = X11Colorlist.White): Image = {
     val g2 = awt.getGraphics
@@ -32,7 +32,7 @@ class MutableImage(awt: BufferedImage) extends Image(awt) {
     this
   }
 
-  override protected[scrimage] def flip(tx: AffineTransform): MutableImage = {
+  protected[scrimage] def flip(tx: AffineTransform): MutableImage = {
     val op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR)
     val output = op.createCompatibleDestImage(awt, null)
     op.filter(awt, output)

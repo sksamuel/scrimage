@@ -11,7 +11,7 @@ package com.sksamuel.scrimage
  **/
 trait Raster {
 
-  def pixel(i: Int, i1: Int): Int = ???
+  def pixel(x: Int, y: Int): Int = ???
 
   type PixelType
   val width: Int
@@ -82,8 +82,10 @@ class IntARGBRaster(val width: Int,
 
   type PixelType = Int
 
+  override def pixel(x: Int, y: Int): Int = model(coordinateToOffset(x, y))
+
   override def toColor(pixel: Int): Color = Color(pixel)
-  override def fromColor(color: Color): Int = color.toRGB.toInt
+  override def fromColor(color: Color): PixelType = color.toRGB.toInt
 
   def copy: IntARGBRaster = new IntARGBRaster(width, height, model.clone())
 
@@ -107,3 +109,4 @@ object IntARGBRaster {
     new IntARGBRaster(width, height, Array(Nil.padTo(width * height, color.toInt): _*))
   }
 }
+

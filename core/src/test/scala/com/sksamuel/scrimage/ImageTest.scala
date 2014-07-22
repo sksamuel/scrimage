@@ -73,10 +73,11 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("pixel returns correct ARGB integer") {
-    val image = new Image(new BufferedImage(50, 30, BufferedImage.TYPE_INT_ARGB))
+    val image = Image.filled(50, 30, Color(0, 0, 0, 0))
     val g = image.awt.getGraphics
     g.setColor(java.awt.Color.RED)
     g.fillRect(10, 10, 10, 10)
+    g.fillRect(0, 0, 10, 10)
     g.dispose()
     assert(0 === image.pixel(0, 0))
     assert(0 === image.pixel(9, 10))
@@ -87,12 +88,12 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("pixel array has correct number of pixels") {
-    val image = new Image(new BufferedImage(50, 30, BufferedImage.TYPE_INT_ARGB))
+    val image = Image.filled(50, 30, Color(0, 0, 0, 0))
     assert(1500 === image.pixels.size)
   }
 
   test("pixel array has correct ARGB integer") {
-    val image = new Image(new BufferedImage(50, 30, BufferedImage.TYPE_INT_ARGB))
+    val image = Image.filled(50, 30, Color(0, 0, 0, 0))
     val g = image.awt.getGraphics
     g.setColor(java.awt.Color.RED)
     g.fillRect(10, 10, 10, 10)
