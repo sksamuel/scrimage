@@ -478,8 +478,8 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
    */
   def overlay(overlayImage: Image, x: Int = 0, y: Int = 0): Image = {
     val copy = raster.copy
-    for ( x1 <- 0 until raster.width;
-          y1 <- 0 until raster.height ) {
+    for ( x1 <- 0 until overlayImage.width;
+          y1 <- 0 until overlayImage.height ) {
       val x2 = x1 + x
       val y2 = y1 + y
       if (0 <= x2 && x2 <= width && 0 <= y2 && y2 <= height)
