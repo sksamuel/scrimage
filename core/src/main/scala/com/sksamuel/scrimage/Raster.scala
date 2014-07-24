@@ -13,7 +13,7 @@ package com.sksamuel.scrimage
  **/
 trait Raster {
 
-  def pixel(x: Int, y: Int): Int
+  def pixel(x: Int, y: Int): Int = ???
 
   type PixelType
   type RasterType <: Raster

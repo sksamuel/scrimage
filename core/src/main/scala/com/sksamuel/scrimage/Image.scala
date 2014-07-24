@@ -429,16 +429,10 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
   def scaleTo(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): Image = {
 
     scaleMethod match {
-      case FastScale =>
-        val target = Image.empty(targetWidth, targetHeight)
-        val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
-        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR)
-        g2.drawImage(awt, 0, 0, targetWidth, targetHeight, null)
-        g2.dispose()
-        target
+      case FastScale => new NNInterpolator(this).scaleTo(targetWidth, targetHeight)
+      case Bilinear => new BilinearInterpolator(this).scaleTo(targetWidth, targetHeight)
       case _ =>
         val method = scaleMethod match {
-          case Bilinear => ResampleFilters.triangleFilter
           case BSpline => ResampleFilters.bSplineFilter
           case Lanczos3 => ResampleFilters.lanczos3Filter
           case _ => ResampleFilters.biCubicFilter

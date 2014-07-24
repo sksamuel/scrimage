@@ -476,24 +476,41 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
                           0xff7f0000, 0xff1fffdf, 0xffff3f00, 0xff004fff,
                           0xff00008f, 0xff004fff, 0xffefff0f, 0xff00008f
                           )
+
   test("scale to with NearestNeighbor works:") {
     val image = new Image(new IntARGBRaster(4, 4, colors))
-    val scaled = new NearestNeighbor(image).scaleTo(200, 100)
+    val scaled = new NNInterpolator(image).scaleTo(200, 100)
     image.write(new java.io.File("small_nn.png"))
     scaled.write(new java.io.File("big_nn.png"))
   }
 
-  test("scale to with BiLinear works:") {
+  test("scale to with Bilinear works:") {
     val image = new Image(new IntARGBRaster(4, 4, colors))
-    val scaled = new Bilinear(image).scaleTo(300, 300)
+    val scaled = new BilinearInterpolator(image).scaleTo(300, 300)
   }
 
   test("scale to with BiLinear works there and back:") {
     val image = new Image(new IntARGBRaster(4, 4, colors))
-    val scaled = new Bilinear(image).scaleTo(300, 300)
-    val resized = new Bilinear(scaled).scaleTo(4, 4)
+    val scaled = new BilinearInterpolator(image).scaleTo(300, 300)
+    val resized = new BilinearInterpolator(scaled).scaleTo(4, 4)
     for( (p0, p1) <- image.raster.model.zip(resized.raster.model)){
       assert(p0 == p1)
     }
+  }
+
+  test("scale to with Bicubic works:") {
+    val image = new Image(new IntARGBRaster(4, 4, colors))
+    val scaled = new BicubicInterpolator(image).scaleTo(300, 300)
+    scaled.write(new java.io.File("big_cubic.png"))
+  }
+
+  test("scale to with Bicubic works there and back:") {
+    val image = new Image(new IntARGBRaster(4, 4, colors))
+    val scaled = new BicubicInterpolator(image).scaleTo(300, 300)
+    val resized = new BicubicInterpolator(scaled).scaleTo(4, 4)
+    for( (p0, p1) <- image.raster.model.zip(resized.raster.model)){
+      assert(p0 == p1)
+    }
+    resized.write(new java.io.File("small_small_cubic.png"))
   }
 }
