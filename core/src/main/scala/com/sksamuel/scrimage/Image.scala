@@ -320,7 +320,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
   def flipX: Image = {
     val copy = raster.copy
     for(x <- 0 until width; y <- 0 until height){
-      copy.write(x, y, raster.read(width - x, y))
+      copy.write(x, y, raster.read(width - 1 - x, y))
     }
     new Image(copy)
   }
@@ -333,7 +333,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
   def flipY: Image = {
     val copy = raster.copy
     for(x <- 0 until width; y <- 0 until height){
-      copy.write(x, y, raster.read(x, height - y))
+      copy.write(x, y, raster.read(x, height - 1 - y))
     }
     new Image(copy)
   }
@@ -496,7 +496,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
           y1 <- 0 until overlayImage.height ) {
       val x2 = x1 + x
       val y2 = y1 + y
-      if (0 <= x2 && x2 <= width && 0 <= y2 && y2 <= height)
+      if (0 <= x2 && x2 < width && 0 <= y2 && y2 < height)
         copy.write(x2, y2, overlayImage.raster.read(x1, y1))
     }
     new Image(copy)
