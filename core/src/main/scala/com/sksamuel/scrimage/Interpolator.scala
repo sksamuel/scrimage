@@ -96,7 +96,9 @@ class BicubicInterpolator(val image: Image) extends Interpolator {
     }
 
     def q(x1: Float, x2: Float, x3: Float)(a_1: Float, a0: Float, a1: Float, a2: Float) = {
-        a0 + 0.5f*x1*(a1-a_1) + x2*(a_1 - 2.5f*a0 + 2f*a1 - a2) + x3*(a_1 + 1.5f*(a0-a1))
+        (a0 + 0.5f*x1*(a1-a_1)
+            + x2*(a_1 - 2.5f*a0 + 2f*a1 - 0.5f*a2)
+            + x3*(0.5f*(a2-a_1) + 1.5f*(a0-a1)))
     }
 
 
