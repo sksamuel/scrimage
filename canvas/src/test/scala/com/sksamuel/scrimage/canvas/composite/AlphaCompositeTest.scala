@@ -1,7 +1,8 @@
-package com.sksamuel.scrimage.composite
+package com.sksamuel.scrimage.canvas.composite
 
 import org.scalatest.{OneInstancePerTest, BeforeAndAfter, FunSuite}
 import com.sksamuel.scrimage.Image
+import com.sksamuel.scrimage.canvas.Canvas._
 
 /** @author Stephen Samuel */
 class AlphaCompositeTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {

@@ -1,6 +1,7 @@
-package com.sksamuel.scrimage.composite
+package com.sksamuel.scrimage.canvas.composite
 
 import com.sksamuel.scrimage.{Format, Composite, Image}
+import com.sksamuel.scrimage.canvas.Canvas._
 import java.io.File
 import org.apache.commons.io.FileUtils
 

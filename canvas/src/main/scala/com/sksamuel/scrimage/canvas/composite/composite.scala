@@ -13,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.composite
+package com.sksamuel.scrimage.canvas.composite
 
 import com.sksamuel.scrimage.{Image, Composite}
 import java.awt.Graphics2D
@@ -33,8 +33,7 @@ class AverageComposite(alpha: Double) extends BlenderComposite(BlendComposite.Bl
 class BlueComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.BLUE, alpha.toFloat)
 class ColorComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.COLOR, alpha.toFloat)
 class ColorBurnComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.COLOR_BURN, alpha.toFloat)
-class ColorDodgeComposite(alpha: Double)
-  extends BlenderComposite(BlendComposite.BlendingMode.COLOR_DODGE, alpha.toFloat)
+class ColorDodgeComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.COLOR_DODGE, alpha.toFloat)
 class DifferenceComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.DIFFERENCE, alpha.toFloat)
 class GreenComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.GREEN, alpha.toFloat)
 class GlowComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.GLOW, alpha.toFloat)

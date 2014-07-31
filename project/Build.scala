@@ -11,7 +11,7 @@ object Build extends Build {
     publishMavenStyle := true,
     publishArtifact in Test := false,
     parallelExecution in Test := false,
-    scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8"),
+    scalacOptions := Seq("-unchecked", "-encoding", "utf8"),
     javacOptions ++= Seq("-source", "1.6", "-target", "1.6"),
     libraryDependencies ++= Seq(
       "org.slf4j"                     % "slf4j-api"             % "1.7.5",

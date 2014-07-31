@@ -1,7 +1,8 @@
 package com.sksamuel.scrimage.canvas
 
-import com.sksamuel.scrimage.{Composite, Color, X11Colorlist, Image}
+import com.sksamuel.scrimage.{Composite, Color, X11Colorlist, Image, IntARGBRaster}
 import java.awt.{RenderingHints, Font, Graphics2D}
+import java.awt.image.BufferedImage
 
 /** @author Stephen Samuel */
 case class Canvas(image: Image,
@@ -30,7 +31,7 @@ case class Canvas(image: Image,
     val g = g2(copy)
     drawables.foreach(_.draw(g))
     g.dispose()
-    this.copy(image = copy)
+    imageFromAWT(copy.awt)
   }
 
   def draw(drawables: Iterable[Drawable]): Canvas = {
@@ -38,7 +39,15 @@ case class Canvas(image: Image,
     val g = g2(copy)
     drawables.foreach(_.draw(g))
     g.dispose()
-    this.copy(image = copy)
+    imageFromAWT(copy.awt)
+  }
+
+  // TODO: check the type of the given image
+  def imageFromAWT(image: BufferedImage) = {
+    val model = Array.ofDim[Int](image.getWidth * image.getHeight)
+    image.getRGB(0, 0, image.getWidth, image.getHeight, model, 0, image.getWidth)
+    val raster = new IntARGBRaster(image.getWidth, image.getHeight, model)
+    new Image(raster)
   }
 
   def watermark(text: String): Canvas = watermark(text, 0.5)
@@ -56,7 +65,7 @@ case class Canvas(image: Image,
   def composite(composite: Composite, applicative: Image): Image = {
     val copy = image.copy
     composite.apply(copy, applicative)
-    copy
+    imageFromAWT(copy.awt)
   }
 }
 
