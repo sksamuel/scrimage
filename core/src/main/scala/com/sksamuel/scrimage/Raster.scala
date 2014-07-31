@@ -11,17 +11,14 @@ package com.sksamuel.scrimage
  **/
 trait Raster {
 
-  def pixel(x: Int, y: Int): Int = ???
-
-  type PixelType
+  val colorModel : ColorModel
+  // type PixelType = colorModel.PixelType
   val width: Int
   val height: Int
-  val model: Array[PixelType]
+  val model: Array[colorModel.PixelType]
 
-  /**
-   * Convert a pixel to a Color
-   */
-  def toColor(pixel: PixelType): Color
+  def pixel(x: Int, y: Int): Int = ???
+
 
   /**
    * Returns the color of the pixel at the given x,y coordinate.
@@ -31,12 +28,8 @@ trait Raster {
    *
    * @return the pixel color
    */
-  def read(x: Int, y: Int): Color = toColor(model(coordinateToOffset(x, y)))
-
-  /**
-   * Convert a Color to a pixel
-   */
-  def fromColor(color: Color): PixelType
+  def read(x: Int, y: Int): Color =
+    colorModel.toColor(model(coordinateToOffset(x, y)))
 
   /**
    * Updates (mutates) this raster by setting the color of the pixel for the given x,y coordinate.
@@ -46,7 +39,7 @@ trait Raster {
    * @param color the pixel color
    */
   def write(x: Int, y: Int, color: Color): Unit =
-    model(coordinateToOffset(x, y)) = fromColor(color)
+    model(coordinateToOffset(x, y)) = colorModel.fromColor(color)
 
 
   protected def coordinateToOffset(x: Int, y: Int): Int = y * width + x
@@ -67,7 +60,9 @@ trait Raster {
    */
   def patch(col: Int, row: Int, width: Int, height: Int): Raster
 
-  def extract: Array[Color] = model.map(toColor)
+  def getComp(n: Int): Array[Int] = model.map(colorModel.getComp(n))
+
+  def extract: Array[Color] = model.map(colorModel.toColor)
 }
 
 /**
@@ -80,12 +75,9 @@ class IntARGBRaster(val width: Int,
                     val height: Int,
                     val model: Array[Int]) extends Raster {
 
-  type PixelType = Int
+  val colorModel = ARGBColorModel
 
   override def pixel(x: Int, y: Int): Int = model(coordinateToOffset(x, y))
-
-  override def toColor(pixel: Int): Color = Color(pixel)
-  override def fromColor(color: Color): PixelType = color.toRGB.toInt
 
   def copy: IntARGBRaster = new IntARGBRaster(width, height, model.clone())
 
