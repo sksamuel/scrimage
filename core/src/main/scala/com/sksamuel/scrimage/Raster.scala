@@ -12,7 +12,6 @@ package com.sksamuel.scrimage
 trait Raster {
 
   val colorModel : ColorModel
-  // type PixelType = colorModel.PixelType
   val width: Int
   val height: Int
   val model: Array[colorModel.PixelType]
@@ -98,7 +97,8 @@ class IntARGBRaster(val width: Int,
 object IntARGBRaster {
   def apply(width: Int, height: Int) = new IntARGBRaster(width, height, new Array[Int](width * height))
   def apply(width: Int, height: Int, color: Color) = {
-    new IntARGBRaster(width, height, Array(Nil.padTo(width * height, color.toInt): _*))
+    val c = color.toRGB.argb
+    new IntARGBRaster(width, height, Array.fill[Int](width * height)(c))
   }
 }
 
