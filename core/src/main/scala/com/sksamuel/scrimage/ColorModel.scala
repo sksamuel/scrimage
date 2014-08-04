@@ -2,9 +2,8 @@ package com.sksamuel.scrimage
 
 trait ColorModel {
     type PixelType
-
     def n_comp: Int
-    def getComp(comp: Int)(pixel: PixelType) : Int
+    def getComp(comp: Int, pixel: PixelType) : Int
     def unpack(pixel: PixelType) : Array[Int]
     def pack(comps :Array[Int]) : PixelType
     def toARGB(pixel: PixelType): Int
@@ -12,12 +11,17 @@ trait ColorModel {
     def toColor(pixel: PixelType): Color
     def fromColor(color: Color): PixelType
     def zipComp(px: PixelType)(comp: Int)(c: Int) : PixelType
+    def newDataModel(size: Int) : Array[PixelType]
 }
 
-object ARGBColorModel extends ColorModel {
+trait IntColorModel extends ColorModel {
     type PixelType = Int
+    def newDataModel(size: Int) = Array.ofDim[Int](size)
+}
+
+trait ARGBColorModel extends IntColorModel {
     val n_comp = 4
-    def getComp(comp: Int)(pixel: PixelType): Int = (pixel >> (24 - comp * 8)) & 0xff
+    def getComp(comp: Int, pixel: PixelType): Int = (pixel >> (24 - comp * 8)) & 0xff
     def pack(comps: Array[Int]): PixelType =
         comps(0) << 24 | comps(1) << 16 | comps(2) << 8 | comps(3)
     def unpack(pixel: PixelType) : Array[Int] =
@@ -29,10 +33,9 @@ object ARGBColorModel extends ColorModel {
     def zipComp(px: PixelType)(comp: Int)(c: Int) = px | c << (24 - comp * 8)
 }
 
-object RGBColorModel extends ColorModel {
-    type PixelType = Int
+trait RGBColorModel extends IntColorModel {
     val n_comp = 3
-    def getComp(comp: Int)(pixel: PixelType): Int = (pixel >> (16 - comp * 8)).toByte
+    def getComp(comp: Int, pixel: PixelType): Int = (pixel >> (16 - comp * 8)).toByte
     def pack(comps: Array[Int]): PixelType =
         comps(0) << 16 | comps(1) << 8 | comps(2)
     def unpack(pixel: PixelType) : Array[Int] =
@@ -48,13 +51,14 @@ trait ByteColorModel extends ColorModel {
     type PixelType = Byte
     val n_comp = 1
     def toInt(b: Byte) = if(b < 0) 256 + b else b
-    def getComp(comp: Int)(pixel: PixelType): Int = toInt(pixel)
+    def getComp(comp: Int, pixel: PixelType): Int = toInt(pixel)
     def pack(comps: Array[Int]): PixelType = comps(0).toByte
     def unpack(pixel: PixelType) : Array[Int] = Array(toInt(pixel))
     def zipComp(pixel: PixelType)(comp: Int)(c: Int) = (pixel | c).toByte
+    def newDataModel(size: Int) = Array.ofDim[PixelType](size)
 }
 
-object GreyColorModel extends ByteColorModel {
+trait GreyColorModel extends ByteColorModel {
     def toARGB(pixel: PixelType): Int = toInt(pixel) * 0x00010101 | 0xff000000
     def fromARGB(c: Int): PixelType = fromColor(Color(c))
     def toColor(pixel: PixelType) = Color(toARGB(pixel))
@@ -64,9 +68,9 @@ object GreyColorModel extends ByteColorModel {
     }
 }
 
-class RGBLayerColorModel(layer: Int) extends ByteColorModel {
-    def toARGB(pixel: PixelType): Int = pixel << (16 - layer * 8) | 0xff000000
-    def fromARGB(c: Int): PixelType = (c >> (16 - layer * 8)).toByte
-    def toColor(pixel: PixelType) = Color(toARGB(pixel))
-    def fromColor(c: Color) = fromARGB(c.toRGB.argb)
-}
+// trait RGBLayerColorModel(layer: Int) extends ByteColorModel {
+//     def toARGB(pixel: PixelType): Int = pixel << (16 - layer * 8) | 0xff000000
+//     def fromARGB(c: Int): PixelType = (c >> (16 - layer * 8)).toByte
+//     def toColor(pixel: PixelType) = Color(toARGB(pixel))
+//     def fromColor(c: Color) = fromARGB(c.toRGB.argb)
+// }

@@ -9,14 +9,17 @@ package com.sksamuel.scrimage
  *
  * @author Stephen Samuel
  **/
-trait Raster {
+trait Raster extends ColorModel { self: ColorModel =>
 
-  val colorModel : ColorModel
   val width: Int
   val height: Int
-  val model: Array[colorModel.PixelType]
 
-  def pixel(x: Int, y: Int): Int = ???
+  override type PixelType
+  val model: Array[PixelType]
+
+  type RasterType <: Raster
+
+  def pixel(x: Int, y: Int): Int = toARGB(model(coordinateToOffset(x, y)))
 
 
   /**
@@ -28,7 +31,7 @@ trait Raster {
    * @return the pixel color
    */
   def read(x: Int, y: Int): Color =
-    colorModel.toColor(model(coordinateToOffset(x, y)))
+    toColor(model(coordinateToOffset(x, y)))
 
   /**
    * Updates (mutates) this raster by setting the color of the pixel for the given x,y coordinate.
@@ -38,7 +41,7 @@ trait Raster {
    * @param color the pixel color
    */
   def write(x: Int, y: Int, color: Color): Unit =
-    model(coordinateToOffset(x, y)) = colorModel.fromColor(color)
+    model(coordinateToOffset(x, y)) = fromColor(color)
 
 
   protected def coordinateToOffset(x: Int, y: Int): Int = y * width + x
@@ -49,7 +52,7 @@ trait Raster {
    *
    * @return the copied Raster.
    */
-  def copy: Raster
+  def copy: RasterType = copyWith(width, height, model.clone())
 
   /**
    * Returns a new Raster that is a subset of this Raster.
@@ -57,12 +60,31 @@ trait Raster {
    * @return a new Raster subset
    *
    */
-  def patch(col: Int, row: Int, width: Int, height: Int): Raster
+  def patch(col: Int, row: Int, patchWidth: Int, patchHeight: Int): RasterType
 
-  def getComp(n: Int): Array[Int] = model.map(colorModel.getComp(n))
+  /**
+   * Returns a new Raster using the same color model but with the given width, height and data
+   * @type {[type]}
+   */
+  def copyWith(width: Int, height: Int, data: Array[PixelType]): RasterType
 
-  def extract: Array[Color] = model.map(colorModel.toColor)
+
+  def getComp(n: Int): Array[Int] = model.map(c => self.getComp(n, c))
+
+  // def n_comp: Int = self.n_comp
+  // def unpack(pixel: PixelType) : Array[Int] = self.unpack
+  // def pack(comps :Array[Int]) : PixelType = self.pack
+
+  def extract: Array[Color] = model.map(toColor)
+
+  def getDataElements(x:Int, y:Int, w:Int, h:Int, out:Array[PixelType]): Array[PixelType] = {
+    for(i <- y until y + h){
+      System.arraycopy(model, coordinateToOffset(x, y), out, y*w, w)
+    }
+    return out
+  }
 }
+
 
 /**
  * Implementation of a Raster that packs ARGB information into a single integer.
@@ -70,35 +92,30 @@ trait Raster {
  * @param width number of columns in the raster
  * @param height number of rows in the raster
  */
-class IntARGBRaster(val width: Int,
-                    val height: Int,
-                    val model: Array[Int]) extends Raster {
+class IntARGBRaster(val width: Int, val height: Int, val model: Array[Int])
+        extends Raster with ARGBColorModel{
 
-  val colorModel = ARGBColorModel
+    type RasterType = IntARGBRaster
 
-  override def pixel(x: Int, y: Int): Int = model(coordinateToOffset(x, y))
-
-  def copy: IntARGBRaster = new IntARGBRaster(width, height, model.clone())
-
-  override def patch(col: Int, row: Int, patchWidth: Int, patchHeight: Int): Raster = {
-    // todo optimize by using system array copy to copy row by row instead of this pixel by pixel
-    // for ( x1 <- 0 until patchWidth;
-    //       y1 <- 0 until patchHeight ) {
-    //   copy.write(x1 + col, y1 + row, read(x1, y1))
-    // }
-    val copy = IntARGBRaster(patchWidth, patchHeight)
-    for(y1 <- 0 until patchHeight){
-      System.arraycopy(model, coordinateToOffset(0, y1), copy, y1*patchWidth, patchWidth)
+    def copyWith(width: Int, height: Int, data: Array[Int]): RasterType = {
+        new IntARGBRaster(width, height, data)
     }
-    copy
-  }
+
+    def patch(col: Int, row: Int, patchWidth: Int, patchHeight: Int): RasterType = {
+        val copy = newDataModel(patchWidth * patchHeight)
+        for(y1 <- 0 until patchHeight){
+            System.arraycopy(model, coordinateToOffset(0, y1 + row), copy, y1*patchWidth, patchWidth)
+        }
+        copyWith(patchWidth, patchHeight, copy)
+    }
 }
 
 object IntARGBRaster {
   def apply(width: Int, height: Int) = new IntARGBRaster(width, height, new Array[Int](width * height))
   def apply(width: Int, height: Int, color: Color) = {
-    val c = color.toRGB.argb
-    new IntARGBRaster(width, height, Array.fill[Int](width * height)(c))
+      val c = color.toRGB.argb
+      new IntARGBRaster(width, height, Array.fill[Int](width * height)(c))
   }
 }
+
 

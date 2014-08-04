@@ -436,6 +436,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
         g2.drawImage(awt, 0, 0, targetWidth, targetHeight, null)
         g2.dispose()
         target
+      case Bicubic => ResampleOpScala.scaleTo(ResampleOpScala.bicubicFilter)(this)(targetWidth, targetHeight, Image.SCALE_THREADS)
       case _ =>
         val method = scaleMethod match {
           case Bilinear => ResampleFilters.triangleFilter
