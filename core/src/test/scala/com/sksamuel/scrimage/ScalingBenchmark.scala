@@ -1,5 +1,6 @@
 package com.sksamuel.scrimage
 
+import com.sksamuel.scrimage.scaling.ResampleOpScala
 import org.apache.commons.io.IOUtils
 import javax.imageio.ImageIO
 import java.io.ByteArrayInputStream

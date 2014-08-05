@@ -25,6 +25,7 @@ import javax.imageio.ImageIO
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.io.ImageWriter
+import com.sksamuel.scrimage.scaling.ResampleOpScala
 import org.apache.commons.io.{FileUtils, IOUtils}
 import sun.awt.resources.awt
 import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
