@@ -18,7 +18,8 @@ libraryDependencies ++= Seq(
   "commons-io"                    % "commons-io"              % "2.4",
   "com.drewnoakes"                % "metadata-extractor"      % "2.6.2",
   "ar.com.hjg"                    % "pngj"                    % "2.0.1",
-  "org.apache.commons"            % "commons-lang3"           % "3.3.2"           % "test"
+  "org.apache.commons"            % "commons-lang3"           % "3.3.2"           % "test",
+  "com.sksamuel.scam"             %% "scam"                   % "0.5.2"           % "test"
 )
 
 

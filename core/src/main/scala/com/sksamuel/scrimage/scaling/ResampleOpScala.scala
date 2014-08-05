@@ -2,9 +2,15 @@ package com.sksamuel.scrimage.scaling
 
 import com.sksamuel.scrimage.Image
 
+import scala.concurrent.{Await, Future}
+import scala.concurrent.duration._
+
 object ResampleOpScala {
 
+  import scala.concurrent.ExecutionContext.Implicits.global
+
   private val MAX_CHANNEL_VALUE = 255
+  private val MAX_WAIT_PER_PASS = 10.minutes
 
   case class ResampFilter(samplingRadius: Int, f: Float => Float) {
     def apply(x: Float) = f(x)
@@ -134,29 +140,14 @@ object ResampleOpScala {
         i += 1
       }
     }
+
     SubSamplingData(arrN, arrPixel, arrWeight, numContributors)
   }
 
-  private[this] def waitForAllThreads(threads: Array[Thread]) {
-    try {
-      for (t <- threads) {
-        t.join(java.lang.Long.MAX_VALUE)
-
-      }
-    } catch {
-      case e: InterruptedException =>
-        e.printStackTrace()
-        throw new RuntimeException(e)
-    }
-  }
-
   def scaleTo(filter: ResampFilter)(img: Image)(dstWidth: Int, dstHeight: Int, numberOfThreads: Int = 0): Image = {
-    if (dstWidth < 3 || dstHeight < 3) {
-      throw new RuntimeException("Error doing rescale. Target size was " + dstWidth + "x" +
-        dstHeight +
-        " but must be" +
-        " at least 3x3.")
-    }
+    require(dstWidth >= 3 && dstHeight >= 3,
+      s"Error doing rescale. Target was $dstWidth x $dstHeight but must be at least 3x3.")
+
     val nrChannels = img.raster.n_comp
     assert(nrChannels > 0)
     val srcWidth = img.width
@@ -172,46 +163,32 @@ object ResampleOpScala {
     val outRaster = srcRaster.empty(dstWidth, dstHeight)
     val middleRaster = srcRaster.empty(dstWidth, srcHeight)
 
-    for (comp <- 0 until srcRaster.n_comp) {
-      val threads = Array.ofDim[Thread](numberOfThreads - 1)
+    for ( comp <- 0 until srcRaster.n_comp ) {
       val workPixels = Array.ofDim[Byte](srcHeight * dstWidth)
-      for (i <- 1 until numberOfThreads) {
+      val horizontals = for ( i <- 0 until numberOfThreads ) yield {
         val finalI = i
-        threads(i - 1) = new Thread(new Runnable() {
-          def run() {
-            horizontallyFromSrcToWork(
-              srcPixels(comp), workPixels,
-              srcWidth, srcHeight, dstWidth,
-              finalI, numberOfThreads, hSampling)
-          }
-        })
-        threads(i - 1).start()
+        Future {
+          horizontallyFromSrcToWork(
+            srcPixels(comp), workPixels,
+            srcWidth, srcHeight, dstWidth,
+            finalI, numberOfThreads, hSampling)
+        }
       }
-      horizontallyFromSrcToWork(
-        srcPixels(comp), workPixels,
-        srcWidth, srcHeight, dstWidth,
-        0, numberOfThreads, hSampling)
-      waitForAllThreads(threads)
+      Await.ready(Future sequence horizontals, MAX_WAIT_PER_PASS)
+
       val outPixels = Array.ofDim[Byte](dstWidth * dstHeight)
-      for (i <- 1 until numberOfThreads) {
+      val verticles = for ( i <- 0 until numberOfThreads ) yield {
         val finalI = i
-        threads(i - 1) = new Thread(new Runnable() {
-          def run() {
-            verticalFromWorkToDst(
-              workPixels, outPixels,
-              dstWidth, dstHeight,
-              finalI, numberOfThreads,
-              vSampling)
-          }
-        })
-        threads(i - 1).start()
+        Future {
+          verticalFromWorkToDst(
+            workPixels, outPixels,
+            dstWidth, dstHeight,
+            finalI, numberOfThreads,
+            vSampling)
+        }
       }
-      verticalFromWorkToDst(
-        workPixels, outPixels,
-        dstWidth, dstHeight,
-        0, numberOfThreads,
-        vSampling)
-      waitForAllThreads(threads)
+      Await.ready(Future sequence verticles, MAX_WAIT_PER_PASS)
+
       outRaster.foldComp(comp)(outPixels)
     }
     new Image(outRaster)
@@ -231,19 +208,21 @@ object ResampleOpScala {
     var index = 0
     var max = 0
     var sample = 0f
+
     while (y < srcHeight) {
       x = dstWidth - 1
       j = 0
       while (x >= 0) {
         max = hSampling.arrN(x)
-        index = x * hSampling.numContributors
         sample = 0
         j = max - 1
+        index = x * hSampling.numContributors
         while (j >= 0) {
           sample += (srcPixels(y * srcWidth + hSampling.arrPixel(index)) & 0xff) * hSampling.arrWeight(index)
           index += 1
           j -= 1
         }
+
         workPixels(y * dstWidth + x) = toByte(sample)
         x -= 1
       }
