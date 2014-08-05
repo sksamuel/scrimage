@@ -4,7 +4,7 @@ trait ColorModel {
     type PixelType
     def n_comp: Int
     def getComp(comp: Int, pixel: PixelType) : Int
-    def unpack(pixel: PixelType) : Array[Int]
+    def unpack(pixel: PixelType, out: Array[Int] = Array.ofDim[Int](n_comp)) : Array[Int]
     def pack(comps :Array[Int]) : PixelType
     def toARGB(pixel: PixelType): Int
     def fromARGB(c: Int): PixelType
@@ -24,8 +24,13 @@ trait ARGBColorModel extends IntColorModel {
     def getComp(comp: Int, pixel: PixelType): Int = (pixel >> (24 - comp * 8)) & 0xff
     def pack(comps: Array[Int]): PixelType =
         comps(0) << 24 | comps(1) << 16 | comps(2) << 8 | comps(3)
-    def unpack(pixel: PixelType) : Array[Int] =
-        Array((pixel >> 24) & 0xff, (pixel >> 16) & 0xff, (pixel >> 8) & 0xff, pixel & 0xff)
+    def unpack(pixel: PixelType, out: Array[Int] = Array.ofDim[Int](n_comp)) : Array[Int] = {
+        out(0) = (pixel >> 24) & 0xff
+        out(1) = (pixel >> 16) & 0xff
+        out(2) = (pixel >> 8) & 0xff
+        out(3) = pixel & 0xff
+        out
+    }
     def toARGB(px: PixelType): Int = px
     def fromARGB(c: Int): PixelType = c
     def toColor(pixel: PixelType) = Color(toARGB(pixel))
@@ -38,8 +43,12 @@ trait RGBColorModel extends IntColorModel {
     def getComp(comp: Int, pixel: PixelType): Int = (pixel >> (16 - comp * 8)).toByte
     def pack(comps: Array[Int]): PixelType =
         comps(0) << 16 | comps(1) << 8 | comps(2)
-    def unpack(pixel: PixelType) : Array[Int] =
-        Array((pixel >> 16) & 0xff, (pixel >> 8) & 0xff, pixel & 0xff)
+    def unpack(pixel: PixelType, out: Array[Int] = Array.ofDim[Int](n_comp)) : Array[Int] = {
+        out(0) = (pixel >> 16) & 0xff
+        out(1) = (pixel >> 8) & 0xff
+        out(2) = pixel & 0xff
+        out
+    }
     def toARGB(px: PixelType): Int = px | 0xff000000
     def fromARGB(c: Int): PixelType = c
     def toColor(pixel: PixelType) = Color(toARGB(pixel))
@@ -53,7 +62,10 @@ trait ByteColorModel extends ColorModel {
     def toInt(b: Byte) = if(b < 0) 256 + b else b
     def getComp(comp: Int, pixel: PixelType): Int = toInt(pixel)
     def pack(comps: Array[Int]): PixelType = comps(0).toByte
-    def unpack(pixel: PixelType) : Array[Int] = Array(toInt(pixel))
+    def unpack(pixel: PixelType, out: Array[Int] = Array.ofDim[Int](n_comp)) : Array[Int] = {
+        out(0) = toInt(pixel)
+        out
+    }
     def zipComp(pixel: PixelType)(comp: Int)(c: Int) = (pixel | c).toByte
     def newDataModel(size: Int) = Array.ofDim[PixelType](size)
 }

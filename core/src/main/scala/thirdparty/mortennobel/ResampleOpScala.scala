@@ -39,68 +39,91 @@ object ResampleOpScala {
         var arrPixel: Array[Int] = null
         val fwidth = filter.samplingRadius
         val centerOffset = 0.5f / scale
+
+        var subindex = 0
+        var center = centerOffset
+        var left = 0
+        var right = 0
+        var j = 0
+        var weight = 0f
+        var tot = 0f
+        var k = 0
+        var n = 0
+        var max = 0
         if (scale < 1.0f) {
             val width = fwidth / scale
             numContributors = (width * 2.0f + 2).toInt
             arrWeight = Array.ofDim[Float](dstSize * numContributors)
             arrPixel = Array.ofDim[Int](dstSize * numContributors)
             val fNormFac = (1f / (Math.ceil(width) / fwidth)).toFloat
-            for (i <- 0 until dstSize) {
-                val subindex = i * numContributors
-                val center = i / scale + centerOffset
-                val left = Math.floor(center - width).toInt
-                val right = Math.ceil(center + width).toInt
-                for (j <- left to right) {
-                    var weight = filter((center - j) * fNormFac)
+            var i = 0
+            while (i < dstSize) {
+                subindex = i * numContributors
+                center = i / scale + centerOffset
+                left = Math.floor(center - width).toInt
+                right = Math.ceil(center + width).toInt
+                j = left
+                while (j <= right) {
+                    weight = filter((center - j) * fNormFac)
                     if (weight != 0.0f) {
-                        val n = (if (j < 0) -j
-                              else if (j >= srcSize) srcSize - j + srcSize - 1
-                              else j)
-                        val k = arrN(i)
+                        n = (if (j < 0) -j
+                            else if (j >= srcSize) srcSize - j + srcSize - 1
+                            else j)
+                        k = arrN(i)
+                        arrN(i) += 1
+                        arrPixel(subindex + k) = n
+                        arrWeight(subindex + k) = if (n < 0 || n >= srcSize) 0.0f
+                                                  else weight
+                    }
+                    j += 1
+                }
+                max = arrN(i)
+                tot = 0f
+                k=0
+                while (k < max){tot += arrWeight(subindex + k); k+=1}
+                if (tot != 0f) {
+                    k=0
+                    while (k < max){arrWeight(subindex + k) /= tot; k+=1}
+                }
+                i += 1
+            }
+        } else {
+            numContributors = (fwidth * 2.0f + 1).toInt
+            arrWeight = Array.ofDim[Float](dstSize * numContributors)
+            arrPixel = Array.ofDim[Int](dstSize * numContributors)
+            var i = 0
+            while (i < dstSize) {
+                subindex = i * numContributors
+                center = i / scale + centerOffset
+                left = Math.floor(center - fwidth).toInt
+                right = Math.ceil(center + fwidth).toInt
+                j = left
+                while(j <= right) {
+                    weight = filter(center - j)
+                    if (weight != 0.0f) {
+                        val n: Int = (
+                            if (j < 0) -j
+                            else if (j >= srcSize) srcSize - j + srcSize - 1
+                            else j)
+                        k = arrN(i)
                         arrN(i) += 1
                         if (n < 0 || n >= srcSize) weight = 0.0f
                         arrPixel(subindex + k) = n
                         arrWeight(subindex + k) = weight
                     }
+                    j += 1
                 }
-                val max = arrN(i)
-                var tot = 0f
-                for (k <- 0 until max) tot += arrWeight(subindex + k)
+                max = arrN(i)
+                tot = 0f
+                k=0
+                while (k < max){ tot += arrWeight(subindex + k); k+=1}
+                assert(tot != 0) // "should never happen except bug in filter"
                 if (tot != 0f) {
-                    for (k <- 0 until max) arrWeight(subindex + k) /= tot
+                    k=0
+                    while (k < max){arrWeight(subindex + k) /= tot; k+=1}
                 }
+                i += 1
             }
-        } else {
-          numContributors = (fwidth * 2.0f + 1).toInt
-          arrWeight = Array.ofDim[Float](dstSize * numContributors)
-          arrPixel = Array.ofDim[Int](dstSize * numContributors)
-          for (i <- 0 until dstSize) {
-              val subindex = i * numContributors
-              val center = i / scale + centerOffset
-              val left = Math.floor(center - fwidth).toInt
-              val right = Math.ceil(center + fwidth).toInt
-              for (j <- left to right) {
-                  var weight = filter(center - j)
-                  if (weight != 0.0f) {
-                      val n: Int = (
-                          if (j < 0) -j
-                          else if (j >= srcSize) srcSize - j + srcSize - 1
-                          else j)
-                      val k = arrN(i)
-                      arrN(i) += 1
-                      if (n < 0 || n >= srcSize) weight = 0.0f
-                      arrPixel(subindex + k) = n
-                      arrWeight(subindex + k) = weight
-                  }
-              }
-              val max = arrN(i)
-              var tot = 0f
-              for (k <- 0 until max) tot += arrWeight(subindex + k)
-              assert(tot != 0) // "should never happen except bug in filter"
-              if (tot != 0f) {
-                  for (k <- 0 until max) arrWeight(subindex + k) /= tot
-              }
-          }
         }
         SubSamplingData(arrN, arrPixel, arrWeight, numContributors)
     }
@@ -131,122 +154,121 @@ object ResampleOpScala {
         val srcWidth = img.width
         val srcHeight = img.height
 
-        val horizontalSubsamplingData = createSubSampling(filter, srcWidth, dstWidth)
-        val verticalSubsamplingData = createSubSampling(filter, srcHeight, dstHeight)
-        val workPixels = Array.ofDim[Int](srcHeight, dstWidth * nrChannels)
+        val hSubsampling = createSubSampling(filter, srcWidth, dstWidth)
+        val vSubsampling = createSubSampling(filter, srcHeight, dstHeight)
 
         val srcRaster = img.raster
         type PixelType = srcRaster.PixelType
+        val workPixels = srcRaster.newDataModel(srcHeight * dstWidth)
 
         def horizontallyFromSrcToWork(
-                workPixels: Array[Array[Int]],
+                workPixels: Array[PixelType],
                 start: Int,
                 delta: Int) {
             val srcPixels: Array[PixelType] = srcRaster.newDataModel(srcWidth)
             var k = start
+            var i = 0
+            var j = 0
+            var index = 0
+            var max = 0
+            var comp = 0
+            val pixel = Array.ofDim[Int](nrChannels)
             while (k < srcHeight) {
-              getPixels[PixelType](srcRaster.model, k, srcWidth, srcPixels)
-              var i = dstWidth - 1
-              while (i >= 0) {
-                val sampleLocation = i * nrChannels
-                val max = horizontalSubsamplingData.arrN(i)
-                val samples = Array.ofDim[Float](nrChannels)
-                var index = i * horizontalSubsamplingData.numContributors
-                var j = max - 1
-                while (j >= 0) {
-                  val arrWeight = horizontalSubsamplingData.arrWeight(index)
-                  val pixelIndex = horizontalSubsamplingData.arrPixel(index)
-                  val pixel = srcRaster.unpack(srcPixels(pixelIndex))
-                  for(comp <- 0 until nrChannels){
-                    samples(comp) += pixel(comp) * arrWeight
-                  }
-                  index += 1
-                  j -= 1
+                getPixels[PixelType](srcRaster.model, k, srcWidth, srcPixels)
+                i = dstWidth - 1
+                j = 0
+                while (i >= 0) {
+                    max = hSubsampling.arrN(i)
+                    index = i * hSubsampling.numContributors
+                    val samples = Array.ofDim[Float](nrChannels)
+                    j = max - 1
+                    while (j >= 0) {
+                        srcRaster.unpack(srcPixels(hSubsampling.arrPixel(index)), pixel)
+                        comp=0
+                        while(comp < nrChannels){
+                            samples(comp) += pixel(comp) * hSubsampling.arrWeight(index)
+                            comp += 1
+                        }
+                        index += 1
+                        j -= 1
+                    }
+                    workPixels(k * dstWidth + i) = srcRaster.pack(samples.map(toUByte))
+                    i -= 1
                 }
-                for(comp <- 0 until nrChannels){
-                    workPixels(k)(sampleLocation + comp) = toByte(samples(comp))
-                }
-                i -= 1
-              }
-              k = k + delta
+                k = k + delta
             }
         }
 
         def verticalFromWorkToDst(
-            workPixels: Array[Array[Int]],
-            outPixels: Array[PixelType],
-            start: Int,
-            delta: Int) {
+                workPixels: Array[PixelType],
+                outPixels: Array[PixelType],
+                start: Int,
+                delta: Int) {
 
             var x = start
+            var comp = 0
+            var y = 0
+            var max = 0
+            var index = 0
+            var j = 0
+            val px = Array.ofDim[Int](nrChannels)
             while (x < dstWidth) {
-              val xLocation = x * nrChannels
-              var y = dstHeight - 1
-              while (y >= 0) {
-                val yTimesNumContributors = y * verticalSubsamplingData.numContributors
-                val max = verticalSubsamplingData.arrN(y)
-                val sampleLocation = y * dstWidth + x
-                val samples = Array.ofDim[Float](nrChannels)
-                var index = yTimesNumContributors
-                var j = max - 1
-                while (j >= 0) {
-                  val valueLocation = verticalSubsamplingData.arrPixel(index)
-                  val arrWeight = verticalSubsamplingData.arrWeight(index)
-
-                  for(comp <- 0 until nrChannels){
-                    samples(comp) += (workPixels(valueLocation)(xLocation + comp) & 0xff) * arrWeight
-                  }
-                  index += 1
-                  j -= 1
+                y = dstHeight - 1
+                while (y >= 0) {
+                    max = vSubsampling.arrN(y)
+                    val samples = Array.ofDim[Float](nrChannels)
+                    index = y * vSubsampling.numContributors
+                    j = max - 1
+                    while (j >= 0) {
+                        srcRaster.unpack(workPixels(vSubsampling.arrPixel(index)*dstWidth + x), px)
+                        comp = 0
+                        while(comp < nrChannels){
+                            samples(comp) += px(comp) * vSubsampling.arrWeight(index)
+                            comp += 1
+                        }
+                        index += 1
+                        j -= 1
+                    }
+                    outPixels(y * dstWidth + x) = srcRaster.pack(samples.map(toUByte))
+                    y -= 1
                 }
-                outPixels(sampleLocation) = srcRaster.pack(samples.map(toUByte))
-                y -= 1
-              }
-              x += delta
+                x += delta
             }
         }
 
         def toByte(f: Float): Byte = {
-            if (f < 0) {
-              return 0
-            }
-            if (f > MAX_CHANNEL_VALUE) {
-              return MAX_CHANNEL_VALUE.toByte
-            }
-            (f + 0.5f).toByte
+            if (f < 0) 0
+            else if (f > MAX_CHANNEL_VALUE) MAX_CHANNEL_VALUE.toByte
+            else (f + 0.5f).toByte
         }
         def toUByte(f: Float): Int = {
-            if (f < 0) {
-              return 0
-            }
-            if (f > MAX_CHANNEL_VALUE) {
-              return MAX_CHANNEL_VALUE
-            }
-            (f + 0.5f).toInt
+            if (f < 0) 0
+            else if (f > MAX_CHANNEL_VALUE) MAX_CHANNEL_VALUE
+            else (f + 0.5f).toInt
         }
 
 
         val threads = Array.ofDim[Thread](numberOfThreads - 1)
         for (i <- 1 until numberOfThreads) {
-          val finalI = i
-          threads(i - 1) = new Thread(new Runnable() {
-              def run() {
-                  horizontallyFromSrcToWork(workPixels, finalI, numberOfThreads)
-              }
-          })
-          threads(i - 1).start()
+            val finalI = i
+            threads(i - 1) = new Thread(new Runnable() {
+                def run() {
+                    horizontallyFromSrcToWork(workPixels, finalI, numberOfThreads)
+                }
+            })
+            threads(i - 1).start()
         }
         horizontallyFromSrcToWork(workPixels, 0, numberOfThreads)
         waitForAllThreads(threads)
         val outPixels = srcRaster.newDataModel(dstWidth * dstHeight)
         for (i <- 1 until numberOfThreads) {
-          val finalI = i
-          threads(i - 1) = new Thread(new Runnable() {
-            def run() {
-              verticalFromWorkToDst(workPixels, outPixels, finalI, numberOfThreads)
-            }
-          })
-          threads(i - 1).start()
+            val finalI = i
+            threads(i - 1) = new Thread(new Runnable() {
+                def run() {
+                    verticalFromWorkToDst(workPixels, outPixels, finalI, numberOfThreads)
+                }
+            })
+            threads(i - 1).start()
         }
         verticalFromWorkToDst(workPixels, outPixels, 0, numberOfThreads)
         waitForAllThreads(threads)
@@ -257,7 +279,7 @@ object ResampleOpScala {
      * returns one row of image data
      */
     def getPixels[T](data: Array[T], y:  Int, w: Int, out: Array[T]): Array[T] = {
-      System.arraycopy(data, y*w, out, 0, w)
-      return out;
+        System.arraycopy(data, y*w, out, 0, w)
+        return out;
     }
 }
