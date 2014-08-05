@@ -9,7 +9,7 @@ package com.sksamuel.scrimage
  *
  * @author Stephen Samuel
  **/
-trait Raster extends ColorModel { self: ColorModel =>
+trait Raster extends { self: ColorModel =>
 
   val width: Int
   val height: Int
@@ -67,13 +67,36 @@ trait Raster extends ColorModel { self: ColorModel =>
    * @type {[type]}
    */
   def copyWith(width: Int, height: Int, data: Array[PixelType]): RasterType
+  def empty(width: Int, height: Int): RasterType
 
+  def getComp(n: Int): Array[Byte] = model.map(c => self.getComp(n, c))
 
-  def getComp(n: Int): Array[Int] = model.map(c => self.getComp(n, c))
+  val n_comp: Int
+  def unpack() : Array[Array[Byte]] = {
+    val unpacked : Array[Array[Byte]] = Array.fill(n_comp)(null)
+    var comp = 0
+    while(comp < n_comp){ unpacked(comp) = Array.ofDim[Byte](width * height); comp += 1 }
 
-  // def n_comp: Int = self.n_comp
-  // def unpack(pixel: PixelType) : Array[Int] = self.unpack
-  // def pack(comps :Array[Int]) : PixelType = self.pack
+    var i = 0
+    while(i < width * height){
+      val px = self.unpack(model(i))
+      comp = 0
+      while(comp < n_comp){
+        unpacked(comp)(i) = px(comp)
+        comp += 1
+      }
+      i += 1
+    }
+    unpacked
+  }
+
+  def foldComp(comp: Int)(pixels: Array[Byte]): Unit = {
+      var i = 0
+      while(i < width * height){
+          model(i) = self.foldComp(model(i), comp, pixels(i))
+          i += 1
+      }
+  }
 
   def extract: Array[Color] = model.map(toColor)
 
@@ -108,14 +131,18 @@ class IntARGBRaster(val width: Int, val height: Int, val model: Array[Int])
         }
         copyWith(patchWidth, patchHeight, copy)
     }
+
+    def empty(width: Int, height: Int) : RasterType = {
+        new IntARGBRaster(width, height, Array.ofDim[Int](width * height))
+    }
 }
 
 object IntARGBRaster {
-  def apply(width: Int, height: Int) = new IntARGBRaster(width, height, new Array[Int](width * height))
-  def apply(width: Int, height: Int, color: Color) = {
-      val c = color.toRGB.argb
-      new IntARGBRaster(width, height, Array.fill[Int](width * height)(c))
-  }
+    def apply(width: Int, height: Int) = new IntARGBRaster(width, height, new Array[Int](width * height))
+    def apply(width: Int, height: Int, color: Color) = {
+        val c = color.toRGB.argb
+        new IntARGBRaster(width, height, Array.fill[Int](width * height)(c))
+    }
 }
 
 
