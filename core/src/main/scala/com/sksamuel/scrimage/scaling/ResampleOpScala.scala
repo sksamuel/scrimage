@@ -217,11 +217,14 @@ object ResampleOpScala {
     new Image(outRaster)
   }
 
-  private[this] def horizontallyFromSrcToWork(
-                                               srcPixels: Array[Byte], workPixels: Array[Byte],
-                                               srcWidth: Int, srcHeight: Int, dstWidth: Int,
-                                               start: Int, delta: Int,
-                                               hSampling: SubSamplingData) {
+  private[this] def horizontallyFromSrcToWork(srcPixels: Array[Byte],
+                                              workPixels: Array[Byte],
+                                              srcWidth: Int,
+                                              srcHeight: Int,
+                                              dstWidth: Int,
+                                              start: Int,
+                                              delta: Int,
+                                              hSampling: SubSamplingData) {
     var y = start
     var x = 0
     var j = 0
@@ -248,11 +251,13 @@ object ResampleOpScala {
     }
   }
 
-  private[this] def verticalFromWorkToDst(
-                                           workPixels: Array[Byte], outPixels: Array[Byte],
-                                           dstWidth: Int, dstHeight: Int,
-                                           start: Int, delta: Int,
-                                           vSampling: SubSamplingData) {
+  private[this] def verticalFromWorkToDst(workPixels: Array[Byte],
+                                          outPixels: Array[Byte],
+                                          dstWidth: Int,
+                                          dstHeight: Int,
+                                          start: Int,
+                                          delta: Int,
+                                          vSampling: SubSamplingData) {
 
     var x = start
     var y = 0
