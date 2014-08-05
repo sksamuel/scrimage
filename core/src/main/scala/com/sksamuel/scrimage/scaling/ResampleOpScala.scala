@@ -188,7 +188,6 @@ object ResampleOpScala {
         }
       }
       Await.ready(Future sequence verticles, MAX_WAIT_PER_PASS)
-
       outRaster.foldComp(comp)(outPixels)
     }
     new Image(outRaster)

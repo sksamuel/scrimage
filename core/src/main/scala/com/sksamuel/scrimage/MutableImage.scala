@@ -22,8 +22,10 @@ import java.io.{ File, InputStream }
 import java.awt.geom.AffineTransform
 
 /** @author Stephen Samuel */
+@deprecated
 class MutableImage(raster: Raster) extends Image(raster) {
 
+  @deprecated
   override def clear(color: Color = X11Colorlist.White): Image = {
     val g2 = awt.getGraphics
     g2.setColor(color)
@@ -32,6 +34,7 @@ class MutableImage(raster: Raster) extends Image(raster) {
     this
   }
 
+  @deprecated
   protected[scrimage] def flip(tx: AffineTransform): MutableImage = {
     val op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR)
     val output = op.createCompatibleDestImage(awt, null)
@@ -40,11 +43,13 @@ class MutableImage(raster: Raster) extends Image(raster) {
     this
   }
 
+  @deprecated
   override def filter(filter: Filter): MutableImage = {
     filter.apply(this)
     this
   }
 
+  @deprecated
   override def filled(color: Color): MutableImage = {
     val g2 = awt.getGraphics.asInstanceOf[Graphics2D]
     g2.setColor(color)
@@ -53,14 +58,19 @@ class MutableImage(raster: Raster) extends Image(raster) {
     this
   }
 
+  @deprecated
   def setPixel(x: Int, y: Int, pixel: Int) {
     awt.setRGB(x, y, pixel)
   }
 }
 
 object MutableImage {
+  @deprecated
   def apply(in: InputStream): MutableImage = Image(in).toMutable
+  @deprecated
   def apply(file: File): MutableImage = Image(file).toMutable
+  @deprecated
   def apply(image: Image): MutableImage = image.toMutable
+  @deprecated
   def apply(buff: BufferedImage): MutableImage = Image(buff).toMutable
 }

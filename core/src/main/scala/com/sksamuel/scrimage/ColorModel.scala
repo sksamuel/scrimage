@@ -1,7 +1,14 @@
 package com.sksamuel.scrimage
 
 trait ColorModel {
+
+  /**
+   * The data type that contains pixel information in this color model.
+   * For example, if you were implementing an ARGB color model, you may chose to use ints
+   * and pack the 4 components into an int using bit shifting, or you may choose to use 4 bytes.
+   */
   type PixelType
+
   def n_comp: Int
   def getComp(comp: Int, pixel: PixelType): Byte
   def unpack(pixel: PixelType, out: Array[Byte] = Array.ofDim[Byte](n_comp)): Array[Byte]

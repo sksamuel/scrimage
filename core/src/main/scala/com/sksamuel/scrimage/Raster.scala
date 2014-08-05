@@ -56,7 +56,6 @@ trait Raster extends { self: ColorModel =>
   def patch(col: Int, row: Int, patchWidth: Int, patchHeight: Int): RasterType
 
   /** Returns a new Raster using the same color model but with the given width, height and data
-    * @type {[type]}
     */
   def copyWith(width: Int, height: Int, data: Array[PixelType]): RasterType
   def empty(width: Int, height: Int): RasterType
@@ -96,7 +95,7 @@ trait Raster extends { self: ColorModel =>
     for (i <- y until y + h) {
       System.arraycopy(model, coordinateToOffset(x, y), out, y * w, w)
     }
-    return out
+    out
   }
 }
 
