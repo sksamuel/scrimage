@@ -625,6 +625,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     *
     * @return
     */
+  @deprecated
   def toMutable: MutableImage = new MutableImage(raster)
 
   /** Creates an AsyncImage instance backed by this image.
