@@ -17,8 +17,8 @@
 package com.sksamuel.scrimage
 
 import java.awt.Graphics2D
-import java.awt.image.{AffineTransformOp, BufferedImage}
-import java.io.{File, InputStream}
+import java.awt.image.{ AffineTransformOp, BufferedImage }
+import java.io.{ File, InputStream }
 import java.awt.geom.AffineTransform
 
 /** @author Stephen Samuel */

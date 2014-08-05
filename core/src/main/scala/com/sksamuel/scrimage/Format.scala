@@ -21,12 +21,11 @@ import com.sksamuel.scrimage.io.PngWriter
 
 /** @author Stephen Samuel */
 sealed trait Format[T <: ImageWriter] {
-  /**
-   * Returns a new ImageWriter for writing the given image
-   * configured with the default configuration settings
-   * for this image format type.
-   *
-   */
+  /** Returns a new ImageWriter for writing the given image
+    * configured with the default configuration settings
+    * for this image format type.
+    *
+    */
   def writer(image: Image): T
 }
 object Format {

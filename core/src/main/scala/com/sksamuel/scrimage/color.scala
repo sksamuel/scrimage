@@ -6,13 +6,12 @@ import java.awt.Paint
 
 trait Color {
 
-  /**
-   * Returns a conversion of this Color into an RGBColor.
-   *
-   * If this colour is already an instance of RGBColor then the same instance will be returned.
-   *
-   * @return an RGBColor conversion of this color.
-   */
+  /** Returns a conversion of this Color into an RGBColor.
+    *
+    * If this colour is already an instance of RGBColor then the same instance will be returned.
+    *
+    * @return an RGBColor conversion of this color.
+    */
   def toRGB: RGBColor
 
   private[scrimage] def paint: Paint = new java.awt.Color(this.toRGB.toInt)
@@ -48,32 +47,29 @@ case class RGBColor(red: Int, green: Int, blue: Int, alpha: Int = 255) extends C
   def toRGB: RGBColor = this
   def toAWT: java.awt.Color = new java.awt.Color(red, green, blue, alpha)
 
-  /**
-   * Returns as an int the value of this color. The RGB and alpha components are packed
-   * into the int as byes.
-   * @return
-   */
+  /** Returns as an int the value of this color. The RGB and alpha components are packed
+    * into the int as byes.
+    * @return
+    */
   def argb: Int = ((alpha & 0xFF) << 24) | ((red & 0xFF) << 16) | ((green & 0xFF) << 8) | blue & 0xFF
   def toInt: Int = argb
 
-  /**
-   * Returns a HEX String of this colour. Eg for 0,255,0, this method will return 00FF00.
-   */
+  /** Returns a HEX String of this colour. Eg for 0,255,0, this method will return 00FF00.
+    */
   def toHex: String = Integer.toHexString(argb & 0xffffff).toUpperCase.reverse.padTo(6, '0').reverse
 }
 
-/**
- * Also called HSB.
- *
- * The hue component should be between 0.0 and 360.0
- * The saturation component should be between 0.0 and 1.0
- * The lightness component should be between 0.0 and 1.0
- * The alpha component should be between 0.0 and 1.0
- *
- * @param hue
- * @param saturation
- * @param value
- */
+/** Also called HSB.
+  *
+  * The hue component should be between 0.0 and 360.0
+  * The saturation component should be between 0.0 and 1.0
+  * The lightness component should be between 0.0 and 1.0
+  * The alpha component should be between 0.0 and 1.0
+  *
+  * @param hue
+  * @param saturation
+  * @param value
+  */
 case class HSVColor(hue: Float, saturation: Float, value: Float, alpha: Float) extends Color {
   require(0 <= hue && hue <= 360f, "Hue component is invalid")
   require(0 <= saturation && saturation <= 1f, "Saturation component is invalid")
@@ -104,16 +100,15 @@ case class HSVColor(hue: Float, saturation: Float, value: Float, alpha: Float) e
   }
 }
 
-/**
- * The hue component should be between 0.0 and 360.0
- * The saturation component should be between 0.0 and 1.0
- * The lightness component should be between 0.0 and 1.0
- * The alpha component should be between 0.0 and 1.0
- *
- * @param hue
- * @param saturation
- * @param lightness
- */
+/** The hue component should be between 0.0 and 360.0
+  * The saturation component should be between 0.0 and 1.0
+  * The lightness component should be between 0.0 and 1.0
+  * The alpha component should be between 0.0 and 1.0
+  *
+  * @param hue
+  * @param saturation
+  * @param lightness
+  */
 case class HSLColor(hue: Float, saturation: Float, lightness: Float, alpha: Float) extends Color {
   require(0 <= hue && hue <= 360f, "Hue component is invalid")
   require(0 <= saturation && saturation <= 1f, "Saturation component is invalid")

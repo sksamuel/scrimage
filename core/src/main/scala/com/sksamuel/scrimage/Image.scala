@@ -18,40 +18,38 @@ package com.sksamuel.scrimage
 
 import java.awt._
 import java.awt.geom.AffineTransform
-import java.awt.image.{BufferedImage, DataBufferInt}
-import java.io.{ByteArrayInputStream, File, InputStream}
+import java.awt.image.{ BufferedImage, DataBufferInt }
+import java.io.{ ByteArrayInputStream, File, InputStream }
 import javax.imageio.ImageIO
 
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.io.ImageWriter
 import com.sksamuel.scrimage.scaling.ResampleOpScala
-import org.apache.commons.io.{FileUtils, IOUtils}
+import org.apache.commons.io.{ FileUtils, IOUtils }
 import sun.awt.resources.awt
-import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
+import thirdparty.mortennobel.{ ResampleFilters, ResampleOp }
 
 import scala.List
 import scala.concurrent.ExecutionContext
 
-/**
- * An Image represents an abstraction over a set of pixels that allow operations such
- * as resize, scale, rotate, flip, trim, pad, cover, fit. An image does not
- * contain its underlying data directly, but instead delegates to a Raster. A Raster is a simple data
- * structure for a grid of pixels. An Image is immutable and all operations return new Images backed by new Rasters.
- *
- * @author Stephen Samuel
- */
+/** An Image represents an abstraction over a set of pixels that allow operations such
+  * as resize, scale, rotate, flip, trim, pad, cover, fit. An image does not
+  * contain its underlying data directly, but instead delegates to a Raster. A Raster is a simple data
+  * structure for a grid of pixels. An Image is immutable and all operations return new Images backed by new Rasters.
+  *
+  * @author Stephen Samuel
+  */
 class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike {
   require(raster != null, "Raster cannot be null")
 
   val width: Int = raster.width
   val height: Int = raster.height
 
-  /**
-   * Returns a new AWT buffered image from the data in this images raster.
-   *
-   * @return a BufferedImage with the same data as this Image.
-   */
+  /** Returns a new AWT buffered image from the data in this images raster.
+    *
+    * @return a BufferedImage with the same data as this Image.
+    */
   def toBufferedImage = {
     val buff = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
     val g2 = buff.getGraphics.asInstanceOf[Graphics2D]
@@ -61,8 +59,8 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
   }
 
   @deprecated("java.awt is to be removed", "22 Jul 2014")
-  lazy val awt : BufferedImage = {
-    import java.awt.image.{ColorModel, DataBufferInt, Raster}
+  lazy val awt: BufferedImage = {
+    import java.awt.image.{ ColorModel, DataBufferInt, Raster }
     val cm = ColorModel.getRGBdefault()
     val sm = cm.createCompatibleSampleModel(width, height)
     val db = new DataBufferInt(raster.extract.map(_.toInt), width * height);
@@ -83,83 +81,76 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     points.foreach(p => raster.write(p._1, p._2, f(p._1, p._2, raster.read(p._1, p._2).toInt)))
   }
 
-  /**
-   * Returns an image that is no larger than the given width and height.
-   *
-   * If the current image is already within the given dimensions then the same image will be returned.
-   * If not, then a scaled image, with the same aspect ratio as the original, and with dimensions
-   * inside the constraints will be returned.
-   *
-   * @param width the maximum width
-   * @param height the maximum height
-   * @return the constrained image.
-   */
+  /** Returns an image that is no larger than the given width and height.
+    *
+    * If the current image is already within the given dimensions then the same image will be returned.
+    * If not, then a scaled image, with the same aspect ratio as the original, and with dimensions
+    * inside the constraints will be returned.
+    *
+    * @param width the maximum width
+    * @param height the maximum height
+    * @return the constrained image.
+    */
   def constrain(width: Int, height: Int): Image = {
     if (this.width <= width && this.height <= height) this
     else bound(width, height)
   }
 
-  /**
-   * Removes the given amount of pixels from each edge; like a crop operation.
-   *
-   * @param amount the number of pixels to trim from each edge
-   *
-   * @return a new Image with the dimensions width-trim*2, height-trim*2
-   */
+  /** Removes the given amount of pixels from each edge; like a crop operation.
+    *
+    * @param amount the number of pixels to trim from each edge
+    *
+    * @return a new Image with the dimensions width-trim*2, height-trim*2
+    */
   def trim(amount: Int): Image = trim(amount, amount, amount, amount)
 
-  /**
-   * Removes the given amount of pixels from each edge; like a crop operation.
-   *
-   * @param left the number of pixels to trim from the left
-   * @param top the number of pixels to trim from the top
-   * @param right the number of pixels to trim from the right
-   * @param bottom the number of pixels to trim from the bottom
-   *
-   * @return a new Image with the dimensions width-trim*2, height-trim*2
-   */
+  /** Removes the given amount of pixels from each edge; like a crop operation.
+    *
+    * @param left the number of pixels to trim from the left
+    * @param top the number of pixels to trim from the top
+    * @param right the number of pixels to trim from the right
+    * @param bottom the number of pixels to trim from the bottom
+    *
+    * @return a new Image with the dimensions width-trim*2, height-trim*2
+    */
   def trim(left: Int, top: Int, right: Int, bottom: Int): Image = {
     Image.empty(width - left - right, height - bottom - top).overlay(this, -left, -top)
   }
 
-  /**
-   * Returns an image that is the result of translating the image while keeping the same
-   * view window. Eg, if translating by 10,5 then all pixels will move 10 to the right, and 5 down.
-   * This would mean 10 columns and 5 rows of background added to the left and top.
-   *
-   * @return a new Image with this image translated.
-   */
+  /** Returns an image that is the result of translating the image while keeping the same
+    * view window. Eg, if translating by 10,5 then all pixels will move 10 to the right, and 5 down.
+    * This would mean 10 columns and 5 rows of background added to the left and top.
+    *
+    * @return a new Image with this image translated.
+    */
   def translate(x: Int, y: Int, background: Color = Color.White): Image = {
     filled(background).overlay(this, x, y)
   }
 
-  /**
-   * Returns a new Image that is a subimage or region of the original image.
-   *
-   * @param x the start x coordinate
-   * @param y the start y coordinate
-   * @param w the width of the subimage
-   * @param h the height of the subimage
-   * @return a new Image that is the subimage
-   */
+  /** Returns a new Image that is a subimage or region of the original image.
+    *
+    * @param x the start x coordinate
+    * @param y the start y coordinate
+    * @param w the width of the subimage
+    * @param h the height of the subimage
+    * @return a new Image that is the subimage
+    */
   def subimage(x: Int, y: Int, w: Int, h: Int): Image = Image(w, h, pixels(x, y, w, h))
 
-  /**
-   * Returns the pixel at the given coordinates as a integer in ARGB format.
-   *
-   * @param x the x coordinate of the pixel to grab
-   * @param y the y coordinate of the pixel to grab
-   *
-   * @return the ARGB value of the pixel
-   */
+  /** Returns the pixel at the given coordinates as a integer in ARGB format.
+    *
+    * @param x the x coordinate of the pixel to grab
+    * @param y the y coordinate of the pixel to grab
+    *
+    * @return the ARGB value of the pixel
+    */
   def pixel(x: Int, y: Int): Int = raster.pixel(x, y)
 
-  /**
-   * Uses linear interpolation to get a sub-pixel.
-   *
-   * Legal values for `x` and `y` are in [0, width) and [0, height),
-   * respectively.
-   */
+  /** Uses linear interpolation to get a sub-pixel.
+    *
+    * Legal values for `x` and `y` are in [0, width) and [0, height),
+    * respectively.
+    */
   def subpixel(x: Double, y: Double): Int = {
     require(x >= 0 && x < width && y >= 0 && y < height)
 
@@ -211,9 +202,8 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     PixelTools.argb(a.round.toInt, r.round.toInt, g.round.toInt, b.round.toInt)
   }
 
-  /**
-   * Extracts a subimage, but using subpixel interpolation.
-   */
+  /** Extracts a subimage, but using subpixel interpolation.
+    */
   def subpixelSubimage(x: Double,
                        y: Double,
                        subWidth: Int,
@@ -233,9 +223,8 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     new Image(raster)
   }
 
-  /**
-   * Extract a patch, centered at a subpixel point.
-   */
+  /** Extract a patch, centered at a subpixel point.
+    */
   def subpixelSubimageCenteredAtPoint(x: Double,
                                       y: Double,
                                       xRadius: Double,
@@ -254,12 +243,11 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
       yWidth.round.toInt)
   }
 
-  /**
-   * Returns all the patches of a given size in the image, assuming pixel
-   * alignment (no subpixel extraction).
-   *
-   * The patches are returned as a sequence of closures.
-   */
+  /** Returns all the patches of a given size in the image, assuming pixel
+    * alignment (no subpixel extraction).
+    *
+    * The patches are returned as a sequence of closures.
+    */
   def patches(patchWidth: Int, patchHeight: Int): IndexedSeq[() => Image] =
     for (
       row <- 0 to height - patchHeight;
@@ -268,42 +256,39 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
       () => new Image(raster.patch(col, row, patchWidth, patchHeight))
     }
 
-  /**
-   * Returns the pixels of this image represented as an array of Integers.
-   *
-   * @return
-   */
+  /** Returns the pixels of this image represented as an array of Integers.
+    *
+    * @return
+    */
   def pixels: Array[Int] = {
     raster match {
       case i: IntARGBRaster => i.model
     }
   }
 
-  /**
-   * Creates a copy of this image with the given filter applied.
-   * The original (this) image is unchanged.
-   *
-   * @param filter the filter to apply. See com.sksamuel.scrimage.Filter.
-   *
-   * @return A new image with the given filter applied.
-   */
+  /** Creates a copy of this image with the given filter applied.
+    * The original (this) image is unchanged.
+    *
+    * @param filter the filter to apply. See com.sksamuel.scrimage.Filter.
+    *
+    * @return A new image with the given filter applied.
+    */
   def filter(filter: Filter): Image = {
     val target = copy
     filter.apply(target)
     target
   }
 
-  /**
-   * Apply a sequence of filters in sequence.
-   * This is sugar for image.filter(filter1).filter(filter2)....
-   *
-   * @param filters the sequence filters to apply
-   * @return the result of applying each filter in turn
-   */
+  /** Apply a sequence of filters in sequence.
+    * This is sugar for image.filter(filter1).filter(filter2)....
+    *
+    * @param filters the sequence filters to apply
+    * @return the result of applying each filter in turn
+    */
   def filter(filters: Filter*): Image = filters.foldLeft(this)((image, filter) => image.filter(filter))
 
   def removeTransparency(color: java.awt.Color): Image = {
-    def rmTransparency(c: RGBColor) : RGBColor = {
+    def rmTransparency(c: RGBColor): RGBColor = {
       val r = (c.red * c.alpha + color.getRed * color.getAlpha * (255 - c.alpha) / 255) / 255
       val g = (c.green * c.alpha + color.getGreen * color.getAlpha * (255 - c.alpha) / 255) / 255
       val b = (c.blue * c.alpha + color.getBlue * color.getAlpha * (255 - c.alpha) / 255) / 255
@@ -313,66 +298,61 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     new Image(new IntARGBRaster(width, height, rgbColors))
   }
 
-  /**
-   * Flips this image horizontally.
-   *
-   * @return The result of flipping this image horizontally.
-   */
+  /** Flips this image horizontally.
+    *
+    * @return The result of flipping this image horizontally.
+    */
   def flipX: Image = {
     val copy = raster.copy
-    for(x <- 0 until width; y <- 0 until height){
+    for (x <- 0 until width; y <- 0 until height) {
       copy.write(x, y, raster.read(width - 1 - x, y))
     }
     new Image(copy)
   }
 
-  /**
-   * Flips this image vertically.
-   *
-   * @return The result of flipping this image vertically.
-   */
+  /** Flips this image vertically.
+    *
+    * @return The result of flipping this image vertically.
+    */
   def flipY: Image = {
     val copy = raster.copy
-    for(x <- 0 until width; y <- 0 until height){
+    for (x <- 0 until width; y <- 0 until height) {
       copy.write(x, y, raster.read(x, height - 1 - y))
     }
     new Image(copy)
   }
 
-  /**
-   * Returns a copy of this image rotated 90 degrees anti-clockwise (counter clockwise to US English speakers).
-   *
-   * @return
-   */
+  /** Returns a copy of this image rotated 90 degrees anti-clockwise (counter clockwise to US English speakers).
+    *
+    * @return
+    */
   def rotateLeft = {
     val raster = IntARGBRaster(height, width)
     new Image(raster)
   }
 
-  /**
-   * Returns a copy of this image rotated 90 degrees clockwise.
-   *
-   * @return
-   */
+  /** Returns a copy of this image rotated 90 degrees clockwise.
+    *
+    * @return
+    */
   def rotateRight = {
     val raster = IntARGBRaster(height, width)
     new Image(raster)
   }
 
   /**
-   *
-   * Returns a copy of this image with the given dimensions
-   * where the original image has been scaled to fit completely
-   * inside the new dimensions whilst retaining the original aspect ratio.
-   *
-   * @param targetWidth the target width
-   * @param targetHeight the target height
-   * @param scaleMethod the algorithm to use for the scaling operation. See ScaleMethod.
-   * @param color the color to use as the "padding" colour should the scaled original not fit exactly inside the new dimensions
-   * @param position where to position the image inside the new canvas
-   *
-   * @return a new Image with the original image scaled to fit inside
-   */
+    * Returns a copy of this image with the given dimensions
+    * where the original image has been scaled to fit completely
+    * inside the new dimensions whilst retaining the original aspect ratio.
+    *
+    * @param targetWidth the target width
+    * @param targetHeight the target height
+    * @param scaleMethod the algorithm to use for the scaling operation. See ScaleMethod.
+    * @param color the color to use as the "padding" colour should the scaled original not fit exactly inside the new dimensions
+    * @param position where to position the image inside the new canvas
+    *
+    * @return a new Image with the original image scaled to fit inside
+    */
   def fit(targetWidth: Int,
           targetHeight: Int,
           color: Color = X11Colorlist.White,
@@ -386,22 +366,21 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
   }
 
   /**
-   *
-   * Returns a copy of the canvas with the given dimensions where the
-   * original image has been scaled to completely cover the new dimensions
-   * whilst retaining the original aspect ratio.
-   *
-   * If the new dimensions have a different aspect ratio than the old image
-   * then the image will be cropped so that it still covers the new area
-   * without leaving any background.
-   *
-   * @param targetWidth the target width
-   * @param targetHeight the target height
-   * @param scaleMethod the type of scaling method to use. Defaults to Bicubic
-   * @param position where to position the image inside the new canvas
-   *
-   * @return a new Image with the original image scaled to cover the new dimensions
-   */
+    * Returns a copy of the canvas with the given dimensions where the
+    * original image has been scaled to completely cover the new dimensions
+    * whilst retaining the original aspect ratio.
+    *
+    * If the new dimensions have a different aspect ratio than the old image
+    * then the image will be cropped so that it still covers the new area
+    * without leaving any background.
+    *
+    * @param targetWidth the target width
+    * @param targetHeight the target height
+    * @param scaleMethod the type of scaling method to use. Defaults to Bicubic
+    * @param position where to position the image inside the new canvas
+    *
+    * @return a new Image with the original image scaled to cover the new dimensions
+    */
   def cover(targetWidth: Int,
             targetHeight: Int,
             scaleMethod: ScaleMethod = Bicubic,
@@ -414,19 +393,18 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
   }
 
   /**
-   *
-   * Scale will resize both the canvas and the image.
-   * This is like a "image resize" in Photoshop.
-   *
-   * The size of the scaled instance are taken from the given
-   * width and height parameters.
-   *
-   * @param targetWidth the target width
-   * @param targetHeight the target height
-   * @param scaleMethod the type of scaling method to use. Defaults to SmoothScale
-   *
-   * @return a new Image that is the result of scaling this image
-   */
+    * Scale will resize both the canvas and the image.
+    * This is like a "image resize" in Photoshop.
+    *
+    * The size of the scaled instance are taken from the given
+    * width and height parameters.
+    *
+    * @param targetWidth the target width
+    * @param targetHeight the target height
+    * @param scaleMethod the type of scaling method to use. Defaults to SmoothScale
+    *
+    * @return a new Image that is the result of scaling this image
+    */
   def scaleTo(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): Image = {
 
     scaleMethod match {
@@ -453,23 +431,22 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
   }
 
   /**
-   *
-   * Resize will resize the canvas, it will not scale the image.
-   * This is like a "canvas resize" in Photoshop.
-   *
-   * If the dimensions are smaller than the current canvas size
-   * then the image will be cropped.
-   *
-   * The position parameter determines how the original image will be positioned on the new
-   * canvas.
-   *
-   * @param targetWidth the target width
-   * @param targetHeight the target height
-   * @param position where to position the original image after the canvas size change
-   * @param background the background color if the canvas was enlarged
-   *
-   * @return a new Image that is the result of resizing the canvas.
-   */
+    * Resize will resize the canvas, it will not scale the image.
+    * This is like a "canvas resize" in Photoshop.
+    *
+    * If the dimensions are smaller than the current canvas size
+    * then the image will be cropped.
+    *
+    * The position parameter determines how the original image will be positioned on the new
+    * canvas.
+    *
+    * @param targetWidth the target width
+    * @param targetHeight the target height
+    * @param position where to position the original image after the canvas size change
+    * @param background the background color if the canvas was enlarged
+    *
+    * @return a new Image that is the result of resizing the canvas.
+    */
   def resizeTo(targetWidth: Int,
                targetHeight: Int,
                position: Position = Center,
@@ -481,21 +458,22 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     }
   }
 
-  /**
-   * Returns a new Image that is the result of overlaying the supplied image over this image
-   * The x / y parameters determine where the (0,0) coordinate of the overlay should be placed.
-   *
-   * If the image to render exceeds the boundaries of the source image, then the excess
-   * pixels will be ignored.
-   *
-   * @param overlayImage the image to overlay.
-   *
-   * @return a new Image with the given image overlaid.
-   */
+  /** Returns a new Image that is the result of overlaying the supplied image over this image
+    * The x / y parameters determine where the (0,0) coordinate of the overlay should be placed.
+    *
+    * If the image to render exceeds the boundaries of the source image, then the excess
+    * pixels will be ignored.
+    *
+    * @param overlayImage the image to overlay.
+    *
+    * @return a new Image with the given image overlaid.
+    */
   def overlay(overlayImage: Image, x: Int = 0, y: Int = 0): Image = {
     val copy = raster.copy
-    for ( x1 <- 0 until overlayImage.width;
-          y1 <- 0 until overlayImage.height ) {
+    for (
+      x1 <- 0 until overlayImage.width;
+      y1 <- 0 until overlayImage.height
+    ) {
       val x2 = x1 + x
       val y2 = y1 + y
       if (0 <= x2 && x2 < width && 0 <= y2 && y2 < height)
@@ -504,19 +482,18 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     new Image(copy)
   }
 
-  /**
-   * Crops an image by removing cols and rows that are composed only of a single
-   * given color.
-   *
-   * Eg, if an image had a 20 pixel border of white at the top, and this method was
-   * invoked with Color.White then the image returned would have that 20 pixel border
-   * removed.
-   *
-   * This method is useful when images have an abudance of
-   *
-   * @param color the color to match
-   * @return
-   */
+  /** Crops an image by removing cols and rows that are composed only of a single
+    * given color.
+    *
+    * Eg, if an image had a 20 pixel border of white at the top, and this method was
+    * invoked with Color.White then the image returned would have that 20 pixel border
+    * removed.
+    *
+    * This method is useful when images have an abudance of
+    *
+    * @param color the color to match
+    * @return
+    */
   def autocrop(color: Color): Image = {
     def uniform(color: Color, pixels: Array[Int]) = pixels.forall(p => p == color.argb)
     def scanright(col: Int, image: Image): Int = {
@@ -542,23 +519,22 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     subimage(x1, y1, x2 - x1, y2 - y1)
   }
 
-  /**
-   * Creates a new image which is the result of this image padded to the canvas size specified.
-   * If this image is already larger than the specified pad then the sizes of the existing
-   * image will be used instead.
-   *
-   * Eg, requesting a pad of 200,200 on an image of 250,300 will result
-   * in keeping the 250,300.
-   *
-   * Eg2, requesting a pad of 300,300 on an image of 400,250 will result
-   * in the width staying at 400 and the height padded to 300.
-   *
-   * @param targetWidth the size of the output canvas width
-   * @param targetHeight the size of the output canvas height
-   * @param color the background of the padded area.
-   *
-   * @return A new image that is the result of the padding
-   */
+  /** Creates a new image which is the result of this image padded to the canvas size specified.
+    * If this image is already larger than the specified pad then the sizes of the existing
+    * image will be used instead.
+    *
+    * Eg, requesting a pad of 200,200 on an image of 250,300 will result
+    * in keeping the 250,300.
+    *
+    * Eg2, requesting a pad of 300,300 on an image of 400,250 will result
+    * in the width staying at 400 and the height padded to 300.
+    *
+    * @param targetWidth the size of the output canvas width
+    * @param targetHeight the size of the output canvas height
+    * @param color the background of the padded area.
+    *
+    * @return A new image that is the result of the padding
+    */
   def padTo(targetWidth: Int, targetHeight: Int, color: Color = X11Colorlist.White): Image = {
     val w = if (width < targetWidth) targetWidth else width
     val h = if (height < targetHeight) targetHeight else height
@@ -567,67 +543,63 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     padWith(x, y, w - width - x, h - height - y, color)
   }
 
-  /**
-   * Creates a new image by adding the given number of columns/rows on left, top, right and bottom.
-   *
-   * @param left the number of columns/pixels to add on the left
-   * @param top the number of rows/pixels to add to the top
-   * @param right the number of columns/pixels to add on the right
-   * @param bottom the number of rows/pixels to add to the bottom
-   * @param color the background of the padded area.
-   *
-   * @return A new image that is the result of the padding operation.
-   */
+  /** Creates a new image by adding the given number of columns/rows on left, top, right and bottom.
+    *
+    * @param left the number of columns/pixels to add on the left
+    * @param top the number of rows/pixels to add to the top
+    * @param right the number of columns/pixels to add on the right
+    * @param bottom the number of rows/pixels to add to the bottom
+    * @param color the background of the padded area.
+    *
+    * @return A new image that is the result of the padding operation.
+    */
   def padWith(left: Int, top: Int, right: Int, bottom: Int, color: Color = Color.White): Image = {
     val w = width + left + right
     val h = height + top + bottom
     Image.filled(w, h, color).overlay(this, left, top)
   }
 
-  /**
-   * Returns a new image that is scaled to fit the specified bounds while retaining the same aspect ratio
-   * as the original image. The dimensions of the returned image will be the same as the result of the
-   * scaling operation. That is, no extra padding will be added to match the bounded width and height. For an
-   * operation that will scale an image as well as add padding to fit the dimensions perfectly, then use fit()
-   *
-   * Requesting a bound of 200,200 on an image of 300,600 will result in a scale to 100,200.
-   * Eg, the original image will be scaled down to fit the bounds.
-   *
-   * Requesting a bound of 150,200 on an image of 150,150 will result in the same image being returned.
-   * Eg, the original image cannot be scaled up any further without exceeding the bounds.
-   *
-   * Requesting a bound of 300,300 on an image of 100,150 will result in a scale to 200,300.
-   *
-   * Requesting a bound of 100,1000 on an image of 50,50 will result in a scale to 100,100.
-   *
-   * @param boundedWidth the maximum width
-   * @param boundedHeight the maximum height
-   *
-   * @return A new image that is the result of the binding.
-   */
+  /** Returns a new image that is scaled to fit the specified bounds while retaining the same aspect ratio
+    * as the original image. The dimensions of the returned image will be the same as the result of the
+    * scaling operation. That is, no extra padding will be added to match the bounded width and height. For an
+    * operation that will scale an image as well as add padding to fit the dimensions perfectly, then use fit()
+    *
+    * Requesting a bound of 200,200 on an image of 300,600 will result in a scale to 100,200.
+    * Eg, the original image will be scaled down to fit the bounds.
+    *
+    * Requesting a bound of 150,200 on an image of 150,150 will result in the same image being returned.
+    * Eg, the original image cannot be scaled up any further without exceeding the bounds.
+    *
+    * Requesting a bound of 300,300 on an image of 100,150 will result in a scale to 200,300.
+    *
+    * Requesting a bound of 100,1000 on an image of 50,50 will result in a scale to 100,100.
+    *
+    * @param boundedWidth the maximum width
+    * @param boundedHeight the maximum height
+    *
+    * @return A new image that is the result of the binding.
+    */
   def bound(boundedWidth: Int, boundedHeight: Int): Image = {
     val dimensions = ImageTools.dimensionsToFit((boundedWidth, boundedHeight), (width, height))
     scaleTo(dimensions._1, dimensions._2)
   }
 
-  /**
-   * Returns a new image that is the result of scaling this image but without changing the canvas size.
-   *
-   * This can be thought of as zooming in on a camera - the viewpane does not change but the image increases
-   * in size with the outer columns/rows being dropped as required.
-   *
-   * @param factor how much to zoom by
-   * @param method how to apply the scaling method
-   * @return the zoomed image
-   */
+  /** Returns a new image that is the result of scaling this image but without changing the canvas size.
+    *
+    * This can be thought of as zooming in on a camera - the viewpane does not change but the image increases
+    * in size with the outer columns/rows being dropped as required.
+    *
+    * @param factor how much to zoom by
+    * @param method how to apply the scaling method
+    * @return the zoomed image
+    */
   def zoom(factor: Double, method: ScaleMethod = ScaleMethod.Bicubic) = scale(factor, method).resizeTo(width, height)
 
-  /**
-   * Creates a new Image with the same dimensions of this image and with
-   * all the pixels initialized by the given color.
-   *
-   * @return a new Image with the same dimensions as this
-   */
+  /** Creates a new Image with the same dimensions of this image and with
+    * all the pixels initialized by the given color.
+    *
+    * @return a new Image with the same dimensions as this
+    */
   def filled(color: Color = Color.White): Image = Image.filled(width, height, color)
 
   def writer[T <: ImageWriter](format: Format[T]): T = format.writer(this)
@@ -645,32 +617,29 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
       case _ => false
     }
 
-  /**
-   * Creates a MutableImage instance backed by this images raster.
-   *
-   * Note, any changes to the mutable image write back to this Image.
-   * If you want a mutable copy then you must first copy this image
-   * before invoking this operation.
-   *
-   * @return
-   */
+  /** Creates a MutableImage instance backed by this images raster.
+    *
+    * Note, any changes to the mutable image write back to this Image.
+    * If you want a mutable copy then you must first copy this image
+    * before invoking this operation.
+    *
+    * @return
+    */
   def toMutable: MutableImage = new MutableImage(raster)
 
-  /**
-   * Creates an AsyncImage instance backed by this image.
-   *
-   * The returned AsyncImage will contain the same backing array
-   * as this image.
-   *
-   * To return back to an image instance use asyncImage.toImage
-   *
-   * @return an AsyncImage wrapping this image.
-   */
+  /** Creates an AsyncImage instance backed by this image.
+    *
+    * The returned AsyncImage will contain the same backing array
+    * as this image.
+    *
+    * To return back to an image instance use asyncImage.toImage
+    *
+    * @return an AsyncImage wrapping this image.
+    */
   def toAsync(implicit executionContext: ExecutionContext): AsyncImage = AsyncImage(this)
 
-  /**
-   * Clears all image data to the given color
-   */
+  /** Clears all image data to the given color
+    */
   @deprecated("use filled", "1.4")
   def clear(color: Color): Image = filled(color)
 }
@@ -681,24 +650,22 @@ object Image {
   val CANONICAL_DATA_TYPE = BufferedImage.TYPE_INT_ARGB
   val SCALE_THREADS = Runtime.getRuntime.availableProcessors()
 
-  /**
-   * Create a new Image from an array of pixels. The specified
-   * width and height must match the number of pixels.
-   *
-   * @return a new Image
-   */
+  /** Create a new Image from an array of pixels. The specified
+    * width and height must match the number of pixels.
+    *
+    * @return a new Image
+    */
   def apply(w: Int, h: Int, pixels: Array[Int]): Image = {
     require(w * h == pixels.size)
     Image.empty(w, h).map((x, y, p) => pixels(PixelTools.coordinateToOffset(x, y, w)))
   }
 
-  /**
-   * Create a new Image from a byte stream. This is intended to create
-   * an image from an image format eg PNG, not from a stream of pixels.
-   *
-   * @param bytes the bytes from the format stream
-   * @return a new Image
-   */
+  /** Create a new Image from a byte stream. This is intended to create
+    * an image from an image format eg PNG, not from a stream of pixels.
+    *
+    * @param bytes the bytes from the format stream
+    * @return a new Image
+    */
   def apply(bytes: Array[Byte]): Image = apply(new ByteArrayInputStream(bytes))
 
   def apply(in: InputStream): Image = {
@@ -714,22 +681,23 @@ object Image {
       case e: Exception =>
         import scala.collection.JavaConverters._
         ImageIO.getImageReaders(new ByteArrayInputStream(bytes)).asScala.foldLeft(None: Option[Image]) {
-          (value, reader) => try {
-            reader.setInput(new ByteArrayInputStream(bytes), true, true)
-            val params = reader.getDefaultReadParam
-            val imageTypes = reader.getImageTypes(0)
-            while (imageTypes.hasNext) {
-              val imageTypeSpecifier = imageTypes.next()
-              val bufferedImageType = imageTypeSpecifier.getBufferedImageType
-              if (bufferedImageType == BufferedImage.TYPE_BYTE_GRAY) {
-                params.setDestinationType(imageTypeSpecifier)
+          (value, reader) =>
+            try {
+              reader.setInput(new ByteArrayInputStream(bytes), true, true)
+              val params = reader.getDefaultReadParam
+              val imageTypes = reader.getImageTypes(0)
+              while (imageTypes.hasNext) {
+                val imageTypeSpecifier = imageTypes.next()
+                val bufferedImageType = imageTypeSpecifier.getBufferedImageType
+                if (bufferedImageType == BufferedImage.TYPE_BYTE_GRAY) {
+                  params.setDestinationType(imageTypeSpecifier)
+                }
               }
+              val bufferedImage = reader.read(0, params)
+              Some(apply(bufferedImage))
+            } catch {
+              case e: Exception => None
             }
-            val bufferedImage = reader.read(0, params)
-            Some(apply(bufferedImage))
-          } catch {
-            case e: Exception => None
-          }
         }.getOrElse(throw new RuntimeException("Unparsable image"))
     }
   }
@@ -740,13 +708,12 @@ object Image {
     apply(in)
   }
 
-  /**
-   * Create a new Scrimage Image from an AWT Image.
-   *
-   * @param awt the source AWT Image
-   *
-   * @return a new Scrimage Image
-   */
+  /** Create a new Scrimage Image from an AWT Image.
+    *
+    * @param awt the source AWT Image
+    *
+    * @return a new Scrimage Image
+    */
   def apply(awt: java.awt.Image): Image = {
     require(awt != null, "AWT image cannot be null")
     // todo optimisation to check for TYPE_INT_ARGB before copying
@@ -762,39 +729,36 @@ object Image {
     new Image(raster)
   }
 
-  /**
-   * Creates a new Image which is a copy of the given image.
-   * Any operations to the new object do not affect the original image.
-   *
-   * @param image the image to copy
-   *
-   * @return a new Image object.
-   */
+  /** Creates a new Image which is a copy of the given image.
+    * Any operations to the new object do not affect the original image.
+    *
+    * @param image the image to copy
+    *
+    * @return a new Image object.
+    */
   def apply(image: Image): Image = image.copy
 
-  /**
-   * Return a new Image with the given width and height, with all pixels set to the supplied colour.
-   *
-   * @param width the width of the new Image
-   * @param height the height of the new Image
-   * @param color the color to set all pixels to
-   *
-   * @return the new Image
-   */
+  /** Return a new Image with the given width and height, with all pixels set to the supplied colour.
+    *
+    * @param width the width of the new Image
+    * @param height the height of the new Image
+    * @param color the color to set all pixels to
+    *
+    * @return the new Image
+    */
   def filled(width: Int, height: Int, color: Color = Color.White): Image = {
     val r = IntARGBRaster(width, height, color)
     new Image(r)
   }
 
-  /**
-   * Create a new Image that is the given width and height with no initialization. This will usually result in a
-   * default black background (all pixel data defaulting to zeroes) but that is not guaranteed.
-   *
-   * @param width the width of the new image
-   * @param height the height of the new image
-   *
-   * @return the new Image with the given width and height
-   */
+  /** Create a new Image that is the given width and height with no initialization. This will usually result in a
+    * default black background (all pixel data defaulting to zeroes) but that is not guaranteed.
+    *
+    * @param width the width of the new image
+    * @param height the height of the new image
+    *
+    * @return the new Image with the given width and height
+    */
   def empty(width: Int, height: Int): Image = new Image(IntARGBRaster(width, height))
 }
 

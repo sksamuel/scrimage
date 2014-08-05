@@ -17,52 +17,47 @@
 package com.sksamuel.scrimage.io
 
 import java.io._
-import org.apache.commons.io.{IOUtils, FileUtils}
+import org.apache.commons.io.{ IOUtils, FileUtils }
 
 /** @author Stephen Samuel */
 trait ImageWriter {
 
-  /**
-   * Writes out this image to the given stream.
-   *
-   * @param out the stream to write out to
-   */
+  /** Writes out this image to the given stream.
+    *
+    * @param out the stream to write out to
+    */
   def write(out: OutputStream)
 
-  /**
-   * Writes out this image to the given filepath.
-   *
-   * @param path the path to write out to.
-   */
+  /** Writes out this image to the given filepath.
+    *
+    * @param path the path to write out to.
+    */
   def write(path: String) {
     write(new File(path))
   }
 
-  /**
-   * Writes out this image to the given file.
-   *
-   * @param file the file to write out to.
-   */
+  /** Writes out this image to the given file.
+    *
+    * @param file the file to write out to.
+    */
   def write(file: File) {
     val out = FileUtils.openOutputStream(file)
     write(out)
     IOUtils.closeQuietly(out)
   }
 
-  /**
-   * Writes out this image to a byte array.
-   *
-   * @return the byte array
-   */
+  /** Writes out this image to a byte array.
+    *
+    * @return the byte array
+    */
   def write(): Array[Byte] = {
     val baos = new ByteArrayOutputStream()
     write(baos)
     baos.toByteArray
   }
 
-  /**
-   * Returns an input stream that reads from this image.
-   */
+  /** Returns an input stream that reads from this image.
+    */
   def toStream: InputStream = {
     val bytes = write()
     new ByteArrayInputStream(bytes)

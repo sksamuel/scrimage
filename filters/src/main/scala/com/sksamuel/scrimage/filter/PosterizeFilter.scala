@@ -19,7 +19,7 @@ import com.sksamuel.scrimage.BufferedOpFilter
 
 /** @author Stephen Samuel */
 class PosterizeFilter(radius: Float, bloom: Float, bloomThreshold: Float, sides: Int, angle: Float)
-  extends BufferedOpFilter {
+    extends BufferedOpFilter {
   val op = new thirdparty.jhlabs.image.PosterizeFilter()
   op.setNumLevels(8)
 }

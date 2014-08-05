@@ -19,8 +19,8 @@ package com.sksamuel.scrimage
 import scala.concurrent._
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod.Bicubic
-import java.io.{InputStream, File}
-import com.sksamuel.scrimage.io.{ImageWriter, AsyncImageWriter}
+import java.io.{ InputStream, File }
+import com.sksamuel.scrimage.io.{ ImageWriter, AsyncImageWriter }
 
 /** @author Stephen Samuel */
 class AsyncImage(image: Image)(implicit executionContext: ExecutionContext) extends ImageLike[Future[AsyncImage]] {
@@ -65,23 +65,21 @@ class AsyncImage(image: Image)(implicit executionContext: ExecutionContext) exte
     AsyncImage(image.scaleTo(targetWidth, targetHeight, scaleMethod))
   }
 
-  /**
-   * Creates a copy of this image with the given filter applied.
-   * The original (this) image is unchanged.
-   *
-   * @param filter the filter to apply. See com.sksamuel.scrimage.Filter.
-   *
-   * @return A new image with the given filter applied.
-   */
+  /** Creates a copy of this image with the given filter applied.
+    * The original (this) image is unchanged.
+    *
+    * @param filter the filter to apply. See com.sksamuel.scrimage.Filter.
+    *
+    * @return A new image with the given filter applied.
+    */
   def filter(filter: Filter): Future[AsyncImage] = Future {
     AsyncImage(image.filter(filter))
   }
 
-  /**
-   * Returns the underlying image.
-   *
-   * @return the image that was wrapped when creating this async.
-   */
+  /** Returns the underlying image.
+    *
+    * @return the image that was wrapped when creating this async.
+    */
   def toImage: Image = image
 
   def writer[T <: ImageWriter](format: Format[T]): AsyncImageWriter[T] = new AsyncImageWriter[T](format.writer(image))
@@ -92,13 +90,13 @@ class AsyncImage(image: Image)(implicit executionContext: ExecutionContext) exte
 
 object AsyncImage {
 
-  def apply(bytes: Array[Byte])(implicit executionContext: ExecutionContext):  Future[AsyncImage] = Future {
+  def apply(bytes: Array[Byte])(implicit executionContext: ExecutionContext): Future[AsyncImage] = Future {
     Image(bytes).toAsync
   }
   def apply(in: InputStream)(implicit executionContext: ExecutionContext): Future[AsyncImage] = Future {
     Image(in).toAsync
   }
-  def apply(file: File)(implicit executionContext: ExecutionContext):  Future[AsyncImage] = Future {
+  def apply(file: File)(implicit executionContext: ExecutionContext): Future[AsyncImage] = Future {
     Image(file).toAsync
   }
   def apply(image: Image)(implicit executionContext: ExecutionContext) = new AsyncImage(image)

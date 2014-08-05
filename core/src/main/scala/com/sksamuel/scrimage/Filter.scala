@@ -23,11 +23,10 @@ trait Filter {
   def apply(image: Image)
 }
 
-/**
- * Extension of Filter that applies its filters using a standard java BufferedImageOp.
- *
- * Filters that wish to provide an awt BufferedImageOp need to simply extend this class.
- */
+/** Extension of Filter that applies its filters using a standard java BufferedImageOp.
+  *
+  * Filters that wish to provide an awt BufferedImageOp need to simply extend this class.
+  */
 abstract class BufferedOpFilter extends Filter {
   val op: BufferedImageOp
   def apply(image: Image) {

@@ -15,19 +15,19 @@ object ResampleOpScala {
     else if (x < 0.0f) bicubicInterpolation(a)(-x)
     else {
       val xx = x * x
-      if (x < 1.0f) (a + 2f) * xx * x - (a + 3f) * xx + 1f
-      else if (x < 2.0f) a * xx * x - 5 * a * xx + 8 * a * x - 4 * a
+      val xxx = xx * x
+      if (x < 1.0f) (a + 2f) * xxx - (a + 3f) * xx + 1f
+      else if (x < 2.0f) a * xxx - 5 * a * xx + 8 * a * x - 4 * a
       else 0.0f
     }
   }
 
   val bicubicFilter = ResampFilter(2, bicubicInterpolation(-0.5f))
 
-  case class SubSamplingData(
-                              arrN: Array[Int],
-                              arrPixel: Array[Int],
-                              arrWeight: Array[Float],
-                              numContributors: Int)
+  case class SubSamplingData(arrN: Array[Int],
+                             arrPixel: Array[Int],
+                             arrWeight: Array[Float],
+                             numContributors: Int)
 
   private[this] def createSubSampling(filter: ResampFilter, srcSize: Int, dstSize: Int): SubSamplingData = {
     val scale = dstSize.toFloat / srcSize.toFloat
@@ -139,7 +139,7 @@ object ResampleOpScala {
 
   private[this] def waitForAllThreads(threads: Array[Thread]) {
     try {
-      for ( t <- threads ) {
+      for (t <- threads) {
         t.join(java.lang.Long.MAX_VALUE)
 
       }
@@ -172,10 +172,10 @@ object ResampleOpScala {
     val outRaster = srcRaster.empty(dstWidth, dstHeight)
     val middleRaster = srcRaster.empty(dstWidth, srcHeight)
 
-    for ( comp <- 0 until srcRaster.n_comp ) {
+    for (comp <- 0 until srcRaster.n_comp) {
       val threads = Array.ofDim[Thread](numberOfThreads - 1)
       val workPixels = Array.ofDim[Byte](srcHeight * dstWidth)
-      for ( i <- 1 until numberOfThreads ) {
+      for (i <- 1 until numberOfThreads) {
         val finalI = i
         threads(i - 1) = new Thread(new Runnable() {
           def run() {
@@ -193,7 +193,7 @@ object ResampleOpScala {
         0, numberOfThreads, hSampling)
       waitForAllThreads(threads)
       val outPixels = Array.ofDim[Byte](dstWidth * dstHeight)
-      for ( i <- 1 until numberOfThreads ) {
+      for (i <- 1 until numberOfThreads) {
         val finalI = i
         threads(i - 1) = new Thread(new Runnable() {
           def run() {

@@ -28,7 +28,7 @@ object RippleType {
 }
 
 class RippleFilter(rippleType: RippleType, xAmplitude: Float, yAmplitude: Float, xWavelength: Float, yWavelength: Float)
-  extends BufferedOpFilter {
+    extends BufferedOpFilter {
   val op = new thirdparty.jhlabs.image.RippleFilter()
   op.setXAmplitude(xAmplitude)
   op.setYAmplitude(yAmplitude)

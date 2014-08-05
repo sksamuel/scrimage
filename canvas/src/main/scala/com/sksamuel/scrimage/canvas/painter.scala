@@ -2,8 +2,8 @@ package com.sksamuel.scrimage.canvas
 
 import java.awt._
 import com.sksamuel.scrimage.Color
-import java.awt.image.{Raster, ColorModel}
-import java.awt.geom.{AffineTransform, Rectangle2D}
+import java.awt.image.{ Raster, ColorModel }
+import java.awt.geom.{ AffineTransform, Rectangle2D }
 import com.sksamuel.scrimage.RGBColor
 import sun.awt.image.IntegerComponentRaster
 import scala.util.Random
@@ -37,7 +37,7 @@ object RandomPainter extends Painter {
                              w: Int,
                              h: Int): Raster = {
         val raster = getColorModel.createCompatibleWritableRaster(w, h).asInstanceOf[IntegerComponentRaster]
-        for ( x <- x until x + w; y <- y until y + h ) {
+        for (x <- x until x + w; y <- y until y + h) {
           val color = Color(Random.nextInt(256), Random.nextInt(256), Random.nextInt(256)).toInt
           raster.getDataStorage()(x + x * y) = color
         }

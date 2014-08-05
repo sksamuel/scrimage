@@ -19,14 +19,12 @@ package com.sksamuel.scrimage
 /** @author Stephen Samuel */
 sealed trait Position {
 
-  /**
-   * Returns the x coordinate for where an image should be placed inside the canvas.
-   */
+  /** Returns the x coordinate for where an image should be placed inside the canvas.
+    */
   def calculateX(canvasWidth: Int, canvasHeight: Int, imageWidth: Int, imageHeight: Int): Int
 
-  /**
-   * Returns the y coordinate for where an image should be placed inside the canvas.
-   */
+  /** Returns the y coordinate for where an image should be placed inside the canvas.
+    */
   def calculateY(canvasWidth: Int, canvasHeight: Int, imageWidth: Int, imageHeight: Int): Int
 
   def calculateXY(canvasWidth: Int, canvasHeight: Int, imageWidth: Int, imageHeight: Int): (Int, Int) =
