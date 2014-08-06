@@ -141,3 +141,49 @@ class RGBLayerColorModel(val channel: Int) extends ByteColorModel {
   def toColor(pixel: PixelType) = Color(toARGB(pixel))
   def fromColor(c: Color) = fromARGB(c.toRGB.argb)
 }
+
+/** A ColorModel that packs a pixel into several bytes. */
+trait BytesColorModel extends ColorModel {
+  type PixelType = Array[Byte]
+  def newDataModel(size: Int) = Array.ofDim[Byte](size, n_channel)
+  def getChannel(channel: Int, pixel: PixelType): Byte = pixel(channel)
+  def pack(channels: Array[Byte]): PixelType = channels
+  def unpack(pixel: PixelType, out: Array[Byte] = Array.ofDim[Byte](n_channel)): Array[Byte] = {
+    System.arraycopy(pixel, 0, out, 0, n_channel)
+    out
+  }
+  def foldChannel(px: PixelType, channel: Int, c: Byte) = {
+    px(channel) = c; px
+  }
+}
+
+trait BytesARGBColorModel extends BytesColorModel {
+  val n_channel = 4
+  def toARGB(pixel: PixelType): Int =
+    (pixel(0) & 0xff) << 24 | (pixel(1) & 0xff) << 16 | (pixel(2) & 0xff) << 8 | (pixel(3) & 0xff)
+  def fromARGB(c: Int): PixelType = {
+    val out = Array.ofDim[Byte](n_channel)
+    out(0) = (c >> 24).toByte
+    out(1) = (c >> 16).toByte
+    out(2) = (c >> 8).toByte
+    out(3) = c.toByte
+    out
+  }
+  def toColor(pixel: PixelType) = Color(pixel(1), pixel(2), pixel(3), pixel(0))
+  def fromColor(c: Color) = fromARGB(c.toRGB.argb)
+}
+
+trait BytesRGBColorModel extends BytesColorModel {
+  val n_channel = 3
+  def toARGB(pixel: PixelType): Int =
+    (pixel(0) & 0xff) << 16 | (pixel(1) & 0xff) << 8 | (pixel(2) & 0xff)
+  def fromARGB(c: Int): PixelType = {
+    val out = Array.ofDim[Byte](n_channel)
+    out(0) = (c >> 16).toByte
+    out(1) = (c >> 8).toByte
+    out(2) = c.toByte
+    out
+  }
+  def toColor(pixel: PixelType) = Color(pixel(0), pixel(1), pixel(2))
+  def fromColor(c: Color) = fromARGB(c.toRGB.argb)
+}
