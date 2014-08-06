@@ -2,7 +2,7 @@ package com.sksamuel.scrimage.scaling
 
 import com.sksamuel.scrimage.Image
 
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{ Await, Future }
 import scala.concurrent.duration._
 
 object ResampleOpScala {
@@ -12,13 +12,13 @@ object ResampleOpScala {
   private val MAX_CHANNEL_VALUE = 255
   private val MAX_WAIT_PER_PASS = 10.minutes
 
-  case class ResampFilter(samplingRadius: Int, f: Float => Float) {
-    def apply(x: Float) = f(x)
+  case class ResampFilter(samplingRadius: Int, kernel: Float => Float) {
+    def apply(x: Float) = kernel(x)
   }
 
-  def bicubicInterpolation(a: Float)(x: Float): Float = {
+  def bicubicKernel(a: Float)(x: Float): Float = {
     if (x == 0) 1.0f
-    else if (x < 0.0f) bicubicInterpolation(a)(-x)
+    else if (x < 0.0f) bicubicKernel(a)(-x)
     else {
       val xx = x * x
       val xxx = xx * x
@@ -28,7 +28,36 @@ object ResampleOpScala {
     }
   }
 
-  val bicubicFilter = ResampFilter(2, bicubicInterpolation(-0.5f))
+  def bilinearKernel(x: Float): Float = {
+    if (x >= 0.0f && x < 1.0f) 1.0f - x
+    else if (-1.0f < x && x < 0.0f) 1.0f + x
+    else 0.0f
+  }
+
+  def bSplineKernel(x: Float): Float = {
+    if (x < 0.0f) bSplineKernel(-x)
+    else if (x < 1.0f) {
+      val xx = x * x
+      0.5f * xx * x - xx + (2.0f / 3.0f)
+    } else if (x < 2.0f) {
+      val y = 2.0f - x
+      (1.0f / 6.0f) * y * y * y
+    } else 0.0f
+  }
+
+  private def sinc(x: Float): Float = Math.sin(x).toFloat / x
+  private val PIf = Math.PI.toFloat
+
+  def lanczos3Kernel(x: Float): Float = {
+    if (x == 0) 1.0f
+    else if (-3.0f < x && x < 3.0f) sinc(x * PIf) * sinc(x * PIf / 3.0f)
+    else 0.0f
+  }
+
+  val bicubicFilter = ResampFilter(2, bicubicKernel(-0.5f))
+  val bilinearFilter = ResampFilter(1, bilinearKernel)
+  val bSplineFilter = ResampFilter(2, bSplineKernel)
+  val lanczos3Filter = ResampFilter(3, lanczos3Kernel)
 
   case class SubSamplingData(arrN: Array[Int],
                              arrPixel: Array[Int],
@@ -148,7 +177,7 @@ object ResampleOpScala {
     require(dstWidth >= 3 && dstHeight >= 3,
       s"Error doing rescale. Target was $dstWidth x $dstHeight but must be at least 3x3.")
 
-    val nrChannels = img.raster.n_comp
+    val nrChannels = img.raster.n_channel
     assert(nrChannels > 0)
     val srcWidth = img.width
     val srcHeight = img.height
@@ -163,13 +192,13 @@ object ResampleOpScala {
     val outRaster = srcRaster.empty(dstWidth, dstHeight)
     val middleRaster = srcRaster.empty(dstWidth, srcHeight)
 
-    for ( comp <- 0 until srcRaster.n_comp ) {
+    for (channel <- 0 until srcRaster.n_channel) {
       val workPixels = Array.ofDim[Byte](srcHeight * dstWidth)
-      val horizontals = for ( i <- 0 until numberOfThreads ) yield {
+      val horizontals = for (i <- 0 until numberOfThreads) yield {
         val finalI = i
         Future {
           horizontallyFromSrcToWork(
-            srcPixels(comp), workPixels,
+            srcPixels(channel), workPixels,
             srcWidth, srcHeight, dstWidth,
             finalI, numberOfThreads, hSampling)
         }
@@ -177,7 +206,7 @@ object ResampleOpScala {
       Await.ready(Future sequence horizontals, MAX_WAIT_PER_PASS)
 
       val outPixels = Array.ofDim[Byte](dstWidth * dstHeight)
-      val verticles = for ( i <- 0 until numberOfThreads ) yield {
+      val verticles = for (i <- 0 until numberOfThreads) yield {
         val finalI = i
         Future {
           verticalFromWorkToDst(
@@ -188,7 +217,7 @@ object ResampleOpScala {
         }
       }
       Await.ready(Future sequence verticles, MAX_WAIT_PER_PASS)
-      outRaster.foldComp(comp)(outPixels)
+      outRaster.foldChannel(channel)(outPixels)
     }
     new Image(outRaster)
   }

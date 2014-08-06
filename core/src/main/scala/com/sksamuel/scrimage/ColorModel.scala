@@ -1,37 +1,82 @@
 package com.sksamuel.scrimage
 
+/** Describes how to read Color from raw data.
+  * The ColorModel may use several channels to encode the color,
+  * and must provide a way to access to each of this channel.
+  */
 trait ColorModel {
 
-  /**
-   * The data type that contains pixel information in this color model.
-   * For example, if you were implementing an ARGB color model, you may chose to use ints
-   * and pack the 4 components into an int using bit shifting, or you may choose to use 4 bytes.
-   */
+  /** The data type that contains pixel information in this color model.
+    * For example, if you were implementing an ARGB color model, you may chose to use ints
+    * and pack the 4 components into an int using bit shifting, or you may choose to use 4 bytes.
+    */
   type PixelType
 
-  def n_comp: Int
-  def getComp(comp: Int, pixel: PixelType): Byte
-  def unpack(pixel: PixelType, out: Array[Byte] = Array.ofDim[Byte](n_comp)): Array[Byte]
-  def pack(comps: Array[Byte]): PixelType
+  /** The number of channels used by this ColorModel
+    */
+  def n_channel: Int
+
+  /** Extracts the channel value of a given pixel.
+    * The result is a signed Byte (use & 0xff to convert to an Int between 0 and 255).
+    *
+    * @param channel - the channel asked
+    * @return The channel value as a Byte
+    */
+  def getChannel(channel: Int, pixel: PixelType): Byte
+
+  /** Extracts all the channels of the given pixels into an Array[Byte].
+    *
+    * @param pixel - the pixel to unpack
+    * @param out - an optionnal array to store the result. If none given, one will be created.
+    * @return Return value - blah blah
+    */
+  def unpack(pixel: PixelType, out: Array[Byte] = Array.ofDim[Byte](n_channel)): Array[Byte]
+
+  /** Packs the given array of byte into a Pixel.
+    *
+    * @param channels - the array to pack into a pixel
+    * @return Return value - blah blah
+    */
+  def pack(channels: Array[Byte]): PixelType
+
+  /** Converts a pixel to an ARGB Int. */
   def toARGB(pixel: PixelType): Int
-  def fromARGB(c: Int): PixelType
+
+  /** Converts an ARGB Int to a Pixel. */
+  def fromARGB(color: Int): PixelType
+
+  /** Converts a pixel to a [[com.sksamuel.scrimage.Color]]. */
   def toColor(pixel: PixelType): Color
+
+  /** Converts a [[com.sksamuel.scrimage.Color]] to a Pixel. */
   def fromColor(color: Color): PixelType
-  def foldComp(px: PixelType, comp: Int, c: Byte): PixelType
+
+  /** Sets a channel of a pixel with the given Byte. Assumes that this channel was 0 before
+    *
+    * @param pixel - the pixel to modify
+    * @param channel - the channel to set
+    * @param level - the level of this channel
+    * @return the result pixel
+    */
+  def foldChannel(pixel: PixelType, channel: Int, level: Byte): PixelType
+
+  /** Creates an array of Pixel of the given size. */
   def newDataModel(size: Int): Array[PixelType]
 }
 
+/** A ColorModel that packs a pixel into an Int. */
 trait IntColorModel extends ColorModel {
   type PixelType = Int
   def newDataModel(size: Int) = Array.ofDim[Int](size)
 }
 
-trait ARGBColorModel extends IntColorModel {
-  val n_comp = 4
-  def getComp(comp: Int, pixel: PixelType): Byte = (pixel >> (24 - comp * 8)).toByte
-  def pack(comps: Array[Byte]): PixelType =
-    (comps(0) & 0xff) << 24 | (comps(1) & 0xff) << 16 | (comps(2) & 0xff) << 8 | (comps(3) & 0xff)
-  def unpack(pixel: PixelType, out: Array[Byte] = Array.ofDim[Byte](n_comp)): Array[Byte] = {
+/** A ColorModel that packs ARGB pixels in an Int. */
+trait IntARGBColorModel extends IntColorModel {
+  val n_channel = 4
+  def getChannel(channel: Int, pixel: PixelType): Byte = (pixel >> (24 - channel * 8)).toByte
+  def pack(channels: Array[Byte]): PixelType =
+    (channels(0) & 0xff) << 24 | (channels(1) & 0xff) << 16 | (channels(2) & 0xff) << 8 | (channels(3) & 0xff)
+  def unpack(pixel: PixelType, out: Array[Byte] = Array.ofDim[Byte](n_channel)): Array[Byte] = {
     out(0) = (pixel >> 24).toByte
     out(1) = (pixel >> 16).toByte
     out(2) = (pixel >> 8).toByte
@@ -42,15 +87,16 @@ trait ARGBColorModel extends IntColorModel {
   def fromARGB(c: Int): PixelType = c
   def toColor(pixel: PixelType) = Color(toARGB(pixel))
   def fromColor(c: Color) = fromARGB(c.toRGB.argb)
-  def foldComp(px: PixelType, comp: Int, c: Byte) = px | (c & 0xff) << (24 - comp * 8)
+  def foldChannel(px: PixelType, channel: Int, c: Byte) = px | (c & 0xff) << (24 - channel * 8)
 }
 
+/** A ColorModel that packs RGB pixels in an Int. */
 trait RGBColorModel extends IntColorModel {
-  val n_comp = 3
-  def getComp(comp: Int, pixel: PixelType): Byte = (pixel >> (16 - comp * 8)).toByte
-  def pack(comps: Array[Byte]): PixelType =
-    (comps(0) & 0xff) << 16 | (comps(1) & 0xff) << 8 | (comps(2) & 0xff)
-  def unpack(pixel: PixelType, out: Array[Byte] = Array.ofDim[Byte](n_comp)): Array[Byte] = {
+  val n_channel = 3
+  def getChannel(channel: Int, pixel: PixelType): Byte = (pixel >> (16 - channel * 8)).toByte
+  def pack(channels: Array[Byte]): PixelType =
+    (channels(0) & 0xff) << 16 | (channels(1) & 0xff) << 8 | (channels(2) & 0xff)
+  def unpack(pixel: PixelType, out: Array[Byte] = Array.ofDim[Byte](n_channel)): Array[Byte] = {
     out(0) = (pixel >> 16).toByte
     out(1) = (pixel >> 8).toByte
     out(2) = pixel.toByte
@@ -60,22 +106,24 @@ trait RGBColorModel extends IntColorModel {
   def fromARGB(c: Int): PixelType = c
   def toColor(pixel: PixelType) = Color(toARGB(pixel))
   def fromColor(c: Color) = fromARGB(c.toRGB.argb)
-  def foldComp(px: PixelType, comp: Int, c: Byte) = px | (c & 0xff) << (16 - comp * 8)
+  def foldChannel(px: PixelType, channel: Int, c: Byte) = px | (c & 0xff) << (16 - channel * 8)
 }
 
+/** A ColorModel with one channel of one Byte. */
 trait ByteColorModel extends ColorModel {
   type PixelType = Byte
-  val n_comp = 1
-  def getComp(comp: Int, pixel: PixelType): Byte = pixel
-  def pack(comps: Array[Byte]): PixelType = comps(0)
-  def unpack(pixel: PixelType, out: Array[Byte] = Array.ofDim[Byte](n_comp)): Array[Byte] = {
+  val n_channel = 1
+  def getChannel(channel: Int, pixel: PixelType): Byte = pixel
+  def pack(channels: Array[Byte]): PixelType = channels(0)
+  def unpack(pixel: PixelType, out: Array[Byte] = Array.ofDim[Byte](n_channel)): Array[Byte] = {
     out(0) = pixel
     out
   }
-  def foldComp(pixel: PixelType)(comp: Int)(c: Byte) = c
+  def foldChannel(pixel: PixelType, channel: Int, c: Byte): PixelType = c
   def newDataModel(size: Int) = Array.ofDim[PixelType](size)
 }
 
+/** A ColorModel for grayscale colors. */
 trait GreyColorModel extends ByteColorModel {
   def toARGB(pixel: PixelType): Int = (pixel & 0xff) * 0x00010101 | 0xff000000
   def fromARGB(c: Int): PixelType = fromColor(Color(c))
@@ -86,9 +134,10 @@ trait GreyColorModel extends ByteColorModel {
   }
 }
 
-// trait RGBLayerColorModel(layer: Int) extends ByteColorModel {
-//     def toARGB(pixel: PixelType): Int = pixel << (16 - layer * 8) | 0xff000000
-//     def fromARGB(c: Int): PixelType = (c >> (16 - layer * 8)).toByte
-//     def toColor(pixel: PixelType) = Color(toARGB(pixel))
-//     def fromColor(c: Color) = fromARGB(c.toRGB.argb)
-// }
+/** A ColorModel that stores only one of the RGB channel. */
+class RGBLayerColorModel(val channel: Int) extends ByteColorModel {
+  def toARGB(pixel: PixelType): Int = pixel << (16 - channel * 8) | 0xff000000
+  def fromARGB(c: Int): PixelType = (c >> (16 - channel * 8)).toByte
+  def toColor(pixel: PixelType) = Color(toARGB(pixel))
+  def fromColor(c: Color) = fromARGB(c.toRGB.argb)
+}
