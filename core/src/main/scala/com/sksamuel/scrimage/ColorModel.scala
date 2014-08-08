@@ -14,7 +14,7 @@ trait ColorModel {
 
   /** The number of channels used by this ColorModel
     */
-  def n_channel: Int
+  val n_channel: Int
 
   /** Extracts the channel value of a given pixel.
     * The result is a signed Byte (use & 0xff to convert to an Int between 0 and 255).
@@ -145,6 +145,13 @@ class RGBLayerColorModel(val channel: Int) extends ByteColorModel {
 /** A ColorModel that packs a pixel into several bytes. */
 trait BytesColorModel extends ColorModel {
   type PixelType = Array[Byte]
+  def toARGB(pixel: PixelType) = toARGB(pixel, 0)
+  def toARGB(pixel: PixelType, off: Int): Int
+  def toColor(pixel: PixelType) = toColor(pixel, 0)
+  def toColor(pixel: PixelType, off: Int): Color
+  def fromARGB(argb: Int) = fromARGB(argb, Array.ofDim[Byte](n_channel), 0)
+  def fromARGB(argb: Int, out: Array[Byte], offset: Int): PixelType
+  def fromColor(c: Color) = fromARGB(c.toRGB.argb)
   def newDataModel(size: Int) = Array.ofDim[Byte](size, n_channel)
   def getChannel(channel: Int, pixel: PixelType): Byte = pixel(channel)
   def pack(channels: Array[Byte]): PixelType = channels
@@ -159,31 +166,34 @@ trait BytesColorModel extends ColorModel {
 
 trait BytesARGBColorModel extends BytesColorModel {
   val n_channel = 4
-  def toARGB(pixel: PixelType): Int =
-    (pixel(0) & 0xff) << 24 | (pixel(1) & 0xff) << 16 | (pixel(2) & 0xff) << 8 | (pixel(3) & 0xff)
-  def fromARGB(c: Int): PixelType = {
-    val out = Array.ofDim[Byte](n_channel)
-    out(0) = (c >> 24).toByte
-    out(1) = (c >> 16).toByte
-    out(2) = (c >> 8).toByte
-    out(3) = c.toByte
+  def toARGB(pixel: PixelType, off: Int): Int = (
+    (pixel(off + 0) & 0xff) << 24 |
+    (pixel(off + 1) & 0xff) << 16 |
+    (pixel(off + 2) & 0xff) << 8 |
+    (pixel(off + 3) & 0xff)
+  )
+  def fromARGB(argb: Int, out: Array[Byte], offset: Int): PixelType = {
+    out(offset) = (argb >> 24).toByte
+    out(offset + 1) = (argb >> 16).toByte
+    out(offset + 2) = (argb >> 8).toByte
+    out(offset + 3) = argb.toByte
     out
   }
-  def toColor(pixel: PixelType) = Color(pixel(1), pixel(2), pixel(3), pixel(0))
-  def fromColor(c: Color) = fromARGB(c.toRGB.argb)
+  def toColor(pixel: PixelType, off: Int) =
+    Color(pixel(off + 1), pixel(off + 2), pixel(off + 3), pixel(off + 0))
+
 }
 
-trait BytesRGBColorModel extends BytesColorModel {
+class BytesRGBColorModel extends BytesColorModel {
   val n_channel = 3
-  def toARGB(pixel: PixelType): Int =
-    (pixel(0) & 0xff) << 16 | (pixel(1) & 0xff) << 8 | (pixel(2) & 0xff)
-  def fromARGB(c: Int): PixelType = {
-    val out = Array.ofDim[Byte](n_channel)
-    out(0) = (c >> 16).toByte
-    out(1) = (c >> 8).toByte
-    out(2) = c.toByte
+  def toARGB(pixel: PixelType, off: Int): Int =
+    (pixel(off + 0) & 0xff) << 16 | (pixel(off + 1) & 0xff) << 8 | (pixel(off + 2) & 0xff)
+
+  def fromARGB(argb: Int, out: Array[Byte], offset: Int): PixelType = {
+    out(offset) = (argb >> 16).toByte
+    out(offset + 1) = (argb >> 8).toByte
+    out(offset + 2) = argb.toByte
     out
   }
-  def toColor(pixel: PixelType) = Color(pixel(0), pixel(1), pixel(2))
-  def fromColor(c: Color) = fromARGB(c.toRGB.argb)
+  def toColor(pixel: PixelType, off: Int) = Color(pixel(off + 0), pixel(off + 1), pixel(off + 2))
 }
