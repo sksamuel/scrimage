@@ -16,6 +16,18 @@ object ResampleOpScala {
     def apply(x: Float) = kernel(x)
   }
 
+  def hermitKernel(x: Float): Float = {
+    if (x == 0) 1.0f
+    else if (x < 0.0f) hermitKernel(-x)
+    else {
+      val xx = x * x
+      val xxx = xx * x
+      if (x < 1.0f) (2.5f) * xxx - (3.5f) * xx + 1f
+      else if (x < 2.0f) 0.5f * xxx - 2.5f * xx + 4f * x - 2f
+      else 0.0f
+    }
+  }
+
   def bicubicKernel(a: Float)(x: Float): Float = {
     if (x == 0) 1.0f
     else if (x < 0.0f) bicubicKernel(a)(-x)
@@ -54,7 +66,7 @@ object ResampleOpScala {
     else 0.0f
   }
 
-  val bicubicFilter = ResampFilter(2, bicubicKernel(-0.5f))
+  val bicubicFilter = ResampFilter(2, hermitKernel)
   val bilinearFilter = ResampFilter(1, bilinearKernel)
   val bSplineFilter = ResampFilter(2, bSplineKernel)
   val lanczos3Filter = ResampFilter(3, lanczos3Kernel)
