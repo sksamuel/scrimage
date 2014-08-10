@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage
 
-import org.scalatest.{OneInstancePerTest, FunSuite}
+import org.scalatest.{ OneInstancePerTest, FunSuite }
 
 /** @author Stephen Samuel */
 class Issue29Test extends FunSuite with OneInstancePerTest {

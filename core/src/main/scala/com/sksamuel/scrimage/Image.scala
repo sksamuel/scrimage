@@ -340,8 +340,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     new Image(raster)
   }
 
-  /**
-    * Returns a copy of this image with the given dimensions
+  /** Returns a copy of this image with the given dimensions
     * where the original image has been scaled to fit completely
     * inside the new dimensions whilst retaining the original aspect ratio.
     *
@@ -365,8 +364,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     Image.filled(targetWidth, targetHeight, color).overlay(scaled, x, y)
   }
 
-  /**
-    * Returns a copy of the canvas with the given dimensions where the
+  /** Returns a copy of the canvas with the given dimensions where the
     * original image has been scaled to completely cover the new dimensions
     * whilst retaining the original aspect ratio.
     *
@@ -392,8 +390,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     Image.empty(targetWidth, targetHeight).overlay(scaled, x, y)
   }
 
-  /**
-    * Scale will resize both the canvas and the image.
+  /** Scale will resize both the canvas and the image.
     * This is like a "image resize" in Photoshop.
     *
     * The size of the scaled instance are taken from the given
@@ -430,8 +427,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
 
   }
 
-  /**
-    * Resize will resize the canvas, it will not scale the image.
+  /** Resize will resize the canvas, it will not scale the image.
     * This is like a "canvas resize" in Photoshop.
     *
     * If the dimensions are smaller than the current canvas size

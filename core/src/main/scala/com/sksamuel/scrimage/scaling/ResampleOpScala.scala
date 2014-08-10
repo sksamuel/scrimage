@@ -22,7 +22,7 @@ object ResampleOpScala {
     else {
       val xx = x * x
       val xxx = xx * x
-      if (x < 1.0f) (2.5f) * xxx - (3.5f) * xx + 1f
+      if (x < 1.0f) 2.5f * xxx - 3.5f * xx + 1f
       else if (x < 2.0f) 0.5f * xxx - 2.5f * xx + 4f * x - 2f
       else 0.0f
     }

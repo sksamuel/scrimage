@@ -1,8 +1,8 @@
 package com.sksamuel.scrimage
 
-import org.scalatest.{Matchers, BeforeAndAfter, FunSuite}
+import org.scalatest.{ Matchers, BeforeAndAfter, FunSuite }
 import java.awt.image.BufferedImage
-import com.sksamuel.scrimage.Position.{TopRight, BottomRight, Center, TopLeft}
+import com.sksamuel.scrimage.Position.{ TopRight, BottomRight, Center, TopLeft }
 
 /** @author Stephen Samuel */
 class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
@@ -242,6 +242,8 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   test("when scaling an image the output image should match as expected") {
     val scaled = image.scale(0.25)
     val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird_scale_025.png"))
+    scaled.write(new java.io.File("scaled.png"))
+    expected.write(new java.io.File("scaled_expected.png"))
     assert(expected.width === scaled.width)
     assert(expected.height === scaled.height)
   }
@@ -255,6 +257,8 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   test("when fitting an image the output image should match as expected") {
     val fitted = image.fit(900, 300, java.awt.Color.RED)
     val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird_fitted2.png"))
+    fitted.write(new java.io.File("fitted.png"))
+    expected.write(new java.io.File("fitted_expected.png"))
     assert(fitted.pixels.length === fitted.pixels.length)
     assert(expected == fitted)
   }
@@ -281,7 +285,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     val image = Image.filled(20, 20, java.awt.Color.YELLOW)
     val components = image.argb
     assert(400 === components.size)
-    for ( component <- components )
+    for (component <- components)
       assert(component === Array(255, 255, 255, 0))
   }
 
@@ -289,7 +293,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     val image = Image.filled(20, 20, java.awt.Color.YELLOW)
     val components = image.rgb
     assert(400 === components.size)
-    for ( component <- components )
+    for (component <- components)
       assert(component === Array(255, 255, 0))
   }
 
@@ -321,7 +325,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   test("map modifies each pixel and returns new image") {
     val image = Image.empty(100, 100)
     val mapped = image.map((_, _, _) => 0xFF00FF00)
-    for ( component <- mapped.argb )
+    for (component <- mapped.argb)
       assert(component === Array(255, 0, 255, 0))
   }
 
@@ -330,9 +334,9 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     val resized = scaled.resizeTo(200, 200, TopLeft)
     assert(200 === resized.width)
     assert(200 === resized.height)
-    for ( x <- 0 until 100; y <- 0 until 100 ) assert(scaled.pixel(x, y) === resized.pixel(x, y))
-    for ( x <- 0 until 200; y <- 100 until 200 ) assert(0xFFFFFFFF === resized.pixel(x, y))
-    for ( x <- 100 until 200; y <- 0 until 100 ) assert(0xFFFFFFFF === resized.pixel(x, y))
+    for (x <- 0 until 100; y <- 0 until 100) assert(scaled.pixel(x, y) === resized.pixel(x, y))
+    for (x <- 0 until 200; y <- 100 until 200) assert(0xFFFFFFFF === resized.pixel(x, y))
+    for (x <- 100 until 200; y <- 0 until 100) assert(0xFFFFFFFF === resized.pixel(x, y))
   }
 
   test("overlay should retain source background") {
@@ -351,9 +355,9 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     val resized = scaled.resizeTo(200, 200, BottomRight)
     assert(200 === resized.width)
     assert(200 === resized.height)
-    for ( x <- 0 until 100; y <- 0 until 200 ) assert(0xFFFFFFFF === resized.pixel(x, y))
-    for ( x <- 100 until 200; y <- 0 until 100 ) assert(0xFFFFFFFF === resized.pixel(x, y))
-    for ( x <- 100 until 200; y <- 100 until 200 ) assert(scaled.pixel(x - 100, y - 100) === resized.pixel(x, y))
+    for (x <- 0 until 100; y <- 0 until 200) assert(0xFFFFFFFF === resized.pixel(x, y))
+    for (x <- 100 until 200; y <- 0 until 100) assert(0xFFFFFFFF === resized.pixel(x, y))
+    for (x <- 100 until 200; y <- 100 until 200) assert(scaled.pixel(x - 100, y - 100) === resized.pixel(x, y))
   }
 
   test("enlarging a canvas with TopRight should position the image to the top and to the right") {
@@ -362,9 +366,9 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     assert(200 === resized.width)
     assert(200 === resized.height)
 
-    for ( x <- 0 until 100; y <- 0 until 200 ) assert(0xFFFFFFFF === resized.pixel(x, y))
-    for ( x <- 100 until 200; y <- 100 until 200 ) assert(0xFFFFFFFF === resized.pixel(x, y))
-    for ( x <- 100 until 200; y <- 0 until 100 ) assert(scaled.pixel(x - 100, y) === resized.pixel(x, y))
+    for (x <- 0 until 100; y <- 0 until 200) assert(0xFFFFFFFF === resized.pixel(x, y))
+    for (x <- 100 until 200; y <- 100 until 200) assert(0xFFFFFFFF === resized.pixel(x, y))
+    for (x <- 100 until 200; y <- 0 until 100) assert(scaled.pixel(x - 100, y) === resized.pixel(x, y))
   }
 
   test("enlarging a canvas with Centre should position the image in the center") {
@@ -372,16 +376,16 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     val resized = scaled.resizeTo(200, 200, Center)
     assert(200 === resized.width)
     assert(200 === resized.height)
-    for ( x <- 0 until 50; y <- 0 until 50 ) assert(0xFFFFFFFF === resized.pixel(x, y))
-    for ( x <- 50 until 150; y <- 50 until 150 ) assert(scaled.pixel(x - 50, y - 50) === resized.pixel(x, y))
-    for ( x <- 150 until 200; y <- 150 until 200 ) assert(0xFFFFFFFF === resized.pixel(x, y))
+    for (x <- 0 until 50; y <- 0 until 50) assert(0xFFFFFFFF === resized.pixel(x, y))
+    for (x <- 50 until 150; y <- 50 until 150) assert(scaled.pixel(x - 50, y - 50) === resized.pixel(x, y))
+    for (x <- 150 until 200; y <- 150 until 200) assert(0xFFFFFFFF === resized.pixel(x, y))
   }
 
   test("when enlarging the background should be set to the specified parameter") {
     val scaled = image.scaleTo(100, 100)
     val resized = scaled.resizeTo(200, 200, Center, java.awt.Color.BLUE)
-    for ( x <- 0 until 200; y <- 0 until 50 ) assert(0xFF0000FF === resized.pixel(x, y))
-    for ( x <- 0 until 200; y <- 150 until 200 ) assert(0xFF0000FF === resized.pixel(x, y))
+    for (x <- 0 until 200; y <- 0 until 50) assert(0xFF0000FF === resized.pixel(x, y))
+    for (x <- 0 until 200; y <- 150 until 200) assert(0xFF0000FF === resized.pixel(x, y))
   }
 
   test("when bounding an image the dimensions should not exceed the bounds") {
@@ -402,7 +406,10 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
 
   test("bound operation happy path") {
     val bounded = image.bound(200, 200)
-    assert(bounded === Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird_bound_200x200.png")))
+    val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird_bound_200x200.png"))
+    bounded.write(new java.io.File("bounded.png"))
+    expected.write(new java.io.File("bounded_expected.png"))
+    assert(bounded === expected)
   }
 
   test("when covering an image the output image should have the specified dimensions") {
@@ -413,14 +420,17 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
 
   test("cover operation happy path") {
     val covered = image.cover(200, 200)
-    assert(covered === Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird_cover_200x200.png")))
+    val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird_cover_200x200.png"))
+    covered.write(new java.io.File("covered.png"))
+    expected.write(new java.io.File("covered_expected.png"))
+    assert(covered === expected)
   }
 
   test("column") {
     val striped = Image.empty(200, 100).map((x, y, p) => if (y % 2 == 0) 255 else 0)
     val col = striped.col(51)
     assert(striped.height === col.size)
-    for ( y <- 0 until striped.height ) {
+    for (y <- 0 until striped.height) {
       if (y % 2 == 0) assert(255 === col(y), "col was " + col(y))
       else assert(0 === col(y), "col was " + col(y))
     }
@@ -439,13 +449,13 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   test("pixels region") {
     val striped = Image.empty(200, 100).map((x, y, p) => if (y % 2 == 0) 255 else 0)
     val pixels = striped.pixels(10, 10, 10, 10)
-    for ( k <- 0 until 10 )
+    for (k <- 0 until 10)
       assert(255 === pixels(k))
-    for ( k <- 10 until 19 )
+    for (k <- 10 until 19)
       assert(0 === pixels(k))
-    for ( k <- 20 until 29 )
+    for (k <- 20 until 29)
       assert(255 === pixels(k))
-    for ( k <- 30 until 39 )
+    for (k <- 30 until 39)
       assert(0 === pixels(k))
   }
 

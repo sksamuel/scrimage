@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.canvas.composite
 
-import com.sksamuel.scrimage.{Format, Composite, Image}
+import com.sksamuel.scrimage.{ Format, Composite, Image }
 import com.sksamuel.scrimage.canvas.Canvas._
 import java.io.File
 import org.apache.commons.io.FileUtils
@@ -40,11 +40,11 @@ object CompositeExampleGenerator extends App {
   val s2 = l2.scaleToWidth(200)
 
   val sb = new StringBuffer()
-  for ( (name, composite) <- composites ) {
+  for ((name, composite) <- composites) {
 
     sb.append("\n| " + name + " | ")
 
-    for ( alpha <- List(0.5, 1.0) ) {
+    for (alpha <- List(0.5, 1.0)) {
 
       val large = l1.composite(composite(alpha), l2)
       val small = s1.composite(composite(alpha), s2)

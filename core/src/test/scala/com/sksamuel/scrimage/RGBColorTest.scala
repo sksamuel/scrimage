@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage
 
 import com.sksamuel.scrimage.Color._
-import org.scalatest.{FlatSpec, OneInstancePerTest}
+import org.scalatest.{ FlatSpec, OneInstancePerTest }
 
 /** @author Stephen Samuel */
 class RGBColorTest extends FlatSpec with OneInstancePerTest {

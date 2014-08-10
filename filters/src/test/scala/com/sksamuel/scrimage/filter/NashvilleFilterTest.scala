@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.filter
 
-import org.scalatest.{OneInstancePerTest, BeforeAndAfter, FunSuite}
+import org.scalatest.{ OneInstancePerTest, BeforeAndAfter, FunSuite }
 import com.sksamuel.scrimage.Image
 
 /** @author Stephen Samuel */
