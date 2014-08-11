@@ -17,6 +17,7 @@ trait ColorModel {
   /** The number of channels used by this ColorModel
     */
   val n_channel: Int
+  val channelSize: Int
 
   def readChannel(pixel: Array[ChannelType], offset: Int, channel: Int): Int
 
@@ -30,15 +31,14 @@ trait ColorModel {
 
   def writeColor(pixel: Array[ChannelType], offset: Int)(color: Color): Unit
 
-  /** Creates an array of ChannelType of the given size. */
-  def newDataModel(size: Int): Array[ChannelType]
-  def newDataModel(width: Int, height: Int): Array[ChannelType] =
-    newDataModel(width * height * n_channel)
+  /** Creates an array of ChannelType of the correct size for the given dim of raster */
+  def newDataModel(width: Int, height: Int): Array[ChannelType]
 }
 
 /** A ColorModel that where channels value ranges between 0 and 255 and are store in one Byte*/
 trait ByteColorModel extends ColorModel {
   type ChannelType = Byte
+  val channelSize = 1
 
   def readChannel(pixel: Array[ChannelType], off: Int, channel: Int) =
     pixel(off + channel) & 0xff
@@ -46,7 +46,8 @@ trait ByteColorModel extends ColorModel {
   def writeChannel(pixel: Array[ChannelType], off: Int, channel: Int)(level: Int) =
     pixel(off + channel) = level.toByte
 
-  def newDataModel(size: Int) = Array.ofDim[Byte](size)
+  def newDataModel(width: Int, height: Int) =
+    Array.ofDim[Byte](width * height * n_channel)
 }
 
 trait ARGBColorModel extends ByteColorModel {

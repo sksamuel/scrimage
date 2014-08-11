@@ -24,7 +24,8 @@ trait Raster { self: ColorModel =>
   /** The number of channels used by this Raster */
   def n_channel: Int
 
-  protected def offset(x: Int, y: Int): Int = (y * width + x) * n_channel
+  protected def offset(x: Int, y: Int): Int =
+    n_channel * channelSize * (y * width + x)
 
   /** The pixel at the given coordinates, as Int, in ARGB format */
   def pixel(x: Int, y: Int): Int = readARGB(model, offset(x, y))
@@ -100,28 +101,6 @@ trait Raster { self: ColorModel =>
     this
   }
 
-  /** Extracts a channel to an Array[ChannelType]. */
-  def getChannel(channel: Int): Array[ChannelType] = {
-    val out = newDataModel(width * height)
-    var i = 0
-    while (i < width * height) { out(i) = model(i * n_channel + channel); i += 1 }
-    return out
-  }
-
-  // /** Extracts all channels in an Array[Array[ChannelType]]. */
-  // def unpack(): Array[Array[ChannelType]] = {
-  //   val unpacked: Array[Array[ChannelType]] = Array.fill(n_channel)(null)
-  //   for (c <- 0 until n_channel) { unpacked(c) = getChannel(c) }
-  //   unpacked
-  // }
-
-  // /** Sets a channel with the given values.
-  //   * Used to fold channels succesively in an image, when channels are computed separately.
-  //   */
-  // def foldChannel(channel: Int)(levels: Array[ChannelType]): Unit = {
-  //   var i = 0
-  //   while (i < width * height) { model(i * n_channel + channel) = levels(i); i += 1 }
-  // }
 }
 
 /** Implementation of a Raster that saves ARGB informations in Bytes.
@@ -140,7 +119,7 @@ class ARGBRaster(val width: Int, val height: Int, val model: Array[Byte])
 
 /** Factory for ARGBRaster */
 object ARGBRaster {
-  val void = new ARGBRaster(0, 0, Array.ofDim[Byte](0))
+  val void = new ARGBRaster(0, 0, null)
   def apply(width: Int, height: Int) = void.empty(width, height)
   def apply(width: Int, height: Int, color: Color) = {
     void.empty(width, height).fill(color)
@@ -150,5 +129,8 @@ object ARGBRaster {
   }
   def apply(width: Int, height: Int, colors: Array[_ <: Color]) = {
     void.empty(width, height).write(colors)
+  }
+  def apply(width: Int, height: Int, channels: Array[Byte]) = {
+    void.copyWith(width, height, channels)
   }
 }
