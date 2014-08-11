@@ -682,7 +682,10 @@ object Image {
       case e: Exception =>
         import scala.collection.JavaConverters._
         ImageIO.getImageReaders(new ByteArrayInputStream(bytes)).asScala.foldLeft(None: Option[Image]) {
-          (value, reader) =>
+          (valueOpt, reader) =>
+          // only bother to read if it hasn't already successfully been read
+          valueOpt orElse {
+
             try {
               reader.setInput(new ByteArrayInputStream(bytes), true, true)
               val params = reader.getDefaultReadParam
@@ -699,6 +702,7 @@ object Image {
             } catch {
               case e: Exception => None
             }
+          }
         }.getOrElse(throw new RuntimeException("Unparsable image"))
     }
   }
