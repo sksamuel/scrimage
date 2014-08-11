@@ -15,7 +15,7 @@ import org.scalatest.FunSuite
 /** @author Stephen Samuel */
 class ScalingBenchmark extends FunSuite {
 
-  val COUNT = 50
+  val COUNT = 5
   val root = new File(".")
   val bird = IOUtils.toByteArray(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird.jpg"))
   val awt = ImageIO.read(new ByteArrayInputStream(bird))
@@ -69,6 +69,7 @@ class ScalingBenchmark extends FunSuite {
   // println(s"Time: $time ms")
 
   var counter = 0
+  val scrimageAWT = scrimage.awt
   println("Testing Mortennobel Bicubic")
   start = System.currentTimeMillis()
   counter = 0
