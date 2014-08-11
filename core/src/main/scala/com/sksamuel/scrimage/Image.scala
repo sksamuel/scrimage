@@ -212,7 +212,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     require(x + subWidth < width)
     require(y >= 0)
     require(y + subHeight < height)
-    val raster = IntARGBRaster(subWidth, subHeight)
+    val raster = ARGBRaster(subWidth, subHeight)
     // Simply copy the pixels over, one by one.
     for (
       yIndex <- 0 until subHeight;
@@ -262,7 +262,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     */
   def pixels: Array[Int] = {
     raster match {
-      case i: IntARGBRaster => i.model
+      case i: ARGBRaster => i.extract.map(_.argb)
     }
   }
 
@@ -294,8 +294,8 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
       val b = (c.blue * c.alpha + color.getBlue * color.getAlpha * (255 - c.alpha) / 255) / 255
       RGBColor(r, g, b)
     }
-    val rgbColors = raster.extract.map(_.toRGB).map(rmTransparency).map(_.argb)
-    new Image(new IntARGBRaster(width, height, rgbColors))
+    val rgbColors = raster.extract.map(_.toRGB).map(rmTransparency)
+    new Image(ARGBRaster(width, height, rgbColors))
   }
 
   /** Flips this image horizontally.
@@ -327,7 +327,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     * @return
     */
   def rotateLeft = {
-    val raster = IntARGBRaster(height, width)
+    val raster = ARGBRaster(height, width)
     new Image(raster)
   }
 
@@ -336,7 +336,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     * @return
     */
   def rotateRight = {
-    val raster = IntARGBRaster(height, width)
+    val raster = ARGBRaster(height, width)
     new Image(raster)
   }
 
@@ -718,7 +718,7 @@ object Image {
     val g2 = buff.getGraphics.asInstanceOf[Graphics2D]
     g2.drawImage(awt, 0, 0, null)
     g2.dispose()
-    val raster = new IntARGBRaster(
+    val raster = ARGBRaster(
       awt.getWidth(null),
       awt.getHeight(null),
       buff.getRaster.getDataBuffer.asInstanceOf[DataBufferInt].getData
@@ -744,7 +744,7 @@ object Image {
     * @return the new Image
     */
   def filled(width: Int, height: Int, color: Color = Color.White): Image = {
-    val r = IntARGBRaster(width, height, color)
+    val r = ARGBRaster(width, height, color)
     new Image(r)
   }
 
@@ -756,7 +756,7 @@ object Image {
     *
     * @return the new Image with the given width and height
     */
-  def empty(width: Int, height: Int): Image = new Image(IntARGBRaster(width, height))
+  def empty(width: Int, height: Int): Image = new Image(ARGBRaster(width, height))
 }
 
 sealed trait ScaleMethod

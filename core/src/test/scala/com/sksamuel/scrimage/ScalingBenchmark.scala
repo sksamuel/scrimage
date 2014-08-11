@@ -128,7 +128,7 @@ class ScalingBenchmark extends FunSuite {
   val redColor = Color(255, 0, 0)
   println(s"Writing one by one pixels in a $size x $size scrimage Raster")
   start = System.currentTimeMillis()
-  val raster = IntARGBRaster(size, size)
+  val raster = ARGBRaster(size, size)
   y = 0
   while (y < size) {
     x = 0

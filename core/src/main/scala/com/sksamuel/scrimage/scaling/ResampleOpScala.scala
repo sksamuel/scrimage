@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.scaling
 
-import com.sksamuel.scrimage.Image
+import com.sksamuel.scrimage.{ Image, Raster }
 
 import scala.concurrent.{ Await, Future }
 import scala.concurrent.duration._
@@ -177,7 +177,6 @@ object ResampleOpScala {
     require(dstWidth >= 3 && dstHeight >= 3,
       s"Error doing rescale. Target was $dstWidth x $dstHeight but must be at least 3x3.")
 
-    val nrChannels = img.raster.n_channel
     val srcWidth = img.width
     val srcHeight = img.height
 
@@ -185,17 +184,14 @@ object ResampleOpScala {
     val vSampling = createSubSampling(filter, srcHeight, dstHeight)
 
     val srcRaster = img.raster
-    val srcPixels = srcRaster.unpack
-    val workPixels = srcRaster.empty(dstWidth, srcHeight).unpack
-    val outPixels = srcRaster.empty(dstWidth, dstHeight).unpack
+    val workRaster = srcRaster.empty(dstWidth, srcHeight)
     val outRaster = srcRaster.empty(dstWidth, dstHeight)
 
     val horizontals = for (i <- 0 until numberOfThreads) yield {
       val finalI = i
       Future {
         horizontallyFromSrcToWork(
-          srcPixels, workPixels,
-          srcWidth, srcHeight, dstWidth,
+          srcRaster, workRaster,
           finalI, numberOfThreads, hSampling)
       }
     }
@@ -205,23 +201,16 @@ object ResampleOpScala {
       val finalI = i
       Future {
         verticalFromWorkToDst(
-          workPixels, outPixels,
-          dstWidth, dstHeight,
-          finalI, numberOfThreads,
-          vSampling)
+          workRaster, outRaster,
+          finalI, numberOfThreads, vSampling)
       }
     }
     Await.ready(Future sequence verticles, MAX_WAIT_PER_PASS)
-    outPixels.zipWithIndex.foreach((levels: Array[Byte], i: Int) => outRaster.foldChannel(i)(levels))
-
     new Image(outRaster)
   }
 
-  private[this] def horizontallyFromSrcToWork(srcPixels: Array[Array[Byte]],
-                                              workPixels: Array[Array[Byte]],
-                                              srcWidth: Int,
-                                              srcHeight: Int,
-                                              dstWidth: Int,
+  private[this] def horizontallyFromSrcToWork(srcRaster: Raster,
+                                              workRaster: Raster,
                                               start: Int,
                                               delta: Int,
                                               hSampling: SubSamplingData) {
@@ -229,9 +218,11 @@ object ResampleOpScala {
     var y = start
     var j = 0
     var index = 0
-    val n_channel = srcPixels.length
+    val srcHeight = srcRaster.height
+    val dstWidth = workRaster.width
+    val n_channel = srcRaster.n_channel
     var sample = Array.ofDim[Float](n_channel)
-    var channel = 0
+    var c = 0
 
     while (y < srcHeight) {
       x = dstWidth - 1
@@ -241,18 +232,18 @@ object ResampleOpScala {
         index = x * hSampling.numContributors
         j = hSampling.arrN(x) - 1
         while (j >= 0) {
-          channel = 0
-          while (channel < n_channel) {
-            sample(channel) += (srcPixels(channel)(y * srcWidth + hSampling.arrPixel(index)) & 0xff) * hSampling.arrWeight(index)
-            channel += 1
+          c = 0
+          while (c < n_channel) {
+            sample(c) += srcRaster.readChannel(hSampling.arrPixel(index), y, c) * hSampling.arrWeight(index)
+            c += 1
           }
           index += 1
           j -= 1
         }
-        channel = 0
-        while (channel < n_channel) {
-          workPixels(channel)(y * dstWidth + x) = toByte(sample(channel))
-          channel += 1
+        c = 0
+        while (c < n_channel) {
+          workRaster.writeChannel(x, y, c)(toByte(sample(c)))
+          c += 1
         }
         x -= 1
       }
@@ -260,16 +251,16 @@ object ResampleOpScala {
     }
   }
 
-  private[this] def verticalFromWorkToDst(workPixels: Array[Array[Byte]],
-                                          outPixels: Array[Array[Byte]],
-                                          dstWidth: Int,
-                                          dstHeight: Int,
+  private[this] def verticalFromWorkToDst(workRaster: Raster,
+                                          outRaster: Raster,
                                           start: Int,
                                           delta: Int,
                                           vSampling: SubSamplingData) {
     var x = start
     var y = 0
-    val n_channel = workPixels.length
+    val dstWidth = workRaster.width
+    val dstHeight = outRaster.height
+    val n_channel = workRaster.n_channel
     var sample = Array.ofDim[Float](n_channel)
     var index = 0
     var j = 0
@@ -284,7 +275,7 @@ object ResampleOpScala {
         while (j >= 0) {
           channel = 0
           while (channel < n_channel) {
-            sample += (workPixels(channel)(vSampling.arrPixel(index) * dstWidth + x) & 0xff) * vSampling.arrWeight(index)
+            sample(channel) += workRaster.readChannel(x, vSampling.arrPixel(index), channel) * vSampling.arrWeight(index)
             channel += 1
           }
           index += 1
@@ -292,7 +283,7 @@ object ResampleOpScala {
         }
         channel = 0
         while (channel < n_channel) {
-          outPixels(channel)(y * dstWidth + x) = toByte(sample(channel))
+          outRaster.writeChannel(x, y, channel)(toByte(sample(channel)))
           channel += 1
         }
         y -= 1

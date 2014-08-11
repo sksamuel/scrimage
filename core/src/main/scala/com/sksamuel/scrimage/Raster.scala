@@ -12,8 +12,8 @@ package com.sksamuel.scrimage
   */
 
 trait Raster { self: ColorModel =>
-  def width: Int
-  def height: Int
+  val width: Int
+  val height: Int
 
   /** The type of this Raster */
   type RasterType <: Raster
@@ -30,7 +30,17 @@ trait Raster { self: ColorModel =>
   def pixel(x: Int, y: Int): Int = readARGB(model, offset(x, y))
 
   /** Returns the color of the pixel at the given x,y coordinate. */
-  def readColor(x: Int, y: Int): Color = readColor(model, offset(x, y))
+  def read(x: Int, y: Int): Color = readColor(model, offset(x, y))
+
+  /** Updates (mutates) this raster by setting the color of the pixel for the given x,y coordinate.
+    */
+  def write(x: Int, y: Int, color: Color) = writeColor(model, offset(x, y))(color)
+
+  def readChannel(x: Int, y: Int, c: Int): Int =
+    readChannel(model, offset(x, y), c)
+
+  def writeChannel(x: Int, y: Int, c: Int)(level: Int): Unit =
+    writeChannel(model, offset(x, y), c)(level)
 
   /** Extracts the color of each pixels into an Array[Color] */
   def extract: Array[Color] = {
@@ -40,15 +50,17 @@ trait Raster { self: ColorModel =>
       colors(x) = readColor(model, x * n_channel)
       x += 1
     }
+    colors
   }
 
-  /** Updates (mutates) this raster by setting the color of the pixel for the given x,y coordinate.
-    *
-    * @param x x-coordinate
-    * @param y y-coordinate
-    * @param color the pixel color
-    */
-  def write(x: Int, y: Int, color: Color) = writeColor(model, offset(x, y))(color)
+  def write(colors: Array[_ <: Color]) = {
+    var x = 0
+    while (x < colors.length) {
+      writeColor(model, x * n_channel)(colors(x))
+      x += 1
+    }
+    this
+  }
 
   /** Returns a new Raster which is a copy of this Raster.
     * Any changes made to the new Raster will not write back to this Raster.
@@ -75,7 +87,9 @@ trait Raster { self: ColorModel =>
   def copyWith(width: Int, height: Int, data: Array[ChannelType]): RasterType
 
   /** Returns an empty raster of the given size. */
-  def empty(width: Int, height: Int): RasterType
+  def empty(width: Int, height: Int): RasterType = {
+    copyWith(width, height, newDataModel(width, height))
+  }
 
   def fill(color: Color) = {
     var x = 0
@@ -88,26 +102,26 @@ trait Raster { self: ColorModel =>
 
   /** Extracts a channel to an Array[ChannelType]. */
   def getChannel(channel: Int): Array[ChannelType] = {
-    val out = Array.ofDim[ChannelType](width * height)
+    val out = newDataModel(width * height)
     var i = 0
     while (i < width * height) { out(i) = model(i * n_channel + channel); i += 1 }
     return out
   }
 
-  /** Extracts all channels in an Array[Array[ChannelType]]. */
-  def unpack(): Array[Array[ChannelType]] = {
-    val unpacked: Array[Array[ChannelType]] = Array.fill(n_channel)(null)
-    for (c <- 0 until n_channel) { unpacked(c) = getChannel(c) }
-    unpacked
-  }
+  // /** Extracts all channels in an Array[Array[ChannelType]]. */
+  // def unpack(): Array[Array[ChannelType]] = {
+  //   val unpacked: Array[Array[ChannelType]] = Array.fill(n_channel)(null)
+  //   for (c <- 0 until n_channel) { unpacked(c) = getChannel(c) }
+  //   unpacked
+  // }
 
-  /** Sets a channel with the given values.
-    * Used to fold channels succesively in an image, when channels are computed separately.
-    */
-  def foldChannel(channel: Int)(levels: Array[ChannelType]): Unit = {
-    var i = 0
-    while (i < width * height) { model(i * n_channel + channel) = levels(i); i += 1 }
-  }
+  // /** Sets a channel with the given values.
+  //   * Used to fold channels succesively in an image, when channels are computed separately.
+  //   */
+  // def foldChannel(channel: Int)(levels: Array[ChannelType]): Unit = {
+  //   var i = 0
+  //   while (i < width * height) { model(i * n_channel + channel) = levels(i); i += 1 }
+  // }
 }
 
 /** Implementation of a Raster that saves ARGB informations in Bytes.
@@ -119,14 +133,9 @@ class ARGBRaster(val width: Int, val height: Int, val model: Array[Byte])
     extends Raster with ARGBColorModel {
 
   type RasterType = ARGBRaster
-  def copyWith(width: Int, height: Int, model: Array[Byte]): RasterType = {
+  def copyWith(width: Int, height: Int, model: Array[ChannelType]): RasterType = {
     new ARGBRaster(width, height, model)
   }
-
-  def empty(width: Int, height: Int): RasterType = {
-    new ARGBRaster(width, height, Array.ofDim[Byte](width * height * n_channel))
-  }
-
 }
 
 /** Factory for ARGBRaster */
@@ -135,5 +144,11 @@ object ARGBRaster {
   def apply(width: Int, height: Int) = void.empty(width, height)
   def apply(width: Int, height: Int, color: Color) = {
     void.empty(width, height).fill(color)
+  }
+  def apply(width: Int, height: Int, colors: Array[Int]) = {
+    void.empty(width, height).write(colors.map(argb => Color(argb)))
+  }
+  def apply(width: Int, height: Int, colors: Array[_ <: Color]) = {
+    void.empty(width, height).write(colors)
   }
 }
