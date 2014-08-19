@@ -15,7 +15,7 @@ import org.scalatest.FunSuite
 /** @author Stephen Samuel */
 class ScalingBenchmark extends FunSuite {
 
-  val COUNT = 50
+  val COUNT = 100
   val root = new File(".")
   val bird = IOUtils.toByteArray(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird.jpg"))
   val awt = ImageIO.read(new ByteArrayInputStream(bird))

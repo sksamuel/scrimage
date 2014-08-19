@@ -11,7 +11,7 @@ package com.sksamuel.scrimage
   * @author Stephen Samuel
   */
 
-trait Raster { self: ColorModel =>
+trait Raster { self: ByteColorModel =>
   val width: Int
   val height: Int
 
@@ -22,33 +22,53 @@ trait Raster { self: ColorModel =>
   val model: Array[ChannelType]
 
   /** The number of channels used by this Raster */
-  def n_channel: Int
+  val n_channel: Int
+  val channelSize: Int
 
-  protected def offset(x: Int, y: Int): Int =
+  def offset(x: Int, y: Int): Int =
     n_channel * channelSize * (y * width + x)
 
+  def offset(x: Int, y: Int, c: Int): Int =
+    (n_channel * (y * width + x) + c) * channelSize
+
   /** The pixel at the given coordinates, as Int, in ARGB format */
-  def pixel(x: Int, y: Int): Int = readARGB(model, offset(x, y))
+  def pixel(x: Int, y: Int): Int = readARGB(offset(x, y), model)
 
   /** Returns the color of the pixel at the given x,y coordinate. */
-  def read(x: Int, y: Int): Color = readColor(model, offset(x, y))
+  def read(x: Int, y: Int): Color = readColor(offset(x, y), model)
 
   /** Updates (mutates) this raster by setting the color of the pixel for the given x,y coordinate.
     */
-  def write(x: Int, y: Int, color: Color) = writeColor(model, offset(x, y))(color)
+  def write(x: Int, y: Int, color: Color) = writeColor(offset(x, y), model)(color)
 
   def readChannel(x: Int, y: Int, c: Int): Int =
-    readChannel(model, offset(x, y), c)
+    readChannel(offset(x, y, c), model)
+
+  @inline
+  def readChannel(off: Int, model: Array[ChannelType] = model): Int
 
   def writeChannel(x: Int, y: Int, c: Int)(level: Int): Unit =
-    writeChannel(model, offset(x, y), c)(level)
+    writeChannel(offset(x, y, c), model)(level)
+
+  @inline
+  def writeChannel(off: Int, model: Array[ChannelType] = model)(level: Int): Unit
+
+  def writeChannels(x: Int, y: Int)(levels: Array[Int]): Unit = {
+    var c = offset(x, y)
+    var i = 0
+    while (i < levels.length) {
+      writeChannel(c, model)(levels(i))
+      c += channelSize
+      i += 1
+    }
+  }
 
   /** Extracts the color of each pixels into an Array[Color] */
   def extract: Array[Color] = {
     val colors = Array.ofDim[Color](width * height)
     var x = 0
     while (x < width * height) {
-      colors(x) = readColor(model, x * n_channel)
+      colors(x) = readColor(x * n_channel, model)
       x += 1
     }
     colors
@@ -57,7 +77,7 @@ trait Raster { self: ColorModel =>
   def write(colors: Array[_ <: Color]) = {
     var x = 0
     while (x < colors.length) {
-      writeColor(model, x * n_channel)(colors(x))
+      writeColor(x * n_channel, model)(colors(x))
       x += 1
     }
     this
@@ -95,7 +115,7 @@ trait Raster { self: ColorModel =>
   def fill(color: Color) = {
     var x = 0
     while (x < width * height) {
-      writeColor(model, x * n_channel)(color)
+      writeColor(x * n_channel, model)(color)
       x += 1
     }
     this

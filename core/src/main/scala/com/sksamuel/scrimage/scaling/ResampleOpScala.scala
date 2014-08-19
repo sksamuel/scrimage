@@ -4,6 +4,7 @@ import com.sksamuel.scrimage.{ Image, Raster }
 
 import scala.concurrent.{ Await, Future }
 import scala.concurrent.duration._
+import scala.collection.immutable.IndexedSeq
 
 object ResampleOpScala {
 
@@ -209,8 +210,8 @@ object ResampleOpScala {
     new Image(outRaster)
   }
 
-  private[this] def horizontallyFromSrcToWork(srcRaster: Raster,
-                                              workRaster: Raster,
+  private[this] def horizontallyFromSrcToWork(src: Raster,
+                                              work: Raster,
                                               start: Int,
                                               delta: Int,
                                               hSampling: SubSamplingData) {
@@ -218,11 +219,15 @@ object ResampleOpScala {
     var y = start
     var j = 0
     var index = 0
-    val srcHeight = srcRaster.height
-    val dstWidth = workRaster.width
-    val n_channel = srcRaster.n_channel
+
+    val pixelSize = src.n_channel * src.channelSize
+
+    val srcHeight = src.height
+    val dstWidth = work.width
+    val n_channel = src.n_channel
     var sample = Array.ofDim[Float](n_channel)
     var c = 0
+    var c0 = 0
 
     while (y < srcHeight) {
       x = dstWidth - 1
@@ -231,19 +236,24 @@ object ResampleOpScala {
         java.util.Arrays.fill(sample, 0.0f)
         index = x * hSampling.numContributors
         j = hSampling.arrN(x) - 1
+
         while (j >= 0) {
+          c0 = src.offset(hSampling.arrPixel(index), y)
           c = 0
           while (c < n_channel) {
-            sample(c) += srcRaster.readChannel(hSampling.arrPixel(index), y, c) * hSampling.arrWeight(index)
+            sample(c) += (src.model(c0) & 0xff) * hSampling.arrWeight(index)
             c += 1
+            c0 += src.channelSize
           }
           index += 1
           j -= 1
         }
+        c0 = work.offset(x, y)
         c = 0
         while (c < n_channel) {
-          workRaster.writeChannel(x, y, c)(toByte(sample(c)))
+          work.model(c0) = (toByte(sample(c)))
           c += 1
+          c0 += work.channelSize
         }
         x -= 1
       }
@@ -251,20 +261,21 @@ object ResampleOpScala {
     }
   }
 
-  private[this] def verticalFromWorkToDst(workRaster: Raster,
-                                          outRaster: Raster,
+  private[this] def verticalFromWorkToDst(work: Raster,
+                                          out: Raster,
                                           start: Int,
                                           delta: Int,
                                           vSampling: SubSamplingData) {
     var x = start
     var y = 0
-    val dstWidth = workRaster.width
-    val dstHeight = outRaster.height
-    val n_channel = workRaster.n_channel
+    val dstWidth = work.width
+    val dstHeight = out.height
+    val n_channel = work.n_channel
     var sample = Array.ofDim[Float](n_channel)
     var index = 0
     var j = 0
-    var channel = 0
+    var c = 0
+    var c0 = 0
 
     while (x < dstWidth) {
       y = dstHeight - 1
@@ -273,18 +284,22 @@ object ResampleOpScala {
         index = y * vSampling.numContributors
         j = vSampling.arrN(y) - 1
         while (j >= 0) {
-          channel = 0
-          while (channel < n_channel) {
-            sample(channel) += workRaster.readChannel(x, vSampling.arrPixel(index), channel) * vSampling.arrWeight(index)
-            channel += 1
+          c0 = work.offset(x, vSampling.arrPixel(index))
+          c = 0
+          while (c < n_channel) {
+            sample(c) += (work.model(c0) & 0xff) * vSampling.arrWeight(index)
+            c0 += work.channelSize
+            c += 1
           }
           index += 1
           j -= 1
         }
-        channel = 0
-        while (channel < n_channel) {
-          outRaster.writeChannel(x, y, channel)(toByte(sample(channel)))
-          channel += 1
+        c0 = out.offset(x, y)
+        c = 0
+        while (c < n_channel) {
+          out.model(c0) = (toByte(sample(c)))
+          c += 1
+          c0 += out.channelSize
         }
         y -= 1
       }
