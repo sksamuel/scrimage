@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.canvas
 
-import com.sksamuel.scrimage.{ Composite, Color, X11Colorlist, Image, IntARGBRaster }
+import com.sksamuel.scrimage.{ Composite, Color, X11Colorlist, Image, ARGBRaster }
 import java.awt.{ RenderingHints, Font, Graphics2D }
 import java.awt.image.BufferedImage
 
@@ -46,7 +46,7 @@ case class Canvas(image: Image,
   def imageFromAWT(image: BufferedImage) = {
     val model = Array.ofDim[Int](image.getWidth * image.getHeight)
     image.getRGB(0, 0, image.getWidth, image.getHeight, model, 0, image.getWidth)
-    val raster = new IntARGBRaster(image.getWidth, image.getHeight, model)
+    val raster = ARGBRaster(image.getWidth, image.getHeight, model)
     new Image(raster)
   }
 

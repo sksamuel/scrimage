@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage.io
 
-import org.scalatest.{OneInstancePerTest, BeforeAndAfter, FunSuite}
-import com.sksamuel.scrimage.{Image, Format}
+import org.scalatest.{ OneInstancePerTest, BeforeAndAfter, FunSuite }
+import com.sksamuel.scrimage.{ Image, Format }
 import java.io.ByteArrayOutputStream
 
 /** @author Stephen Samuel */

@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.canvas.composite
 
-import org.scalatest.{OneInstancePerTest, BeforeAndAfter, FunSuite}
+import org.scalatest.{ OneInstancePerTest, BeforeAndAfter, FunSuite }
 import com.sksamuel.scrimage.Image
 import com.sksamuel.scrimage.canvas.Canvas._
 

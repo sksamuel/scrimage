@@ -121,8 +121,7 @@ trait ImageLike[R] {
     ) yield pixel(x1, y1)
   }
 
-  /**
-    * Creates a new image which is the result of this image
+  /** Creates a new image which is the result of this image
     * padded with the given number of pixels on each edge.
     *
     * Eg, requesting a pad of 30 on an image of 250,300 will result
@@ -219,8 +218,7 @@ trait ImageLike[R] {
 
   def resizeTo(targetWidth: Int, targetHeight: Int, position: Position, background: Color = X11Colorlist.White): R
 
-  /**
-    * Resize will resize the canvas, it will not scale the image.
+  /** Resize will resize the canvas, it will not scale the image.
     * This is like a "canvas resize" in Photoshop.
     *
     * @param scaleFactor the scaleFactor. 1 retains original size. 0.5 is half. 2 double. etc
@@ -232,8 +230,7 @@ trait ImageLike[R] {
   def resize(scaleFactor: Double, position: Position = Center, background: Color = X11Colorlist.White): R =
     resizeTo((width * scaleFactor).toInt, (height * scaleFactor).toInt, position, background)
 
-  /**
-    * Resize will resize the canvas, it will not scale the image.
+  /** Resize will resize the canvas, it will not scale the image.
     * This is like a "canvas resize" in Photoshop.
     *
     * @param position where to position the original image after the canvas size change
@@ -243,8 +240,7 @@ trait ImageLike[R] {
   def resizeToHeight(targetHeight: Int, position: Position = Center, background: Color = X11Colorlist.White): R =
     resizeTo((targetHeight / height.toDouble * height).toInt, targetHeight, position, background)
 
-  /**
-    * Resize will resize the canvas, it will not scale the image.
+  /** Resize will resize the canvas, it will not scale the image.
     * This is like a "canvas resize" in Photoshop.
     *
     * @param position where to position the original image after the canvas size change
@@ -254,8 +250,7 @@ trait ImageLike[R] {
   def resizeToWidth(targetWidth: Int, position: Position = Center, background: Color = X11Colorlist.White): R =
     resizeTo(targetWidth, (targetWidth / width.toDouble * height).toInt, position, background)
 
-  /**
-    * Scale will resize the canvas and scale the image to match.
+  /** Scale will resize the canvas and scale the image to match.
     * This is like a "image resize" in Photoshop.
     *
     * @param targetWidth the target width
@@ -266,8 +261,7 @@ trait ImageLike[R] {
     */
   def scaleTo(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): R
 
-  /**
-    * Scale will resize the canvas and scale the image to match.
+  /** Scale will resize the canvas and scale the image to match.
     * This is like a "image resize" in Photoshop.
     *
     * This overloaded version of scale will scale the image so that the new image
@@ -285,8 +279,7 @@ trait ImageLike[R] {
   def scaleToWidth(targetWidth: Int, scaleMethod: ScaleMethod = Bicubic): R =
     scaleTo(targetWidth, (targetWidth / width.toDouble * height).toInt, scaleMethod)
 
-  /**
-    * Scale will resize the canvas and scale the image to match.
+  /** Scale will resize the canvas and scale the image to match.
     * This is like a "image resize" in Photoshop.
     *
     * This overloaded version of scale will scale the image so that the new image
@@ -304,8 +297,7 @@ trait ImageLike[R] {
   def scaleToHeight(targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): R =
     scaleTo((targetHeight / height.toDouble * width).toInt, targetHeight, scaleMethod)
 
-  /**
-    * Scale will resize the canvas and the image.
+  /** Scale will resize the canvas and the image.
     * This is like a "image resize" in Photoshop.
     *
     * @param scaleFactor the target increase or decrease. 1 is the same as original.

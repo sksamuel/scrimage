@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.io
 
-import com.sksamuel.scrimage.{Format, Image}
+import com.sksamuel.scrimage.{ Format, Image }
 import scala.concurrent.duration._
 import java.io.File
 
@@ -9,7 +9,7 @@ object PngCompressionBenchmark extends App {
 
   val image = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/jazz.jpg"))
 
-  for ( c <- 0 to 9 ) {
+  for (c <- 0 to 9) {
     benchmarkN(1, string => println(s"Compression level $c took " + string)) {
       image.writer(Format.PNG).withCompression(c).write(File.createTempFile(s"compressiontest$c", ".png"))
     }
@@ -18,7 +18,7 @@ object PngCompressionBenchmark extends App {
   def benchmarkN[A](n: Int, pr: String => Unit)(f: => A): Unit = {
     val stopwatch = new Stopwatch
     stopwatch.start()
-    for ( k <- 0 until n ) f
+    for (k <- 0 until n) f
     stopwatch.stop()
     pr(stopwatch.elapsed.toMillis / n + "ms")
   }

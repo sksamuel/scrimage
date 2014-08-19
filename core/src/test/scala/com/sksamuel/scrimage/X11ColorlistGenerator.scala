@@ -9,7 +9,7 @@ import org.apache.commons.lang3.text.WordUtils
 object X11ColorlistGenerator extends App {
   val file = "/etc/X11/rgb.txt"
   val lines = IOUtils.readLines(new FileInputStream(file))
-  for ( line <- lines.asScala ) {
+  for (line <- lines.asScala) {
     val tokens = line.replaceAll("\\s{2,}", " ").trim.split(' ')
     val red = tokens(0)
     val green = tokens(1)
