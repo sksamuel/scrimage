@@ -10,7 +10,6 @@ object ResampleOpScala {
 
   import scala.concurrent.ExecutionContext.Implicits.global
 
-  private val MAX_CHANNEL_VALUE = 255
   private val MAX_WAIT_PER_PASS = 10.minutes
 
   case class ResampFilter(samplingRadius: Int, kernel: Float => Float) {
@@ -241,7 +240,7 @@ object ResampleOpScala {
           c0 = src.offset(hSampling.arrPixel(index), y)
           c = 0
           while (c < n_channel) {
-            sample(c) += (src.model(c0) & 0xff) * hSampling.arrWeight(index)
+            sample(c) += (src.readChannel(c0)) * hSampling.arrWeight(index)
             c += 1
             c0 += src.channelSize
           }
@@ -251,7 +250,7 @@ object ResampleOpScala {
         c0 = work.offset(x, y)
         c = 0
         while (c < n_channel) {
-          work.model(c0) = (toByte(sample(c)))
+          work.writeChannel(c0)(fit(sample(c), work.max_channel_value))
           c += 1
           c0 += work.channelSize
         }
@@ -287,7 +286,7 @@ object ResampleOpScala {
           c0 = work.offset(x, vSampling.arrPixel(index))
           c = 0
           while (c < n_channel) {
-            sample(c) += (work.model(c0) & 0xff) * vSampling.arrWeight(index)
+            sample(c) += (work.readChannel(c0)) * vSampling.arrWeight(index)
             c0 += work.channelSize
             c += 1
           }
@@ -297,7 +296,7 @@ object ResampleOpScala {
         c0 = out.offset(x, y)
         c = 0
         while (c < n_channel) {
-          out.model(c0) = (toByte(sample(c)))
+          out.writeChannel(c0)(fit(sample(c), out.max_channel_value))
           c += 1
           c0 += out.channelSize
         }
@@ -307,9 +306,9 @@ object ResampleOpScala {
     }
   }
 
-  private[this] def toByte(f: Float): Byte = {
-    if (f < 0) 0.toByte
-    else if (f > MAX_CHANNEL_VALUE) MAX_CHANNEL_VALUE.toByte
-    else (f + 0.5f).toByte
+  private[this] def fit(f: Float, max: Int): Int = {
+    if (f < 0) 0
+    else if (f > max) max
+    else (f + 0.5f).toInt
   }
 }
