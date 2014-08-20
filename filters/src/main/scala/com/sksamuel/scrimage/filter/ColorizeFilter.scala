@@ -25,6 +25,7 @@ class ColorizeFilter(color: Color) extends Filter {
     g2.setColor(color)
     g2.fillRect(0, 0, image.width, image.height)
     g2.dispose()
+    image.updateFromAWT()
   }
 }
 

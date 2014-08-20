@@ -21,6 +21,7 @@ object BackgroundBlendFilter extends Filter {
     g3.setComposite(BlendComposite.getInstance(BlendingMode.ADD, 1f))
     g3.drawImage(background.awt, 0, 0, null)
     g3.dispose()
+    image.updateFromAWT()
   }
 }
 

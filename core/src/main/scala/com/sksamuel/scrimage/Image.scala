@@ -68,6 +68,13 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     new BufferedImage(cm, wr, false, null);
   }
 
+  /** This a workaround to allow code written for the old version image to work.
+    */
+  @deprecated("java.awt is to be removed", "22 Jul 2014")
+  def updateFromAWT(): Unit = {
+    raster.write(Image(awt).raster.extract)
+  }
+
   override def empty: Image = Image.empty(width, height)
   override def copy: Image = new Image(raster.copy)
 
@@ -679,26 +686,26 @@ object Image {
         import scala.collection.JavaConverters._
         ImageIO.getImageReaders(new ByteArrayInputStream(bytes)).asScala.foldLeft(None: Option[Image]) {
           (valueOpt, reader) =>
-          // only bother to read if it hasn't already successfully been read
-          valueOpt orElse {
+            // only bother to read if it hasn't already successfully been read
+            valueOpt orElse {
 
-            try {
-              reader.setInput(new ByteArrayInputStream(bytes), true, true)
-              val params = reader.getDefaultReadParam
-              val imageTypes = reader.getImageTypes(0)
-              while (imageTypes.hasNext) {
-                val imageTypeSpecifier = imageTypes.next()
-                val bufferedImageType = imageTypeSpecifier.getBufferedImageType
-                if (bufferedImageType == BufferedImage.TYPE_BYTE_GRAY) {
-                  params.setDestinationType(imageTypeSpecifier)
+              try {
+                reader.setInput(new ByteArrayInputStream(bytes), true, true)
+                val params = reader.getDefaultReadParam
+                val imageTypes = reader.getImageTypes(0)
+                while (imageTypes.hasNext) {
+                  val imageTypeSpecifier = imageTypes.next()
+                  val bufferedImageType = imageTypeSpecifier.getBufferedImageType
+                  if (bufferedImageType == BufferedImage.TYPE_BYTE_GRAY) {
+                    params.setDestinationType(imageTypeSpecifier)
+                  }
                 }
+                val bufferedImage = reader.read(0, params)
+                Some(apply(bufferedImage))
+              } catch {
+                case e: Exception => None
               }
-              val bufferedImage = reader.read(0, params)
-              Some(apply(bufferedImage))
-            } catch {
-              case e: Exception => None
             }
-          }
         }.getOrElse(throw new RuntimeException("Unparsable image"))
     }
   }
