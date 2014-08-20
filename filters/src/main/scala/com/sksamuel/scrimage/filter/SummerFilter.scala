@@ -31,6 +31,7 @@ class SummerFilter(vignette: Boolean) extends Filter {
     g2.dispose()
     if (vignette)
       VignetteFilter(0.92f, 0.98f, 0.3).apply(image)
+    image.updateFromAWT()
   }
 }
 

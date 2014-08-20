@@ -19,6 +19,7 @@ trait ColorModel {
     */
   val n_channel: Int
   val channelSize: Int
+  val max_channel_value: Int
 
   def readChannel(offset: Int, pixel: Array[ChannelType]): Int
 
@@ -42,6 +43,7 @@ trait ByteColorModel extends ColorModel {
   type ChannelType = Byte
 
   val channelSize = 1
+  val max_channel_value = 255
 
   @inline
   def readChannel(off: Int, pixel: Array[ChannelType]) = pixel(off) & 0xff
