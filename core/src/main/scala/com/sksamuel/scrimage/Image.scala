@@ -302,7 +302,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
       RGBColor(r, g, b)
     }
     val rgbColors = raster.extract.map(_.toRGB).map(rmTransparency)
-    new Image(ARGBRaster(width, height, rgbColors))
+    new Image(Raster(width, height, rgbColors, Raster.RGB))
   }
 
   /** Flips this image horizontally.
