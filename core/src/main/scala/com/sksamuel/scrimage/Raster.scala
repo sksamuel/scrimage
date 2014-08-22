@@ -138,20 +138,75 @@ class ARGBRaster(val width: Int, val height: Int, val model: Array[Byte])
   }
 }
 
+/** Implementation of a Raster that saves RGB informations in Bytes.
+  *
+  * @param width number of columns in the raster
+  * @param height number of rows in the raster
+  */
+class RGBRaster(val width: Int, val height: Int, val model: Array[Byte])
+    extends Raster with RGBColorModel {
+  type RasterType = RGBRaster
+  def copyWith(width: Int, height: Int, model: Array[ChannelType]): RasterType = {
+    new RGBRaster(width, height, model)
+  }
+}
+class GrayRaster(val width: Int, val height: Int, val model: Array[Byte])
+    extends Raster with GrayColorModel {
+  type RasterType = GrayRaster
+  def copyWith(width: Int, height: Int, model: Array[ChannelType]): RasterType = {
+    new GrayRaster(width, height, model)
+  }
+}
+class GrayAlphaRaster(val width: Int, val height: Int, val model: Array[Byte])
+    extends Raster with GrayAlphaColorModel {
+  type RasterType = GrayAlphaRaster
+  def copyWith(width: Int, height: Int, model: Array[ChannelType]): RasterType = {
+    new GrayAlphaRaster(width, height, model)
+  }
+}
+
+object Raster {
+  val GRAY = 0
+  val GRAY_ALPHA = 4
+  val RGB = 2
+  val ARGB = 6
+  def apply(width: Int, height: Int): Raster = apply(width, height, ARGB)
+
+  def apply(width: Int, height: Int, colorModel: Int): Raster = {
+    if (colorModel == ARGB) new ARGBRaster(width, height, Array.ofDim[Byte](width * height * 4))
+    else if (colorModel == RGB) new RGBRaster(width, height, Array.ofDim[Byte](width * height * 3))
+    else if (colorModel == GRAY) new GrayRaster(width, height, Array.ofDim[Byte](width * height * 1))
+    else if (colorModel == GRAY_ALPHA) new GrayAlphaRaster(width, height, Array.ofDim[Byte](width * height * 2))
+    else throw new RuntimeException("Unknown colorModel. Use the PNG convention.")
+  }
+
+  def apply(width: Int, height: Int, model: Array[Byte], colorModel: Int): Raster = {
+    if (colorModel == ARGB) new ARGBRaster(width, height, model)
+    else if (colorModel == RGB) new RGBRaster(width, height, model)
+    else if (colorModel == GRAY) new GrayRaster(width, height, model)
+    else if (colorModel == GRAY_ALPHA) new GrayAlphaRaster(width, height, model)
+    else throw new RuntimeException("Unknown colorModel. Use the PNG convention.")
+  }
+
+  def apply(width: Int, height: Int, colors: Array[_ <: Color], colorModel: Int): Raster =
+    Raster(width, height, colorModel).write(colors)
+
+  def apply(width: Int, height: Int, argbColors: Array[Int], colorModel: Int): Raster =
+    Raster(width, height, colorModel).write(argbColors map (argb => Color(argb)))
+}
+
 /** Factory for ARGBRaster */
 object ARGBRaster {
-  val void = new ARGBRaster(0, 0, null)
-  def apply(width: Int, height: Int) = void.empty(width, height)
+  def apply(width: Int, height: Int) = Raster(width, height, Raster.ARGB)
   def apply(width: Int, height: Int, color: Color) = {
-    void.empty(width, height).fill(color)
+    Raster(width, height, Raster.ARGB).fill(color)
   }
   def apply(width: Int, height: Int, colors: Array[Int]) = {
-    void.empty(width, height).write(colors.map(argb => Color(argb)))
+    Raster(width, height, Raster.ARGB).write(colors.map(argb => Color(argb)))
   }
-  def apply(width: Int, height: Int, colors: Array[_ <: Color]) = {
-    void.empty(width, height).write(colors)
-  }
+  def apply(width: Int, height: Int, colors: Array[_ <: Color]) = Raster(width, height, colors, Raster.ARGB)
+
   def apply(width: Int, height: Int, channels: Array[Byte]) = {
-    void.copyWith(width, height, channels)
+    new ARGBRaster(width, height, channels)
   }
 }
