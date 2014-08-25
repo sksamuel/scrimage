@@ -12,7 +12,7 @@ object Build extends Build {
     publishArtifact in Test := false,
     parallelExecution in Test := false,
     scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8"),
-    javacOptions ++= Seq("-source", "1.7", "-target", "1.7"),
+    javacOptions ++= Seq("-source", "1.6", "-target", "1.6"),
     libraryDependencies ++= Seq(
       "org.slf4j"                     % "slf4j-api"             % "1.7.5",
       "org.imgscalr"                  % "imgscalr-lib"          % "4.2" % "test",
