@@ -308,7 +308,13 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
       //                    array(k) = pixel
       //                }
       //                array
-      case _ => throw new UnsupportedOperationException
+      case _ => {
+        val px = Array.ofDim[Int](width * height)
+        for(x <- 0 until width; y <- 0 until height){
+          px(y * width + x) = awt.getRGB(x, y)
+        }
+        px
+      }
     }
   }
 
