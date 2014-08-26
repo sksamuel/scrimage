@@ -23,7 +23,6 @@ trait Raster { self: ByteColorModel =>
 
   /** The number of channels used by this Raster */
   val n_channel: Int
-  val channelSize: Int
   val maxChannelValue: Int
 
   def offset(x: Int, y: Int): Int =

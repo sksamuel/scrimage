@@ -219,7 +219,7 @@ object ResampleOpScala {
     var j = 0
     var index = 0
 
-    val pixelSize = src.n_channel * src.channelSize
+    val pixelSize = src.n_channel * 1
 
     val srcHeight = src.height
     val dstWidth = work.width
@@ -242,7 +242,7 @@ object ResampleOpScala {
           while (c < n_channel) {
             sample(c) += (src.readChannel(c0)) * hSampling.arrWeight(index)
             c += 1
-            c0 += src.channelSize
+            c0 += 1
           }
           index += 1
           j -= 1
@@ -252,7 +252,7 @@ object ResampleOpScala {
         while (c < n_channel) {
           work.writeChannel(c0)(fit(sample(c), work.maxChannelValue))
           c += 1
-          c0 += work.channelSize
+          c0 += 1
         }
         x -= 1
       }
@@ -287,7 +287,7 @@ object ResampleOpScala {
           c = 0
           while (c < n_channel) {
             sample(c) += (work.readChannel(c0)) * vSampling.arrWeight(index)
-            c0 += work.channelSize
+            c0 += 1
             c += 1
           }
           index += 1
@@ -298,7 +298,7 @@ object ResampleOpScala {
         while (c < n_channel) {
           out.writeChannel(c0)(fit(sample(c), out.maxChannelValue))
           c += 1
-          c0 += out.channelSize
+          c0 += 1
         }
         y -= 1
       }

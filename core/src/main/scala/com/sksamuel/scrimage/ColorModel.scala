@@ -16,7 +16,6 @@ trait ColorModel {
   /** The number of channels used by this ColorModel
     */
   val n_channel: Int
-  val channelSize: Int
   val maxChannelValue: Int
 
   def readChannel(offset: Int, pixel: Array[ChannelType]): Int
