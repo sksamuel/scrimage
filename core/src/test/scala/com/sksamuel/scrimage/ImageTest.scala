@@ -482,4 +482,11 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/dyson_autocropped.png"))
     assert(expected == autocropped)
   }
+
+  test("removeTransparency conserve pixels on non transparent image") {
+    val withoutTransparency = image.removeTransparency(java.awt.Color.BLACK)
+    val pixels = image.pixels
+    val pxwt = withoutTransparency.pixels
+    assert(pixels.toList === pxwt.toList)
+  }
 }
