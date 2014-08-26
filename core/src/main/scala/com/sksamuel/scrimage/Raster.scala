@@ -6,13 +6,19 @@ package com.sksamuel.scrimage
   * For performance, Rasters are mutable data structures. Thus care should
   * be taken when sharing between multiple images.
   *
-  * A Raster embeds a ColorModel to make sense of it's
+  * A Raster needs a ColorModel to be instantiated and to make sense of it's data model.
+  *
+  * Rasters are created trough the compagnion object Raster.
   *
   * @author Stephen Samuel
   */
 
-trait Raster { self: ByteColorModel =>
+trait Raster { self: ColorModel =>
+
+  /** Number of columns in the raster */
   val width: Int
+
+  /** Number of rows in the raster */
   val height: Int
 
   /** The type of this Raster */
@@ -21,15 +27,19 @@ trait Raster { self: ByteColorModel =>
   /** The underlying data representation */
   val model: Array[ChannelType]
 
-  /** The number of channels used by this Raster */
+  /** The number of channels used by this Raster (herited from the ColorModel)  */
   val n_channel: Int
+
+  /** The max value you should write in this Raster (herited from the ColorModel) */
   val maxChannelValue: Int
 
-  def offset(x: Int, y: Int): Int =
-    n_channel * channelSize * (y * width + x)
+  /** Returns the adresse where to read the pixel (x, y) in the model. */
+  @inline
+  def offset(x: Int, y: Int): Int = n_channel * (y * width + x)
 
-  def offset(x: Int, y: Int, c: Int): Int =
-    (n_channel * (y * width + x) + c) * channelSize
+  /** Returns the adresse where to read the channel c of pixel (x, y) in the model. */
+  @inline
+  def offset(x: Int, y: Int, c: Int): Int = n_channel * (y * width + x) + c
 
   /** The pixel at the given coordinates, as Int, in ARGB format */
   def pixel(x: Int, y: Int): Int = readARGB(offset(x, y), model)
@@ -41,46 +51,45 @@ trait Raster { self: ByteColorModel =>
     */
   def write(x: Int, y: Int, color: Color) = writeColor(offset(x, y), model)(color)
 
-  def readChannel(x: Int, y: Int, c: Int): Int =
-    readChannel(offset(x, y, c), model)
+  /** Returns the level of the channel c of the pixel (x, y). */
+  def readChannel(x: Int, y: Int, c: Int): Int = readChannel(offset(x, y, c), model)
 
-  @inline
-  def readChannel(off: Int, model: Array[ChannelType] = model): Int
+  /** Returns the level at the given offset.
+    * Used for fast access successives channels  (herited from the ColorModel).
+    */
+  @inline def readChannel(off: Int, model: Array[ChannelType] = model): Int
 
-  def writeChannel(x: Int, y: Int, c: Int)(level: Int): Unit =
-    writeChannel(offset(x, y, c), model)(level)
+  /** Sets the level of the channel c of the pixel (x, y). */
+  def writeChannel(x: Int, y: Int, c: Int)(level: Int): Unit = writeChannel(offset(x, y, c), model)(level)
 
-  @inline
-  def writeChannel(off: Int, model: Array[ChannelType] = model)(level: Int): Unit
-
-  def writeChannels(x: Int, y: Int)(levels: Array[Int]): Unit = {
-    var c = offset(x, y)
-    var i = 0
-    while (i < levels.length) {
-      writeChannel(c, model)(levels(i))
-      c += channelSize
-      i += 1
-    }
-  }
+  /** Set the level at the given offset.
+    * Used for fast access successives channels (herited from the ColorModel).
+    */
+  @inline def writeChannel(off: Int, model: Array[ChannelType] = model)(level: Int): Unit
 
   /** Extracts the color of each pixels into an Array[Color] */
   def extract = {
     val colors = Array.ofDim[Color](width * height)
     var x = 0
     var off = 0
-    val sampleSize = n_channel * channelSize
     while (x < width * height) {
       colors(x) = readColor(off, model)
       x += 1
-      off += sampleSize
+      off += n_channel
     }
     colors
   }
 
+  /** Returns an Iterator over the colors contained in this Raster.
+    * Colors are returned row by row, left to right and top to bottom.
+    */
   def read: Iterable[Color] = {
     for (x <- 0 until width * height) yield readColor(x * n_channel, model)
   }
 
+  /** Set all the pixels with the given colors.
+    * Pixels are set row by row, left to right and top to bottom.
+    */
   def write(colors: Iterable[Color]) = {
     val it = colors.toIterator
     var x = 0
@@ -121,6 +130,7 @@ trait Raster { self: ByteColorModel =>
     copyWith(width, height, newDataModel(width, height))
   }
 
+  /** Fills the raster with given color. */
   def fill(color: Color) = {
     var x = 0
     while (x < width * height) {
@@ -132,11 +142,7 @@ trait Raster { self: ByteColorModel =>
 
 }
 
-/** Implementation of a Raster that saves ARGB informations in Bytes.
-  *
-  * @param width number of columns in the raster
-  * @param height number of rows in the raster
-  */
+/** Uses the RGBAColorModel */
 class ARGBRaster(val width: Int, val height: Int, val model: Array[Byte])
     extends Raster with RGBAColorModel {
 
@@ -146,11 +152,7 @@ class ARGBRaster(val width: Int, val height: Int, val model: Array[Byte])
   }
 }
 
-/** Implementation of a Raster that saves RGB informations in Bytes.
-  *
-  * @param width number of columns in the raster
-  * @param height number of rows in the raster
-  */
+/** Uses the RGBColorModel */
 class RGBRaster(val width: Int, val height: Int, val model: Array[Byte])
     extends Raster with RGBColorModel {
   type RasterType = RGBRaster
@@ -159,6 +161,7 @@ class RGBRaster(val width: Int, val height: Int, val model: Array[Byte])
   }
 }
 
+/** Uses the GrayColorModel */
 class GrayRaster(val width: Int, val height: Int, val model: Array[Byte])
     extends Raster with GrayColorModel {
   type RasterType = GrayRaster
@@ -167,6 +170,7 @@ class GrayRaster(val width: Int, val height: Int, val model: Array[Byte])
   }
 }
 
+/** Uses the GrayAlphaColorModel */
 class GrayAlphaRaster(val width: Int, val height: Int, val model: Array[Byte])
     extends Raster with GrayAlphaColorModel {
   type RasterType = GrayAlphaRaster
@@ -175,6 +179,7 @@ class GrayAlphaRaster(val width: Int, val height: Int, val model: Array[Byte])
   }
 }
 
+/** Factory for Raster */
 object Raster {
   trait RasterType
   object GRAY extends RasterType
@@ -227,8 +232,4 @@ object ARGBRaster {
   }
 
   def apply(width: Int, height: Int, colors: Iterable[Color]) = Raster(width, height, colors, Raster.ARGB)
-
-  def apply(width: Int, height: Int, channels: Array[Byte]) = {
-    new ARGBRaster(width, height, channels)
-  }
 }

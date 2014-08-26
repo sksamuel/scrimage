@@ -3,6 +3,8 @@ package com.sksamuel.scrimage
 /** Describes how to read Color from raw data.
   * The ColorModel may use several channels to encode the color,
   * and must provide a way to access to each of this channel.
+  *
+  * @author Guillaume Wenzek
   */
 trait ColorModel {
 
@@ -13,32 +15,40 @@ trait ColorModel {
   @specialized(Byte)
   type ChannelType
 
-  /** The number of channels used by this ColorModel
-    */
+  /** The number of channels used by this ColorModel */
   val n_channel: Int
+
+  /** The maximum value that should be written in a channel*/
   val maxChannelValue: Int
 
+  /** Reads one channel in the given array at the given offset. */
   def readChannel(offset: Int, pixel: Array[ChannelType]): Int
 
+  /** Writes one channel in the given array at the given offset.
+    * May have unexpected result if level is bigger than maxChannelValue.
+    */
   def writeChannel(offset: Int, pixel: Array[ChannelType])(level: Int): Unit
 
+  /** Reads a color at the given offset and returns it in the ARGB format. */
   def readARGB(offset: Int, pixel: Array[ChannelType]): Int
 
+  /** Writes a color, given in the ARGB format, at the given offset. */
   def writeARGB(offset: Int, pixel: Array[ChannelType])(argb: Int): Unit
 
+  /** Reads a color at the given offset */
   def readColor(offset: Int, pixel: Array[ChannelType]): Color
 
+  /** Writes a color at the given offset */
   def writeColor(offset: Int, pixel: Array[ChannelType])(color: Color): Unit
 
   /** Creates an array of ChannelType of the correct size for the given dim of raster */
   def newDataModel(width: Int, height: Int): Array[ChannelType]
 }
 
-/** A ColorModel that where channels value ranges between 0 and 255 and are store in one Byte*/
+/** Stores channels value ranges between 0 and 255 and are stored in separated bytes */
 trait ByteColorModel extends ColorModel {
 
   final type ChannelType = Byte
-  final val channelSize = 1
   final val maxChannelValue = 255
 
   @inline
@@ -52,6 +62,7 @@ trait ByteColorModel extends ColorModel {
     Array.ofDim[Byte](width * height * n_channel)
 }
 
+/** Stores 4 component in 4 bytes in the order: Red, Green, Blue, Alpha (cf PNG standards). */
 trait RGBAColorModel extends ByteColorModel {
   final val n_channel = 4
   final def readARGB(off: Int, pixel: Array[ChannelType]) = (
@@ -82,6 +93,7 @@ trait RGBAColorModel extends ByteColorModel {
   }
 }
 
+/** Stores 3 component in 3 bytes in the order: Red, Green, Blue (cf PNG standards). */
 trait RGBColorModel extends ByteColorModel {
   final val n_channel = 3
   final def readARGB(off: Int, pixel: Array[ChannelType]) = (
@@ -109,7 +121,7 @@ trait RGBColorModel extends ByteColorModel {
   }
 }
 
-/** A ColorModel for grayscale colors. */
+/** Stores the grayscale level in one byte. */
 trait GrayColorModel extends ByteColorModel {
   final val n_channel = 1
   final def readARGB(off: Int, pixel: Array[ChannelType]) = readChannel(off, pixel) * 0x00010101 | 0xff000000
@@ -123,7 +135,7 @@ trait GrayColorModel extends ByteColorModel {
   }
 }
 
-/** A ColorModel for grayscale colors with alpha. */
+/** Stores the grayscale and alpha levels in two bytes (cf PNG standards). */
 trait GrayAlphaColorModel extends ByteColorModel {
   final val n_channel = 2
   final def readARGB(off: Int, pixel: Array[ChannelType]) =
@@ -139,7 +151,7 @@ trait GrayAlphaColorModel extends ByteColorModel {
   }
 }
 
-/** A ColorModel that stores only one of the RGB channel. */
+/** Stores only one of the RGB channel. */
 class RGBLayerColorModel(val channel: Int) extends ByteColorModel {
   final val n_channel = 1
   final def readARGB(off: Int, pixel: Array[ChannelType]) = (
