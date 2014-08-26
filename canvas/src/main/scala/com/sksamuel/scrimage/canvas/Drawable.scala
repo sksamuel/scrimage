@@ -104,6 +104,12 @@ case class FilledPolygon(points: Seq[Point]) extends Drawable {
 }
 
 object Polygon {
+
+  implicit def awt2polygon(awt: java.awt.Polygon): Polygon = {
+    val points = awt.xpoints.zip(awt.ypoints).map(Point.tuple2point)
+    Polygon(points)
+  }
+
   def rectangle(x: Int, y: Int, width: Int, height: Int) = {
     Polygon(Seq(x -> y, (x + width) -> y, (x + width) -> (y + height), x -> (y + height)))
   }
