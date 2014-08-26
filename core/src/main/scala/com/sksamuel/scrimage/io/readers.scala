@@ -30,7 +30,7 @@ trait SanselanReader extends ImageReader {
   def read(in: InputStream): Image = Image(Sanselan.getBufferedImage(in))
 }
 
-object PNGReader extends ImageReader {
+object PNGReader extends ImageReader with MimeTypeChecker {
   def read(in: InputStream): Image = {
     val pngr = new PngReader(in)
     println(pngr.toString)
@@ -55,5 +55,17 @@ object PNGReader extends ImageReader {
 
     pngr.end()
     new Image(raster)
+  }
+
+  def readMimeType(input: InputStream) = {
+    try {
+      val buff = Array.ofDim[Byte](8)
+      input.read(buff)
+      val expected = List(0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A, 0x0A) map (_.toByte)
+      assert(buff.toList == expected)
+      Some(PNGMimeType)
+    } catch {
+      case _: AssertionError => None
+    }
   }
 }

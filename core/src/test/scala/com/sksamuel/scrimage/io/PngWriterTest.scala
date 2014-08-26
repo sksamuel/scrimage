@@ -33,7 +33,7 @@ class PngWriterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest
   }
 
   test("png reader detects the correct mime type") {
-    val mime = PNGMimeTypeChecker.readMimeType(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png"))
+    val mime = PNGReader.readMimeType(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png"))
     assert(mime === Some(PNGMimeType))
   }
 
