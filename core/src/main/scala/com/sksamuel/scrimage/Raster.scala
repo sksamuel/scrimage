@@ -138,7 +138,7 @@ trait Raster { self: ByteColorModel =>
   * @param height number of rows in the raster
   */
 class ARGBRaster(val width: Int, val height: Int, val model: Array[Byte])
-    extends Raster with ARGBColorModel {
+    extends Raster with RGBAColorModel {
 
   type RasterType = ARGBRaster
   def copyWith(width: Int, height: Int, model: Array[ChannelType]): RasterType = {

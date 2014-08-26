@@ -17,8 +17,9 @@ package com.sksamuel.scrimage.io
 
 import java.io.InputStream
 import javax.imageio.ImageIO
-import com.sksamuel.scrimage.Image
+import com.sksamuel.scrimage.{ Image, Raster }
 import org.apache.sanselan.Sanselan
+import ar.com.hjg.pngj.{ PngReader, ImageInfo, ImageLineInt, ImageLineByte, IImageLine }
 
 /** @author Stephen Samuel */
 trait JavaImageIOReader extends ImageReader {
@@ -27,4 +28,32 @@ trait JavaImageIOReader extends ImageReader {
 
 trait SanselanReader extends ImageReader {
   def read(in: InputStream): Image = Image(Sanselan.getBufferedImage(in))
+}
+
+object PNGReader extends ImageReader {
+  def read(in: InputStream): Image = {
+    val pngr = new PngReader(in)
+    println(pngr.toString)
+    val channels = pngr.imgInfo.channels
+    val bitDepth = pngr.imgInfo.bitDepth
+    val width = pngr.imgInfo.cols
+    val height = pngr.imgInfo.rows
+    val raster = Raster(width, height, Raster.getType(channels, bitDepth))
+    val rowSize = raster.n_channel * width
+
+    if (bitDepth <= 8) {
+      for (row <- 0 until height) { // also: while(pngr.hasMoreRows())
+        val scanline: Array[Byte] = pngr.readRow().asInstanceOf[ImageLineInt].getScanline().map(_.toByte)
+        System.arraycopy(scanline, 0, raster.model, row * rowSize, rowSize)
+      }
+    } else {
+      for (row <- 0 until height) { // also: while(pngr.hasMoreRows())
+        val scanline: Array[Int] = pngr.readRow().asInstanceOf[ImageLineInt].getScanline()
+        System.arraycopy(scanline, 0, raster.model, row * rowSize, rowSize)
+      }
+    }
+
+    pngr.end()
+    new Image(raster)
+  }
 }
