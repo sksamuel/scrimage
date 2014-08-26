@@ -250,7 +250,7 @@ object ResampleOpScala {
         c0 = work.offset(x, y)
         c = 0
         while (c < n_channel) {
-          work.writeChannel(c0)(fit(sample(c), work.max_channel_value))
+          work.writeChannel(c0)(fit(sample(c), work.maxChannelValue))
           c += 1
           c0 += work.channelSize
         }
@@ -296,7 +296,7 @@ object ResampleOpScala {
         c0 = out.offset(x, y)
         c = 0
         while (c < n_channel) {
-          out.writeChannel(c0)(fit(sample(c), out.max_channel_value))
+          out.writeChannel(c0)(fit(sample(c), out.maxChannelValue))
           c += 1
           c0 += out.channelSize
         }

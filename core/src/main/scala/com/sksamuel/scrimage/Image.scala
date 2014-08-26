@@ -72,7 +72,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     */
   @deprecated("java.awt is to be removed", "22 Jul 2014")
   def updateFromAWT(): Unit = {
-    raster.write(Image(awt).raster.extract)
+    raster.write(Image(awt).raster.read)
   }
 
   override def empty: Image = Image.empty(width, height)
@@ -301,7 +301,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
       val b = (c.blue * c.alpha + color.getBlue * color.getAlpha * (255 - c.alpha) / 255) / 255
       RGBColor(r, g, b)
     }
-    val rgbColors = raster.extract.map(_.toRGB).map(rmTransparency)
+    val rgbColors = raster.read.map(_.toRGB).map(rmTransparency)
     new Image(Raster(width, height, rgbColors, Raster.RGB))
   }
 

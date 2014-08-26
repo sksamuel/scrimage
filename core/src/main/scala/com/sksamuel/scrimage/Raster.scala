@@ -24,7 +24,7 @@ trait Raster { self: ByteColorModel =>
   /** The number of channels used by this Raster */
   val n_channel: Int
   val channelSize: Int
-  val max_channel_value: Int
+  val maxChannelValue: Int
 
   def offset(x: Int, y: Int): Int =
     n_channel * channelSize * (y * width + x)
@@ -65,20 +65,29 @@ trait Raster { self: ByteColorModel =>
   }
 
   /** Extracts the color of each pixels into an Array[Color] */
-  def extract: Array[Color] = {
+  def extract = {
     val colors = Array.ofDim[Color](width * height)
     var x = 0
+    var off = 0
+    val sampleSize = n_channel * channelSize
     while (x < width * height) {
-      colors(x) = readColor(x * n_channel, model)
+      colors(x) = readColor(off, model)
       x += 1
+      off += sampleSize
     }
     colors
   }
 
-  def write(colors: Array[_ <: Color]) = {
+  def read: Iterable[Color] = {
+    for (x <- 0 until width * height) yield readColor(x * n_channel, model)
+  }
+
+  def write(colors: Iterable[Color]) = {
+    val it = colors.toIterator
     var x = 0
-    while (x < colors.length) {
-      writeColor(x * n_channel, model)(colors(x))
+    val xmax = width * height
+    while (x < xmax && it.hasNext) {
+      writeColor(x * n_channel, model)(it.next())
       x += 1
     }
     this
@@ -150,6 +159,7 @@ class RGBRaster(val width: Int, val height: Int, val model: Array[Byte])
     new RGBRaster(width, height, model)
   }
 }
+
 class GrayRaster(val width: Int, val height: Int, val model: Array[Byte])
     extends Raster with GrayColorModel {
   type RasterType = GrayRaster
@@ -157,6 +167,7 @@ class GrayRaster(val width: Int, val height: Int, val model: Array[Byte])
     new GrayRaster(width, height, model)
   }
 }
+
 class GrayAlphaRaster(val width: Int, val height: Int, val model: Array[Byte])
     extends Raster with GrayAlphaColorModel {
   type RasterType = GrayAlphaRaster
@@ -166,33 +177,43 @@ class GrayAlphaRaster(val width: Int, val height: Int, val model: Array[Byte])
 }
 
 object Raster {
-  val GRAY = 0
-  val GRAY_ALPHA = 4
-  val RGB = 2
-  val ARGB = 6
+  trait RasterType
+  object GRAY extends RasterType
+  object GRAY_ALPHA extends RasterType
+  object RGB extends RasterType
+  object ARGB extends RasterType
+
   def apply(width: Int, height: Int): Raster = apply(width, height, ARGB)
 
-  def apply(width: Int, height: Int, colorModel: Int): Raster = {
-    if (colorModel == ARGB) new ARGBRaster(width, height, Array.ofDim[Byte](width * height * 4))
-    else if (colorModel == RGB) new RGBRaster(width, height, Array.ofDim[Byte](width * height * 3))
-    else if (colorModel == GRAY) new GrayRaster(width, height, Array.ofDim[Byte](width * height * 1))
-    else if (colorModel == GRAY_ALPHA) new GrayAlphaRaster(width, height, Array.ofDim[Byte](width * height * 2))
-    else throw new RuntimeException("Unknown colorModel. Use the PNG convention.")
+  def apply(width: Int, height: Int, rasterType: RasterType): Raster = rasterType match {
+    case ARGB => new ARGBRaster(width, height, Array.ofDim[Byte](width * height * 4))
+    case RGB => new RGBRaster(width, height, Array.ofDim[Byte](width * height * 3))
+    case GRAY => new GrayRaster(width, height, Array.ofDim[Byte](width * height * 1))
+    case GRAY_ALPHA => new GrayAlphaRaster(width, height, Array.ofDim[Byte](width * height * 2))
   }
 
-  def apply(width: Int, height: Int, model: Array[Byte], colorModel: Int): Raster = {
-    if (colorModel == ARGB) new ARGBRaster(width, height, model)
-    else if (colorModel == RGB) new RGBRaster(width, height, model)
-    else if (colorModel == GRAY) new GrayRaster(width, height, model)
-    else if (colorModel == GRAY_ALPHA) new GrayAlphaRaster(width, height, model)
-    else throw new RuntimeException("Unknown colorModel. Use the PNG convention.")
+  def apply(width: Int, height: Int, model: Array[Byte], rasterType: RasterType): Raster = rasterType match {
+    case ARGB => new ARGBRaster(width, height, model)
+    case RGB => new RGBRaster(width, height, model)
+    case GRAY => new GrayRaster(width, height, model)
+    case GRAY_ALPHA => new GrayAlphaRaster(width, height, model)
   }
 
-  def apply(width: Int, height: Int, colors: Array[_ <: Color], colorModel: Int): Raster =
-    Raster(width, height, colorModel).write(colors)
+  def apply(width: Int, height: Int, colors: Iterable[Color], rasterType: RasterType): Raster =
+    Raster(width, height, rasterType) write colors
 
-  def apply(width: Int, height: Int, argbColors: Array[Int], colorModel: Int): Raster =
-    Raster(width, height, colorModel).write(argbColors map (argb => Color(argb)))
+  def withARGB(width: Int, height: Int, argbColors: Iterable[Int], rasterType: RasterType): Raster =
+    Raster(width, height, rasterType) write (argbColors map (argb => Color(argb)))
+
+  def getType(channels: Int, bitDepth: Int): RasterType = {
+    if (bitDepth <= 8) {
+      if (channels == 4) ARGB
+      else if (channels == 3) RGB
+      else if (channels == 2) GRAY_ALPHA
+      else if (channels == 1) GRAY
+      else throw new RuntimeException(s"Too much channels: $channels")
+    } else throw new RuntimeException(s"Bit depth not supported: $bitDepth")
+  }
 }
 
 /** Factory for ARGBRaster */
@@ -201,10 +222,12 @@ object ARGBRaster {
   def apply(width: Int, height: Int, color: Color) = {
     Raster(width, height, Raster.ARGB).fill(color)
   }
+
   def apply(width: Int, height: Int, colors: Array[Int]) = {
     Raster(width, height, Raster.ARGB).write(colors.map(argb => Color(argb)))
   }
-  def apply(width: Int, height: Int, colors: Array[_ <: Color]) = Raster(width, height, colors, Raster.ARGB)
+
+  def apply(width: Int, height: Int, colors: Iterable[Color]) = Raster(width, height, colors, Raster.ARGB)
 
   def apply(width: Int, height: Int, channels: Array[Byte]) = {
     new ARGBRaster(width, height, channels)
