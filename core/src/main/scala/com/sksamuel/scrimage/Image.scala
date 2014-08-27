@@ -730,6 +730,12 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
    */
   @deprecated("use filled", "1.4")
   def clear(color: Color): Image = filled(color)
+
+  /**
+    * Returns true if this image uses its Alpha component.
+    */
+  def usesAlpha: Boolean =
+    !(pixels map( _ >> 24 & 0xff) forall( _ == 0xff ))
 }
 
 object Image {

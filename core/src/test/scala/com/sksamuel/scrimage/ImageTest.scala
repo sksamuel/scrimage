@@ -476,4 +476,10 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     val pxwt = withoutTransparency.pixels
     assert(pixels.toList === pxwt.toList)
   }
+
+  test("transparency"){
+    assert(image.usesAlpha === false)
+    val transparent = Image(getClass.getResourceAsStream("/transparent_chip.png"))
+    assert(transparent.usesAlpha === true)
+  }
 }
