@@ -58,14 +58,11 @@ object PNGReader extends ImageReader with MimeTypeChecker {
   }
 
   def readMimeType(input: InputStream) = {
-    try {
-      val buff = Array.ofDim[Byte](8)
-      input.read(buff)
-      val expected = List(0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A, 0x0A) map (_.toByte)
-      assert(buff.toList == expected)
-      Some(PNGMimeType)
-    } catch {
-      case _: AssertionError => None
-    }
+    val buff = Array.ofDim[Byte](8)
+    input.read(buff)
+    val expected = List(0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A, 0x0A) map (_.toByte)
+
+    if(buff.toList == expected) Some(PNGMimeType)
+    else None
   }
 }
