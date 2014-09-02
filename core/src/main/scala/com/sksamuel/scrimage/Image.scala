@@ -17,18 +17,16 @@
 package com.sksamuel.scrimage
 
 import java.awt._
-import java.awt.geom.AffineTransform
-import java.awt.image.{ BufferedImage, DataBufferInt }
-import java.io.{ ByteArrayInputStream, File, InputStream }
+import java.awt.image.{BufferedImage, DataBufferInt}
+import java.io.{ByteArrayInputStream, File, InputStream}
 import javax.imageio.ImageIO
 
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.io.ImageWriter
 import com.sksamuel.scrimage.scaling.ResampleOpScala
-import org.apache.commons.io.{ FileUtils, IOUtils }
-import sun.awt.resources.awt
-import thirdparty.mortennobel.{ ResampleFilters, ResampleOp }
+import org.apache.commons.io.{FileUtils, IOUtils}
+import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 
 import scala.List
 import scala.concurrent.ExecutionContext
@@ -50,22 +48,29 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     *
     * @return a BufferedImage with the same data as this Image.
     */
-  def toBufferedImage = {
-    val buff = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
-    val g2 = buff.getGraphics.asInstanceOf[Graphics2D]
-    // todo draw pixels
-    g2.dispose()
-    Image(buff)
+  def toBufferedImage: BufferedImage = {
+    val imageType = raster match {
+      case _: RGBRaster => BufferedImage.TYPE_INT_RGB
+      case _: ARGBRaster => BufferedImage.TYPE_INT_ARGB
+      case _: GrayRaster => BufferedImage.TYPE_BYTE_GRAY
+      case _: GrayAlphaRaster => BufferedImage.TYPE_INT_ARGB
+    }
+    val buffered = new BufferedImage(width, height, imageType)
+    if ((imageType == BufferedImage.TYPE_INT_ARGB) || (imageType == BufferedImage.TYPE_INT_RGB))
+      buffered.setRGB(0, 0, width, height, raster.extract.map(_.toInt), 0, width)
+    if (imageType == BufferedImage.TYPE_BYTE_GRAY)
+      buffered.getRaster.setDataElements(0, 0, width, height, raster.model)
+    buffered
   }
 
   @deprecated("java.awt is to be removed", "22 Jul 2014")
   lazy val awt: BufferedImage = {
-    import java.awt.image.{ ColorModel, DataBufferInt, Raster }
-    val cm = ColorModel.getRGBdefault()
+    import java.awt.image.{ColorModel, DataBufferInt}
+    val cm = ColorModel.getRGBdefault
     val sm = cm.createCompatibleSampleModel(width, height)
-    val db = new DataBufferInt(raster.extract.map(_.toInt), width * height);
-    val wr = java.awt.image.Raster.createWritableRaster(sm, db, null);
-    new BufferedImage(cm, wr, false, null);
+    val db = new DataBufferInt(raster.extract.map(_.toInt), width * height)
+    val wr = java.awt.image.Raster.createWritableRaster(sm, db, null)
+    new BufferedImage(cm, wr, false, null)
   }
 
   /** This a workaround to allow code written for the old version image to work.

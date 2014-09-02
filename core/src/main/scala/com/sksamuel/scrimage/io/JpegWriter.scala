@@ -16,11 +16,12 @@
 
 package com.sksamuel.scrimage.io
 
-import com.sksamuel.scrimage.Image
 import java.io.OutputStream
-import javax.imageio.{ IIOImage, ImageWriteParam, ImageIO }
-import org.apache.commons.io.IOUtils
 import javax.imageio.stream.MemoryCacheImageOutputStream
+import javax.imageio.{IIOImage, ImageIO, ImageWriteParam}
+
+import com.sksamuel.scrimage.Image
+import org.apache.commons.io.IOUtils
 
 /** @author Stephen Samuel */
 class JpegWriter(image: Image, compression: Int, progressive: Boolean) extends ImageWriter {
@@ -50,7 +51,7 @@ class JpegWriter(image: Image, compression: Int, progressive: Boolean) extends I
 
     val output = new MemoryCacheImageOutputStream(out)
     writer.setOutput(output)
-    writer.write(null, new IIOImage(noAlpha.awt, null, null), params)
+    writer.write(null, new IIOImage(noAlpha.toBufferedImage, null, null), params)
     writer.dispose()
     output.close()
     IOUtils.closeQuietly(out)
