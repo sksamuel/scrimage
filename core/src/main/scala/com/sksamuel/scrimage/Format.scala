@@ -16,8 +16,9 @@
 
 package com.sksamuel.scrimage
 
-import com.sksamuel.scrimage.io._
-import com.sksamuel.scrimage.io.PngWriter
+import java.io.InputStream
+
+import com.sksamuel.scrimage.io.{PngWriter, _}
 
 /** @author Stephen Samuel */
 sealed trait Format[T <: ImageWriter] {
@@ -28,14 +29,21 @@ sealed trait Format[T <: ImageWriter] {
     */
   def writer(image: Image): T
 }
+
 object Format {
   case object PNG extends Format[PngWriter] {
     def writer(image: Image) = PngWriter(image)
   }
+
   case object JPEG extends Format[JpegWriter] {
     def writer(image: Image) = JpegWriter(image)
   }
+
   case object GIF extends Format[GifWriter] {
     def writer(image: Image) = GifWriter(image)
   }
+}
+
+trait MimeTypeChecker {
+    def readMimeType(input: InputStream): Option[Format[_]]
 }

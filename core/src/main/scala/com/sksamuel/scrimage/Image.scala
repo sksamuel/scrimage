@@ -339,17 +339,20 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     * @return
     */
   def rotateLeft = {
-    val raster = ARGBRaster(height, width)
-    new Image(raster)
+    val rotated = raster.empty(height, width)
+    for(x <- 0 until width; y <- 0 until height; c <- 0 until raster.n_channel){
+      rotated.writeChannel(y, width - 1 - x, c)(raster.readChannel(x, y, c))
+    }
+    new Image(rotated)
   }
 
-  /** Returns a copy of this image rotated 90 degrees clockwise.
-    *
-    * @return
-    */
+  /** Returns a copy of this image rotated 90 degrees clockwise. */
   def rotateRight = {
-    val raster = ARGBRaster(height, width)
-    new Image(raster)
+    val rotated = raster.empty(height, width)
+    for(x <- 0 until width; y <- 0 until height; c <- 0 until raster.n_channel){
+      rotated.writeChannel(height - 1 - y, x, c)(raster.readChannel(x, y, c))
+    }
+    new Image(rotated)
   }
 
   /** Returns a copy of this image with the given dimensions
