@@ -1,8 +1,9 @@
 package com.sksamuel.scrimage.io
 
-import org.scalatest.{ OneInstancePerTest, BeforeAndAfter, FunSuite }
-import com.sksamuel.scrimage.{ Format, Image }
 import java.io.ByteArrayOutputStream
+
+import com.sksamuel.scrimage.{Format, Image}
+import org.scalatest.{BeforeAndAfter, FunSuite, OneInstancePerTest}
 
 /** @author Stephen Samuel */
 class PngWriterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
@@ -34,7 +35,7 @@ class PngWriterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest
 
   test("png reader detects the correct mime type") {
     val mime = PNGReader.readMimeType(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png"))
-    assert(mime === Some(PNGMimeType))
+    assert(mime === Some(Format.PNG))
   }
 
   test("png reader reads an image correctly") {

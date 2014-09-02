@@ -1,8 +1,9 @@
 package com.sksamuel.scrimage
 
-import org.scalatest.{ Matchers, BeforeAndAfter, FunSuite }
 import java.awt.image.BufferedImage
-import com.sksamuel.scrimage.Position.{ TopRight, BottomRight, Center, TopLeft }
+
+import com.sksamuel.scrimage.Position.{BottomRight, Center, TopLeft, TopRight}
+import org.scalatest.{BeforeAndAfter, FunSuite, Matchers}
 
 /** @author Stephen Samuel */
 class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
@@ -77,8 +78,8 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     val g = image.awt.getGraphics
     g.setColor(java.awt.Color.RED)
     g.fillRect(10, 10, 10, 10)
-    g.fillRect(0, 0, 10, 10)
     g.dispose()
+    image.updateFromAWT()
     assert(0 === image.pixel(0, 0))
     assert(0 === image.pixel(9, 10))
     assert(0 === image.pixel(10, 9))
@@ -98,6 +99,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     g.setColor(java.awt.Color.RED)
     g.fillRect(10, 10, 10, 10)
     g.dispose()
+    image.updateFromAWT()
     assert(0 === image.pixels(0))
     assert(0xFFFF0000 === image.pixels(765))
   }
