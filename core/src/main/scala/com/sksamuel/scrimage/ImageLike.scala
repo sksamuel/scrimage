@@ -187,6 +187,8 @@ trait ImageLike[R] {
     */
   def copy: Image
 
+  def cover(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod = Bicubic, position: Position = Center): R
+
   /** Maps the pixels of this image into another image by applying the given function to each point.
     *
     * The function accepts three parameters: x,y,p where x and y are the coordinates of the pixel

@@ -46,6 +46,29 @@ class AsyncImage(image: Image)(implicit executionContext: ExecutionContext) exte
     AsyncImage(image.fit(targetWidth, targetHeight, color, scaleMethod, position))
   }
 
+  /** Returns a copy of the canvas with the given dimensions where the
+    * original image has been scaled to completely cover the new dimensions
+    * whilst retaining the original aspect ratio.
+    *
+    * If the new dimensions have a different aspect ratio than the old image
+    * then the image will be cropped so that it still covers the new area
+    * without leaving any background.
+    *
+    * @param targetWidth the target width
+    * @param targetHeight the target height
+    * @param scaleMethod the type of scaling method to use. Defaults to Bicubic
+    * @param position where to position the image inside the new canvas
+    *
+    * @return a new [[AsyncImage]], wrapped in a [[Future]], with the original
+    *       image scaled to cover the new dimensions
+    */
+  override def cover(targetWidth: Int,
+                     targetHeight: Int,
+                     scaleMethod: ScaleMethod = Bicubic,
+                     position: Position = Center): Future[AsyncImage] = Future {
+    AsyncImage(image.cover(targetWidth, targetHeight, scaleMethod, position))
+  }
+
   def pixel(x: Int, y: Int): Int = image.pixel(x, y)
 
   def padTo(targetWidth: Int,
