@@ -33,6 +33,7 @@ object Build extends Build {
 
   lazy val root = Project("scrimage", file("."))
     .settings(scrimageSettings: _*)
+    .settings(publishArtifact := false)
     .aggregate(core, canvas, filters)
 
   lazy val core = Project("scrimage-core", file("core"))
