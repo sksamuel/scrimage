@@ -186,11 +186,11 @@ Scrimage is cross compiled for scala 2.11 and 2.10.
 
 If using SBT then you want:
 ```scala
-libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-core" % "1.4.1"
+libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-core" % "1.4.2"
 
-libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-canvas" % "1.4.1"
+libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-canvas" % "1.4.2"
 
-libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-filters" % "1.4.1"
+libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-filters" % "1.4.2"
 ```
 
 Maven:
@@ -198,17 +198,17 @@ Maven:
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage-core_2.11</artifactId>
-    <version>1.4.1</version>
+    <version>1.4.2</version>
 </dependency>
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage-canvas_2.11</artifactId>
-    <version>1.4.1</version>
+    <version>1.4.2</version>
 </dependency>
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage-filters_2.11</artifactId>
-    <version>1.4.1</version>
+    <version>1.4.2</version>
 </dependency>
 ```
 
