@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage.filter
 
-import org.scalatest.{ OneInstancePerTest, BeforeAndAfter, FunSuite }
 import com.sksamuel.scrimage.Image
+import org.scalatest.{BeforeAndAfter, FunSuite, OneInstancePerTest}
 
 /** @author Stephen Samuel */
 class BlurFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
@@ -11,5 +11,12 @@ class BlurFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTes
 
   test("filter output matches expected") {
     assert(Image(original).filter(BlurFilter) == Image(expected))
+  }
+
+  test("jpeg reader"){
+    import com.sksamuel.scrimage.Format
+    val champi = Image(getClass.getResourceAsStream("/champi.jpg"))
+    val ch = champi.scaleTo(300, 400)
+    ch.write("champi.png", Format.PNG)
   }
 }
