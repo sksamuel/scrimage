@@ -154,7 +154,7 @@ public class ResampleOp extends AdvancedResizeOp {
 
     final float fwidth = filter.getSamplingRadius();
 
-    float centerOffset = 0.5f / scale;
+    float centerOffset = 0.5f / scale - 0.5f;
 
     if (scale < 1.0f) {
       final float width = fwidth / scale;
