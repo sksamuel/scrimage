@@ -7,6 +7,8 @@ import org.apache.commons.io.FileUtils
 /** @author Stephen Samuel */
 object CompositeExampleGenerator extends App {
 
+  import scala.concurrent.ExecutionContext.Implicits.global
+
   val composites: List[(String, (Double => Composite))] = List(
     ("alpha", new AlphaComposite(_)),
     ("average", new AverageComposite(_)),

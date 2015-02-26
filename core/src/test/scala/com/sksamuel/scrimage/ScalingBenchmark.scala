@@ -10,7 +10,9 @@ import com.sksamuel.scrimage.ScaleMethod.{ FastScale, Bicubic }
 /** @author Stephen Samuel */
 object ScalingBenchmark extends App {
 
-  val COUNT = 100
+  import scala.concurrent.ExecutionContext.Implicits.global
+
+  val COUNT = 20
 
   val bird = IOUtils.toByteArray(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird.jpg"))
   val awt = ImageIO.read(new ByteArrayInputStream(bird))

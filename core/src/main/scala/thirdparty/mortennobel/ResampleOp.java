@@ -6,8 +6,11 @@
  */
 package thirdparty.mortennobel;
 
+import scala.concurrent.ExecutionContext;
+
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Based on work from Java Image Util ( http://schmidt.devlib.org/jiu/ )
@@ -21,8 +24,9 @@ public class ResampleOp extends AdvancedResizeOp {
 
   private final static int MAX_CHANNEL_VALUE = 255;
 
-  private final int numberOfThreads;
+  private final ExecutionContext executionContext;
   private final ResampleFilter filter;
+  private final int numberOfTasks;
 
   private int nrChannels;
   private int srcWidth;
@@ -47,10 +51,14 @@ public class ResampleOp extends AdvancedResizeOp {
   private SubSamplingData horizontalSubsamplingData;
   private SubSamplingData verticalSubsamplingData;
 
-  public ResampleOp(final int numberOfThreads, final ResampleFilter filter, final int destWidth, final int destHeight) {
+  public ResampleOp(final ExecutionContext executionContext,
+                    final ResampleFilter filter,
+                    final int destWidth,
+                    final int destHeight) {
     super(destWidth, destHeight);
-    this.numberOfThreads = numberOfThreads;
+    this.executionContext = executionContext;
     this.filter = filter;
+    this.numberOfTasks = Runtime.getRuntime().availableProcessors();
   }
 
   public BufferedImage doFilter(BufferedImage srcImg, BufferedImage dest, int dstWidth, int dstHeight) {
@@ -59,14 +67,14 @@ public class ResampleOp extends AdvancedResizeOp {
 
     if (dstWidth < 3 || dstHeight < 3) {
       throw new RuntimeException("Error doing rescale. Target size was " + dstWidth + "x" + dstHeight + " but must be" +
-          " at least 3x3.");
+        " at least 3x3.");
     }
 
     if (srcImg.getType() == BufferedImage.TYPE_BYTE_BINARY ||
-        srcImg.getType() == BufferedImage.TYPE_BYTE_INDEXED ||
-        srcImg.getType() == BufferedImage.TYPE_CUSTOM)
+      srcImg.getType() == BufferedImage.TYPE_BYTE_INDEXED ||
+      srcImg.getType() == BufferedImage.TYPE_CUSTOM)
       srcImg = ImageUtils.convert(srcImg, srcImg.getColorModel().hasAlpha() ?
-          BufferedImage.TYPE_4BYTE_ABGR : BufferedImage.TYPE_3BYTE_BGR);
+        BufferedImage.TYPE_4BYTE_ABGR : BufferedImage.TYPE_3BYTE_BGR);
 
     this.nrChannels = ImageUtils.nrChannels(srcImg);
     assert nrChannels > 0;
@@ -81,35 +89,45 @@ public class ResampleOp extends AdvancedResizeOp {
 
     final BufferedImage scrImgCopy = srcImg;
     final byte[][] workPixelsCopy = workPixels;
-    Thread[] threads = new Thread[numberOfThreads - 1];
-    for (int i = 1; i < numberOfThreads; i++) {
+
+    final CountDownLatch latch1 = new CountDownLatch(numberOfTasks - 1);
+    for (int i = 1; i < numberOfTasks; i++) {
       final int finalI = i;
-      threads[i - 1] = new Thread(new Runnable() {
+      executionContext.execute(new Runnable() {
         public void run() {
-          horizontallyFromSrcToWork(scrImgCopy, workPixelsCopy, finalI, numberOfThreads);
+          horizontallyFromSrcToWork(scrImgCopy, workPixelsCopy, finalI, numberOfTasks);
+          latch1.countDown();
         }
       });
-      threads[i - 1].start();
     }
-    horizontallyFromSrcToWork(scrImgCopy, workPixelsCopy, 0, numberOfThreads);
-    waitForAllThreads(threads);
+    horizontallyFromSrcToWork(scrImgCopy, workPixelsCopy, 0, numberOfTasks);
+    try {
+      latch1.await();
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
 
     byte[] outPixels = new byte[dstWidth * dstHeight * nrChannels];
     // --------------------------------------------------
     // Apply filter to sample vertically from Work to Dst
     // --------------------------------------------------
     final byte[] outPixelsCopy = outPixels;
-    for (int i = 1; i < numberOfThreads; i++) {
+    final CountDownLatch latch2 = new CountDownLatch(numberOfTasks - 1);
+    for (int i = 1; i < numberOfTasks; i++) {
       final int finalI = i;
-      threads[i - 1] = new Thread(new Runnable() {
+      executionContext.execute(new Runnable() {
         public void run() {
-          verticalFromWorkToDst(workPixelsCopy, outPixelsCopy, finalI, numberOfThreads);
+          verticalFromWorkToDst(workPixelsCopy, outPixelsCopy, finalI, numberOfTasks);
+          latch2.countDown();
         }
       });
-      threads[i - 1].start();
     }
-    verticalFromWorkToDst(workPixelsCopy, outPixelsCopy, 0, numberOfThreads);
-    waitForAllThreads(threads);
+    verticalFromWorkToDst(workPixelsCopy, outPixelsCopy, 0, numberOfTasks);
+    try {
+      latch2.await();
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
 
     //noinspection UnusedAssignment
     workPixels = null; // free memory
@@ -119,9 +137,9 @@ public class ResampleOp extends AdvancedResizeOp {
       int nrDestChannels = ImageUtils.nrChannels(dest);
       if (nrDestChannels != nrChannels) {
         String
-            errorMgs =
-            String.format("Destination image must be compatible width source image. Source image had %d channels " +
-                "destination image had %d channels", nrChannels, nrDestChannels);
+          errorMgs =
+          String.format("Destination image must be compatible width source image. Source image had %d channels " +
+            "destination image had %d channels", nrChannels, nrDestChannels);
         throw new RuntimeException(errorMgs);
       }
     } else {
@@ -130,17 +148,6 @@ public class ResampleOp extends AdvancedResizeOp {
 
     ImageUtils.setBGRPixels(outPixels, out, 0, 0, dstWidth, dstHeight);
     return out;
-  }
-
-  private void waitForAllThreads(Thread[] threads) {
-    try {
-      for (Thread t : threads) {
-        t.join(Long.MAX_VALUE);
-      }
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-      throw new RuntimeException(e);
-    }
   }
 
   static SubSamplingData createSubSampling(ResampleFilter filter,
@@ -254,7 +261,7 @@ public class ResampleOp extends AdvancedResizeOp {
 
   private void verticalFromWorkToDst(byte[][] workPixels, byte[] outPixels, int start, int delta) {
     if (nrChannels == 1) {
-      verticalFromWorkToDstGray(workPixels, outPixels, start, numberOfThreads);
+      verticalFromWorkToDstGray(workPixels, outPixels, start, numberOfTasks);
       return;
     }
     boolean useChannel3 = nrChannels > 3;
@@ -327,8 +334,8 @@ public class ResampleOp extends AdvancedResizeOp {
     }
     final
     int[]
-        tempPixels =
-        new int[srcWidth];   // Used if we work on int based bitmaps, later used to keep channel values
+      tempPixels =
+      new int[srcWidth];   // Used if we work on int based bitmaps, later used to keep channel values
     final byte[] srcPixels = new byte[srcWidth * nrChannels]; // create reusable row to minimize memory overhead
     final boolean useChannel3 = nrChannels > 3;
 
@@ -373,8 +380,8 @@ public class ResampleOp extends AdvancedResizeOp {
   private void horizontallyFromSrcToWorkGray(BufferedImage srcImg, byte[][] workPixels, int start, int delta) {
     final
     int[]
-        tempPixels =
-        new int[srcWidth];   // Used if we work on int based bitmaps, later used to keep channel values
+      tempPixels =
+      new int[srcWidth];   // Used if we work on int based bitmaps, later used to keep channel values
     final byte[] srcPixels = new byte[srcWidth]; // create reusable row to minimize memory overhead
 
     for (int k = start; k < srcHeight; k = k + delta) {
@@ -411,8 +418,8 @@ public class ResampleOp extends AdvancedResizeOp {
 
   protected int getResultBufferedImageType(BufferedImage srcImg) {
     return nrChannels == 3 ? BufferedImage.TYPE_3BYTE_BGR :
-        (nrChannels == 4 ? BufferedImage.TYPE_4BYTE_ABGR :
-            (srcImg.getSampleModel().getDataType() == DataBuffer.TYPE_USHORT ?
-                BufferedImage.TYPE_USHORT_GRAY : BufferedImage.TYPE_BYTE_GRAY));
+      (nrChannels == 4 ? BufferedImage.TYPE_4BYTE_ABGR :
+        (srcImg.getSampleModel().getDataType() == DataBuffer.TYPE_USHORT ?
+          BufferedImage.TYPE_USHORT_GRAY : BufferedImage.TYPE_BYTE_GRAY));
   }
 }

@@ -80,7 +80,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
    * @param height the maximum height
    * @return the constrained image.
    */
-  def constrain(width: Int, height: Int): Image = {
+  def constrain(width: Int, height: Int)(implicit executor: ExecutionContext): Image = {
     if (this.width <= width && this.height <= height) this
     else bound(width, height)
   }
@@ -310,7 +310,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
       //                array
       case _ => {
         val px = Array.ofDim[Int](width * height)
-        for(x <- 0 until width; y <- 0 until height){
+        for ( x <- 0 until width; y <- 0 until height ) {
           px(y * width + x) = awt.getRGB(x, y)
         }
         px
@@ -439,7 +439,8 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
           targetHeight: Int,
           color: Color = X11Colorlist.White,
           scaleMethod: ScaleMethod = Bicubic,
-          position: Position = Center): Image = {
+          position: Position = Center)
+         (implicit executor: ExecutionContext): Image = {
     val fittedDimensions = ImageTools.dimensionsToFit((targetWidth, targetHeight), (width, height))
     val x = ((targetWidth - fittedDimensions._1) / 2.0).toInt
     val y = ((targetHeight - fittedDimensions._2) / 2.0).toInt
@@ -467,7 +468,8 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
   def cover(targetWidth: Int,
             targetHeight: Int,
             scaleMethod: ScaleMethod = Bicubic,
-            position: Position = Center): Image = {
+            position: Position = Center)
+           (implicit executor: ExecutionContext): Image = {
     val coveredDimensions = ImageTools.dimensionsToCover((targetWidth, targetHeight), (width, height))
     val scaled = scaleTo(coveredDimensions._1, coveredDimensions._2, scaleMethod)
     val x = ((targetWidth - coveredDimensions._1) / 2.0).toInt
@@ -489,7 +491,8 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
    *
    * @return a new Image that is the result of scaling this image
    */
-  def scaleTo(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): Image = {
+  def scaleTo(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod = Bicubic)
+             (implicit executor: ExecutionContext): Image = {
 
     scaleMethod match {
       case FastScale =>
@@ -506,7 +509,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
           case Lanczos3 => ResampleFilters.lanczos3Filter
           case _ => ResampleFilters.biCubicFilter
         }
-        val op = new ResampleOp(Image.SCALE_THREADS, method, targetWidth, targetHeight)
+        val op = new ResampleOp(executor, method, targetWidth, targetHeight)
         val scaled = op.filter(awt, null)
         Image(scaled)
     }
@@ -662,7 +665,8 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
    *
    * @return A new image that is the result of the binding.
    */
-  def bound(boundedWidth: Int, boundedHeight: Int): Image = {
+  def bound(boundedWidth: Int, boundedHeight: Int)
+           (implicit executor: ExecutionContext): Image = {
     val dimensions = ImageTools.dimensionsToFit((boundedWidth, boundedHeight), (width, height))
     scaleTo(dimensions._1, dimensions._2)
   }
@@ -677,7 +681,7 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
    * @param method how to apply the scaling method
    * @return the zoomed image
    */
-  def zoom(factor: Double, method: ScaleMethod = ScaleMethod.Bicubic) = scale(factor, method).resizeTo(width, height)
+  def zoom(factor: Double, method: ScaleMethod = ScaleMethod.Bicubic)(implicit executor: ExecutionContext) = scale(factor, method).resizeTo(width, height)
 
   /**
    * Creates a new Image with the same dimensions of this image and with
@@ -714,28 +718,16 @@ class Image(val awt: BufferedImage) extends ImageLike[Image] with WritableImageL
   def toMutable: MutableImage = new MutableImage(copy.awt)
 
   /**
-   * Creates an AsyncImage instance backed by this image.
-   *
-   * The returned AsyncImage will contain the same backing array
-   * as this image.
-   *
-   * To return back to an image instance use asyncImage.toImage
-   *
-   * @return an AsyncImage wrapping this image.
-   */
-  def toAsync(implicit executionContext: ExecutionContext): AsyncImage = AsyncImage(this)
-
-  /**
    * Clears all image data to the given color
    */
   @deprecated("use filled", "1.4")
   def clear(color: Color): Image = filled(color)
 
   /**
-    * Returns true if this image uses its Alpha component.
-    */
+   * Returns true if this image uses its Alpha component.
+   */
   def usesAlpha: Boolean =
-    !(pixels map( _ >> 24 & 0xff) forall( _ == 0xff ))
+    !(pixels map (_ >> 24 & 0xff) forall (_ == 0xff))
 }
 
 object Image {

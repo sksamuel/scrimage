@@ -22,6 +22,8 @@ import thirdparty.romainguy.BlendComposite
 /** @author Stephen Samuel */
 class SummerFilter(vignette: Boolean) extends Filter {
 
+  import scala.concurrent.ExecutionContext.Implicits.global
+
   val summer = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/filter/summer1.jpg"))
 
   def apply(image: Image) {

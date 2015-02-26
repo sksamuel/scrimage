@@ -25,6 +25,8 @@ import com.sksamuel.scrimage.ScaleMethod.Bicubic
 import com.sksamuel.scrimage.io.ImageWriter
 import org.apache.commons.io.{FileUtils, IOUtils}
 
+import scala.concurrent.ExecutionContext
+
 /** @author Stephen Samuel */
 trait ImageLike[R] {
 
@@ -223,14 +225,14 @@ trait ImageLike[R] {
    */
   def filter(filter: Filter): R
 
-  def fit(targetWidth: Int, targetHeight: Int, color: Color, scaleMethod: ScaleMethod, position: Position): R
+  def fit(targetWidth: Int, targetHeight: Int, color: Color, scaleMethod: ScaleMethod, position: Position)  (implicit executor: ExecutionContext): R
 
   def fitToHeight(targetHeight: Int, color: Color = X11Colorlist.White,
-                  scaleMethod: ScaleMethod = Bicubic, position: Position = Center): R =
+                  scaleMethod: ScaleMethod = Bicubic, position: Position = Center)  (implicit executor: ExecutionContext): R =
     fit((targetHeight / height.toDouble * height).toInt, targetHeight, color, scaleMethod, position)
 
   def fitToWidth(targetWidth: Int, color: Color = X11Colorlist.White,
-                 scaleMethod: ScaleMethod = Bicubic, position: Position = Center): R =
+                 scaleMethod: ScaleMethod = Bicubic, position: Position = Center)  (implicit executor: ExecutionContext): R =
     fit(targetWidth, (targetWidth / width.toDouble * height).toInt, color, scaleMethod, position)
 
   def resizeTo(targetWidth: Int, targetHeight: Int, position: Position, background: Color = X11Colorlist.White): R
@@ -284,7 +286,7 @@ trait ImageLike[R] {
    *
    * @return a new Image that is the result of scaling this image
    */
-  def scaleTo(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): R
+  def scaleTo(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod = Bicubic)(implicit executor: ExecutionContext): R
 
   /**
    *
@@ -303,7 +305,7 @@ trait ImageLike[R] {
    *
    * @return a new Image that is the result of scaling this image
    */
-  def scaleToWidth(targetWidth: Int, scaleMethod: ScaleMethod = Bicubic): R =
+  def scaleToWidth(targetWidth: Int, scaleMethod: ScaleMethod = Bicubic)(implicit executor: ExecutionContext): R =
     scaleTo(targetWidth, (targetWidth / width.toDouble * height).toInt, scaleMethod)
 
   /**
@@ -323,7 +325,7 @@ trait ImageLike[R] {
    *
    * @return a new Image that is the result of scaling this image
    */
-  def scaleToHeight(targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): R =
+  def scaleToHeight(targetHeight: Int, scaleMethod: ScaleMethod = Bicubic)(implicit executor: ExecutionContext): R =
     scaleTo((targetHeight / height.toDouble * width).toInt, targetHeight, scaleMethod)
 
   /**
@@ -336,7 +338,7 @@ trait ImageLike[R] {
    *
    * @return a new Image that is the result of scaling this image
    */
-  def scale(scaleFactor: Double, scaleMethod: ScaleMethod = Bicubic): R =
+  def scale(scaleFactor: Double, scaleMethod: ScaleMethod = Bicubic)(implicit executor: ExecutionContext): R =
     scaleTo((width * scaleFactor).toInt, (height * scaleFactor).toInt, scaleMethod)
 
   def pixels: Array[Int]

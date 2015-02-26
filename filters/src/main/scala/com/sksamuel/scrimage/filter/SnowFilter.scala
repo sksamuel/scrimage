@@ -23,6 +23,8 @@ import thirdparty.romainguy.BlendComposite.BlendingMode
 /** @author Stephen Samuel */
 object SnowFilter extends Filter {
 
+  import scala.concurrent.ExecutionContext.Implicits.global
+
   val snow = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/filter/snow1.jpg"))
 
   def apply(image: Image) {

@@ -5,14 +5,14 @@ object Build extends Build {
 
   val scrimageSettings = Seq(
     organization := "com.sksamuel.scrimage",
-    version := "1.4.2",
-    scalaVersion := "2.11.1",
-    crossScalaVersions := Seq("2.10.4", "2.11.1"),
+    version := "2.0.0-SNAPSHOT",
+    scalaVersion := "2.11.5",
+    crossScalaVersions := Seq("2.10.4", "2.11.5"),
     publishMavenStyle := true,
     publishArtifact in Test := false,
     parallelExecution in Test := false,
     scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8"),
-    javacOptions ++= Seq("-source", "1.6", "-target", "1.6"),
+    javacOptions ++= Seq("-source", "1.7", "-target", "1.7"),
     libraryDependencies ++= Seq(
       "org.slf4j"                     % "slf4j-api"             % "1.7.5",
       "org.imgscalr"                  % "imgscalr-lib"          % "4.2" % "test",
