@@ -10,8 +10,8 @@ object Build extends Build {
   val scrimageSettings = scalariformSettings ++ Seq(
     organization := "com.sksamuel.scrimage",
     version := "1.4.2",
-    scalaVersion := "2.11.1",
-    crossScalaVersions := Seq("2.10.4", "2.11.1"),
+    scalaVersion := "2.11.5",
+    crossScalaVersions := Seq("2.10.4", "2.11.5"),
     publishMavenStyle := true,
     publishArtifact in Test := false,
     parallelExecution in Test := false,
@@ -34,24 +34,14 @@ object Build extends Build {
   lazy val root = Project("scrimage", file("."))
     .settings(scrimageSettings: _*)
     .settings(publishArtifact := false)
-    .aggregate(core, canvas, filters)
+    .aggregate(core, filters)
 
   lazy val core = Project("scrimage-core", file("core"))
     .settings(scrimageSettings: _*)
     .settings(name := "scrimage-core")
 
-  lazy val canvas = Project("scrimage-canvas", file("canvas"))
-    .dependsOn(core)
-    .settings(scrimageSettings: _*)
-    .settings(name := "scrimage-canvas")
-
   lazy val filters = Project("scrimage-filters", file("filters"))
     .dependsOn(core)
     .settings(scrimageSettings: _*)
     .settings(name := "scrimage-filters")
-
-  lazy val samples = Project("scrimage-samples", file("samples"))
-    .dependsOn(core)
-    .settings(scrimageSettings: _*)
-    .settings(name := "scrimage-samples")
 }
