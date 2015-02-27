@@ -9,7 +9,7 @@ object Build extends Build {
 
   val scrimageSettings = scalariformSettings ++ Seq(
     organization := "com.sksamuel.scrimage",
-    version := "1.4.2",
+    version := "2.0.0-SNAPSHOT",
     scalaVersion := "2.11.5",
     crossScalaVersions := Seq("2.10.4", "2.11.5"),
     publishMavenStyle := true,
