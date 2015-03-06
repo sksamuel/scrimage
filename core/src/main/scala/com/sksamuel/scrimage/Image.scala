@@ -678,15 +678,7 @@ object Image {
     * @param bytes the bytes from the format stream
     * @return a new Image
     */
-  def apply(bytes: Array[Byte]): Image = apply(new ByteArrayInputStream(bytes))
-
-  def apply(in: InputStream): Image = {
-    require(in != null)
-    require(in.available > 0)
-
-    val bytes = IOUtils.toByteArray(in) // lets buffer in case we have to repeat
-    IOUtils.closeQuietly(in)
-
+  def apply(bytes: Array[Byte]): Image = {
     try {
       apply(ImageIO.read(new ByteArrayInputStream(bytes)))
     } catch {
@@ -716,6 +708,16 @@ object Image {
             }
         }.getOrElse(throw new RuntimeException("Unparsable image"))
     }
+  }
+
+  def apply(in: InputStream): Image = {
+    require(in != null)
+    require(in.available > 0)
+
+    val bytes = IOUtils.toByteArray(in) // lets buffer in case we have to repeat
+    IOUtils.closeQuietly(in)
+
+    apply(bytes)
   }
 
   def apply(file: File): Image = {
