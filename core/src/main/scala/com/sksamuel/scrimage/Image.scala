@@ -31,6 +31,8 @@ import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 import scala.List
 import scala.concurrent.ExecutionContext
 
+class ImageParseException extends RuntimeException("Unparsable image")
+
 /** An Image represents an abstraction over a set of pixels that allow operations such
   * as resize, scale, rotate, flip, trim, pad, cover, fit. An image does not
   * contain its underlying data directly, but instead delegates to a Raster. A Raster is a simple data
@@ -706,7 +708,7 @@ object Image {
                 case e: Exception => None
               }
             }
-        }.getOrElse(throw new RuntimeException("Unparsable image"))
+        }.getOrElse(throw new ImageParseException)
     }
   }
 
