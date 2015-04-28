@@ -31,7 +31,9 @@ class AsyncImage(image: Image)(implicit executionContext: ExecutionContext) exte
   override def pixels: Array[Int] = image.pixels
 
   override def map(f: (Int, Int, Int) => Int): Future[AsyncImage] = Future {
-    AsyncImage(image.map(f))
+    blocking {
+      AsyncImage(image.map(f))
+    }
   }
 
   override def foreach(f: (Int, Int, Int) => Unit) {
@@ -43,7 +45,9 @@ class AsyncImage(image: Image)(implicit executionContext: ExecutionContext) exte
           color: Color = X11Colorlist.White,
           scaleMethod: ScaleMethod = Bicubic,
           position: Position = Position.Center): Future[AsyncImage] = Future {
-    AsyncImage(image.fit(targetWidth, targetHeight, color, scaleMethod, position))
+    blocking {
+      AsyncImage(image.fit(targetWidth, targetHeight, color, scaleMethod, position))
+    }
   }
 
   /** Returns a copy of the canvas with the given dimensions where the
@@ -60,13 +64,15 @@ class AsyncImage(image: Image)(implicit executionContext: ExecutionContext) exte
     * @param position where to position the image inside the new canvas
     *
     * @return a new [[AsyncImage]], wrapped in a [[Future]], with the original
-    *       image scaled to cover the new dimensions
+    *     image scaled to cover the new dimensions
     */
   override def cover(targetWidth: Int,
                      targetHeight: Int,
                      scaleMethod: ScaleMethod = Bicubic,
                      position: Position = Center): Future[AsyncImage] = Future {
-    AsyncImage(image.cover(targetWidth, targetHeight, scaleMethod, position))
+    blocking {
+      AsyncImage(image.cover(targetWidth, targetHeight, scaleMethod, position))
+    }
   }
 
   def pixel(x: Int, y: Int): Int = image.pixel(x, y)
@@ -74,18 +80,24 @@ class AsyncImage(image: Image)(implicit executionContext: ExecutionContext) exte
   def padTo(targetWidth: Int,
             targetHeight: Int,
             color: Color = X11Colorlist.White): Future[AsyncImage] = Future {
-    AsyncImage(image.padTo(targetWidth, targetHeight, color))
+    blocking {
+      AsyncImage(image.padTo(targetWidth, targetHeight, color))
+    }
   }
 
   def resizeTo(targetWidth: Int,
                targetHeight: Int,
                position: Position = Center,
                background: Color = X11Colorlist.White): Future[AsyncImage] = Future {
-    AsyncImage(image.resizeTo(targetWidth, targetHeight, position))
+    blocking {
+      AsyncImage(image.resizeTo(targetWidth, targetHeight, position))
+    }
   }
 
   def scaleTo(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): Future[AsyncImage] = Future {
-    AsyncImage(image.scaleTo(targetWidth, targetHeight, scaleMethod))
+    blocking {
+      AsyncImage(image.scaleTo(targetWidth, targetHeight, scaleMethod))
+    }
   }
 
   /** Creates a copy of this image with the given filter applied.
@@ -96,7 +108,9 @@ class AsyncImage(image: Image)(implicit executionContext: ExecutionContext) exte
     * @return A new image with the given filter applied.
     */
   def filter(filter: Filter): Future[AsyncImage] = Future {
-    AsyncImage(image.filter(filter))
+    blocking {
+      AsyncImage(image.filter(filter))
+    }
   }
 
   /** Returns the underlying image.
@@ -114,13 +128,19 @@ class AsyncImage(image: Image)(implicit executionContext: ExecutionContext) exte
 object AsyncImage {
 
   def apply(bytes: Array[Byte])(implicit executionContext: ExecutionContext): Future[AsyncImage] = Future {
-    Image(bytes).toAsync
+    blocking {
+      Image(bytes).toAsync
+    }
   }
   def apply(in: InputStream)(implicit executionContext: ExecutionContext): Future[AsyncImage] = Future {
-    Image(in).toAsync
+    blocking {
+      Image(in).toAsync
+    }
   }
   def apply(file: File)(implicit executionContext: ExecutionContext): Future[AsyncImage] = Future {
-    Image(file).toAsync
+    blocking {
+      Image(file).toAsync
+    }
   }
   def apply(image: Image)(implicit executionContext: ExecutionContext) = new AsyncImage(image)
 }

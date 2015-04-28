@@ -17,16 +17,16 @@
 package com.sksamuel.scrimage
 
 import java.awt._
-import java.awt.image.{BufferedImage, DataBufferInt}
-import java.io.{ByteArrayInputStream, File, InputStream}
+import java.awt.image.{ BufferedImage, DataBufferInt }
+import java.io.{ ByteArrayInputStream, File, InputStream }
 import javax.imageio.ImageIO
 
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.io.ImageWriter
 import com.sksamuel.scrimage.scaling.ResampleOpScala
-import org.apache.commons.io.{FileUtils, IOUtils}
-import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
+import org.apache.commons.io.{ FileUtils, IOUtils }
+import thirdparty.mortennobel.{ ResampleFilters, ResampleOp }
 
 import scala.List
 import scala.concurrent.ExecutionContext
@@ -67,7 +67,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
 
   @deprecated("java.awt is to be removed", "22 Jul 2014")
   lazy val awt: BufferedImage = {
-    import java.awt.image.{ColorModel, DataBufferInt}
+    import java.awt.image.{ ColorModel, DataBufferInt }
     val cm = ColorModel.getRGBdefault
     val sm = cm.createCompatibleSampleModel(width, height)
     val db = new DataBufferInt(raster.extract.map(_.toInt), width * height)
@@ -342,7 +342,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     */
   def rotateLeft = {
     val rotated = raster.empty(height, width)
-    for(x <- 0 until width; y <- 0 until height; c <- 0 until raster.n_channel){
+    for (x <- 0 until width; y <- 0 until height; c <- 0 until raster.n_channel) {
       rotated.writeChannel(y, width - 1 - x, c)(raster.readChannel(x, y, c))
     }
     new Image(rotated)
@@ -351,7 +351,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
   /** Returns a copy of this image rotated 90 degrees clockwise. */
   def rotateRight = {
     val rotated = raster.empty(height, width)
-    for(x <- 0 until width; y <- 0 until height; c <- 0 until raster.n_channel){
+    for (x <- 0 until width; y <- 0 until height; c <- 0 until raster.n_channel) {
       rotated.writeChannel(height - 1 - y, x, c)(raster.readChannel(x, y, c))
     }
     new Image(rotated)

@@ -18,7 +18,7 @@ package com.sksamuel.scrimage
 
 import java.io.InputStream
 
-import com.sksamuel.scrimage.io.{PngWriter, _}
+import com.sksamuel.scrimage.io.{ PngWriter, _ }
 
 /** @author Stephen Samuel */
 sealed trait Format[T <: ImageWriter] {
@@ -45,5 +45,5 @@ object Format {
 }
 
 trait MimeTypeChecker {
-    def readMimeType(input: InputStream): Option[Format[_]]
+  def readMimeType(input: InputStream): Option[Format[_]]
 }

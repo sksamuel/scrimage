@@ -18,8 +18,8 @@ package com.sksamuel.scrimage.io
 import java.io.InputStream
 import javax.imageio.ImageIO
 
-import ar.com.hjg.pngj.{ImageLineInt, PngReader}
-import com.sksamuel.scrimage.{Format, Image, MimeTypeChecker, Raster}
+import ar.com.hjg.pngj.{ ImageLineInt, PngReader }
+import com.sksamuel.scrimage.{ Format, Image, MimeTypeChecker, Raster }
 import org.apache.sanselan.Sanselan
 
 /** @author Stephen Samuel */
@@ -63,7 +63,7 @@ object PNGReader extends ImageReader with MimeTypeChecker {
     input.read(buff)
     val expected = List(0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A, 0x0A) map (_.toByte)
 
-    if(buff.toList == expected) Some(Format.PNG)
+    if (buff.toList == expected) Some(Format.PNG)
     else None
   }
 }
