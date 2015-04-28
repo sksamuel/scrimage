@@ -2,8 +2,8 @@ package com.sksamuel.scrimage
 
 import java.awt.image.BufferedImage
 
-import com.sksamuel.scrimage.Position.{BottomRight, Center, TopLeft, TopRight}
-import org.scalatest.{BeforeAndAfter, FunSuite, Matchers}
+import com.sksamuel.scrimage.Position.{ BottomRight, Center, TopLeft, TopRight }
+import org.scalatest.{ BeforeAndAfter, FunSuite, Matchers }
 
 /** @author Stephen Samuel */
 class ImageTest extends FunSuite with BeforeAndAfter with Matchers {

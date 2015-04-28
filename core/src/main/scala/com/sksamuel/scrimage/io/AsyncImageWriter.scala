@@ -17,7 +17,7 @@
 package com.sksamuel.scrimage.io
 
 import java.io.{ ByteArrayInputStream, InputStream, File, OutputStream }
-import scala.concurrent.{ Future, ExecutionContext }
+import scala.concurrent.{ Future, ExecutionContext, blocking }
 
 class AsyncImageWriter[T <: ImageWriter](writer: T) {
 
@@ -26,7 +26,9 @@ class AsyncImageWriter[T <: ImageWriter](writer: T) {
     * @param out the stream to write out to
     */
   def write(out: OutputStream)(implicit executionContext: ExecutionContext): Future[Unit] = Future {
-    writer.write(out)
+    blocking {
+      writer.write(out)
+    }
   }
 
   /** Writes out this image to the given filepath.
@@ -34,7 +36,9 @@ class AsyncImageWriter[T <: ImageWriter](writer: T) {
     * @param path the path to write out to.
     */
   def write(path: String)(implicit executionContext: ExecutionContext): Future[Unit] = Future {
-    writer.write(path)
+    blocking {
+      writer.write(path)
+    }
   }
 
   /** Writes out this image to the given file.
@@ -42,7 +46,9 @@ class AsyncImageWriter[T <: ImageWriter](writer: T) {
     * @param file the file to write out to.
     */
   def write(file: File)(implicit executionContext: ExecutionContext): Future[Unit] = Future {
-    writer.write(file)
+    blocking {
+      writer.write(file)
+    }
   }
 
   /** Writes out this image to a byte array.
@@ -50,14 +56,18 @@ class AsyncImageWriter[T <: ImageWriter](writer: T) {
     * @return the byte array
     */
   def write()(implicit executionContext: ExecutionContext): Future[Array[Byte]] = Future {
-    writer.write()
+    blocking {
+      writer.write()
+    }
   }
 
   /** Returns an input stream that reads from this image.
     */
   def toStream(implicit executionContext: ExecutionContext): Future[InputStream] = Future {
-    val bytes = writer.write()
-    new ByteArrayInputStream(bytes)
+    blocking {
+      val bytes = writer.write()
+      new ByteArrayInputStream(bytes)
+    }
   }
 
 }

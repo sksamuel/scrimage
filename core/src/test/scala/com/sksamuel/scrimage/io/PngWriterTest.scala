@@ -2,8 +2,8 @@ package com.sksamuel.scrimage.io
 
 import java.io.ByteArrayOutputStream
 
-import com.sksamuel.scrimage.{Format, Image}
-import org.scalatest.{BeforeAndAfter, FunSuite, OneInstancePerTest}
+import com.sksamuel.scrimage.{ Format, Image }
+import org.scalatest.{ BeforeAndAfter, FunSuite, OneInstancePerTest }
 
 /** @author Stephen Samuel */
 class PngWriterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {

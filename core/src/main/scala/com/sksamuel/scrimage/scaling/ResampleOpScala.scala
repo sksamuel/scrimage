@@ -2,9 +2,8 @@ package com.sksamuel.scrimage.scaling
 
 import com.sksamuel.scrimage.{ Image, Raster }
 
-import scala.concurrent.{ Await, Future }
+import scala.concurrent.{ Await, Future, blocking }
 import scala.concurrent.duration._
-import scala.collection.immutable.IndexedSeq
 
 object ResampleOpScala {
 
@@ -190,9 +189,11 @@ object ResampleOpScala {
     val horizontals = for (i <- 0 until numberOfThreads) yield {
       val finalI = i
       Future {
-        horizontallyFromSrcToWork(
-          srcRaster, workRaster,
-          finalI, numberOfThreads, hSampling)
+        blocking {
+          horizontallyFromSrcToWork(
+            srcRaster, workRaster,
+            finalI, numberOfThreads, hSampling)
+        }
       }
     }
     Await.ready(Future sequence horizontals, MAX_WAIT_PER_PASS)
@@ -200,9 +201,11 @@ object ResampleOpScala {
     val verticles = for (i <- 0 until numberOfThreads) yield {
       val finalI = i
       Future {
-        verticalFromWorkToDst(
-          workRaster, outRaster,
-          finalI, numberOfThreads, vSampling)
+        blocking {
+          verticalFromWorkToDst(
+            workRaster, outRaster,
+            finalI, numberOfThreads, vSampling)
+        }
       }
     }
     Await.ready(Future sequence verticles, MAX_WAIT_PER_PASS)
