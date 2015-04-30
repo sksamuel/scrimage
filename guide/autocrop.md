@@ -9,7 +9,7 @@ Very simple to use, simply invoke on an image and pass in a color that should be
 For example to remove excess white background:
 
 ```
-image.autocrop(Color.WHITE)
+image.autocrop(Color.White)
 ```
 or to remove a background of a custom color you could do:
 ```
