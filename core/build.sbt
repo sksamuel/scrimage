@@ -9,15 +9,15 @@ publishTo <<= version {
 
 libraryDependencies ++= Seq(
   "org.apache.sanselan"           % "sanselan"                % "0.97-incubator",
-  "com.twelvemonkeys.imageio"     % "imageio-core"            % "3.0-rc5",
-  "com.twelvemonkeys.imageio"     % "imageio-metadata"        % "3.0-rc5",
-  "com.twelvemonkeys.imageio"     % "imageio-jpeg"            % "3.0-rc5",
-  "com.twelvemonkeys.common"      % "common-lang"             % "3.0-rc5",
-  "com.twelvemonkeys.common"      % "common-io"               % "3.0-rc5",
-  "com.twelvemonkeys.common"      % "common-image"            % "3.0-rc5",
+  "com.twelvemonkeys.imageio"     % "imageio-core"            % "3.1.0",
+  "com.twelvemonkeys.imageio"     % "imageio-metadata"        % "3.1.0",
+  "com.twelvemonkeys.imageio"     % "imageio-jpeg"            % "3.1.0",
+  "com.twelvemonkeys.common"      % "common-lang"             % "3.1.0",
+  "com.twelvemonkeys.common"      % "common-io"               % "3.1.0",
+  "com.twelvemonkeys.common"      % "common-image"            % "3.1.0",
   "commons-io"                    % "commons-io"              % "2.4",
-  "com.drewnoakes"                % "metadata-extractor"      % "2.6.2",
-  "ar.com.hjg"                    % "pngj"                    % "2.0.1",
+  "com.drewnoakes"                % "metadata-extractor"      % "2.8.1",
+  "ar.com.hjg"                    % "pngj"                    % "2.1.0",
   "org.apache.commons"            % "commons-lang3"           % "3.3.2"           % "test",
   "com.sksamuel.scam"             %% "scam"                   % "0.5.2"           % "test"
 )
