@@ -275,8 +275,36 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     * @return
     */
   def pixels: Array[Int] = {
-    raster match {
-      case i: ARGBRaster => i.extract.map(_.argb)
+    awt.getRaster.getDataBuffer match {
+      //        case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_RGB => buffer.getData
+      case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_ARGB => buffer.getData
+      //            case buffer: DataBufferByte if awt.getType == BufferedImage.TYPE_3BYTE_BGR =>
+      //                val array = new Array[Int](buffer.getData.length / 3)
+      //                for ( k <- 0 until array.length ) {
+      //                    val blue = array(k * 3)
+      //                    val green = array(k * 3 + 1)
+      //                    val red = array(k * 3 + 2)
+      //                    val pixel = red << 16 | green << 8 | blue << 0
+      //                    array(k) = pixel
+      //                }
+      //                array
+      //            case buffer: DataBufferByte if awt.getType == BufferedImage.TYPE_4BYTE_ABGR =>
+      //                val array = new Array[Int](buffer.getData.length / 4)
+      //                for ( k <- 0 until array.length ) {
+      //                    val alpha = array(k * 4)
+      //                    val blue = array(k * 4 + 1)
+      //                    val green = array(k * 4 + 2)
+      //                    val red = array(k * 4 + 3)
+      //                    val pixel = alpha << 24 | red << 16 | green << 8 | blue << 0
+      //                    array(k) = pixel
+      //                }
+      //                array
+      case _ =>
+        val px = Array.ofDim[Int](width * height)
+        for(x <- 0 until width; y <- 0 until height){
+          px(y * width + x) = awt.getRGB(x, y)
+        }
+        px
     }
   }
 
