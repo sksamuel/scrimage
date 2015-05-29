@@ -18,16 +18,16 @@ package com.sksamuel.scrimage
 
 import java.awt._
 import java.awt.geom.AffineTransform
-import java.awt.image.{ AffineTransformOp, BufferedImage, DataBufferInt }
-import java.io.{ ByteArrayInputStream, File, InputStream }
+import java.awt.image.{AffineTransformOp, BufferedImage, DataBufferInt}
+import java.io.{ByteArrayInputStream, File, InputStream}
 import javax.imageio.ImageIO
 
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.io.ImageWriter
 import com.sksamuel.scrimage.scaling.ResampleOpScala
-import org.apache.commons.io.{ FileUtils, IOUtils }
-import thirdparty.mortennobel.{ ResampleFilters, ResampleOp }
+import org.apache.commons.io.{FileUtils, IOUtils}
+import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 
 import scala.List
 import scala.language.implicitConversions
@@ -176,17 +176,17 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] w
       (xInt, xWeight) <- xIntsAndWeights;
       (yInt, yWeight) <- yIntsAndWeights
     ) yield {
-      val weight = xWeight * yWeight
-      if (weight == 0) List(0.0, 0.0, 0.0, 0.0)
-      else {
-        val px = pixel(xInt, yInt)
-        List(
-          weight * px.alpha,
-          weight * px.red,
-          weight * px.green,
-          weight * px.blue)
+        val weight = xWeight * yWeight
+        if (weight == 0) List(0.0, 0.0, 0.0, 0.0)
+        else {
+          val px = pixel(xInt, yInt)
+          List(
+            weight * px.alpha,
+            weight * px.red,
+            weight * px.green,
+            weight * px.blue)
+        }
       }
-    }
 
     // We perform the weighted averaging (a summation).
     // First though, we need to transpose so that we sum within channels,
@@ -285,7 +285,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] w
       //                array
       case _ =>
         val pixels = Array.ofDim[Pixel](width * height)
-        for (x <- 0 until width; y <- 0 until height) {
+        for ( x <- 0 until width; y <- 0 until height ) {
           pixels(y * width + x) = new ARGBPixel(awt.getRGB(x, y))
         }
         pixels
@@ -451,10 +451,12 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] w
         g2.drawImage(awt, 0, 0, targetWidth, targetHeight, null)
         g2.dispose()
         target
-      case Bicubic => ResampleOpScala
-        .scaleTo(ResampleOpScala.bicubicFilter)(this)(targetWidth, targetHeight, Image.SCALE_THREADS)
+      // todo put this back
+      // case Bicubic =>
+      // ResampleOpScala.scaleTo(ResampleOpScala.bicubicFilter)(this)(targetWidth, targetHeight, Image.SCALE_THREADS)
       case _ =>
         val method = scaleMethod match {
+          case Bicubic => ResampleFilters.biCubicFilter
           case Bilinear => ResampleFilters.triangleFilter
           case BSpline => ResampleFilters.bSplineFilter
           case Lanczos3 => ResampleFilters.lanczos3Filter
@@ -523,7 +525,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] w
     * @return
     */
   def autocrop(color: Color): Image = {
-    def uniform(color: Color, pixels: Array[Pixel]) = pixels.forall(p => p == color.argb)
+    def uniform(color: Color, pixels: Array[Pixel]) = pixels.forall(p => p.toARGBInt == color.argb)
     def scanright(col: Int, image: Image): Int = {
       if (uniform(color, pixels(col, 0, 1, height))) scanright(col + 1, image)
       else col
@@ -633,20 +635,6 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] w
 
   def writer[T <: ImageWriter](format: Format[T]): T = format.writer(this)
 
-  // This tuple contains all the state that identifies this particular image.
-  private[scrimage] def imageState = (width, height, pixels)
-
-  // See this Stack Overflow question to see why this is implemented this way.
-  // http://stackoverflow.com/questions/7370925/what-is-the-standard-idiom-for-implementing-equals-and-hashcode-in-scala
-  override def hashCode: Int = imageState.hashCode
-
-  override def equals(other: Any): Boolean = {
-    other match {
-      case that: Image => imageState == that.imageState
-      case _ => false
-    }
-  }
-
   /** Clears all image data to the given color
     */
   @deprecated("use filled", "1.4")
@@ -656,6 +644,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] w
 object Image {
 
   ImageIO.scanForPlugins()
+
   val CANONICAL_DATA_TYPE = BufferedImage.TYPE_INT_ARGB
   val SCALE_THREADS = Runtime.getRuntime.availableProcessors()
 

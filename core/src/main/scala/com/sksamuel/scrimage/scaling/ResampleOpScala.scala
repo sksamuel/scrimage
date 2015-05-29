@@ -4,17 +4,15 @@ import java.awt.image.Raster
 
 import com.sksamuel.scrimage.Image
 
-import scala.concurrent.{ Await, Future, blocking }
+import scala.concurrent.{Future, Await}
 import scala.concurrent.duration._
 
 object ResampleOpScala {
 
-  import scala.concurrent.ExecutionContext.Implicits.global
-
   private val MAX_WAIT_PER_PASS = 10.minutes
 
   case class ResampFilter(samplingRadius: Int, kernel: Float => Float) {
-    def apply(x: Float) = kernel(x)
+    def apply(x: Float): Float = kernel(x)
   }
 
   def bicubicKernel(a: Float)(x: Float): Float = {
@@ -184,10 +182,10 @@ object ResampleOpScala {
     val hSampling = createSubSampling(filter, srcWidth, dstWidth)
     val vSampling = createSubSampling(filter, srcHeight, dstHeight)
 
-    //    val srcRaster = img.raster
+//    val srcRaster = img.raster
     //    val workRaster = srcRaster.empty(dstWidth, srcHeight)
     //    val outRaster = srcRaster.empty(dstWidth, dstHeight)
-
+    //
     //    val horizontals = for ( i <- 0 until numberOfThreads ) yield {
     //      val finalI = i
     //      Future {

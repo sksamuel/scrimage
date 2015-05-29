@@ -2,8 +2,8 @@ package com.sksamuel.scrimage.io
 
 import java.io.ByteArrayOutputStream
 
-import com.sksamuel.scrimage.{ Format, Image }
-import org.scalatest.{ BeforeAndAfter, FunSuite, OneInstancePerTest }
+import com.sksamuel.scrimage.{Format, Image}
+import org.scalatest.{BeforeAndAfter, FunSuite, OneInstancePerTest}
 
 /** @author Stephen Samuel */
 class PngWriterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
@@ -21,7 +21,7 @@ class PngWriterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest
   }
 
   ignore("png compression happy path") {
-    for (i <- 0 to 9) {
+    for ( i <- 0 to 9 ) {
 
       val out = new ByteArrayOutputStream()
       original.writer(Format.PNG).withCompression(i).write(out)
@@ -44,6 +44,8 @@ class PngWriterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest
     read.write(new java.io.File("read_withPNGReader.png"))
     assert(read.width === expected.width)
     assert(read.height === expected.height)
+    println(read.pixels.take(100).toList)
+    println(expected.pixels.take(100).toList)
     assert(read === expected)
   }
 }

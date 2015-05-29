@@ -34,7 +34,8 @@ case class Canvas(image: Image,
     val g = g2(copy)
     drawables.foreach(_.draw(g))
     g.dispose()
-    imageFromAWT(copy.awt)
+    copy
+    //  imageFromAWT(copy.awt)
   }
 
   def draw(drawables: Iterable[Drawable]): Canvas = {
@@ -42,7 +43,8 @@ case class Canvas(image: Image,
     val g = g2(copy)
     drawables.foreach(_.draw(g))
     g.dispose()
-    imageFromAWT(copy.awt)
+    //imageFromAWT(copy.awt)
+    copy
   }
 
   // TODO: check the type of the given image

@@ -3,7 +3,7 @@ package com.sksamuel.scrimage
 import scala.language.implicitConversions
 
 /** @author Stephen Samuel */
-class ARGBPixel(argb: Int) extends Pixel {
+case class ARGBPixel(argb: Int) extends Pixel {
 
   override def alpha: Int = argb >> 24 & 0xFF
   override def red: Int = argb >> 16 & 0xFF
@@ -19,10 +19,12 @@ class ARGBPixel(argb: Int) extends Pixel {
 
 object ARGBPixel {
   implicit def int2pixel(pixel: Int): ARGBPixel = new ARGBPixel(pixel)
-  def apply(argb: Int): ARGBPixel = new ARGBPixel(argb)
+
+  def apply(argb: Array[Int]): ARGBPixel = ARGBPixel(argb.head, argb(1), argb(2), argb(3))
+
   def apply(alpha: Int, r: Int, g: Int, b: Int): ARGBPixel = {
     val int = alpha << 24 | (r & 0xFF) << 16 | (g & 0xFF) << 8 | (b & 0xFF) << 0
-    new ARGBPixel(int)
+    ARGBPixel(int)
   }
 }
 

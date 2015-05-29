@@ -1,6 +1,5 @@
 package thirdparty.marvin.image.edge;
 
-
 import thirdparty.marvin.Convolution;
 import thirdparty.marvin.image.MarvinAbstractImagePlugin;
 import thirdparty.marvin.image.MarvinAttributes;
@@ -12,27 +11,27 @@ import thirdparty.marvin.image.MarvinImageMask;
  */
 public class Roberts extends MarvinAbstractImagePlugin {
 
-    private Convolution convolution = new Convolution();
+  private Convolution convolution = new Convolution();
 
-    double[][] matrixRobertsX = new double[][]{
-            {1, 0},
-            {0, -1}
-    };
+  double[][] matrixRobertsX = new double[][]{
+    {1, 0},
+    {0, -1}
+  };
 
-    double[][] matrixRobertsY = new double[][]{
-            {0, 1},
-            {-1, 0}
-    };
+  double[][] matrixRobertsY = new double[][]{
+    {0, 1},
+    {-1, 0}
+  };
 
-    public void process(MarvinImage imageIn,
-                        MarvinImage imageOut,
-                        MarvinAttributes attrOut,
-                        MarvinImageMask mask,
-                        boolean previewMode) {
-        convolution.matrix = matrixRobertsX;
-        convolution.process(imageIn, imageOut, null, mask, previewMode);
+  public void process(MarvinImage imageIn,
+                      MarvinImage imageOut,
+                      MarvinAttributes attrOut,
+                      MarvinImageMask mask,
+                      boolean previewMode) {
+    convolution.matrix = matrixRobertsX;
+    convolution.process(imageIn, imageOut, null, mask, previewMode);
 
-        convolution.matrix = matrixRobertsY;
-        convolution.process(imageIn, imageOut, null, mask, previewMode);
-    }
+    convolution.matrix = matrixRobertsY;
+    convolution.process(imageIn, imageOut, null, mask, previewMode);
+  }
 }

@@ -16,14 +16,14 @@
 
 package com.sksamuel.scrimage
 
-import java.io.{File, OutputStream}
+import java.io.{ File, OutputStream }
 
 import com.sksamuel.scrimage.Format.PNG
 import com.sksamuel.scrimage.PixelTools._
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod.Bicubic
 import com.sksamuel.scrimage.io.ImageWriter
-import org.apache.commons.io.{FileUtils, IOUtils}
+import org.apache.commons.io.{ FileUtils, IOUtils }
 
 /** Read-only image operations.
   *
@@ -31,7 +31,7 @@ import org.apache.commons.io.{FileUtils, IOUtils}
   */
 trait ImageLike[R] {
 
-  lazy val points: Seq[(Int, Int)] = for ( x <- 0 until width; y <- 0 until height ) yield (x, y)
+  lazy val points: Seq[(Int, Int)] = for (x <- 0 until width; y <- 0 until height) yield (x, y)
 
   /** Returns the centre coordinates for the image.
     */
@@ -127,68 +127,62 @@ trait ImageLike[R] {
     ) yield pixel(x1, y1)
   }
 
-  /**
-   * Creates a new image which is the result of this image
-   * padded with the given number of pixels on each edge.
-   *
-   * Eg, requesting a pad of 30 on an image of 250,300 will result
-   * in a new image with a canvas size of 310,360
-   *
-   * @param size the number of pixels to add on each edge
-   * @param color the background of the padded area.
-   *
-   * @return A new image that is the result of the padding
-   */
+  /** Creates a new image which is the result of this image
+    * padded with the given number of pixels on each edge.
+    *
+    * Eg, requesting a pad of 30 on an image of 250,300 will result
+    * in a new image with a canvas size of 310,360
+    *
+    * @param size the number of pixels to add on each edge
+    * @param color the background of the padded area.
+    *
+    * @return A new image that is the result of the padding
+    */
   def pad(size: Int, color: Color = X11Colorlist.White): R = {
     padTo(width + size * 2, height + size * 2, color)
   }
 
-  /**
-   * Creates a new image which is the result of this image padded to the canvas size specified.
-   * If this image is already larger than the specified pad then the sizes of the existing
-   * image will be used instead.
-   *
-   * Eg, requesting a pad of 200,200 on an image of 250,300 will result
-   * in keeping the 250,300.
-   *
-   * Eg2, requesting a pad of 300,300 on an image of 400,250 will result
-   * in the width staying at 400 and the height padded to 300.
-   *
-   * @param targetWidth the size of the output canvas width
-   * @param targetHeight the size of the output canvas height
-   * @param color the background of the padded area.
-   *
-   * @return A new image that is the result of the padding
-   */
+  /** Creates a new image which is the result of this image padded to the canvas size specified.
+    * If this image is already larger than the specified pad then the sizes of the existing
+    * image will be used instead.
+    *
+    * Eg, requesting a pad of 200,200 on an image of 250,300 will result
+    * in keeping the 250,300.
+    *
+    * Eg2, requesting a pad of 300,300 on an image of 400,250 will result
+    * in the width staying at 400 and the height padded to 300.
+    *
+    * @param targetWidth the size of the output canvas width
+    * @param targetHeight the size of the output canvas height
+    * @param color the background of the padded area.
+    *
+    * @return A new image that is the result of the padding
+    */
   def padTo(targetWidth: Int, targetHeight: Int, color: Color = X11Colorlist.White): R
 
-  /**
-   * Creates an empty Image with the same dimensions of this image.
-   *
-   * @return a new Image that is a clone of this image but with uninitialized data
-   */
+  /** Creates an empty Image with the same dimensions of this image.
+    *
+    * @return a new Image that is a clone of this image but with uninitialized data
+    */
   def empty: Image
 
-  /**
-   * Returns the number of pixels in the image.
-   *
-   * @return the number of pixels
-   */
+  /** Returns the number of pixels in the image.
+    *
+    * @return the number of pixels
+    */
   def count: Int = pixels.length
 
-  /**
-   * Returns a set of the distinct colours used in this image.
-   *
-   * @return the set of distinct Colors
-   */
+  /** Returns a set of the distinct colours used in this image.
+    *
+    * @return the set of distinct Colors
+    */
   def colours: Set[Color] = pixels.map(argb => Color(argb.toARGBInt)).toSet
 
-  /**
-   * Counts the number of pixels with the given colour.
-   *
-   * @param color the colour to detect.
-   * @return the number of pixels that matched the colour of the given pixel
-   */
+  /** Counts the number of pixels with the given colour.
+    *
+    * @param color the colour to detect.
+    * @return the number of pixels that matched the colour of the given pixel
+    */
   def count(color: Color): Int = pixels.find(_ == color.toInt).size
 
   /** Creates a new image with the same data as this image.
@@ -338,9 +332,18 @@ trait ImageLike[R] {
     */
   def exists(color: Color): Boolean = pixels.exists(pixel => pixel.toARGBInt == color.toRGB.toInt)
 
-  override def equals(obj: Any): Boolean = obj match {
-    case other: ImageLike[_] => other.pixels.sameElements(pixels)
-    case _ => false
+  // This tuple contains all the state that identifies this particular image.
+  private[scrimage] def imageState = (width, height, pixels.toList)
+
+  // See this Stack Overflow question to see why this is implemented this way.
+  // http://stackoverflow.com/questions/7370925/what-is-the-standard-idiom-for-implementing-equals-and-hashcode-in-scala
+  override def hashCode: Int = imageState.hashCode
+
+  override def equals(other: Any): Boolean = {
+    other match {
+      case that: ImageLike[_] => imageState == that.imageState
+      case _ => false
+    }
   }
 }
 

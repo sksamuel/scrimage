@@ -47,6 +47,7 @@ class VignetteFilter(start: Double, end: Double, blur: Double, color: Color = Co
     g3.setComposite(new BlendComposite(BlendingMode.MULTIPLY, 1.0f))
     g3.drawImage(blend.awt, 0, 0, null)
     g3.dispose()
+
     //image.updateFromAWT()
   }
 }
