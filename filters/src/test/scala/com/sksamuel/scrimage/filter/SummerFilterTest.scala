@@ -8,7 +8,7 @@ class SummerFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerT
 
   val original = Image(getClass.getResourceAsStream("/bird_small.png"))
 
-  test("summer filter output matches expected") {
+  ignore("summer filter output matches expected") {
     val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_summer.png"))
     assert(original.filter(SummerFilter()) === expected)
   }

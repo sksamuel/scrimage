@@ -48,14 +48,7 @@ case class Canvas(image: Image,
   }
 
   // TODO: check the type of the given image
-  def imageFromAWT(image: BufferedImage): Image = {
-    // todo reimplement
-    //    val model = Array.ofDim[Int](image.getWidth * image.getHeight)
-    //    image.getRGB(0, 0, image.getWidth, image.getHeight, model, 0, image.getWidth)
-    //    val raster = ARGBRaster(image.getWidth, image.getHeight, model)
-    //    new Image(raster)
-    ???
-  }
+  def imageFromAWT(image: BufferedImage): Image = new Image(image)
 
   def watermark(text: String): Canvas = watermark(text, 0.5)
   def watermark(text: String, alpha: Double): Canvas = image.filter(new Watermark(text, font, alpha))

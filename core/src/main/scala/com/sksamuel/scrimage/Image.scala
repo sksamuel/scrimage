@@ -18,16 +18,16 @@ package com.sksamuel.scrimage
 
 import java.awt._
 import java.awt.geom.AffineTransform
-import java.awt.image.{ColorModel, WritableRaster, Raster, AffineTransformOp, BufferedImage, DataBufferInt}
-import java.io.{ByteArrayInputStream, File, InputStream}
+import java.awt.image.{ ColorModel, WritableRaster, Raster, AffineTransformOp, BufferedImage, DataBufferInt }
+import java.io.{ ByteArrayInputStream, File, InputStream }
 import javax.imageio.ImageIO
 
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.io.ImageWriter
 import com.sksamuel.scrimage.scaling.ResampleOpScala
-import org.apache.commons.io.{FileUtils, IOUtils}
-import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
+import org.apache.commons.io.{ FileUtils, IOUtils }
+import thirdparty.mortennobel.{ ResampleFilters, ResampleOp }
 
 import scala.List
 import scala.language.implicitConversions
@@ -176,17 +176,17 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] w
       (xInt, xWeight) <- xIntsAndWeights;
       (yInt, yWeight) <- yIntsAndWeights
     ) yield {
-        val weight = xWeight * yWeight
-        if (weight == 0) List(0.0, 0.0, 0.0, 0.0)
-        else {
-          val px = pixel(xInt, yInt)
-          List(
-            weight * px.alpha,
-            weight * px.red,
-            weight * px.green,
-            weight * px.blue)
-        }
+      val weight = xWeight * yWeight
+      if (weight == 0) List(0.0, 0.0, 0.0, 0.0)
+      else {
+        val px = pixel(xInt, yInt)
+        List(
+          weight * px.alpha,
+          weight * px.red,
+          weight * px.green,
+          weight * px.blue)
       }
+    }
 
     // We perform the weighted averaging (a summation).
     // First though, we need to transpose so that we sum within channels,
@@ -285,7 +285,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] w
       //                array
       case _ =>
         val pixels = Array.ofDim[Pixel](width * height)
-        for ( x <- 0 until width; y <- 0 until height ) {
+        for (x <- 0 until width; y <- 0 until height) {
           pixels(y * width + x) = ARGBPixel(awt.getRGB(x, y))
         }
         pixels
@@ -508,17 +508,16 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] w
     }
   }
 
-  /**
-   * Returns a new Image that is the result of overlaying the supplied image over this image
-   * The x / y parameters determine where the (0,0) coordinate of the overlay should be placed.
-   *
-   * If the image to render exceeds the boundaries of the source image, then the excess
-   * pixels will be ignored.
-   *
-   * @param overlayImage the image to overlay.
-   *
-   * @return a new Image with the given image overlaid.
-   */
+  /** Returns a new Image that is the result of overlaying the supplied image over this image
+    * The x / y parameters determine where the (0,0) coordinate of the overlay should be placed.
+    *
+    * If the image to render exceeds the boundaries of the source image, then the excess
+    * pixels will be ignored.
+    *
+    * @param overlayImage the image to overlay.
+    *
+    * @return a new Image with the given image overlaid.
+    */
   def overlay(overlayImage: Image, x: Int = 0, y: Int = 0): Image = {
     val copy = toNewBufferedImage
     copy.getGraphics.drawImage(overlayImage.awt, x, y, null)
@@ -760,9 +759,10 @@ object Image {
     */
   def filled(width: Int, height: Int, color: Color = Color.White): Image = {
     val target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
-    for ( w <- 0 until width;
-          h <- 0 until height )
-      target.setRGB(w, h, color.toRGB.toInt)
+    for (
+      w <- 0 until width;
+      h <- 0 until height
+    ) target.setRGB(w, h, color.toRGB.toInt)
     new Image(target)
   }
 
