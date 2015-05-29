@@ -1,7 +1,9 @@
 package com.sksamuel.scrimage.filter
 
+import java.io.File
+
 import org.scalatest.{ OneInstancePerTest, BeforeAndAfter, FunSuite }
-import com.sksamuel.scrimage.Image
+import com.sksamuel.scrimage.{Format, Image}
 
 /** @author Stephen Samuel */
 class NashvilleFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
@@ -10,6 +12,8 @@ class NashvilleFilterTest extends FunSuite with BeforeAndAfter with OneInstanceP
 
   test("filter output matches expected") {
     val expected = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_nashville.png")
-    assert(original.filter(NashvilleFilter) === Image(expected))
+    val actual = original.filter(NashvilleFilter)
+    actual.write(new File("nashville.png"), Format.PNG)
+    assert(actual === Image(expected))
   }
 }

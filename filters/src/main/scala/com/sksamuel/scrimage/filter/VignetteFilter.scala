@@ -15,8 +15,8 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.{ Image, Filter }
-import java.awt.{ RadialGradientPaint, Color, Graphics2D }
+import com.sksamuel.scrimage.{Image, Filter}
+import java.awt.{RadialGradientPaint, Color, Graphics2D}
 import java.awt.geom.Point2D
 import thirdparty.romainguy.BlendComposite
 import thirdparty.romainguy.BlendComposite.BlendingMode
@@ -47,13 +47,12 @@ class VignetteFilter(start: Double, end: Double, blur: Double, color: Color = Co
     g3.setComposite(new BlendComposite(BlendingMode.MULTIPLY, 1.0f))
     g3.drawImage(blend.awt, 0, 0, null)
     g3.dispose()
-
-    //image.updateFromAWT()
   }
 }
 
 object VignetteFilter {
   def apply(): VignetteFilter = apply(0.85f, 0.95f, 0.3)
-  def apply(start: Double, end: Double, blur: Double, color: Color = Color.BLACK): VignetteFilter =
+  def apply(start: Double, end: Double, blur: Double, color: Color = Color.BLACK): VignetteFilter = {
     new VignetteFilter(start, end, blur, color)
+  }
 }

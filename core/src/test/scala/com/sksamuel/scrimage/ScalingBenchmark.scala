@@ -13,7 +13,7 @@ import java.io.File
 import org.scalatest.FunSuite
 
 /** @author Stephen Samuel */
-class ScalingBenchmark extends FunSuite {
+class ScalingBenchmark { // extends FunSuite {
 
   val COUNT = 100
   val root = new File(".")

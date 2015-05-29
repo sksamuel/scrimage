@@ -335,6 +335,8 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] w
     new Image(target)
   }
 
+  override def toString : String = s"Image [width=$width, height=$height, type=${awt.getType}]"
+
   /** Flips this image horizontally.
     *
     * @return The result of flipping this image horizontally.
