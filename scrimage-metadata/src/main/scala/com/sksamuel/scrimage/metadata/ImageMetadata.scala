@@ -15,10 +15,10 @@ object ImageMetadata {
   }
 
   def fromMetadata(metadata: Metadata): ImageMetadata = {
+
     val directories = metadata.getDirectories.asScala.map { directory =>
-      println(directory)
       val tags = directory.getTags.asScala.map { tag =>
-        Tag(tag.getTagName, tag.getTagType, tag.getDescription)
+        Tag(tag.getTagName, tag.getTagType, directory.getString(tag.getTagType), tag.getDescription)
       }
       Directory(directory.getName, tags.toList)
     }
@@ -32,4 +32,4 @@ case class ImageMetadata(directories: List[Directory]) {
 
 case class Directory(name: String, tags: List[Tag])
 
-case class Tag(name: String, `type`: Int, value: String)
+case class Tag(name: String, `type`: Int, rawValue: String, value: String)
