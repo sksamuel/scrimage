@@ -1,8 +1,8 @@
 package com.sksamuel.scrimage.filter
 
-import java.awt.{Color, Graphics2D}
+import java.awt.{ Color, Graphics2D }
 
-import com.sksamuel.scrimage.{Filter, Image}
+import com.sksamuel.scrimage.{ Filter, Image }
 import thirdparty.romainguy.BlendComposite._
 
 object BackgroundBlendFilter extends Filter {

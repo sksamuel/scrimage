@@ -12,5 +12,3 @@ object NashvilleFilter extends PipelineFilter(
   ContrastFilter(1.6),
   VignetteFilter(0.9, 1, 0.6, new Color(255, 140, 0)))
 
-
-

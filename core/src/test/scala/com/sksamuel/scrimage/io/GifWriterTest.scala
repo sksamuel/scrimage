@@ -2,7 +2,7 @@ package com.sksamuel.scrimage.io
 
 import org.scalatest.{ OneInstancePerTest, BeforeAndAfter, FunSuite }
 import com.sksamuel.scrimage.{ Image, Format }
-import java.io.{File, ByteArrayOutputStream}
+import java.io.{ File, ByteArrayOutputStream }
 
 /** @author Stephen Samuel */
 class GifWriterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
@@ -26,6 +26,6 @@ class GifWriterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest
 
     val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_progressive.gif"))
     assert(expected.pixels.length === actual.pixels.length)
-   // assert(expected == actual)
+    // assert(expected == actual)
   }
 }

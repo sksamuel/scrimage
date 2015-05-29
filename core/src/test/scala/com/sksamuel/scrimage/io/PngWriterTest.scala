@@ -44,8 +44,6 @@ class PngWriterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest
     read.write(new java.io.File("read_withPNGReader.png"))
     assert(read.width === expected.width)
     assert(read.height === expected.height)
-    println(read.pixels.take(100).toList)
-    println(expected.pixels.take(100).toList)
     assert(read === expected)
   }
 }

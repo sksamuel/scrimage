@@ -18,6 +18,7 @@ case class ARGBPixel(argb: Int) extends Pixel {
 }
 
 object ARGBPixel {
+
   implicit def int2pixel(pixel: Int): ARGBPixel = new ARGBPixel(pixel)
 
   def apply(argb: Array[Int]): ARGBPixel = ARGBPixel(argb.head, argb(1), argb(2), argb(3))
@@ -28,7 +29,7 @@ object ARGBPixel {
   }
 }
 
-class RGBPixel(rgb: Int) extends Pixel {
+case class RGBPixel(rgb: Int) extends Pixel {
 
   override def alpha: Int = 0
   override def red: Int = rgb >> 16 & 0xFF
@@ -36,13 +37,13 @@ class RGBPixel(rgb: Int) extends Pixel {
   override def blue: Int = rgb & 0xFF
 
   def toARGBPixel: ARGBPixel = ARGBPixel(0, red, green, blue)
-  override def toInt: Int = toARGBPixel.toInt
+  override def toInt: Int = rgb
 }
 
 object RGBPixel {
   def apply(r: Int, g: Int, b: Int): RGBPixel = {
     val int = 0xFF << 24 | (r & 0xFF) << 16 | (g & 0xFF) << 8 | (b & 0xFF) << 0
-    new RGBPixel(int)
+    RGBPixel(int)
   }
 }
 
