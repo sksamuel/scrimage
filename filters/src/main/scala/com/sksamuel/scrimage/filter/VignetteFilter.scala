@@ -16,7 +16,7 @@
 package com.sksamuel.scrimage.filter
 
 import com.sksamuel.scrimage.{Image, Filter}
-import java.awt.{RadialGradientPaint, Color, Graphics2D}
+import java.awt.{RenderingHints, RadialGradientPaint, Color, Graphics2D}
 import java.awt.geom.Point2D
 import thirdparty.romainguy.BlendComposite
 import thirdparty.romainguy.BlendComposite.BlendingMode
@@ -28,24 +28,30 @@ class VignetteFilter(start: Double, end: Double, blur: Double, color: Color = Co
   require(blur >= 0)
   require(blur <= 1)
 
-  def apply(image: Image) {
-
-    val blend = image.empty
-    val g2 = blend.awt.getGraphics.asInstanceOf[Graphics2D]
+  private def background(image: Image): Image = {
+    val target = image.empty
+    val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
     val radius = image.radius * end
-    val p = new RadialGradientPaint(new Point2D.Float(blend.center._1, blend.center._2),
+    val p = new RadialGradientPaint(new Point2D.Float(target.center._1, target.center._2),
       radius.toInt,
       Array(0.0f, if (start == 0) 0.01f else if (start == 1) 0.999f else start.toFloat, 1f),
       Array(Color.WHITE, Color.WHITE, color))
     g2.setPaint(p)
-    g2.fillRect(0, 0, blend.width, blend.height)
+    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+    g2.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE)
+    g2.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY)
+    g2.fillRect(0, 0, target.width, target.height)
     g2.dispose()
+    target
+  }
 
-    blend.filter(GaussianBlurFilter((image.radius * blur).toInt))
+  def apply(image: Image) {
+    val bg = background(image)
+    bg.filter(GaussianBlurFilter((image.radius * blur).toInt))
 
     val g3 = image.awt.getGraphics.asInstanceOf[Graphics2D]
     g3.setComposite(new BlendComposite(BlendingMode.MULTIPLY, 1.0f))
-    g3.drawImage(blend.awt, 0, 0, null)
+    g3.drawImage(bg.awt, 0, 0, null)
     g3.dispose()
   }
 }

@@ -19,7 +19,6 @@ package com.sksamuel.scrimage
 import java.io.{ File, OutputStream }
 
 import com.sksamuel.scrimage.Format.PNG
-import com.sksamuel.scrimage.PixelTools._
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod.Bicubic
 import com.sksamuel.scrimage.io.ImageWriter
@@ -43,10 +42,6 @@ trait ImageLike[R] {
     */
   lazy val ratio: Double = if (height == 0) 0 else width / height.toDouble
 
-  /** Clears all image data to the given color
-    */
-  @deprecated("use filled", "1.4")
-  def clear(color: Color = X11Colorlist.White): Image
   def width: Int
   def height: Int
 
