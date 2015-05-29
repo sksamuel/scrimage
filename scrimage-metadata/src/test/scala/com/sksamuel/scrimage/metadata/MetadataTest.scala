@@ -1,6 +1,6 @@
-package com.sksamuel.scrimage
+package com.sksamuel.scrimage.metadata
 
-import org.scalatest.{ OneInstancePerTest, BeforeAndAfter, FunSuite }
+import org.scalatest.{BeforeAndAfter, FunSuite, OneInstancePerTest}
 
 /** @author Stephen Samuel */
 class MetadataTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
