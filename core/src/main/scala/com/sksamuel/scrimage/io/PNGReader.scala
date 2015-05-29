@@ -1,11 +1,11 @@
 package com.sksamuel.scrimage.io
 
-import java.awt.image.{BufferedImage, Raster, ColorModel, DataBufferInt}
+import java.awt.image.{ BufferedImage, Raster, ColorModel, DataBufferInt }
 import java.io.InputStream
 
-import ar.com.hjg.pngj.{ImageLineInt, PngReader}
+import ar.com.hjg.pngj.{ ImageLineInt, PngReader }
 import com.sksamuel.scrimage.Format.PNG
-import com.sksamuel.scrimage.{ARGBPixel, Image, Format, MimeTypeChecker}
+import com.sksamuel.scrimage.{ ARGBPixel, Image, Format, MimeTypeChecker }
 
 object PNGReader extends ImageReader with MimeTypeChecker {
 
@@ -21,14 +21,14 @@ object PNGReader extends ImageReader with MimeTypeChecker {
     val rowSize = w * channels
     val matrix = Array.ofDim[Int](w * h)
 
-    for ( row <- 0 until h ) {
+    for (row <- 0 until h) {
       val scanline: Array[Int] = pngr.readRow().asInstanceOf[ImageLineInt].getScanline
       val pixels = scanline.grouped(channels).map { group =>
         channels match {
           case 4 => ARGBPixel(group(3), group.head, group(1), group(2)) // note: the png reader is n RGBA
           case x => throw new UnsupportedOperationException(s"PNG Reader does not support $x channels")
         }
-      }.map(_.toARGBInt).toArray
+      }.map(_.toInt).toArray
       System.arraycopy(pixels, 0, matrix, row * w, w)
     }
     pngr.end()

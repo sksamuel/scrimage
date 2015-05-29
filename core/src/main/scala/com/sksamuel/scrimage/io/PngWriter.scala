@@ -26,7 +26,7 @@ import com.sksamuel.scrimage.Image
 /** @author Stephen Samuel */
 class PngWriter(image: Image, compressionLevel: Int) extends ImageWriter {
 
-  def withMaxCompression = withCompression(9)
+  def withMaxCompression: PngWriter = withCompression(9)
   def withCompression(c: Int): PngWriter = new PngWriter(image, c)
 
   def write(out: OutputStream) {
@@ -66,5 +66,5 @@ class PngWriter(image: Image, compressionLevel: Int) extends ImageWriter {
 }
 
 object PngWriter {
-  def apply(image: Image) = new PngWriter(image, 5)
+  def apply(image: Image): PngWriter = new PngWriter(image, 5)
 }

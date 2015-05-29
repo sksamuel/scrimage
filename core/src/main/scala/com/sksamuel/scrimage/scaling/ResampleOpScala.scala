@@ -4,7 +4,7 @@ import java.awt.image.Raster
 
 import com.sksamuel.scrimage.Image
 
-import scala.concurrent.{Future, Await}
+import scala.concurrent.{ Future, Await }
 import scala.concurrent.duration._
 
 object ResampleOpScala {
@@ -182,7 +182,7 @@ object ResampleOpScala {
     val hSampling = createSubSampling(filter, srcWidth, dstWidth)
     val vSampling = createSubSampling(filter, srcHeight, dstHeight)
 
-//    val srcRaster = img.raster
+    //    val srcRaster = img.raster
     //    val workRaster = srcRaster.empty(dstWidth, srcHeight)
     //    val outRaster = srcRaster.empty(dstWidth, dstHeight)
     //

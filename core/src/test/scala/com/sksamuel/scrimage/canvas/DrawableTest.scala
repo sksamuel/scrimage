@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage.canvas
 
 import org.scalatest.FunSuite
-import com.sksamuel.scrimage.{ X11Colorlist, Image }
+import com.sksamuel.scrimage.{ ARGBPixel, X11Colorlist, Image }
 
 class DrawableTest extends FunSuite {
 
@@ -22,7 +22,7 @@ class DrawableTest extends FunSuite {
       Line(100, 100, 120, 120)
     )
     val img = canvas.image
-    val black = X11Colorlist.Black.toInt
+    val black = ARGBPixel(X11Colorlist.Black.toInt)
     assert(img.pixel(10, 5) === black)
     assert(img.pixel(20, 25) === black)
     assert(img.pixel(30, 100) === black)
@@ -38,9 +38,9 @@ class DrawableTest extends FunSuite {
     val img = canvas.image
     val black = X11Colorlist.Black.toInt
     val red = X11Colorlist.Red.toInt
-    assert(img.pixel(20, 25) === black)
-    assert(img.pixel(30, 100) === red)
-    assert(img.pixel(110, 110) === black)
+    assert(img.pixel(20, 25) === ARGBPixel(black))
+    assert(img.pixel(30, 100) === ARGBPixel(red))
+    assert(img.pixel(110, 110) === ARGBPixel(black))
   }
 
   test("Rectangle and polygones draw the same thing") {

@@ -10,7 +10,7 @@ case class ARGBPixel(argb: Int) extends Pixel {
   override def green: Int = argb >> 8 & 0xFF
   override def blue: Int = argb & 0xFF
 
-  override def toARGBInt: Int = argb
+  override def toInt: Int = argb
 
   def hue: Float = java.awt.Color.RGBtoHSB(red, green, blue, null)(0)
   def saturation: Float = java.awt.Color.RGBtoHSB(red, green, blue, null)(1)
@@ -36,7 +36,7 @@ class RGBPixel(rgb: Int) extends Pixel {
   override def blue: Int = rgb & 0xFF
 
   def toARGBPixel: ARGBPixel = ARGBPixel(0, red, green, blue)
-  override def toARGBInt: Int = toARGBPixel.toARGBInt
+  override def toInt: Int = toARGBPixel.toInt
 }
 
 object RGBPixel {
@@ -64,7 +64,7 @@ trait Pixel {
     */
   def blue: Int
 
-  /** Returns an compacted int for ARGB
+  /** Returns an compacted int
     */
-  def toARGBInt: Int
+  def toInt: Int
 }

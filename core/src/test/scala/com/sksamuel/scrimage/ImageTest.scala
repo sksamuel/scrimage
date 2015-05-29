@@ -60,7 +60,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
 
   test("when trimming the new image is not empty") {
     val trimmed = image.trim(3, 4, 5, 6)
-    assert(!trimmed.forall((x, y, p) => p.toARGBInt == 0xFF000000 || p.toARGBInt == 0xFFFFFFFF))
+    assert(!trimmed.forall((x, y, p) => p.toInt == 0xFF000000 || p.toInt == 0xFFFFFFFF))
   }
 
   test("when resizing by pixels then the output image has the given dimensions") {

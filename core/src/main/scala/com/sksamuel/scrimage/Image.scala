@@ -18,16 +18,16 @@ package com.sksamuel.scrimage
 
 import java.awt._
 import java.awt.geom.AffineTransform
-import java.awt.image.{AffineTransformOp, BufferedImage, DataBufferInt}
-import java.io.{ByteArrayInputStream, File, InputStream}
+import java.awt.image.{ ColorModel, WritableRaster, Raster, AffineTransformOp, BufferedImage, DataBufferInt }
+import java.io.{ ByteArrayInputStream, File, InputStream }
 import javax.imageio.ImageIO
 
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.io.ImageWriter
 import com.sksamuel.scrimage.scaling.ResampleOpScala
-import org.apache.commons.io.{FileUtils, IOUtils}
-import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
+import org.apache.commons.io.{ FileUtils, IOUtils }
+import thirdparty.mortennobel.{ ResampleFilters, ResampleOp }
 
 import scala.List
 import scala.language.implicitConversions
@@ -71,7 +71,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] w
     points.foreach {
       case (x, y) =>
         val newpixel = f(x, y, pixel(x, y))
-        awt.setRGB(x, y, newpixel.toARGBInt)
+        awt.setRGB(x, y, newpixel.toInt)
     }
     this
   }
@@ -176,17 +176,17 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] w
       (xInt, xWeight) <- xIntsAndWeights;
       (yInt, yWeight) <- yIntsAndWeights
     ) yield {
-        val weight = xWeight * yWeight
-        if (weight == 0) List(0.0, 0.0, 0.0, 0.0)
-        else {
-          val px = pixel(xInt, yInt)
-          List(
-            weight * px.alpha,
-            weight * px.red,
-            weight * px.green,
-            weight * px.blue)
-        }
+      val weight = xWeight * yWeight
+      if (weight == 0) List(0.0, 0.0, 0.0, 0.0)
+      else {
+        val px = pixel(xInt, yInt)
+        List(
+          weight * px.alpha,
+          weight * px.red,
+          weight * px.green,
+          weight * px.blue)
       }
+    }
 
     // We perform the weighted averaging (a summation).
     // First though, we need to transpose so that we sum within channels,
@@ -285,7 +285,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] w
       //                array
       case _ =>
         val pixels = Array.ofDim[Pixel](width * height)
-        for ( x <- 0 until width; y <- 0 until height ) {
+        for (x <- 0 until width; y <- 0 until height) {
           pixels(y * width + x) = new ARGBPixel(awt.getRGB(x, y))
         }
         pixels
@@ -313,17 +313,26 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] w
     */
   def filter(filters: Filter*): Image = filters.foldLeft(this)((image, filter) => image.filter(filter))
 
+  /** Returns a new image with the transarency replaced with the given color.
+    */
   def removeTransparency(color: java.awt.Color): Image = {
-    //    def rmTransparency(c: RGBColor): RGBColor = {
-    //      val r = (c.red * c.alpha + color.getRed * color.getAlpha * (255 - c.alpha) / 255) / 255
-    //      val g = (c.green * c.alpha + color.getGreen * color.getAlpha * (255 - c.alpha) / 255) / 255
-    //      val b = (c.blue * c.alpha + color.getBlue * color.getAlpha * (255 - c.alpha) / 255) / 255
-    //      RGBColor(r, g, b)
-    //    }
-    //    val rgbColors = raster.read.map(_.toRGB).map(rmTransparency)
-    //    new Image(Raster(width, height, rgbColors, Raster.RGB))
-    // todo reimplement
-    ???
+
+    def rmTransparency(p: Pixel): Int = {
+      val r = (p.red * p.alpha + color.getRed * color.getAlpha * (255 - p.alpha) / 255) / 255
+      val g = (p.green * p.alpha + color.getGreen * color.getAlpha * (255 - p.alpha) / 255) / 255
+      val b = (p.blue * p.alpha + color.getBlue * color.getAlpha * (255 - p.alpha) / 255) / 255
+      RGBPixel(r, g, b).toInt
+    }
+
+    val rgb = pixels.map(rmTransparency)
+    val buffer = new DataBufferInt(rgb, rgb.length)
+
+    val bandMasks = Array(0xFF0000, 0xFF00, 0xFF, 0xFF000000)
+    val raster = Raster.createPackedRaster(buffer, width, height, width, bandMasks, null)
+
+    val cm = ColorModel.getRGBdefault()
+    val target = new BufferedImage(cm, raster, cm.isAlphaPremultiplied(), null)
+    new Image(target)
   }
 
   /** Flips this image horizontally.
@@ -525,7 +534,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] w
     * @return
     */
   def autocrop(color: Color): Image = {
-    def uniform(color: Color, pixels: Array[Pixel]) = pixels.forall(p => p.toARGBInt == color.argb)
+    def uniform(color: Color, pixels: Array[Pixel]) = pixels.forall(p => p.toInt == color.argb)
     def scanright(col: Int, image: Image): Int = {
       if (uniform(color, pixels(col, 0, 1, height))) scanright(col + 1, image)
       else col

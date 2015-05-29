@@ -69,7 +69,7 @@ trait ImageLike[R] {
     *
     * @return the RGBColor value of the pixel
     */
-  def color(x: Int, y: Int): RGBColor = pixel(x, y).toARGBInt
+  def color(x: Int, y: Int): RGBColor = pixel(x, y).toInt
 
   /** Returns the ARGB components for the pixel at the given coordinates
     *
@@ -176,7 +176,7 @@ trait ImageLike[R] {
     *
     * @return the set of distinct Colors
     */
-  def colours: Set[Color] = pixels.map(argb => Color(argb.toARGBInt)).toSet
+  def colours: Set[Color] = pixels.map(argb => Color(argb.toInt)).toSet
 
   /** Counts the number of pixels with the given colour.
     *
@@ -330,7 +330,7 @@ trait ImageLike[R] {
     * @param color the pixel colour to look for.
     * @return true if there exists at least one pixel that has the given pixels color
     */
-  def exists(color: Color): Boolean = pixels.exists(pixel => pixel.toARGBInt == color.toRGB.toInt)
+  def exists(color: Color): Boolean = pixels.exists(pixel => pixel.toInt == color.toRGB.toInt)
 
   // This tuple contains all the state that identifies this particular image.
   private[scrimage] def imageState = (width, height, pixels.toList)
