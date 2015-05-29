@@ -40,8 +40,6 @@ class JpegWriter(image: Image, compression: Int, progressive: Boolean) extends I
     if (compression < 100) {
       params.setCompressionMode(ImageWriteParam.MODE_EXPLICIT)
       params.setCompressionQuality(compression / 100f)
-    } else {
-      params.setCompressionMode(ImageWriteParam.MODE_DISABLED)
     }
     if (progressive)
       params.setProgressiveMode(ImageWriteParam.MODE_DEFAULT)
