@@ -51,7 +51,7 @@ class JpegWriter(image: Image, compression: Int, progressive: Boolean) extends I
 
     val output = new MemoryCacheImageOutputStream(out)
     writer.setOutput(output)
-    writer.write(null, new IIOImage(noAlpha.toBufferedImage, null, null), params)
+    writer.write(null, new IIOImage(noAlpha.toNewBufferedImage, null, null), params)
     writer.dispose()
     output.close()
     IOUtils.closeQuietly(out)
@@ -59,5 +59,5 @@ class JpegWriter(image: Image, compression: Int, progressive: Boolean) extends I
 }
 
 object JpegWriter {
-  def apply(image: Image) = new JpegWriter(image, 80, false)
+  def apply(image: Image): JpegWriter = new JpegWriter(image, 80, false)
 }

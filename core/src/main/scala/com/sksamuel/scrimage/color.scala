@@ -2,6 +2,8 @@ package com.sksamuel.scrimage
 
 import java.awt.Paint
 
+import scala.language.implicitConversions
+
 /** @author Stephen Samuel */
 
 trait Color {
@@ -65,10 +67,6 @@ case class RGBColor(red: Int, green: Int, blue: Int, alpha: Int = 255) extends C
   * The saturation component should be between 0.0 and 1.0
   * The lightness component should be between 0.0 and 1.0
   * The alpha component should be between 0.0 and 1.0
-  *
-  * @param hue
-  * @param saturation
-  * @param value
   */
 case class HSVColor(hue: Float, saturation: Float, value: Float, alpha: Float) extends Color {
   require(0 <= hue && hue < 1f, "Hue component is invalid")
@@ -104,10 +102,6 @@ case class HSVColor(hue: Float, saturation: Float, value: Float, alpha: Float) e
   * The saturation component should be between 0.0 and 1.0
   * The lightness component should be between 0.0 and 1.0
   * The alpha component should be between 0.0 and 1.0
-  *
-  * @param hue
-  * @param saturation
-  * @param lightness
   */
 case class HSLColor(hue: Float, saturation: Float, lightness: Float, alpha: Float) extends Color {
   require(0 <= hue && hue <= 360f, "Hue component is invalid")

@@ -1,5 +1,12 @@
 package com.sksamuel.scrimage.io
 
+import java.awt.image.{BufferedImage, Raster, ColorModel, DataBufferInt}
+import java.io.InputStream
+
+import ar.com.hjg.pngj.{ImageLineInt, PngReader}
+import com.sksamuel.scrimage.Format.PNG
+import com.sksamuel.scrimage.{Image, Format, MimeTypeChecker}
+
 object PNGReader extends ImageReader with MimeTypeChecker {
 
   def read(in: InputStream): Image = {

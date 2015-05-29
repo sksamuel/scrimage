@@ -17,7 +17,7 @@ package com.sksamuel.scrimage.filter
 
 import java.awt.Graphics2D
 
-import com.sksamuel.scrimage.{ Image, Filter }
+import com.sksamuel.scrimage.{Image, Filter}
 import thirdparty.misc.ThistleFilter
 
 /** @author Stephen Samuel */
@@ -25,9 +25,9 @@ object VintageFilter extends Filter {
   def apply(image: Image) {
     val thistle = new ThistleFilter()
     val filtered = thistle.filter(image.awt)
-    // val g2 = image.awt.getGraphics.asInstanceOf[Graphics2D]
-    // g2.drawImage(filtered, 0, 0, null)
-    // g2.dispose()
-    image.raster.write(Image(filtered).raster.extract)
+    val g2 = image.awt.getGraphics.asInstanceOf[Graphics2D]
+    g2.drawImage(filtered, 0, 0, null)
+    g2.dispose()
+    //image.raster.write(Image(filtered).raster.extract)
   }
 }

@@ -35,6 +35,6 @@ abstract class MarvinFilter extends Filter {
 
     input.setIntColorArray(output.getIntColorArray)
     input.update()
-    image.updateFromAWT()
+    //image.updateFromAWT()
   }
 }

@@ -18,8 +18,7 @@ package com.sksamuel.scrimage.io
 import java.io.InputStream
 import javax.imageio.ImageIO
 
-import ar.com.hjg.pngj.{ ImageLineInt, PngReader }
-import com.sksamuel.scrimage.{ Format, Image, MimeTypeChecker, Raster }
+import com.sksamuel.scrimage.Image
 import org.apache.sanselan.Sanselan
 
 /** @author Stephen Samuel */
@@ -31,39 +30,4 @@ trait SanselanReader extends ImageReader {
   def read(in: InputStream): Image = Image(Sanselan.getBufferedImage(in))
 }
 
-object PNGReader extends ImageReader with MimeTypeChecker {
-  def read(in: InputStream): Image = {
-    val pngr = new PngReader(in)
-    println(pngr.toString)
-    val channels = pngr.imgInfo.channels
-    val bitDepth = pngr.imgInfo.bitDepth
-    val width = pngr.imgInfo.cols
-    val height = pngr.imgInfo.rows
-    val raster = Raster(width, height, Raster.getType(channels, bitDepth))
-    val rowSize = raster.n_channel * width
 
-    if (bitDepth <= 8) {
-      for (row <- 0 until height) { // also: while(pngr.hasMoreRows())
-        val scanline: Array[Byte] = pngr.readRow().asInstanceOf[ImageLineInt].getScanline().map(_.toByte)
-        System.arraycopy(scanline, 0, raster.model, row * rowSize, rowSize)
-      }
-    } else {
-      for (row <- 0 until height) { // also: while(pngr.hasMoreRows())
-        val scanline: Array[Int] = pngr.readRow().asInstanceOf[ImageLineInt].getScanline()
-        System.arraycopy(scanline, 0, raster.model, row * rowSize, rowSize)
-      }
-    }
-
-    pngr.end()
-    new Image(raster)
-  }
-
-  def readMimeType(input: InputStream) = {
-    val buff = Array.ofDim[Byte](8)
-    input.read(buff)
-    val expected = List(0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A, 0x0A) map (_.toByte)
-
-    if (buff.toList == expected) Some(Format.PNG)
-    else None
-  }
-}

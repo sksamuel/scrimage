@@ -15,8 +15,8 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.{ Image, Filter }
-import java.awt.{ Color, Graphics2D }
+import com.sksamuel.scrimage.{Image, Filter}
+import java.awt.{Color, Graphics2D}
 
 /** @author Stephen Samuel */
 class ColorizeFilter(color: Color) extends Filter {
@@ -25,11 +25,11 @@ class ColorizeFilter(color: Color) extends Filter {
     g2.setColor(color)
     g2.fillRect(0, 0, image.width, image.height)
     g2.dispose()
-    image.updateFromAWT()
+    //image.updateFromAWT()
   }
 }
 
 object ColorizeFilter {
-  def apply(color: Color) = new ColorizeFilter(color)
-  def apply(r: Int, g: Int, b: Int, a: Int = 255) = new ColorizeFilter(new Color(r, g, b, a))
+  def apply(color: Color): ColorizeFilter = new ColorizeFilter(color)
+  def apply(r: Int, g: Int, b: Int, a: Int = 255): ColorizeFilter = new ColorizeFilter(new Color(r, g, b, a))
 }

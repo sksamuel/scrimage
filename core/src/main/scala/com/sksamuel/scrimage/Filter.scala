@@ -20,7 +20,7 @@ import java.awt.Graphics2D
 
 /** @author Stephen Samuel */
 trait Filter {
-  def apply(image: Image)
+  def apply(image: Image): Unit
 }
 
 /** Extension of Filter that applies its filters using a standard java BufferedImageOp.
@@ -33,7 +33,6 @@ abstract class BufferedOpFilter extends Filter {
     val g2 = image.awt.getGraphics.asInstanceOf[Graphics2D]
     g2.drawImage(image.awt, op, 0, 0)
     g2.dispose()
-    image.updateFromAWT()
   }
 }
 

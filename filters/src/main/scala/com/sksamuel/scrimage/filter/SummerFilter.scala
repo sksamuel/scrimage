@@ -15,7 +15,7 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.{ Image, Filter }
+import com.sksamuel.scrimage.{Image, Filter}
 import java.awt.Graphics2D
 import thirdparty.romainguy.BlendComposite
 
@@ -31,10 +31,10 @@ class SummerFilter(vignette: Boolean) extends Filter {
     g2.dispose()
     if (vignette)
       VignetteFilter(0.92f, 0.98f, 0.3).apply(image)
-    image.updateFromAWT()
+    //  image.updateFromAWT()
   }
 }
 
 object SummerFilter {
-  def apply(vignette: Boolean = true) = new SummerFilter(true)
+  def apply(vignette: Boolean = true): SummerFilter = new SummerFilter(true)
 }

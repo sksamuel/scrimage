@@ -17,19 +17,20 @@
 package com.sksamuel.scrimage
 
 import java.awt._
-import java.awt.image.{ BufferedImage, DataBufferInt }
-import java.io.{ ByteArrayInputStream, File, InputStream }
+import java.awt.geom.AffineTransform
+import java.awt.image.{AffineTransformOp, BufferedImage, DataBufferInt}
+import java.io.{ByteArrayInputStream, File, InputStream}
 import javax.imageio.ImageIO
 
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.io.ImageWriter
 import com.sksamuel.scrimage.scaling.ResampleOpScala
-import org.apache.commons.io.{ FileUtils, IOUtils }
-import thirdparty.mortennobel.{ ResampleFilters, ResampleOp }
+import org.apache.commons.io.{FileUtils, IOUtils}
+import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 
 import scala.List
-import scala.concurrent.ExecutionContext
+import scala.language.implicitConversions
 
 class ImageParseException extends RuntimeException("Unparsable image")
 
@@ -40,59 +41,38 @@ class ImageParseException extends RuntimeException("Unparsable image")
   *
   * @author Stephen Samuel
   */
-class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike {
-  require(raster != null, "Raster cannot be null")
+class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] with WritableImageLike {
+  require(awt != null, "Wrapping image cannot be null")
 
-  val width: Int = raster.width
-  val height: Int = raster.height
+  lazy val width: Int = awt.getWidth
+  lazy val height: Int = awt.getHeight
 
-  /** Returns a new AWT buffered image from the data in this images raster.
+  /** Returns a new AWT BufferedImage from this image.
     *
-    * @return a BufferedImage with the same data as this Image.
+    * @return a new, non-shared, BufferedImage with the same data as this Image.
     */
-  def toBufferedImage: BufferedImage = {
-    val imageType = raster match {
-      case _: RGBRaster => BufferedImage.TYPE_INT_RGB
-      case _: ARGBRaster => BufferedImage.TYPE_INT_ARGB
-      case _: GrayRaster => BufferedImage.TYPE_BYTE_GRAY
-      case _: GrayAlphaRaster => BufferedImage.TYPE_INT_ARGB
-    }
-    val buffered = new BufferedImage(width, height, imageType)
-    if ((imageType == BufferedImage.TYPE_INT_ARGB) || (imageType == BufferedImage.TYPE_INT_RGB))
-      buffered.setRGB(0, 0, width, height, raster.extract.map(_.toInt), 0, width)
-    if (imageType == BufferedImage.TYPE_BYTE_GRAY)
-      buffered.getRaster.setDataElements(0, 0, width, height, raster.model)
+  def toNewBufferedImage: BufferedImage = {
+    val buffered = new BufferedImage(width, height, awt.getType)
+    buffered.getGraphics.drawImage(awt, 0, 0, null)
     buffered
   }
 
-  @deprecated("java.awt is to be removed", "22 Jul 2014")
-  lazy val awt: BufferedImage = {
-    import java.awt.image.{ ColorModel, DataBufferInt }
-    val cm = ColorModel.getRGBdefault
-    val sm = cm.createCompatibleSampleModel(width, height)
-    val db = new DataBufferInt(raster.extract.map(_.toInt), width * height)
-    val wr = java.awt.image.Raster.createWritableRaster(sm, db, null)
-    new BufferedImage(cm, wr, false, null)
-  }
-
-  /** This a workaround to allow code written for the old version image to work.
-    */
-  @deprecated("java.awt is to be removed", "22 Jul 2014")
-  def updateFromAWT(): Unit = {
-    raster.write(Image(awt).raster.read)
-  }
-
   override def empty: Image = Image.empty(width, height)
-  override def copy: Image = new Image(raster.copy)
 
-  override def map(f: (Int, Int, Int) => Int): Image = {
+  override def copy: Image = new Image(toNewBufferedImage)
+
+  def map(f: (Int, Int, Pixel) => Pixel): Image = {
     val target = copy
     target.mapInPlace(f)
     target
   }
 
-  private[scrimage] def mapInPlace(f: (Int, Int, Int) => Int): Unit = {
-    points.foreach(p => raster.write(p._1, p._2, f(p._1, p._2, raster.read(p._1, p._2).toInt)))
+  private[scrimage] def mapInPlace(f: (Int, Int, Pixel) => Pixel): this.type = {
+    points.foreach { case (x, y) =>
+      val newpixel = f(x, y, pixel(x, y))
+      awt.setRGB(x, y, newpixel.toARGBInt)
+    }
+    this
   }
 
   /** Returns an image that is no larger than the given width and height.
@@ -158,7 +138,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     *
     * @return the ARGB value of the pixel
     */
-  def pixel(x: Int, y: Int): Int = raster.pixel(x, y)
+  def pixel(x: Int, y: Int): Pixel = new ARGBPixel(awt.getRGB(x, y))
 
   /** Uses linear interpolation to get a sub-pixel.
     *
@@ -195,18 +175,17 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
       (xInt, xWeight) <- xIntsAndWeights;
       (yInt, yWeight) <- yIntsAndWeights
     ) yield {
-      val weight = xWeight * yWeight
-      if (weight == 0) List(0.0, 0.0, 0.0, 0.0)
-      else {
-        val pixelInt = pixel(xInt, yInt)
-
-        List(
-          weight * PixelTools.alpha(pixelInt),
-          weight * PixelTools.red(pixelInt),
-          weight * PixelTools.green(pixelInt),
-          weight * PixelTools.blue(pixelInt))
+        val weight = xWeight * yWeight
+        if (weight == 0) List(0.0, 0.0, 0.0, 0.0)
+        else {
+          val px = pixel(xInt, yInt)
+          List(
+            weight * px.alpha,
+            weight * px.red,
+            weight * px.green,
+            weight * px.blue)
+        }
       }
-    }
 
     // We perform the weighted averaging (a summation).
     // First though, we need to transpose so that we sum within channels,
@@ -222,19 +201,21 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
                        y: Double,
                        subWidth: Int,
                        subHeight: Int): Image = {
-    require(x >= 0)
-    require(x + subWidth < width)
-    require(y >= 0)
-    require(y + subHeight < height)
-    val raster = ARGBRaster(subWidth, subHeight)
-    // Simply copy the pixels over, one by one.
-    for (
-      yIndex <- 0 until subHeight;
-      xIndex <- 0 until subWidth
-    ) {
-      raster.write(xIndex, yIndex, subpixel(xIndex + x, yIndex + y))
-    }
-    new Image(raster)
+    //    require(x >= 0)
+    //    require(x + subWidth < width)
+    //    require(y >= 0)
+    //    require(y + subHeight < height)
+    //    val raster = ARGBRaster(subWidth, subHeight)
+    //    // Simply copy the pixels over, one by one.
+    //    for (
+    //      yIndex <- 0 until subHeight;
+    //      xIndex <- 0 until subWidth
+    //    ) {
+    //      raster.write(xIndex, yIndex, subpixel(xIndex + x, yIndex + y))
+    //    }
+    //    new Image(raster)
+    // todo reimplement
+    ???
   }
 
   /** Extract a patch, centered at a subpixel point.
@@ -257,27 +238,30 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
       yWidth.round.toInt)
   }
 
-  /** Returns all the patches of a given size in the image, assuming pixel
-    * alignment (no subpixel extraction).
-    *
-    * The patches are returned as a sequence of closures.
-    */
-  def patches(patchWidth: Int, patchHeight: Int): IndexedSeq[() => Image] =
-    for (
-      row <- 0 to height - patchHeight;
-      col <- 0 to width - patchWidth
-    ) yield {
-      () => new Image(raster.patch(col, row, patchWidth, patchHeight))
-    }
+  /**
+   * Returns all the patches of a given size in the image, assuming pixel
+   * alignment (no subpixel extraction).
+   *
+   * The patches are returned as a sequence of closures.
+   */
+  def patches(patchWidth: Int, patchHeight: Int): IndexedSeq[() => Image] = {
+    // to do reimplement
+    //    for (
+    //      row <- 0 to height - patchHeight;
+    //      col <- 0 to width - patchWidth
+    //    ) yield {
+    //      () => new Image(raster.patch(col, row, patchWidth, patchHeight))
+    //    }
+    ???
+  }
 
-  /** Returns the pixels of this image represented as an array of Integers.
-    *
-    * @return
+  /** Returns the pixels of this image represented as an array of Pixels.
     */
-  def pixels: Array[Int] = {
+  def pixels: Array[Pixel] = {
     awt.getRaster.getDataBuffer match {
+      case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_ARGB => buffer.getData.map(new ARGBPixel(_))
+      // todo implement this using new instances of Pixel
       //        case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_RGB => buffer.getData
-      case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_ARGB => buffer.getData
       //            case buffer: DataBufferByte if awt.getType == BufferedImage.TYPE_3BYTE_BGR =>
       //                val array = new Array[Int](buffer.getData.length / 3)
       //                for ( k <- 0 until array.length ) {
@@ -300,11 +284,11 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
       //                }
       //                array
       case _ =>
-        val px = Array.ofDim[Int](width * height)
-        for(x <- 0 until width; y <- 0 until height){
-          px(y * width + x) = awt.getRGB(x, y)
+        val pixels = Array.ofDim[Pixel](width * height)
+        for ( x <- 0 until width; y <- 0 until height ) {
+          pixels(y * width + x) = new ARGBPixel(awt.getRGB(x, y))
         }
-        px
+        pixels
     }
   }
 
@@ -330,59 +314,73 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
   def filter(filters: Filter*): Image = filters.foldLeft(this)((image, filter) => image.filter(filter))
 
   def removeTransparency(color: java.awt.Color): Image = {
-    def rmTransparency(c: RGBColor): RGBColor = {
-      val r = (c.red * c.alpha + color.getRed * color.getAlpha * (255 - c.alpha) / 255) / 255
-      val g = (c.green * c.alpha + color.getGreen * color.getAlpha * (255 - c.alpha) / 255) / 255
-      val b = (c.blue * c.alpha + color.getBlue * color.getAlpha * (255 - c.alpha) / 255) / 255
-      RGBColor(r, g, b)
-    }
-    val rgbColors = raster.read.map(_.toRGB).map(rmTransparency)
-    new Image(Raster(width, height, rgbColors, Raster.RGB))
+    //    def rmTransparency(c: RGBColor): RGBColor = {
+    //      val r = (c.red * c.alpha + color.getRed * color.getAlpha * (255 - c.alpha) / 255) / 255
+    //      val g = (c.green * c.alpha + color.getGreen * color.getAlpha * (255 - c.alpha) / 255) / 255
+    //      val b = (c.blue * c.alpha + color.getBlue * color.getAlpha * (255 - c.alpha) / 255) / 255
+    //      RGBColor(r, g, b)
+    //    }
+    //    val rgbColors = raster.read.map(_.toRGB).map(rmTransparency)
+    //    new Image(Raster(width, height, rgbColors, Raster.RGB))
+    // todo reimplement
+    ???
   }
 
-  /** Flips this image horizontally.
-    *
-    * @return The result of flipping this image horizontally.
-    */
+  /**
+   * Flips this image horizontally.
+   *
+   * @return The result of flipping this image horizontally.
+   */
   def flipX: Image = {
-    val copy = raster.copy
-    for (x <- 0 until width; y <- 0 until height) {
-      copy.write(x, y, raster.read(width - 1 - x, y))
-    }
-    new Image(copy)
+    val tx = AffineTransform.getScaleInstance(-1, 1)
+    tx.translate(-width, 0)
+    flip(tx)
   }
 
-  /** Flips this image vertically.
-    *
-    * @return The result of flipping this image vertically.
-    */
+  /**
+   * Flips this image vertically.
+   *
+   * @return The result of flipping this image vertically.
+   */
   def flipY: Image = {
-    val copy = raster.copy
-    for (x <- 0 until width; y <- 0 until height) {
-      copy.write(x, y, raster.read(x, height - 1 - y))
-    }
-    new Image(copy)
+    val tx = AffineTransform.getScaleInstance(1, -1)
+    tx.translate(0, -height)
+    flip(tx)
   }
 
-  /** Returns a copy of this image rotated 90 degrees anti-clockwise (counter clockwise to US English speakers).
-    *
-    * @return
-    */
-  def rotateLeft = {
-    val rotated = raster.empty(height, width)
-    for (x <- 0 until width; y <- 0 until height; c <- 0 until raster.n_channel) {
-      rotated.writeChannel(y, width - 1 - x, c)(raster.readChannel(x, y, c))
-    }
-    new Image(rotated)
+  protected[scrimage] def flip(tx: AffineTransform): Image = {
+    val op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR)
+    val flipped = op.filter(awt, null)
+    new Image(flipped)
   }
 
-  /** Returns a copy of this image rotated 90 degrees clockwise. */
-  def rotateRight = {
-    val rotated = raster.empty(height, width)
-    for (x <- 0 until width; y <- 0 until height; c <- 0 until raster.n_channel) {
-      rotated.writeChannel(height - 1 - y, x, c)(raster.readChannel(x, y, c))
+  /**
+   * Returns a copy of this image rotated 90 degrees anti-clockwise (counter clockwise to US English speakers).
+   *
+   * @return
+   */
+  def rotateLeft: Image = rotate(Math.PI / 2)
+
+  /**
+   * Returns a copy of this image rotated 90 degrees clockwise.
+   *
+   * @return
+   */
+  def rotateRight: Image = rotate(-Math.PI / 2)
+
+  private def rotate(angle: Double): Image = {
+    val target = new BufferedImage(height, width, awt.getType)
+    val g2 = target.getGraphics.asInstanceOf[Graphics2D]
+    val offset = angle match {
+      case a if a < 0 => (0, width)
+      case a if a > 0 => (height, 0)
+      case _ => (0, 0)
     }
-    new Image(rotated)
+    g2.translate(offset._1, offset._2)
+    g2.rotate(angle)
+    g2.drawImage(awt, 0, 0, null)
+    g2.dispose()
+    new Image(target)
   }
 
   /** Returns a copy of this image with the given dimensions
@@ -457,7 +455,8 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
         g2.drawImage(awt, 0, 0, targetWidth, targetHeight, null)
         g2.dispose()
         target
-      case Bicubic => ResampleOpScala.scaleTo(ResampleOpScala.bicubicFilter)(this)(targetWidth, targetHeight, Image.SCALE_THREADS)
+      case Bicubic => ResampleOpScala
+        .scaleTo(ResampleOpScala.bicubicFilter)(this)(targetWidth, targetHeight, Image.SCALE_THREADS)
       case _ =>
         val method = scaleMethod match {
           case Bilinear => ResampleFilters.triangleFilter
@@ -499,44 +498,38 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     }
   }
 
-  /** Returns a new Image that is the result of overlaying the supplied image over this image
-    * The x / y parameters determine where the (0,0) coordinate of the overlay should be placed.
-    *
-    * If the image to render exceeds the boundaries of the source image, then the excess
-    * pixels will be ignored.
-    *
-    * @param overlayImage the image to overlay.
-    *
-    * @return a new Image with the given image overlaid.
-    */
+  /**
+   * Returns a new Image that is the result of overlaying the supplied image over this image
+   * The x / y parameters determine where the (0,0) coordinate of the overlay should be placed.
+   *
+   * If the image to render exceeds the boundaries of the source image, then the excess
+   * pixels will be ignored.
+   *
+   * @param overlayImage the image to overlay.
+   *
+   * @return a new Image with the given image overlaid.
+   */
   def overlay(overlayImage: Image, x: Int = 0, y: Int = 0): Image = {
-    val copy = raster.copy
-    for (
-      x1 <- 0 until overlayImage.width;
-      y1 <- 0 until overlayImage.height
-    ) {
-      val x2 = x1 + x
-      val y2 = y1 + y
-      if (0 <= x2 && x2 < width && 0 <= y2 && y2 < height)
-        copy.write(x2, y2, overlayImage.raster.read(x1, y1))
-    }
+    val copy = toNewBufferedImage
+    copy.getGraphics.drawImage(overlayImage.awt, 0, 0, null)
     new Image(copy)
   }
 
-  /** Crops an image by removing cols and rows that are composed only of a single
-    * given color.
-    *
-    * Eg, if an image had a 20 pixel border of white at the top, and this method was
-    * invoked with Color.White then the image returned would have that 20 pixel border
-    * removed.
-    *
-    * This method is useful when images have an abudance of
-    *
-    * @param color the color to match
-    * @return
-    */
+  /**
+   * Crops an image by removing cols and rows that are composed only of a single
+   * given color.
+   *
+   * Eg, if an image had a 20 pixel row of white at the top, and this method was
+   * invoked with Color.White then the image returned would have that 20 pixel row
+   * removed.
+   *
+   * This method is useful when images have an abudance of a single colour around them.
+   *
+   * @param color the color to match
+   * @return
+   */
   def autocrop(color: Color): Image = {
-    def uniform(color: Color, pixels: Array[Int]) = pixels.forall(p => p == color.argb)
+    def uniform(color: Color, pixels: Array[Pixel]) = pixels.forall(p => p == color.argb)
     def scanright(col: Int, image: Image): Int = {
       if (uniform(color, pixels(col, 0, 1, height))) scanright(col + 1, image)
       else col
@@ -634,7 +627,8 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     * @param method how to apply the scaling method
     * @return the zoomed image
     */
-  def zoom(factor: Double, method: ScaleMethod = ScaleMethod.Bicubic) = scale(factor, method).resizeTo(width, height)
+  def zoom(factor: Double, method: ScaleMethod = ScaleMethod.Bicubic): Image = scale(factor, method)
+    .resizeTo(width, height)
 
   /** Creates a new Image with the same dimensions of this image and with
     * all the pixels initialized by the given color.
@@ -646,39 +640,18 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
   def writer[T <: ImageWriter](format: Format[T]): T = format.writer(this)
 
   // This tuple contains all the state that identifies this particular image.
-  private[scrimage] def imageState = (width, height, raster.model.toList)
+  private[scrimage] def imageState = (width, height, pixels)
 
   // See this Stack Overflow question to see why this is implemented this way.
   // http://stackoverflow.com/questions/7370925/what-is-the-standard-idiom-for-implementing-equals-and-hashcode-in-scala
-  override def hashCode = imageState.hashCode
+  override def hashCode: Int = imageState.hashCode
 
-  override def equals(other: Any): Boolean =
+  override def equals(other: Any): Boolean = {
     other match {
       case that: Image => imageState == that.imageState
       case _ => false
     }
-
-  /** Creates a MutableImage instance backed by this images raster.
-    *
-    * Note, any changes to the mutable image write back to this Image.
-    * If you want a mutable copy then you must first copy this image
-    * before invoking this operation.
-    *
-    * @return
-    */
-  @deprecated
-  def toMutable: MutableImage = new MutableImage(raster)
-
-  /** Creates an AsyncImage instance backed by this image.
-    *
-    * The returned AsyncImage will contain the same backing array
-    * as this image.
-    *
-    * To return back to an image instance use asyncImage.toImage
-    *
-    * @return an AsyncImage wrapping this image.
-    */
-  def toAsync(implicit executionContext: ExecutionContext): AsyncImage = AsyncImage(this)
+  }
 
   /** Clears all image data to the given color
     */
@@ -697,9 +670,9 @@ object Image {
     *
     * @return a new Image
     */
-  def apply(w: Int, h: Int, pixels: Array[Int]): Image = {
-    require(w * h == pixels.size)
-    Image.empty(w, h).map((x, y, p) => pixels(PixelTools.coordinateToOffset(x, y, w)))
+  def apply(w: Int, h: Int, pixels: Array[Pixel]): Image = {
+    require(w * h == pixels.length)
+    Image.empty(w, h).mapInPlace((x, y, p) => pixels(PixelTools.coordinateToOffset(x, y, w)))
   }
 
   /** Create a new Image from a byte stream. This is intended to create
@@ -765,49 +738,51 @@ object Image {
   def apply(awt: java.awt.Image): Image = {
     require(awt != null, "AWT image cannot be null")
     // todo optimisation to check for TYPE_INT_ARGB before copying
-    val buff = new BufferedImage(awt.getWidth(null), awt.getHeight(null), BufferedImage.TYPE_INT_ARGB)
-    val g2 = buff.getGraphics.asInstanceOf[Graphics2D]
+    val target = new BufferedImage(awt.getWidth(null), awt.getHeight(null), BufferedImage.TYPE_INT_ARGB)
+    val g2 = target.getGraphics.asInstanceOf[Graphics2D]
     g2.drawImage(awt, 0, 0, null)
     g2.dispose()
-    val raster = ARGBRaster(
-      awt.getWidth(null),
-      awt.getHeight(null),
-      buff.getRaster.getDataBuffer.asInstanceOf[DataBufferInt].getData
-    )
-    new Image(raster)
+    new Image(target)
   }
 
-  /** Creates a new Image which is a copy of the given image.
-    * Any operations to the new object do not affect the original image.
-    *
-    * @param image the image to copy
-    *
-    * @return a new Image object.
-    */
+  /**
+   * Creates a new Image which is a copy of the given image.
+   * Any operations to the new object do not affect the original image.
+   *
+   * @param image the image to copy
+   *
+   * @return a new Image object.
+   */
   def apply(image: Image): Image = image.copy
 
-  /** Return a new Image with the given width and height, with all pixels set to the supplied colour.
-    *
-    * @param width the width of the new Image
-    * @param height the height of the new Image
-    * @param color the color to set all pixels to
-    *
-    * @return the new Image
-    */
+  /**
+   * Return a new Image with the given width and height, with all pixels set to the supplied colour.
+   *
+   * @param width the width of the new Image
+   * @param height the height of the new Image
+   * @param color the color to set all pixels to
+   *
+   * @return the new Image
+   */
   def filled(width: Int, height: Int, color: Color = Color.White): Image = {
-    val r = ARGBRaster(width, height, color)
-    new Image(r)
+    val target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
+    target.getRaster.setPixel(0, 0, Array.fill(width * height)(color.toRGB.toInt))
+    new Image(target)
   }
 
-  /** Create a new Image that is the given width and height with no initialization. This will usually result in a
-    * default black background (all pixel data defaulting to zeroes) but that is not guaranteed.
-    *
-    * @param width the width of the new image
-    * @param height the height of the new image
-    *
-    * @return the new Image with the given width and height
-    */
-  def empty(width: Int, height: Int): Image = new Image(ARGBRaster(width, height))
+  /**
+   * Create a new Image that is the given width and height with no initialization. This will usually result in a
+   * default black background (all pixel data defaulting to zeroes) but that is not guaranteed.
+   *
+   * @param width the width of the new image
+   * @param height the height of the new image
+   *
+   * @return the new Image with the given width and height
+   */
+  def empty(width: Int, height: Int): Image = {
+    val target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
+    new Image(target)
+  }
 }
 
 sealed trait ScaleMethod
@@ -820,5 +795,5 @@ object ScaleMethod {
 }
 
 object Implicits {
-  implicit def awt2rich(awt: java.awt.Image) = Image(awt)
+  implicit def awtToScrimage(awt: java.awt.Image): Image = Image(awt)
 }

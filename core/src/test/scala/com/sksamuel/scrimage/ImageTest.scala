@@ -60,7 +60,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
 
   test("when trimming the new image is not empty") {
     val trimmed = image.trim(3, 4, 5, 6)
-    assert(!trimmed.forall((x, y, p) => p == 0xFF000000 || p == 0xFFFFFFFF))
+    assert(!trimmed.forall((x, y, p) => p.toARGBInt == 0xFF000000 || p.toARGBInt == 0xFFFFFFFF))
   }
 
   test("when resizing by pixels then the output image has the given dimensions") {
@@ -86,7 +86,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     g.setColor(java.awt.Color.RED)
     g.fillRect(10, 10, 10, 10)
     g.dispose()
-    image.updateFromAWT()
+    //image.updateFromAWT()
     assert(0 === image.pixel(0, 0))
     assert(0 === image.pixel(9, 10))
     assert(0 === image.pixel(10, 9))
@@ -97,7 +97,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
 
   test("pixel array has correct number of pixels") {
     val image = Image.filled(50, 30, Color(0, 0, 0, 0))
-    assert(1500 === image.pixels.size)
+    assert(1500 === image.pixels.length)
   }
 
   test("pixel array has correct ARGB integer") {
@@ -106,7 +106,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     g.setColor(java.awt.Color.RED)
     g.fillRect(10, 10, 10, 10)
     g.dispose()
-    image.updateFromAWT()
+    // image.updateFromAWT()
     assert(0 === image.pixels(0))
     assert(0xFFFF0000 === image.pixels(765))
   }
@@ -293,7 +293,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   test("argb returns array of ARGB bytes") {
     val image = Image.filled(20, 20, java.awt.Color.YELLOW)
     val components = image.argb
-    assert(400 === components.size)
+    assert(400 === components.length)
     for ( component <- components )
       assert(component === Array(255, 255, 255, 0))
   }
@@ -301,7 +301,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   test("rgb returns array of RGB bytes") {
     val image = Image.filled(20, 20, java.awt.Color.YELLOW)
     val components = image.rgb
-    assert(400 === components.size)
+    assert(400 === components.length)
     for ( component <- components )
       assert(component === Array(255, 255, 0))
   }
@@ -333,7 +333,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
 
   test("map modifies each pixel and returns new image") {
     val image = Image.empty(100, 100)
-    val mapped = image.map((_, _, _) => 0xFF00FF00)
+    val mapped = image.map((_, _, _) => new ARGBPixel(0xFF00FF00))
     for ( component <- mapped.argb )
       assert(component === Array(255, 0, 255, 0))
   }
@@ -436,36 +436,36 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("column") {
-    val striped = Image.empty(200, 100).map((x, y, p) => if (y % 2 == 0) 255 else 0)
+    val striped = Image.empty(200, 100).map((x, y, p) => if (y % 2 == 0) new ARGBPixel(255) else new ARGBPixel(0))
     val col = striped.col(51)
-    assert(striped.height === col.size)
+    assert(striped.height === col.length)
     for ( y <- 0 until striped.height ) {
-      if (y % 2 == 0) assert(255 === col(y), "col was " + col(y))
-      else assert(0 === col(y), "col was " + col(y))
+      if (y % 2 == 0) assert(new ARGBPixel(255) === col(y), "col was " + col(y))
+      else assert(new ARGBPixel(0) === col(y), "col was " + col(y))
     }
   }
 
   test("row") {
-    val striped = Image.empty(200, 100).map((x, y, p) => if (y % 2 == 0) 255 else 0)
+    val striped = Image.empty(200, 100).map((x, y, p) => if (y % 2 == 0) new ARGBPixel(255) else new ARGBPixel(0))
     val row1 = striped.row(44)
-    assert(striped.width === row1.size)
-    assert(row1.forall(_ == 255))
+    assert(striped.width === row1.length)
+    assert(row1.forall(_ == new ARGBPixel(255)))
     val row2 = striped.row(45)
-    assert(striped.width === row2.size)
-    assert(row2.forall(_ == 0))
+    assert(striped.width === row2.length)
+    assert(row2.forall(_ == new ARGBPixel(0)))
   }
 
   test("pixels region") {
-    val striped = Image.empty(200, 100).map((x, y, p) => if (y % 2 == 0) 255 else 0)
+    val striped = Image.empty(200, 100).map((x, y, p) => if (y % 2 == 0) new ARGBPixel(255) else new ARGBPixel(0))
     val pixels = striped.pixels(10, 10, 10, 10)
     for ( k <- 0 until 10 )
-      assert(255 === pixels(k))
+      assert(new ARGBPixel(255) === pixels(k))
     for ( k <- 10 until 19 )
       assert(0 === pixels(k))
     for ( k <- 20 until 29 )
-      assert(255 === pixels(k))
+      assert(new ARGBPixel(255) === pixels(k))
     for ( k <- 30 until 39 )
-      assert(0 === pixels(k))
+      assert(new ARGBPixel(0) === pixels(k))
   }
 
   test("subpixel happy path") {

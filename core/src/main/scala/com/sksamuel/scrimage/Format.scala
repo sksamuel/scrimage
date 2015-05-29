@@ -32,15 +32,15 @@ sealed trait Format[T <: ImageWriter] {
 
 object Format {
   case object PNG extends Format[PngWriter] {
-    def writer(image: Image) = PngWriter(image)
+    def writer(image: Image): PngWriter = PngWriter(image)
   }
 
   case object JPEG extends Format[JpegWriter] {
-    def writer(image: Image) = JpegWriter(image)
+    def writer(image: Image): JpegWriter = JpegWriter(image)
   }
 
   case object GIF extends Format[GifWriter] {
-    def writer(image: Image) = GifWriter(image)
+    def writer(image: Image): GifWriter = GifWriter(image)
   }
 }
 

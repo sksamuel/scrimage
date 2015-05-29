@@ -1,8 +1,11 @@
 package com.sksamuel.scrimage.canvas
 
-import com.sksamuel.scrimage.{ Composite, Color, X11Colorlist, Image, ARGBRaster }
-import java.awt.{ RenderingHints, Font, Graphics2D }
 import java.awt.image.BufferedImage
+import java.awt.{Font, Graphics2D, RenderingHints}
+
+import com.sksamuel.scrimage.{Color, Composite, Image, X11Colorlist}
+
+import scala.language.implicitConversions
 
 /** @author Stephen Samuel */
 case class Canvas(image: Image,
@@ -13,7 +16,7 @@ case class Canvas(image: Image,
   def withPainter(painter: Painter): Canvas = copy(painter = painter)
   def withPainter(color: Color): Canvas = copy(painter = color)
   def withFont(font: Font): Canvas = copy(font = font)
-  def withAliasing(aliasing: Boolean) = copy(aliasing = aliasing)
+  def withAliasing(aliasing: Boolean): Canvas = copy(aliasing = aliasing)
 
   private def g2(image: Image): Graphics2D = {
     val g2 = image.awt.getGraphics.asInstanceOf[Graphics2D]
@@ -43,11 +46,13 @@ case class Canvas(image: Image,
   }
 
   // TODO: check the type of the given image
-  def imageFromAWT(image: BufferedImage) = {
-    val model = Array.ofDim[Int](image.getWidth * image.getHeight)
-    image.getRGB(0, 0, image.getWidth, image.getHeight, model, 0, image.getWidth)
-    val raster = ARGBRaster(image.getWidth, image.getHeight, model)
-    new Image(raster)
+  def imageFromAWT(image: BufferedImage): Image = {
+    // todo reimplement
+    //    val model = Array.ofDim[Int](image.getWidth * image.getHeight)
+    //    image.getRGB(0, 0, image.getWidth, image.getHeight, model, 0, image.getWidth)
+    //    val raster = ARGBRaster(image.getWidth, image.getHeight, model)
+    //    new Image(raster)
+    ???
   }
 
   def watermark(text: String): Canvas = watermark(text, 0.5)

@@ -15,7 +15,7 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.{ Image, Filter }
+import com.sksamuel.scrimage.{Image, Filter}
 import java.awt.Graphics2D
 import thirdparty.romainguy.BlendComposite
 import thirdparty.romainguy.BlendComposite.BlendingMode
@@ -30,6 +30,6 @@ object SnowFilter extends Filter {
     g2.setComposite(new BlendComposite(BlendingMode.SCREEN, 1.0f))
     g2.drawImage(snow.scaleTo(image.width, image.height).awt, 0, 0, null)
     g2.dispose()
-    image.updateFromAWT()
+    //image.updateFromAWT()
   }
 }

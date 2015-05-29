@@ -1,8 +1,10 @@
 package com.sksamuel.scrimage.scaling
 
-import com.sksamuel.scrimage.{ Image, Raster }
+import java.awt.image.Raster
 
-import scala.concurrent.{ Await, Future, blocking }
+import com.sksamuel.scrimage.Image
+
+import scala.concurrent.{Await, Future, blocking}
 import scala.concurrent.duration._
 
 object ResampleOpScala {
@@ -182,131 +184,134 @@ object ResampleOpScala {
     val hSampling = createSubSampling(filter, srcWidth, dstWidth)
     val vSampling = createSubSampling(filter, srcHeight, dstHeight)
 
-    val srcRaster = img.raster
-    val workRaster = srcRaster.empty(dstWidth, srcHeight)
-    val outRaster = srcRaster.empty(dstWidth, dstHeight)
+    //    val srcRaster = img.raster
+    //    val workRaster = srcRaster.empty(dstWidth, srcHeight)
+    //    val outRaster = srcRaster.empty(dstWidth, dstHeight)
 
-    val horizontals = for (i <- 0 until numberOfThreads) yield {
-      val finalI = i
-      Future {
-        blocking {
-          horizontallyFromSrcToWork(
-            srcRaster, workRaster,
-            finalI, numberOfThreads, hSampling)
-        }
-      }
-    }
-    Await.ready(Future sequence horizontals, MAX_WAIT_PER_PASS)
+    //    val horizontals = for ( i <- 0 until numberOfThreads ) yield {
+    //      val finalI = i
+    //      Future {
+    //        blocking {
+    //          horizontallyFromSrcToWork(
+    //            srcRaster, workRaster,
+    //            finalI, numberOfThreads, hSampling)
+    //        }
+    //      }
+    //    }
+    //    Await.ready(Future sequence horizontals, MAX_WAIT_PER_PASS)
+    //
+    //    val verticles = for ( i <- 0 until numberOfThreads ) yield {
+    //      val finalI = i
+    //      Future {
+    //        blocking {
+    //          verticalFromWorkToDst(
+    //            workRaster, outRaster,
+    //            finalI, numberOfThreads, vSampling)
+    //        }
+    //      }
+    //    }
+    //    Await.ready(Future sequence verticles, MAX_WAIT_PER_PASS)
+    //    new Image(outRaster)
 
-    val verticles = for (i <- 0 until numberOfThreads) yield {
-      val finalI = i
-      Future {
-        blocking {
-          verticalFromWorkToDst(
-            workRaster, outRaster,
-            finalI, numberOfThreads, vSampling)
-        }
-      }
-    }
-    Await.ready(Future sequence verticles, MAX_WAIT_PER_PASS)
-    new Image(outRaster)
+    // todo reimplement
+    ???
   }
 
   private[this] def horizontallyFromSrcToWork(src: Raster,
                                               work: Raster,
                                               start: Int,
                                               delta: Int,
-                                              hSampling: SubSamplingData) {
+                                              hSampling: SubSamplingData): Unit = {
     var x = 0
     var y = start
     var j = 0
     var index = 0
 
-    val pixelSize = src.n_channel * 1
-
-    val srcHeight = src.height
-    val dstWidth = work.width
-    val n_channel = src.n_channel
-    var sample = Array.ofDim[Float](n_channel)
-    var c = 0
-    var c0 = 0
-
-    while (y < srcHeight) {
-      x = dstWidth - 1
-      j = 0
-      while (x >= 0) {
-        java.util.Arrays.fill(sample, 0.0f)
-        index = x * hSampling.numContributors
-        j = hSampling.arrN(x) - 1
-
-        while (j >= 0) {
-          c0 = src.offset(hSampling.arrPixel(index), y)
-          c = 0
-          while (c < n_channel) {
-            sample(c) += (src.readChannel(c0)) * hSampling.arrWeight(index)
-            c += 1
-            c0 += 1
-          }
-          index += 1
-          j -= 1
-        }
-        c0 = work.offset(x, y)
-        c = 0
-        while (c < n_channel) {
-          work.writeChannel(c0)(fit(sample(c), work.maxChannelValue))
-          c += 1
-          c0 += 1
-        }
-        x -= 1
-      }
-      y = y + delta
-    }
+    //    val pixelSize = src.n_channel * 1
+    //
+    //    val srcHeight = src.height
+    //    val dstWidth = work.width
+    //    val n_channel = src.n_channel
+    //    var sample = Array.ofDim[Float](n_channel)
+    //    var c = 0
+    //    var c0 = 0
+    //
+    //    while (y < srcHeight) {
+    //      x = dstWidth - 1
+    //      j = 0
+    //      while (x >= 0) {
+    //        java.util.Arrays.fill(sample, 0.0f)
+    //        index = x * hSampling.numContributors
+    //        j = hSampling.arrN(x) - 1
+    //
+    //        while (j >= 0) {
+    //          c0 = src.offset(hSampling.arrPixel(index), y)
+    //          c = 0
+    //          while (c < n_channel) {
+    //            sample(c) += (src.readChannel(c0)) * hSampling.arrWeight(index)
+    //            c += 1
+    //            c0 += 1
+    //          }
+    //          index += 1
+    //          j -= 1
+    //        }
+    //        c0 = work.offset(x, y)
+    //        c = 0
+    //        while (c < n_channel) {
+    //          work.writeChannel(c0)(fit(sample(c), work.maxChannelValue))
+    //          c += 1
+    //          c0 += 1
+    //        }
+    //        x -= 1
+    //      }
+    //      y = y + delta
+    //    }
   }
 
   private[this] def verticalFromWorkToDst(work: Raster,
                                           out: Raster,
                                           start: Int,
                                           delta: Int,
-                                          vSampling: SubSamplingData) {
-    var x = start
-    var y = 0
-    val dstWidth = work.width
-    val dstHeight = out.height
-    val n_channel = work.n_channel
-    var sample = Array.ofDim[Float](n_channel)
-    var index = 0
-    var j = 0
-    var c = 0
-    var c0 = 0
-
-    while (x < dstWidth) {
-      y = dstHeight - 1
-      while (y >= 0) {
-        java.util.Arrays.fill(sample, 0.0f)
-        index = y * vSampling.numContributors
-        j = vSampling.arrN(y) - 1
-        while (j >= 0) {
-          c0 = work.offset(x, vSampling.arrPixel(index))
-          c = 0
-          while (c < n_channel) {
-            sample(c) += (work.readChannel(c0)) * vSampling.arrWeight(index)
-            c0 += 1
-            c += 1
-          }
-          index += 1
-          j -= 1
-        }
-        c0 = out.offset(x, y)
-        c = 0
-        while (c < n_channel) {
-          out.writeChannel(c0)(fit(sample(c), out.maxChannelValue))
-          c += 1
-          c0 += 1
-        }
-        y -= 1
-      }
-      x += delta
-    }
+                                          vSampling: SubSamplingData): Unit = {
+    //    var x = start
+    //    var y = 0
+    //    val dstWidth = work.width
+    //    val dstHeight = out.height
+    //    val n_channel = work.n_channel
+    //    var sample = Array.ofDim[Float](n_channel)
+    //    var index = 0
+    //    var j = 0
+    //    var c = 0
+    //    var c0 = 0
+    //
+    //    while (x < dstWidth) {
+    //      y = dstHeight - 1
+    //      while (y >= 0) {
+    //        java.util.Arrays.fill(sample, 0.0f)
+    //        index = y * vSampling.numContributors
+    //        j = vSampling.arrN(y) - 1
+    //        while (j >= 0) {
+    //          c0 = work.offset(x, vSampling.arrPixel(index))
+    //          c = 0
+    //          while (c < n_channel) {
+    //            sample(c) += (work.readChannel(c0)) * vSampling.arrWeight(index)
+    //            c0 += 1
+    //            c += 1
+    //          }
+    //          index += 1
+    //          j -= 1
+    //        }
+    //        c0 = out.offset(x, y)
+    //        c = 0
+    //        while (c < n_channel) {
+    //          out.writeChannel(c0)(fit(sample(c), out.maxChannelValue))
+    //          c += 1
+    //          c0 += 1
+    //        }
+    //        y -= 1
+    //      }
+    //      x += delta
+    //    }
   }
 
   private[this] def fit(f: Float, max: Int): Int = {

@@ -16,19 +16,26 @@
 
 package com.sksamuel.scrimage
 
-import java.io.{ File, OutputStream }
+import java.io.{File, OutputStream}
 
 import com.sksamuel.scrimage.Format.PNG
 import com.sksamuel.scrimage.PixelTools._
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod.Bicubic
 import com.sksamuel.scrimage.io.ImageWriter
-import org.apache.commons.io.{ FileUtils, IOUtils }
+import org.apache.commons.io.{FileUtils, IOUtils}
 
-/** @author Stephen Samuel */
+/**
+ * Read-only image operations.
+ *
+ * @author Stephen Samuel */
 trait ImageLike[R] {
 
-  lazy val points: Seq[(Int, Int)] = for (x <- 0 until width; y <- 0 until height) yield (x, y)
+  lazy val points: Seq[(Int, Int)] = for ( x <- 0 until width; y <- 0 until height ) yield (x, y)
+
+  /**
+   * Returns the centre coordinates for the image.
+   */
   lazy val center: (Int, Int) = (width / 2, height / 2)
   lazy val radius: Int = Math.sqrt(Math.pow(width / 2.0, 2) + Math.pow(height / 2.0, 2)).toInt
   lazy val dimensions: (Int, Int) = (width, height)
@@ -44,37 +51,39 @@ trait ImageLike[R] {
   def width: Int
   def height: Int
 
-  def forall(f: (Int, Int, Int) => Boolean): Boolean = points.forall(p => f(p._1, p._2, pixel(p)))
-  def foreach(f: (Int, Int, Int) => Unit): Unit = points.foreach(p => f(p._1, p._2, pixel(p)))
+  def forall(f: (Int, Int, Pixel) => Boolean): Boolean = points.forall(p => f(p._1, p._2, pixel(p)))
+  def foreach(f: (Int, Int, Pixel) => Unit): Unit = points.foreach(p => f(p._1, p._2, pixel(p)))
 
-  def row(y: Int): Array[Int] = pixels(0, y, width, 1)
-  def col(x: Int): Array[Int] = pixels(x, 0, 1, height)
+  def row(y: Int): Array[Pixel] = pixels(0, y, width, 1)
+  def col(x: Int): Array[Pixel] = pixels(x, 0, 1, height)
 
-  /** Returns the pixel at the given coordinates as a integer in ARGB format.
-    *
-    * @param x the x coordinate of the pixel to grab
-    * @param y the y coordinate of the pixel to grab
-    *
-    * @return the ARGB value of the pixel
-    */
-  def pixel(x: Int, y: Int): Int
+  /**
+   * Returns the pixel at the given coordinates.
+   *
+   * @param x the x coordinate of the pixel to grab
+   * @param y the y coordinate of the pixel to grab
+   *
+   * @return the Pixel at the location
+   */
+  def pixel(x: Int, y: Int): Pixel
 
   /** Returns the color at the given coordinates.
     *
     * @return the RGBColor value of the pixel
     */
-  def color(x: Int, y: Int): RGBColor = pixel(x, y)
+  def color(x: Int, y: Int): RGBColor = pixel(x, y).toARGBInt
 
-  /** Returns the ARGB components for the pixel at the given coordinates
-    *
-    * @param x the x coordinate of the pixel component to grab
-    * @param y the y coordinate of the pixel component to grab
-    *
-    * @return an array containing ARGB components in that order.
-    */
+  /**
+   * Returns the ARGB components for the pixel at the given coordinates
+   *
+   * @param x the x coordinate of the pixel component to grab
+   * @param y the y coordinate of the pixel component to grab
+   *
+   * @return an array containing ARGB components in that order.
+   */
   def argb(x: Int, y: Int): Array[Int] = {
     val p = pixel(x, y)
-    Array(alpha(p), red(p), green(p), blue(p))
+    Array(p.alpha, p.red, p.green, p.blue)
   }
 
   /** Returns the ARGB components for all pixels in this image
@@ -82,16 +91,16 @@ trait ImageLike[R] {
     * @return an array containing ARGB components in that order.
     */
   def argb: Array[Array[Int]] = {
-    pixels.map(p => Array(alpha(p), red(p), green(p), blue(p)))
+    pixels.map(p => Array(p.alpha, p.red, p.green, p.blue))
   }
 
   def rgb(x: Int, y: Int): Array[Int] = {
     val p = pixel(x, y)
-    Array(red(p), green(p), blue(p))
+    Array(p.red, p.green, p.blue)
   }
 
   def rgb: Array[Array[Int]] = {
-    pixels.map(p => Array(red(p), green(p), blue(p)))
+    pixels.map(p => Array(p.red, p.green, p.blue))
   }
 
   /** Returns the pixel at the given coordinates as a integer in RGB format.
@@ -100,7 +109,7 @@ trait ImageLike[R] {
     *
     * @return the ARGB value of the pixel
     */
-  def pixel(p: (Int, Int)): Int = pixel(p._1, p._2)
+  def pixel(p: (Int, Int)): Pixel = pixel(p._1, p._2)
 
   /** Returns a rectangular region within the given boundaries as a single
     * dimensional array of integers.
@@ -114,7 +123,7 @@ trait ImageLike[R] {
     * @param h the height of the region
     * @return an Array of pixels for the region
     */
-  def pixels(x: Int, y: Int, w: Int, h: Int): Array[Int] = {
+  def pixels(x: Int, y: Int, w: Int, h: Int): Array[Pixel] = {
     for (
       y1 <- Array.range(y, y + h);
       x1 <- Array.range(x, x + w)
@@ -164,40 +173,43 @@ trait ImageLike[R] {
     *
     * @return the number of pixels
     */
-  def count: Int = pixels.size
+  def count: Int = pixels.length
 
   /** Returns a set of the distinct colours used in this image.
     *
     * @return the set of distinct Colors
     */
-  def colours: Set[Color] = pixels.map(argb => Color(argb)).toSet
+  def colours: Set[Color] = pixels.map(argb => Color(argb.toARGBInt)).toSet
 
   /** Counts the number of pixels with the given colour.
     *
     * @param color the colour to detect.
     * @return the number of pixels that matched the colour of the given pixel
     */
-  def count(color: Color) = pixels.find(_ == color.toInt).size
+  def count(color: Color): Int = pixels.find(_ == color.toInt).size
 
-  /** Creates a new image with the same data as this image.
-    * Any operations to the copied image will not write back to the original.
-    * Images can be copied multiple times as well as copies copied etc.
-    *
-    * @return A copy of this image.
-    */
+  /**
+   * Creates a new image with the same data as this image.
+   * Any operations to the copied image will not write back to the original.
+   *
+   * @return A copy of this image.
+   */
   def copy: Image
 
-  def cover(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod = Bicubic, position: Position = Center): R
+  def cover(targetWidth: Int,
+            targetHeight: Int,
+            scaleMethod: ScaleMethod = Bicubic,
+            position: Position = Center): R
 
-  /** Maps the pixels of this image into another image by applying the given function to each point.
+  /** Maps the pixels of this image into another image by applying the given function to each pixel.
     *
     * The function accepts three parameters: x,y,p where x and y are the coordinates of the pixel
-    * being transformed and p is the current pixel value in ABGR format.
+    * being transformed and p is the pixel at that location.
     *
     * @param f the function to transform pixel x,y with existing value p into new pixel value p' (p prime)
     * @return
     */
-  def map(f: (Int, Int, Int) => Int): R
+  def map(f: (Int, Int, Pixel) => Pixel): R
 
   /** Creates a copy of this image with the given filter applied.
     * The original (this) image is unchanged.
@@ -218,7 +230,10 @@ trait ImageLike[R] {
                  scaleMethod: ScaleMethod = Bicubic, position: Position = Center): R =
     fit(targetWidth, (targetWidth / width.toDouble * height).toInt, color, scaleMethod, position)
 
-  def resizeTo(targetWidth: Int, targetHeight: Int, position: Position, background: Color = X11Colorlist.White): R
+  def resizeTo(targetWidth: Int,
+               targetHeight: Int,
+               position: Position,
+               background: Color = X11Colorlist.White): R
 
   /** Resize will resize the canvas, it will not scale the image.
     * This is like a "canvas resize" in Photoshop.
@@ -239,7 +254,9 @@ trait ImageLike[R] {
     *
     * @return a new Image that is the result of resizing the canvas.
     */
-  def resizeToHeight(targetHeight: Int, position: Position = Center, background: Color = X11Colorlist.White): R =
+  def resizeToHeight(targetHeight: Int,
+                     position: Position = Center,
+                     background: Color = X11Colorlist.White): R =
     resizeTo((targetHeight / height.toDouble * height).toInt, targetHeight, position, background)
 
   /** Resize will resize the canvas, it will not scale the image.
@@ -299,25 +316,27 @@ trait ImageLike[R] {
   def scaleToHeight(targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): R =
     scaleTo((targetHeight / height.toDouble * width).toInt, targetHeight, scaleMethod)
 
-  /** Scale will resize the canvas and the image.
-    * This is like a "image resize" in Photoshop.
-    *
-    * @param scaleFactor the target increase or decrease. 1 is the same as original.
-    * @param scaleMethod the type of scaling method to use.
-    *
-    * @return a new Image that is the result of scaling this image
-    */
+  /**
+   * Scale will resize the canvas and the image.
+   * This is like a "image resize" in Photoshop.
+   *
+   * @param scaleFactor the target increase or decrease. 1 is the same as original.
+   * @param scaleMethod the type of scaling method to use.
+   *
+   * @return a new Image that is the result of scaling this image
+   */
   def scale(scaleFactor: Double, scaleMethod: ScaleMethod = Bicubic): R =
     scaleTo((width * scaleFactor).toInt, (height * scaleFactor).toInt, scaleMethod)
 
-  def pixels: Array[Int]
+  def pixels: Array[Pixel]
 
-  /** Returns true if a pixel with the given color exists.
-    *
-    * @param color the pixel colour to look for.
-    * @return true if there exists at least one pixel that has the given pixels color
-    */
-  def exists(color: Color) = pixels.exists(argb => Color(argb) == color)
+  /**
+   * Returns true if a pixel with the given color exists.
+   *
+   * @param color the pixel colour to look for.
+   * @return true if there exists at least one pixel that has the given pixels color
+   */
+  def exists(color: Color): Boolean = pixels.exists(pixel => pixel.toARGBInt == color.toRGB.toInt)
 
   override def equals(obj: Any): Boolean = obj match {
     case other: ImageLike[_] => other.pixels.sameElements(pixels)

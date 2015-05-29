@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.{ Image, Filter, PipelineFilter }
-import java.awt.{ Graphics2D, Color }
+import com.sksamuel.scrimage.{Image, Filter, PipelineFilter}
+import java.awt.{Graphics2D, Color}
 import thirdparty.romainguy.BlendComposite
 import thirdparty.romainguy.BlendComposite.BlendingMode
 
@@ -21,7 +21,7 @@ object BackgroundBlendFilter extends Filter {
     g3.setComposite(BlendComposite.getInstance(BlendingMode.ADD, 1f))
     g3.drawImage(background.awt, 0, 0, null)
     g3.dispose()
-    image.updateFromAWT()
+    //  image.updateFromAWT()
   }
 }
 
