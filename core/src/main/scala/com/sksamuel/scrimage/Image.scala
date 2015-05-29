@@ -18,16 +18,16 @@ package com.sksamuel.scrimage
 
 import java.awt._
 import java.awt.geom.AffineTransform
-import java.awt.image.{AffineTransformOp, BufferedImage, DataBufferInt}
-import java.io.{ByteArrayInputStream, File, InputStream}
+import java.awt.image.{ AffineTransformOp, BufferedImage, DataBufferInt }
+import java.io.{ ByteArrayInputStream, File, InputStream }
 import javax.imageio.ImageIO
 
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.io.ImageWriter
 import com.sksamuel.scrimage.scaling.ResampleOpScala
-import org.apache.commons.io.{FileUtils, IOUtils}
-import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
+import org.apache.commons.io.{ FileUtils, IOUtils }
+import thirdparty.mortennobel.{ ResampleFilters, ResampleOp }
 
 import scala.List
 import scala.language.implicitConversions
@@ -68,9 +68,10 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] w
   }
 
   private[scrimage] def mapInPlace(f: (Int, Int, Pixel) => Pixel): this.type = {
-    points.foreach { case (x, y) =>
-      val newpixel = f(x, y, pixel(x, y))
-      awt.setRGB(x, y, newpixel.toARGBInt)
+    points.foreach {
+      case (x, y) =>
+        val newpixel = f(x, y, pixel(x, y))
+        awt.setRGB(x, y, newpixel.toARGBInt)
     }
     this
   }
@@ -175,17 +176,17 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] w
       (xInt, xWeight) <- xIntsAndWeights;
       (yInt, yWeight) <- yIntsAndWeights
     ) yield {
-        val weight = xWeight * yWeight
-        if (weight == 0) List(0.0, 0.0, 0.0, 0.0)
-        else {
-          val px = pixel(xInt, yInt)
-          List(
-            weight * px.alpha,
-            weight * px.red,
-            weight * px.green,
-            weight * px.blue)
-        }
+      val weight = xWeight * yWeight
+      if (weight == 0) List(0.0, 0.0, 0.0, 0.0)
+      else {
+        val px = pixel(xInt, yInt)
+        List(
+          weight * px.alpha,
+          weight * px.red,
+          weight * px.green,
+          weight * px.blue)
       }
+    }
 
     // We perform the weighted averaging (a summation).
     // First though, we need to transpose so that we sum within channels,
@@ -238,12 +239,11 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] w
       yWidth.round.toInt)
   }
 
-  /**
-   * Returns all the patches of a given size in the image, assuming pixel
-   * alignment (no subpixel extraction).
-   *
-   * The patches are returned as a sequence of closures.
-   */
+  /** Returns all the patches of a given size in the image, assuming pixel
+    * alignment (no subpixel extraction).
+    *
+    * The patches are returned as a sequence of closures.
+    */
   def patches(patchWidth: Int, patchHeight: Int): IndexedSeq[() => Image] = {
     // to do reimplement
     //    for (
@@ -285,7 +285,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] w
       //                array
       case _ =>
         val pixels = Array.ofDim[Pixel](width * height)
-        for ( x <- 0 until width; y <- 0 until height ) {
+        for (x <- 0 until width; y <- 0 until height) {
           pixels(y * width + x) = new ARGBPixel(awt.getRGB(x, y))
         }
         pixels
@@ -326,22 +326,20 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] w
     ???
   }
 
-  /**
-   * Flips this image horizontally.
-   *
-   * @return The result of flipping this image horizontally.
-   */
+  /** Flips this image horizontally.
+    *
+    * @return The result of flipping this image horizontally.
+    */
   def flipX: Image = {
     val tx = AffineTransform.getScaleInstance(-1, 1)
     tx.translate(-width, 0)
     flip(tx)
   }
 
-  /**
-   * Flips this image vertically.
-   *
-   * @return The result of flipping this image vertically.
-   */
+  /** Flips this image vertically.
+    *
+    * @return The result of flipping this image vertically.
+    */
   def flipY: Image = {
     val tx = AffineTransform.getScaleInstance(1, -1)
     tx.translate(0, -height)
@@ -354,18 +352,16 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] w
     new Image(flipped)
   }
 
-  /**
-   * Returns a copy of this image rotated 90 degrees anti-clockwise (counter clockwise to US English speakers).
-   *
-   * @return
-   */
+  /** Returns a copy of this image rotated 90 degrees anti-clockwise (counter clockwise to US English speakers).
+    *
+    * @return
+    */
   def rotateLeft: Image = rotate(Math.PI / 2)
 
-  /**
-   * Returns a copy of this image rotated 90 degrees clockwise.
-   *
-   * @return
-   */
+  /** Returns a copy of this image rotated 90 degrees clockwise.
+    *
+    * @return
+    */
   def rotateRight: Image = rotate(-Math.PI / 2)
 
   private def rotate(angle: Double): Image = {
@@ -498,36 +494,34 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] w
     }
   }
 
-  /**
-   * Returns a new Image that is the result of overlaying the supplied image over this image
-   * The x / y parameters determine where the (0,0) coordinate of the overlay should be placed.
-   *
-   * If the image to render exceeds the boundaries of the source image, then the excess
-   * pixels will be ignored.
-   *
-   * @param overlayImage the image to overlay.
-   *
-   * @return a new Image with the given image overlaid.
-   */
+  /** Returns a new Image that is the result of overlaying the supplied image over this image
+    * The x / y parameters determine where the (0,0) coordinate of the overlay should be placed.
+    *
+    * If the image to render exceeds the boundaries of the source image, then the excess
+    * pixels will be ignored.
+    *
+    * @param overlayImage the image to overlay.
+    *
+    * @return a new Image with the given image overlaid.
+    */
   def overlay(overlayImage: Image, x: Int = 0, y: Int = 0): Image = {
     val copy = toNewBufferedImage
     copy.getGraphics.drawImage(overlayImage.awt, 0, 0, null)
     new Image(copy)
   }
 
-  /**
-   * Crops an image by removing cols and rows that are composed only of a single
-   * given color.
-   *
-   * Eg, if an image had a 20 pixel row of white at the top, and this method was
-   * invoked with Color.White then the image returned would have that 20 pixel row
-   * removed.
-   *
-   * This method is useful when images have an abudance of a single colour around them.
-   *
-   * @param color the color to match
-   * @return
-   */
+  /** Crops an image by removing cols and rows that are composed only of a single
+    * given color.
+    *
+    * Eg, if an image had a 20 pixel row of white at the top, and this method was
+    * invoked with Color.White then the image returned would have that 20 pixel row
+    * removed.
+    *
+    * This method is useful when images have an abudance of a single colour around them.
+    *
+    * @param color the color to match
+    * @return
+    */
   def autocrop(color: Color): Image = {
     def uniform(color: Color, pixels: Array[Pixel]) = pixels.forall(p => p == color.argb)
     def scanright(col: Int, image: Image): Int = {
@@ -745,40 +739,37 @@ object Image {
     new Image(target)
   }
 
-  /**
-   * Creates a new Image which is a copy of the given image.
-   * Any operations to the new object do not affect the original image.
-   *
-   * @param image the image to copy
-   *
-   * @return a new Image object.
-   */
+  /** Creates a new Image which is a copy of the given image.
+    * Any operations to the new object do not affect the original image.
+    *
+    * @param image the image to copy
+    *
+    * @return a new Image object.
+    */
   def apply(image: Image): Image = image.copy
 
-  /**
-   * Return a new Image with the given width and height, with all pixels set to the supplied colour.
-   *
-   * @param width the width of the new Image
-   * @param height the height of the new Image
-   * @param color the color to set all pixels to
-   *
-   * @return the new Image
-   */
+  /** Return a new Image with the given width and height, with all pixels set to the supplied colour.
+    *
+    * @param width the width of the new Image
+    * @param height the height of the new Image
+    * @param color the color to set all pixels to
+    *
+    * @return the new Image
+    */
   def filled(width: Int, height: Int, color: Color = Color.White): Image = {
     val target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
     target.getRaster.setPixel(0, 0, Array.fill(width * height)(color.toRGB.toInt))
     new Image(target)
   }
 
-  /**
-   * Create a new Image that is the given width and height with no initialization. This will usually result in a
-   * default black background (all pixel data defaulting to zeroes) but that is not guaranteed.
-   *
-   * @param width the width of the new image
-   * @param height the height of the new image
-   *
-   * @return the new Image with the given width and height
-   */
+  /** Create a new Image that is the given width and height with no initialization. This will usually result in a
+    * default black background (all pixel data defaulting to zeroes) but that is not guaranteed.
+    *
+    * @param width the width of the new image
+    * @param height the height of the new image
+    *
+    * @return the new Image with the given width and height
+    */
   def empty(width: Int, height: Int): Image = {
     val target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
     new Image(target)

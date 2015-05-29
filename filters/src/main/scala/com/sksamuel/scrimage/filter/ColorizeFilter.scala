@@ -15,8 +15,8 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.{Image, Filter}
-import java.awt.{Color, Graphics2D}
+import com.sksamuel.scrimage.{ Image, Filter }
+import java.awt.{ Color, Graphics2D }
 
 /** @author Stephen Samuel */
 class ColorizeFilter(color: Color) extends Filter {

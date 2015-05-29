@@ -46,28 +46,23 @@ object RGBPixel {
 
 trait Pixel {
 
-  /**
-   * Returns the alpha component as an Int from 0 to 255
-   */
+  /** Returns the alpha component as an Int from 0 to 255
+    */
   def alpha: Int
 
-  /**
-   * Returns the red component as an Int from 0 to 255
-   */
+  /** Returns the red component as an Int from 0 to 255
+    */
   def red: Int
 
-  /**
-   * Returns the green component as an Int from 0 to 255
-   */
+  /** Returns the green component as an Int from 0 to 255
+    */
   def green: Int
 
-  /**
-   * Returns the blue component as an Int from 0 to 255
-   */
+  /** Returns the blue component as an Int from 0 to 255
+    */
   def blue: Int
 
-  /**
-   * Returns an compacted int for ARGB
-   */
+  /** Returns an compacted int for ARGB
+    */
   def toARGBInt: Int
 }

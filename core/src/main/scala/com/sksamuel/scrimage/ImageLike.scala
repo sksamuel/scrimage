@@ -25,17 +25,16 @@ import com.sksamuel.scrimage.ScaleMethod.Bicubic
 import com.sksamuel.scrimage.io.ImageWriter
 import org.apache.commons.io.{FileUtils, IOUtils}
 
-/**
- * Read-only image operations.
- *
- * @author Stephen Samuel */
+/** Read-only image operations.
+  *
+  * @author Stephen Samuel
+  */
 trait ImageLike[R] {
 
   lazy val points: Seq[(Int, Int)] = for ( x <- 0 until width; y <- 0 until height ) yield (x, y)
 
-  /**
-   * Returns the centre coordinates for the image.
-   */
+  /** Returns the centre coordinates for the image.
+    */
   lazy val center: (Int, Int) = (width / 2, height / 2)
   lazy val radius: Int = Math.sqrt(Math.pow(width / 2.0, 2) + Math.pow(height / 2.0, 2)).toInt
   lazy val dimensions: (Int, Int) = (width, height)
@@ -57,14 +56,13 @@ trait ImageLike[R] {
   def row(y: Int): Array[Pixel] = pixels(0, y, width, 1)
   def col(x: Int): Array[Pixel] = pixels(x, 0, 1, height)
 
-  /**
-   * Returns the pixel at the given coordinates.
-   *
-   * @param x the x coordinate of the pixel to grab
-   * @param y the y coordinate of the pixel to grab
-   *
-   * @return the Pixel at the location
-   */
+  /** Returns the pixel at the given coordinates.
+    *
+    * @param x the x coordinate of the pixel to grab
+    * @param y the y coordinate of the pixel to grab
+    *
+    * @return the Pixel at the location
+    */
   def pixel(x: Int, y: Int): Pixel
 
   /** Returns the color at the given coordinates.
@@ -73,14 +71,13 @@ trait ImageLike[R] {
     */
   def color(x: Int, y: Int): RGBColor = pixel(x, y).toARGBInt
 
-  /**
-   * Returns the ARGB components for the pixel at the given coordinates
-   *
-   * @param x the x coordinate of the pixel component to grab
-   * @param y the y coordinate of the pixel component to grab
-   *
-   * @return an array containing ARGB components in that order.
-   */
+  /** Returns the ARGB components for the pixel at the given coordinates
+    *
+    * @param x the x coordinate of the pixel component to grab
+    * @param y the y coordinate of the pixel component to grab
+    *
+    * @return an array containing ARGB components in that order.
+    */
   def argb(x: Int, y: Int): Array[Int] = {
     val p = pixel(x, y)
     Array(p.alpha, p.red, p.green, p.blue)
@@ -130,70 +127,75 @@ trait ImageLike[R] {
     ) yield pixel(x1, y1)
   }
 
-  /** Creates a new image which is the result of this image
-    * padded with the given number of pixels on each edge.
-    *
-    * Eg, requesting a pad of 30 on an image of 250,300 will result
-    * in a new image with a canvas size of 310,360
-    *
-    * @param size the number of pixels to add on each edge
-    * @param color the background of the padded area.
-    *
-    * @return A new image that is the result of the padding
-    */
+  /**
+   * Creates a new image which is the result of this image
+   * padded with the given number of pixels on each edge.
+   *
+   * Eg, requesting a pad of 30 on an image of 250,300 will result
+   * in a new image with a canvas size of 310,360
+   *
+   * @param size the number of pixels to add on each edge
+   * @param color the background of the padded area.
+   *
+   * @return A new image that is the result of the padding
+   */
   def pad(size: Int, color: Color = X11Colorlist.White): R = {
     padTo(width + size * 2, height + size * 2, color)
   }
 
-  /** Creates a new image which is the result of this image padded to the canvas size specified.
-    * If this image is already larger than the specified pad then the sizes of the existing
-    * image will be used instead.
-    *
-    * Eg, requesting a pad of 200,200 on an image of 250,300 will result
-    * in keeping the 250,300.
-    *
-    * Eg2, requesting a pad of 300,300 on an image of 400,250 will result
-    * in the width staying at 400 and the height padded to 300.
-    *
-    * @param targetWidth the size of the output canvas width
-    * @param targetHeight the size of the output canvas height
-    * @param color the background of the padded area.
-    *
-    * @return A new image that is the result of the padding
-    */
+  /**
+   * Creates a new image which is the result of this image padded to the canvas size specified.
+   * If this image is already larger than the specified pad then the sizes of the existing
+   * image will be used instead.
+   *
+   * Eg, requesting a pad of 200,200 on an image of 250,300 will result
+   * in keeping the 250,300.
+   *
+   * Eg2, requesting a pad of 300,300 on an image of 400,250 will result
+   * in the width staying at 400 and the height padded to 300.
+   *
+   * @param targetWidth the size of the output canvas width
+   * @param targetHeight the size of the output canvas height
+   * @param color the background of the padded area.
+   *
+   * @return A new image that is the result of the padding
+   */
   def padTo(targetWidth: Int, targetHeight: Int, color: Color = X11Colorlist.White): R
 
-  /** Creates an empty Image with the same dimensions of this image.
-    *
-    * @return a new Image that is a clone of this image but with uninitialized data
-    */
+  /**
+   * Creates an empty Image with the same dimensions of this image.
+   *
+   * @return a new Image that is a clone of this image but with uninitialized data
+   */
   def empty: Image
 
-  /** Returns the number of pixels in the image.
-    *
-    * @return the number of pixels
-    */
+  /**
+   * Returns the number of pixels in the image.
+   *
+   * @return the number of pixels
+   */
   def count: Int = pixels.length
 
-  /** Returns a set of the distinct colours used in this image.
-    *
-    * @return the set of distinct Colors
-    */
+  /**
+   * Returns a set of the distinct colours used in this image.
+   *
+   * @return the set of distinct Colors
+   */
   def colours: Set[Color] = pixels.map(argb => Color(argb.toARGBInt)).toSet
 
-  /** Counts the number of pixels with the given colour.
-    *
-    * @param color the colour to detect.
-    * @return the number of pixels that matched the colour of the given pixel
-    */
+  /**
+   * Counts the number of pixels with the given colour.
+   *
+   * @param color the colour to detect.
+   * @return the number of pixels that matched the colour of the given pixel
+   */
   def count(color: Color): Int = pixels.find(_ == color.toInt).size
 
-  /**
-   * Creates a new image with the same data as this image.
-   * Any operations to the copied image will not write back to the original.
-   *
-   * @return A copy of this image.
-   */
+  /** Creates a new image with the same data as this image.
+    * Any operations to the copied image will not write back to the original.
+    *
+    * @return A copy of this image.
+    */
   def copy: Image
 
   def cover(targetWidth: Int,
@@ -316,26 +318,24 @@ trait ImageLike[R] {
   def scaleToHeight(targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): R =
     scaleTo((targetHeight / height.toDouble * width).toInt, targetHeight, scaleMethod)
 
-  /**
-   * Scale will resize the canvas and the image.
-   * This is like a "image resize" in Photoshop.
-   *
-   * @param scaleFactor the target increase or decrease. 1 is the same as original.
-   * @param scaleMethod the type of scaling method to use.
-   *
-   * @return a new Image that is the result of scaling this image
-   */
+  /** Scale will resize the canvas and the image.
+    * This is like a "image resize" in Photoshop.
+    *
+    * @param scaleFactor the target increase or decrease. 1 is the same as original.
+    * @param scaleMethod the type of scaling method to use.
+    *
+    * @return a new Image that is the result of scaling this image
+    */
   def scale(scaleFactor: Double, scaleMethod: ScaleMethod = Bicubic): R =
     scaleTo((width * scaleFactor).toInt, (height * scaleFactor).toInt, scaleMethod)
 
   def pixels: Array[Pixel]
 
-  /**
-   * Returns true if a pixel with the given color exists.
-   *
-   * @param color the pixel colour to look for.
-   * @return true if there exists at least one pixel that has the given pixels color
-   */
+  /** Returns true if a pixel with the given color exists.
+    *
+    * @param color the pixel colour to look for.
+    * @return true if there exists at least one pixel that has the given pixels color
+    */
   def exists(color: Color): Boolean = pixels.exists(pixel => pixel.toARGBInt == color.toRGB.toInt)
 
   override def equals(obj: Any): Boolean = obj match {

@@ -15,7 +15,7 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.{ARGBPixel, Filter, Image, Pixel}
+import com.sksamuel.scrimage.{ ARGBPixel, Filter, Image, Pixel }
 
 /** @author Stephen Samuel */
 class OpacityFilter(amount: Double) extends Filter {

@@ -1,11 +1,11 @@
 package com.sksamuel.scrimage.io
 
-import java.awt.image.{BufferedImage, Raster, ColorModel, DataBufferInt}
+import java.awt.image.{ BufferedImage, Raster, ColorModel, DataBufferInt }
 import java.io.InputStream
 
-import ar.com.hjg.pngj.{ImageLineInt, PngReader}
+import ar.com.hjg.pngj.{ ImageLineInt, PngReader }
 import com.sksamuel.scrimage.Format.PNG
-import com.sksamuel.scrimage.{Image, Format, MimeTypeChecker}
+import com.sksamuel.scrimage.{ Image, Format, MimeTypeChecker }
 
 object PNGReader extends ImageReader with MimeTypeChecker {
 
@@ -22,13 +22,13 @@ object PNGReader extends ImageReader with MimeTypeChecker {
     val matrix = Array.ofDim[Int](w * h)
 
     if (bitDepth <= 8) {
-      for ( row <- 0 until h ) {
+      for (row <- 0 until h) {
         // also: while(pngr.hasMoreRows())
         val scanline: Array[Byte] = pngr.readRow().asInstanceOf[ImageLineInt].getScanline.map(_.toByte)
         System.arraycopy(scanline, 0, matrix, row * rowSize, rowSize)
       }
     } else {
-      for ( row <- 0 until h ) {
+      for (row <- 0 until h) {
         // also: while(pngr.hasMoreRows())
         val scanline: Array[Int] = pngr.readRow().asInstanceOf[ImageLineInt].getScanline
         System.arraycopy(scanline, 0, matrix, row * rowSize, rowSize)

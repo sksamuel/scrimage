@@ -4,7 +4,7 @@ import java.awt.image.Raster
 
 import com.sksamuel.scrimage.Image
 
-import scala.concurrent.{Await, Future, blocking}
+import scala.concurrent.{ Await, Future, blocking }
 import scala.concurrent.duration._
 
 object ResampleOpScala {

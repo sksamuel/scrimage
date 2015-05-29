@@ -30,4 +30,3 @@ trait SanselanReader extends ImageReader {
   def read(in: InputStream): Image = Image(Sanselan.getBufferedImage(in))
 }
 
-

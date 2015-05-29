@@ -15,7 +15,7 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.{RGBPixel, PixelTools, Image, Filter}
+import com.sksamuel.scrimage.{ RGBPixel, PixelTools, Image, Filter }
 
 /** @author Stephen Samuel */
 object GrayscaleFilter extends Filter {

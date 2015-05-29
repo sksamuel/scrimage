@@ -1,9 +1,9 @@
 package com.sksamuel.scrimage.canvas
 
 import java.awt.image.BufferedImage
-import java.awt.{Font, Graphics2D, RenderingHints}
+import java.awt.{ Font, Graphics2D, RenderingHints }
 
-import com.sksamuel.scrimage.{Color, Composite, Image, X11Colorlist}
+import com.sksamuel.scrimage.{ Color, Composite, Image, X11Colorlist }
 
 import scala.language.implicitConversions
 

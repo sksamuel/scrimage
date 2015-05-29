@@ -17,7 +17,7 @@ package com.sksamuel.scrimage.filter
 
 import java.awt.Graphics2D
 
-import com.sksamuel.scrimage.{Image, Filter}
+import com.sksamuel.scrimage.{ Image, Filter }
 import thirdparty.misc.ThistleFilter
 
 /** @author Stephen Samuel */

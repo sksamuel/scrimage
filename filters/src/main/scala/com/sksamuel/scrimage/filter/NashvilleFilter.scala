@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.{Image, Filter, PipelineFilter}
-import java.awt.{Graphics2D, Color}
+import com.sksamuel.scrimage.{ Image, Filter, PipelineFilter }
+import java.awt.{ Graphics2D, Color }
 import thirdparty.romainguy.BlendComposite
 import thirdparty.romainguy.BlendComposite.BlendingMode
 
