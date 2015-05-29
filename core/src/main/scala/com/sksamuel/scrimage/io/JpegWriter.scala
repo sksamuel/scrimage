@@ -18,7 +18,7 @@ package com.sksamuel.scrimage.io
 
 import java.io.OutputStream
 import javax.imageio.stream.MemoryCacheImageOutputStream
-import javax.imageio.{ IIOImage, ImageIO, ImageWriteParam }
+import javax.imageio.{IIOImage, ImageIO, ImageWriteParam}
 
 import com.sksamuel.scrimage.Image
 import org.apache.commons.io.IOUtils
@@ -37,8 +37,12 @@ class JpegWriter(image: Image, compression: Int, progressive: Boolean) extends I
 
     val writer = ImageIO.getImageWritersByFormatName("jpeg").next()
     val params = writer.getDefaultWriteParam
-    params.setCompressionMode(ImageWriteParam.MODE_EXPLICIT)
-    params.setCompressionQuality(compression / 100f)
+    if (compression < 100) {
+      params.setCompressionMode(ImageWriteParam.MODE_EXPLICIT)
+      params.setCompressionQuality(compression / 100f)
+    } else {
+      params.setCompressionMode(ImageWriteParam.MODE_DISABLED)
+    }
     if (progressive)
       params.setProgressiveMode(ImageWriteParam.MODE_DEFAULT)
     else
