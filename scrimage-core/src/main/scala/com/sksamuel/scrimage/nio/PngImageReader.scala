@@ -1,15 +1,14 @@
-package com.sksamuel.scrimage.io
+package com.sksamuel.scrimage.nio
 
-import java.awt.image.{ BufferedImage, Raster, ColorModel, DataBufferInt }
+import java.awt.image.{BufferedImage, ColorModel, DataBufferInt, Raster}
 import java.io.InputStream
 
-import ar.com.hjg.pngj.{ ImageLineInt, PngReader }
-import com.sksamuel.scrimage.Format.PNG
-import com.sksamuel.scrimage.{ ARGBPixel, Image, Format, MimeTypeChecker }
+import ar.com.hjg.pngj.{ImageLineInt, PngReader}
+import com.sksamuel.scrimage.{ARGBPixel, Image}
 
-object PNGReader extends ImageReader with MimeTypeChecker {
+object PngImageReader extends ImageReader  {
 
-  def read(in: InputStream): Image = {
+  override def read(in: InputStream): Image = {
 
     val pngr = new PngReader(in)
 
@@ -18,10 +17,9 @@ object PNGReader extends ImageReader with MimeTypeChecker {
     val w = pngr.imgInfo.cols
     val h = pngr.imgInfo.rows
 
-    val rowSize = w * channels
     val matrix = Array.ofDim[Int](w * h)
 
-    for (row <- 0 until h) {
+    for ( row <- 0 until h ) {
       val scanline: Array[Int] = pngr.readRow().asInstanceOf[ImageLineInt].getScanline
       val pixels = scanline.grouped(channels).map { group =>
         channels match {
@@ -43,13 +41,12 @@ object PNGReader extends ImageReader with MimeTypeChecker {
     new Image(image)
   }
 
-  def readMimeType(input: InputStream): Option[PNG.type] = {
+  def supports(input: InputStream): Boolean = {
 
     val buff = Array.ofDim[Byte](8)
     input.read(buff)
     val expected = List[Char](0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A, 0x0A).map(_.toByte)
 
-    if (buff.toList == expected) Some(Format.PNG)
-    else None
+    buff.toList == expected
   }
 }

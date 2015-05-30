@@ -4,7 +4,8 @@ import java.io.{ByteArrayInputStream, InputStream}
 
 import com.drew.imaging.ImageMetadataReader
 import com.drew.metadata.Metadata
-import com.sksamuel.scrimage.{Image, Format}
+import com.sksamuel.scrimage.Image
+import com.sksamuel.scrimage.nio.PngWriter
 
 import scala.language.implicitConversions
 
@@ -17,7 +18,7 @@ object ImageMetadata {
   import scala.collection.JavaConverters._
 
   def fromImage(image: Image): ImageMetadata = {
-    val metadata = ImageMetadataReader.readMetadata(new ByteArrayInputStream(image.write(Format.PNG)))
+    val metadata = ImageMetadataReader.readMetadata(new ByteArrayInputStream(image.bytes(PngWriter.MinCompression)))
     fromMetadata(metadata)
   }
 

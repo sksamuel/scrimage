@@ -16,13 +16,8 @@
 
 package com.sksamuel.scrimage
 
-import java.io.{ File, OutputStream }
-
-import com.sksamuel.scrimage.Format.PNG
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod.Bicubic
-import com.sksamuel.scrimage.io.ImageWriter
-import org.apache.commons.io.{ FileUtils, IOUtils }
 
 /** Read-only image operations.
   *
@@ -30,7 +25,7 @@ import org.apache.commons.io.{ FileUtils, IOUtils }
   */
 trait ImageLike[R] {
 
-  lazy val points: Seq[(Int, Int)] = for (x <- 0 until width; y <- 0 until height) yield (x, y)
+  lazy val points: Seq[(Int, Int)] = for ( x <- 0 until width; y <- 0 until height ) yield (x, y)
 
   /** Returns the centre coordinates for the image.
     */
@@ -342,32 +337,4 @@ trait ImageLike[R] {
   }
 }
 
-trait WritableImageLike {
 
-  def writer[T <: ImageWriter](format: Format[T]): T
-
-  def write: Array[Byte] = write(Format.PNG)
-  def write(format: Format[_ <: ImageWriter]): Array[Byte] = writer(format).write()
-
-  def write(path: String) {
-    write(path, Format.PNG)
-  }
-  def write(path: String, format: Format[_ <: ImageWriter]) {
-    write(new File(path), format)
-  }
-  def write(file: File) {
-    write(file, Format.PNG)
-  }
-  def write(file: File, format: Format[_ <: ImageWriter]) {
-    val fos = FileUtils.openOutputStream(file)
-    write(fos, format)
-    IOUtils.closeQuietly(fos)
-  }
-  def write(out: OutputStream) {
-    write(out, PNG)
-  }
-  def write(out: OutputStream, format: Format[_ <: ImageWriter]) {
-    writer(format).write(out)
-  }
-
-}

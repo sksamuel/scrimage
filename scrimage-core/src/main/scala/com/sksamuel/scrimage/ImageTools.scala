@@ -27,7 +27,7 @@ object ImageTools {
   val SCALING_METHOD = java.awt.Image.SCALE_AREA_AVERAGING
 
   // write out the image to bytes
-  def toBytes(image: BufferedImage, format: String) = {
+  def toBytes(image: BufferedImage, format: String): Array[Byte] = {
     require(format != null)
     val output = new ByteArrayOutputStream
     ImageIO.write(image, format, output)

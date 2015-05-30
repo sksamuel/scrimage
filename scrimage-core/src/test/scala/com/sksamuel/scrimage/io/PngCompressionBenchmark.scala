@@ -1,8 +1,11 @@
 package com.sksamuel.scrimage.io
 
-import com.sksamuel.scrimage.{ Format, Image }
-import scala.concurrent.duration._
 import java.io.File
+
+import com.sksamuel.scrimage.Image
+import com.sksamuel.scrimage.nio.PngWriter
+
+import scala.concurrent.duration._
 
 /** @author Stephen Samuel */
 object PngCompressionBenchmark extends App {
@@ -11,7 +14,7 @@ object PngCompressionBenchmark extends App {
 
   for (c <- 0 to 9) {
     benchmarkN(1, string => println(s"Compression level $c took " + string)) {
-      image.writer(Format.PNG).withCompression(c).write(File.createTempFile(s"compressiontest$c", ".png"))
+      image.output(File.createTempFile(s"compressiontest$c", ".png"))(PngWriter(c))
     }
   }
 
@@ -27,10 +30,10 @@ object PngCompressionBenchmark extends App {
 class Stopwatch {
   var _start = 0l
   var _end = 0l
-  def start() = {
+  def start(): Unit = {
     _start = System.nanoTime()
   }
-  def stop() = {
+  def stop(): Unit = {
     _end = System.nanoTime()
   }
   def elapsed: FiniteDuration = (_end - _start).nanos

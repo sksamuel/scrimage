@@ -18,16 +18,16 @@ package com.sksamuel.scrimage
 
 import java.awt._
 import java.awt.geom.AffineTransform
-import java.awt.image.{ ColorModel, WritableRaster, Raster, AffineTransformOp, BufferedImage, DataBufferInt }
-import java.io.{ ByteArrayInputStream, File, InputStream }
+import java.awt.image.{AffineTransformOp, BufferedImage, ColorModel, DataBufferInt, Raster}
+import java.io.{ByteArrayInputStream, File, InputStream}
+import java.nio.file.Path
 import javax.imageio.ImageIO
 
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod._
-import com.sksamuel.scrimage.io.ImageWriter
-import com.sksamuel.scrimage.scaling.ResampleOpScala
-import org.apache.commons.io.{ FileUtils, IOUtils }
-import thirdparty.mortennobel.{ ResampleFilters, ResampleOp }
+import com.sksamuel.scrimage.nio.{PngWriter, ImageWriter}
+import org.apache.commons.io.{FileUtils, IOUtils}
+import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 
 import scala.List
 import scala.language.implicitConversions
@@ -41,7 +41,7 @@ class ImageParseException extends RuntimeException("Unparsable image")
   *
   * @author Stephen Samuel
   */
-class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] with WritableImageLike {
+class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] {
   require(awt != null, "Wrapping image cannot be null")
 
   lazy val width: Int = awt.getWidth
@@ -176,17 +176,17 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] w
       (xInt, xWeight) <- xIntsAndWeights;
       (yInt, yWeight) <- yIntsAndWeights
     ) yield {
-      val weight = xWeight * yWeight
-      if (weight == 0) List(0.0, 0.0, 0.0, 0.0)
-      else {
-        val px = pixel(xInt, yInt)
-        List(
-          weight * px.alpha,
-          weight * px.red,
-          weight * px.green,
-          weight * px.blue)
+        val weight = xWeight * yWeight
+        if (weight == 0) List(0.0, 0.0, 0.0, 0.0)
+        else {
+          val px = pixel(xInt, yInt)
+          List(
+            weight * px.alpha,
+            weight * px.red,
+            weight * px.green,
+            weight * px.blue)
+        }
       }
-    }
 
     // We perform the weighted averaging (a summation).
     // First though, we need to transpose so that we sum within channels,
@@ -285,7 +285,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] w
       //                array
       case _ =>
         val pixels = Array.ofDim[Pixel](width * height)
-        for (x <- 0 until width; y <- 0 until height) {
+        for ( x <- 0 until width; y <- 0 until height ) {
           pixels(y * width + x) = ARGBPixel(awt.getRGB(x, y))
         }
         pixels
@@ -645,12 +645,13 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] w
     */
   def filled(color: Color = Color.White): Image = Image.filled(width, height, color)
 
-  def writer[T <: ImageWriter](format: Format[T]): T = format.writer(this)
+  def bytes(implicit writer: ImageWriter): Array[Byte] = forWriter(writer).bytes
 
-  /** Clears all image data to the given color
-    */
-  @deprecated("use filled", "1.4")
-  def clear(color: Color): Image = filled(color)
+  def output(file: File)(implicit writer: ImageWriter): File = forWriter(writer).write(file)
+
+  def output(path: Path)(implicit writer: ImageWriter): Path = forWriter(writer).write(path)
+
+  def forWriter(writer: ImageWriter): WriteContext = new WriteContext(writer, this)
 }
 
 object Image {
@@ -778,6 +779,7 @@ object Image {
     val target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
     new Image(target)
   }
+
 }
 
 sealed trait ScaleMethod

@@ -2,18 +2,18 @@ package com.sksamuel.scrimage.filter
 
 import java.io.File
 
-import org.scalatest.{ OneInstancePerTest, BeforeAndAfter, FunSuite }
-import com.sksamuel.scrimage.{ Format, Image }
+import com.sksamuel.scrimage.Image
+import org.scalatest.FunSuite
 
 /** @author Stephen Samuel */
-class VignetteFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
+class VignetteFilterTest extends FunSuite {
 
   val original = Image(getClass.getResourceAsStream("/bird_small.png"))
 
   ignore("filter output matches expected") {
     val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_vignette.png"))
     val actual = original.filter(VignetteFilter())
-    actual.write(new File("vignette.png"), Format.PNG)
+    actual.output(new File("vignette.png"))
     assert(actual === expected)
   }
 }

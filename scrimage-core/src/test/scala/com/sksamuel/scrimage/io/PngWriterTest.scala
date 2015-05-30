@@ -1,49 +1,44 @@
 package com.sksamuel.scrimage.io
 
-import java.io.ByteArrayOutputStream
-
-import com.sksamuel.scrimage.{ Format, Image }
-import org.scalatest.{ BeforeAndAfter, FunSuite, OneInstancePerTest }
+import com.sksamuel.scrimage.Image
+import com.sksamuel.scrimage.nio.{PngImageReader, PngWriter}
+import org.scalatest.{Matchers, WordSpec}
 
 /** @author Stephen Samuel */
-class PngWriterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
+class PngWriterTest extends WordSpec with Matchers {
 
   val original = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird.jpg")).scaleTo(300, 200)
 
-  ignore("png output happy path") {
-    val out = new ByteArrayOutputStream()
-    original.write(out, Format.PNG)
+  "png write" should {
+    "png output happy path" in {
+      val bytes = original.bytes(PngWriter())
 
-    val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png"))
-    assert(expected.pixels.length === Image(out.toByteArray).pixels.length)
-    assert(expected.pixels.deep == Image(out.toByteArray).pixels.deep)
-    assert(expected == Image(out.toByteArray))
-  }
-
-  ignore("png compression happy path") {
-    for (i <- 0 to 9) {
-
-      val out = new ByteArrayOutputStream()
-      original.writer(Format.PNG).withCompression(i).write(out)
-
-      val expected = Image(getClass.getResourceAsStream(s"/com/sksamuel/scrimage/io/bird_compressed_$i.png"))
-      assert(expected.pixels.length === Image(out.toByteArray).pixels.length)
-      assert(expected.pixels.deep == Image(out.toByteArray).pixels.deep)
-      assert(expected == Image(out.toByteArray))
+      val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png"))
+      assert(expected.pixels.length === Image(bytes).pixels.length)
+      assert(expected.pixels.deep == Image(bytes).pixels.deep)
+      assert(expected == Image(bytes))
     }
-  }
+    "png compression happy path" ignore {
+      for ( i <- 0 to 9 ) {
 
-  test("png reader detects the correct mime type") {
-    val mime = PNGReader.readMimeType(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png"))
-    assert(mime === Some(Format.PNG))
-  }
+        val bytes = original.bytes(PngWriter().withCompression(i))
 
-  test("png reader reads an image correctly") {
-    val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png"))
-    val read = PNGReader.read(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png"))
-    read.write(new java.io.File("read_withPNGReader.png"))
-    assert(read.width === expected.width)
-    assert(read.height === expected.height)
-    assert(read === expected)
+        val expected = Image(getClass.getResourceAsStream(s"/com/sksamuel/scrimage/io/bird_compressed_$i.png"))
+        assert(expected.pixels.length === Image(bytes).pixels.length)
+        assert(expected.pixels.deep == Image(bytes).pixels.deep)
+        assert(expected == Image(bytes))
+      }
+    }
+    "png reader detects the correct mime type" in {
+      PngImageReader.supports(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png")) shouldBe true
+    }
+    "png reader reads an image correctly" in {
+      val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png"))
+      val actual = PngImageReader.read(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png"))
+      actual.output(new java.io.File("read_withPNGReader.png"))(PngWriter.MaxCompression)
+      assert(actual.width === expected.width)
+      assert(actual.height === expected.height)
+      assert(actual === expected)
+    }
   }
 }

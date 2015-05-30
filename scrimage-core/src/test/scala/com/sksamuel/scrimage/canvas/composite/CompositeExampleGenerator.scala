@@ -1,8 +1,10 @@
 package com.sksamuel.scrimage.canvas.composite
 
-import com.sksamuel.scrimage.{ Format, Composite, Image }
-import com.sksamuel.scrimage.canvas.Canvas._
 import java.io.File
+
+import com.sksamuel.scrimage.canvas.Canvas._
+import com.sksamuel.scrimage.nio.JpegWriter
+import com.sksamuel.scrimage.{Composite, Image}
 import org.apache.commons.io.FileUtils
 
 /** @author Stephen Samuel */
@@ -40,18 +42,18 @@ object CompositeExampleGenerator extends App {
   val s2 = l2.scaleToWidth(200)
 
   val sb = new StringBuffer()
-  for ((name, composite) <- composites) {
+  for ( (name, composite) <- composites ) {
 
     sb.append("\n| " + name + " | ")
 
-    for (alpha <- List(0.5, 1.0)) {
+    for ( alpha <- List(0.5, 1.0) ) {
 
       val large = l1.composite(composite(alpha), l2)
       val small = s1.composite(composite(alpha), s2)
 
       println(s"Generating example [$name ($alpha)]")
-      large.write(new File(s"examples/composite/${name}_${alpha}_large.jpeg"), Format.JPEG)
-      small.writer(Format.PNG).withMaxCompression.write(new File(s"examples/composite/${name}_${alpha}_small.png"))
+      large.output(new File(s"examples/composite/${name}_${alpha}_large.jpeg"))(JpegWriter.NoCompression)
+      small.output(new File(s"examples/composite/${name}_${alpha}_small.png"))
 
       sb.append(
         s"<a href='https://raw.github.com/sksamuel/scrimage/master/examples/composite/${name}_${alpha}_large.jpeg'>")

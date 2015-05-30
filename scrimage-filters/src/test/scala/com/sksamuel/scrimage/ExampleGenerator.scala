@@ -3,6 +3,7 @@ package com.sksamuel.scrimage
 import java.io.File
 
 import com.sksamuel.scrimage.filter._
+import com.sksamuel.scrimage.nio.{PngWriter, JpegWriter}
 import org.apache.commons.io.FileUtils
 
 /** @author Stephen Samuel */
@@ -82,8 +83,8 @@ object ExampleGenerator extends App {
       val small = image.scaleToWidth(200)
 
       println("Generating example " + filename + " " + filterName)
-      large.filter(filter._2).write(new File("examples/filters/" + filename + "_" + filterName + "_large.jpeg"), Format.JPEG)
-      small.filter(filter._2).writer(Format.PNG).withCompression(9)
+      large.filter(filter._2).output(new File("examples/filters/" + filename + "_" + filterName + "_large.jpeg"))(JpegWriter.NoCompression)
+      small.filter(filter._2).forWriter(PngWriter.MaxCompression)
         .write(new File("examples/filters/" + filename + "_" + filterName + "_small.png"))
 
       sb

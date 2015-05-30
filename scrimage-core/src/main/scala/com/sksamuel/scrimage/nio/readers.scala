@@ -13,12 +13,20 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.io
+package com.sksamuel.scrimage.nio
 
 import java.io.InputStream
+import javax.imageio.ImageIO
+
 import com.sksamuel.scrimage.Image
+import org.apache.sanselan.Sanselan
 
 /** @author Stephen Samuel */
-trait ImageReader {
-  def read(in: InputStream): Image
+trait JavaImageIOReader extends ImageReader {
+  def read(in: InputStream): Image = Image(ImageIO.read(in))
 }
+
+trait SanselanReader extends ImageReader {
+  def read(in: InputStream): Image = Image(Sanselan.getBufferedImage(in))
+}
+

@@ -1,10 +1,10 @@
 package com.sksamuel.scrimage.filter
 
-import org.scalatest.{ OneInstancePerTest, BeforeAndAfter, FunSuite }
-import com.sksamuel.scrimage.{ Format, Image }
+import com.sksamuel.scrimage.Image
+import org.scalatest.FunSuite
 
 /** @author Stephen Samuel */
-class SummerFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
+class SummerFilterTest extends FunSuite {
 
   val original = Image(getClass.getResourceAsStream("/bird_small.png"))
 

@@ -14,37 +14,44 @@
    limitations under the License.
  */
 
-package com.sksamuel.scrimage.io
+package com.sksamuel.scrimage.nio
 
-import java.awt.image.{ BufferedImage, DataBufferInt, SinglePixelPackedSampleModel }
+import java.awt.image.{BufferedImage, DataBufferInt, SinglePixelPackedSampleModel}
 import java.io.OutputStream
 import javax.imageio.ImageIO
 
-import ar.com.hjg.pngj.{ FilterType, ImageInfo, ImageLineInt }
+import ar.com.hjg.pngj.{FilterType, ImageInfo, ImageLineInt}
 import com.sksamuel.scrimage.Image
 
 /** @author Stephen Samuel */
-class PngWriter(image: Image, compressionLevel: Int) extends ImageWriter {
+case class PngWriter(compressionLevel: Int) extends ImageWriter {
 
-  def withMaxCompression: PngWriter = withCompression(9)
-  def withCompression(c: Int): PngWriter = new PngWriter(image, c)
+  import PngWriter._
 
-  def write(out: OutputStream) {
+  def withMaxCompression: PngWriter = MaxCompression
+  def withMinCompression: PngWriter = MinCompression
+  def withCompression(c: Int): PngWriter = copy(compressionLevel = c)
+
+  override def write(image: Image, out: OutputStream): Unit = {
 
     if (image.awt.getType == BufferedImage.TYPE_INT_ARGB) {
       val imi = new ImageInfo(image.width, image.height, 8, true)
+
       val writer = new ar.com.hjg.pngj.PngWriter(out, imi)
       writer.setCompLevel(compressionLevel)
       writer.setFilterType(FilterType.FILTER_DEFAULT)
+
       val db = image.awt.getRaster.getDataBuffer.asInstanceOf[DataBufferInt]
       if (db.getNumBanks != 1) throw new RuntimeException("This method expects one bank")
+
       val samplemodel = image.awt.getSampleModel.asInstanceOf[SinglePixelPackedSampleModel]
       val line = new ImageLineInt(imi)
       val dbbuf = db.getData
-      for (row <- 0 until imi.rows) {
+
+      for ( row <- 0 until imi.rows ) {
         var elem = samplemodel.getOffset(0, row)
         var j = 0
-        for (col <- 0 until imi.cols) {
+        for ( col <- 0 until imi.cols ) {
           val sample = dbbuf(elem)
           elem = elem + 1
           line.getScanline()(j) = (sample & 0xFF0000) >> 16; // R
@@ -59,6 +66,7 @@ class PngWriter(image: Image, compressionLevel: Int) extends ImageWriter {
         writer.writeRow(line, row)
       }
       writer.end() // end calls close
+
     } else {
       ImageIO.write(image.awt, "png", out)
     }
@@ -66,5 +74,9 @@ class PngWriter(image: Image, compressionLevel: Int) extends ImageWriter {
 }
 
 object PngWriter {
-  def apply(image: Image): PngWriter = new PngWriter(image, 5)
+
+  val MaxCompression = PngWriter(9)
+  val MinCompression = PngWriter(1)
+
+  def apply(): PngWriter = MaxCompression
 }
