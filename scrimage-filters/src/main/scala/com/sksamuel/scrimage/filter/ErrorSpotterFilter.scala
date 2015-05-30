@@ -2,8 +2,9 @@ package com.sksamuel.scrimage.filter
 
 import com.sksamuel.scrimage.{ Color, Filter, Image, RGBColor }
 
-/** Created by guw on 23/09/14.
-  */
+/**
+ * Created by guw on 23/09/14.
+ */
 case class ErrorSpotterFilter(base: Image, ratio: Int = 50) extends Filter {
 
   def apply(src: Image): Unit = {

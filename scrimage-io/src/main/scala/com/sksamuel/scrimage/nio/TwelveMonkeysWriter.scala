@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage.nio
 
 import java.io.OutputStream
-import javax.imageio.{IIOImage, ImageIO}
+import javax.imageio.{ IIOImage, ImageIO }
 
 import com.sksamuel.scrimage.Image
 import org.apache.commons.io.IOUtils

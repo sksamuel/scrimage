@@ -3,7 +3,7 @@ package com.sksamuel.scrimage
 import java.io.File
 
 import com.sksamuel.scrimage.filter._
-import com.sksamuel.scrimage.nio.{PngWriter, JpegWriter}
+import com.sksamuel.scrimage.nio.{ PngWriter, JpegWriter }
 import org.apache.commons.io.FileUtils
 
 /** @author Stephen Samuel */

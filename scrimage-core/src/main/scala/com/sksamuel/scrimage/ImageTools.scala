@@ -46,9 +46,10 @@ object ImageTools {
     }
   }
 
-  /** Returns width and height that allow the given source width, height to fit inside the target width, height
-    * without losing aspect ratio
-    */
+  /**
+   * Returns width and height that allow the given source width, height to fit inside the target width, height
+   * without losing aspect ratio
+   */
   def dimensionsToFit(target: (Int, Int), source: (Int, Int)): (Int, Int) = {
 
     // if target width/height is zero then we have no preference for that, so set it to the original value,

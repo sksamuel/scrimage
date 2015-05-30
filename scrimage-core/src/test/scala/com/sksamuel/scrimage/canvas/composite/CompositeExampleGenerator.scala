@@ -4,7 +4,7 @@ import java.io.File
 
 import com.sksamuel.scrimage.canvas.Canvas._
 import com.sksamuel.scrimage.nio.JpegWriter
-import com.sksamuel.scrimage.{Composite, Image}
+import com.sksamuel.scrimage.{ Composite, Image }
 import org.apache.commons.io.FileUtils
 
 /** @author Stephen Samuel */
@@ -42,11 +42,11 @@ object CompositeExampleGenerator extends App {
   val s2 = l2.scaleToWidth(200)
 
   val sb = new StringBuffer()
-  for ( (name, composite) <- composites ) {
+  for ((name, composite) <- composites) {
 
     sb.append("\n| " + name + " | ")
 
-    for ( alpha <- List(0.5, 1.0) ) {
+    for (alpha <- List(0.5, 1.0)) {
 
       val large = l1.composite(composite(alpha), l2)
       val small = s1.composite(composite(alpha), s2)

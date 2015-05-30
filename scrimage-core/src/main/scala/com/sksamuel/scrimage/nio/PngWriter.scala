@@ -16,11 +16,11 @@
 
 package com.sksamuel.scrimage.nio
 
-import java.awt.image.{BufferedImage, DataBufferInt, SinglePixelPackedSampleModel}
+import java.awt.image.{ BufferedImage, DataBufferInt, SinglePixelPackedSampleModel }
 import java.io.OutputStream
 import javax.imageio.ImageIO
 
-import ar.com.hjg.pngj.{FilterType, ImageInfo, ImageLineInt}
+import ar.com.hjg.pngj.{ FilterType, ImageInfo, ImageLineInt }
 import com.sksamuel.scrimage.Image
 
 /** @author Stephen Samuel */
@@ -48,10 +48,10 @@ case class PngWriter(compressionLevel: Int) extends ImageWriter {
       val line = new ImageLineInt(imi)
       val dbbuf = db.getData
 
-      for ( row <- 0 until imi.rows ) {
+      for (row <- 0 until imi.rows) {
         var elem = samplemodel.getOffset(0, row)
         var j = 0
-        for ( col <- 0 until imi.cols ) {
+        for (col <- 0 until imi.cols) {
           val sample = dbbuf(elem)
           elem = elem + 1
           line.getScanline()(j) = (sample & 0xFF0000) >> 16; // R

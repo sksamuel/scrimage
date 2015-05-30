@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.metadata
 
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.{ Matchers, WordSpec }
 
 /** @author Stephen Samuel */
 class ImageMetadataTest extends WordSpec with Matchers {
@@ -13,8 +13,6 @@ class ImageMetadataTest extends WordSpec with Matchers {
       meta.tags should contain(Tag("ISO Speed Ratings", 34855, "2500", "2500"))
       meta.tags should contain(Tag("Image Width", 256, "4928", "4928 pixels"))
       meta.tags should contain(Tag("White Balance Mode", 41987, "0", "Auto white balance"))
-
-      println(meta.tags.mkString("\n"))
     }
   }
 }

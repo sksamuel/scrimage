@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.metadata
 
-import java.io.{ByteArrayInputStream, InputStream}
+import java.io.{ ByteArrayInputStream, InputStream }
 
 import com.drew.imaging.ImageMetadataReader
 import com.drew.metadata.Metadata

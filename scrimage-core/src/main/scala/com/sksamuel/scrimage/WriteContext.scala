@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage
 
-import java.io.{OutputStream, File, ByteArrayOutputStream}
-import java.nio.file.{Files, Paths, Path}
+import java.io.{ OutputStream, File, ByteArrayOutputStream }
+import java.nio.file.{ Files, Paths, Path }
 
 import com.sksamuel.scrimage.nio.ImageWriter
 
