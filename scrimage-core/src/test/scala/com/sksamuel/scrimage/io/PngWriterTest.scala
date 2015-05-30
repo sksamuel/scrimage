@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage.io
 
 import com.sksamuel.scrimage.Image
-import com.sksamuel.scrimage.nio.{ PngImageReader, PngWriter }
+import com.sksamuel.scrimage.nio.{ PngReader, PngWriter }
 import org.scalatest.{ Matchers, WordSpec }
 
 /** @author Stephen Samuel */
@@ -30,11 +30,11 @@ class PngWriterTest extends WordSpec with Matchers {
       }
     }
     "png reader detects the correct mime type" in {
-      PngImageReader.supports(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png")) shouldBe true
+      PngReader.supports(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png")) shouldBe true
     }
     "png reader reads an image correctly" in {
       val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png"))
-      val actual = PngImageReader.read(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png"))
+      val actual = PngReader.read(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png"))
       actual.output(new java.io.File("read_withPNGReader.png"))(PngWriter.MaxCompression)
       assert(actual.width === expected.width)
       assert(actual.height === expected.height)

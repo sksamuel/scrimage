@@ -6,7 +6,7 @@ import java.io.InputStream
 import ar.com.hjg.pngj.{ ImageLineInt, PngReader }
 import com.sksamuel.scrimage.{ ARGBPixel, Image }
 
-object PngImageReader extends ImageReader {
+object PngReader extends ImageReader {
 
   override def read(in: InputStream): Image = {
 
