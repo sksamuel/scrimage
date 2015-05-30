@@ -38,9 +38,9 @@ case class JpegWriter(compression: Int, progressive: Boolean) extends ImageWrite
 
     val output = new MemoryCacheImageOutputStream(out)
     writer.setOutput(output)
-    writer.write(null, new IIOImage(noAlpha.toNewBufferedImage, null, null), params)
-    writer.dispose()
+    writer.write(null, new IIOImage(noAlpha.awt, null, null), params)
     output.close()
+    writer.dispose()
     IOUtils.closeQuietly(out)
   }
 }
