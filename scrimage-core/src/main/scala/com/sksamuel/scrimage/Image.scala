@@ -25,7 +25,7 @@ import javax.imageio.ImageIO
 
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod._
-import com.sksamuel.scrimage.nio.{PngWriter, ImageWriter}
+import com.sksamuel.scrimage.nio.{ImageReader, PngWriter, ImageWriter}
 import org.apache.commons.io.{FileUtils, IOUtils}
 import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 
@@ -710,37 +710,7 @@ object Image {
    * @param bytes the bytes from the format stream
    * @return a new Image
    */
-  def apply(bytes: Array[Byte]): Image = {
-    try {
-      apply(ImageIO.read(new ByteArrayInputStream(bytes)))
-    } catch {
-      case e: Exception =>
-        import scala.collection.JavaConverters._
-        ImageIO.getImageReaders(new ByteArrayInputStream(bytes)).asScala.foldLeft(None: Option[Image]) {
-          (valueOpt, reader) =>
-            // only bother to read if it hasn't already successfully been read
-            valueOpt orElse {
-
-              try {
-                reader.setInput(new ByteArrayInputStream(bytes), true, true)
-                val params = reader.getDefaultReadParam
-                val imageTypes = reader.getImageTypes(0)
-                while (imageTypes.hasNext) {
-                  val imageTypeSpecifier = imageTypes.next()
-                  val bufferedImageType = imageTypeSpecifier.getBufferedImageType
-                  if (bufferedImageType == BufferedImage.TYPE_BYTE_GRAY) {
-                    params.setDestinationType(imageTypeSpecifier)
-                  }
-                }
-                val bufferedImage = reader.read(0, params)
-                Some(apply(bufferedImage))
-              } catch {
-                case e: Exception => None
-              }
-            }
-        }.getOrElse(throw new ImageParseException)
-    }
-  }
+  def apply(bytes: Array[Byte]): Image = ImageReader.read(bytes)
 
   /**
    * Create a new Image from an input stream. This is intended to create
@@ -752,11 +722,7 @@ object Image {
   def apply(in: InputStream): Image = {
     require(in != null)
     require(in.available > 0)
-
-    val bytes = IOUtils.toByteArray(in) // lets buffer in case we have to repeat
-    IOUtils.closeQuietly(in)
-
-    apply(bytes)
+    ImageReader.read(in)
   }
 
   /**
@@ -764,8 +730,7 @@ object Image {
    */
   def apply(file: File): Image = {
     require(file != null)
-    val in = Files.newInputStream(file.toPath)
-    apply(in)
+    ImageReader.read(file)
   }
 
   /**
