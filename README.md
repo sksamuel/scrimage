@@ -17,7 +17,6 @@ keeping the original in memory). For these kinds of operations Scrimage supports
 instance where operations that can be performed in place mutate the original instead of returning a copy.
 
 [![Build Status](https://travis-ci.org/sksamuel/scrimage.png)](https://travis-ci.org/sksamuel/scrimage) 
-[![Coverage Status](https://coveralls.io/repos/sksamuel/scrimage/badge.png?branch=master)](https://coveralls.io/r/sksamuel/scrimage?branch=master)
 
 ### Image Operations
 
