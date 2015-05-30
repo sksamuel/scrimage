@@ -17,15 +17,15 @@
 package com.sksamuel.scrimage
 
 import java.awt._
-import java.awt.image.{ BufferedImage, ColorModel, DataBufferInt, Raster }
-import java.io.{ File, InputStream }
+import java.awt.image.{BufferedImage, ColorModel, DataBufferInt, Raster}
+import java.io.{File, InputStream}
 import java.nio.file.Path
 import javax.imageio.ImageIO
 
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod._
-import com.sksamuel.scrimage.nio.{ ImageReader, ImageWriter }
-import thirdparty.mortennobel.{ ResampleFilters, ResampleOp }
+import com.sksamuel.scrimage.nio.{ImageReader, ImageWriter}
+import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 
 import scala.List
 import scala.language.implicitConversions
@@ -170,17 +170,17 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
       (xInt, xWeight) <- xIntsAndWeights;
       (yInt, yWeight) <- yIntsAndWeights
     ) yield {
-      val weight = xWeight * yWeight
-      if (weight == 0) List(0.0, 0.0, 0.0, 0.0)
-      else {
-        val px = pixel(xInt, yInt)
-        List(
-          weight * px.alpha,
-          weight * px.red,
-          weight * px.green,
-          weight * px.blue)
+        val weight = xWeight * yWeight
+        if (weight == 0) List(0.0, 0.0, 0.0, 0.0)
+        else {
+          val px = pixel(xInt, yInt)
+          List(
+            weight * px.alpha,
+            weight * px.red,
+            weight * px.green,
+            weight * px.blue)
+        }
       }
-    }
 
     // We perform the weighted averaging (a summation).
     // First though, we need to transpose so that we sum within channels,
@@ -197,21 +197,17 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
                        y: Double,
                        subWidth: Int,
                        subHeight: Int): Image = {
-    //    require(x >= 0)
-    //    require(x + subWidth < width)
-    //    require(y >= 0)
-    //    require(y + subHeight < height)
-    //    val raster = ARGBRaster(subWidth, subHeight)
-    //    // Simply copy the pixels over, one by one.
-    //    for (
-    //      yIndex <- 0 until subHeight;
-    //      xIndex <- 0 until subWidth
-    //    ) {
-    //      raster.write(xIndex, yIndex, subpixel(xIndex + x, yIndex + y))
-    //    }
-    //    new Image(raster)
-    // todo reimplement
-    ???
+    require(x >= 0)
+    require(x + subWidth < width)
+    require(y >= 0)
+    require(y + subHeight < height)
+
+    val matrix = Array.ofDim[Pixel](subWidth * subHeight)
+    // Simply copy the pixels over, one by one.
+    for ( yIndex <- 0 until subHeight; xIndex <- 0 until subWidth ) {
+      matrix(PixelTools.coordinateToOffset(xIndex, yIndex, subWidth)) = ARGBPixel(subpixel(xIndex + x, yIndex + y))
+    }
+    Image(subWidth, subHeight, matrix)
   }
 
   /**
@@ -716,7 +712,7 @@ object Image {
    */
   def filled(width: Int, height: Int, color: Color = Color.White): Image = {
     val target = empty(width, height)
-    for (w <- 0 until width; h <- 0 until height)
+    for ( w <- 0 until width; h <- 0 until height )
       target.awt.setRGB(w, h, color.toRGB.toInt)
     target
   }
