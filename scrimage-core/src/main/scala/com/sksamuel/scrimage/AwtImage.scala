@@ -18,14 +18,14 @@ abstract class AwtImage[R](awt: BufferedImage) extends ReadOnlyOperations[R] wit
    */
   def pixels: Array[Pixel] = {
     awt.getRaster.getDataBuffer match {
-      case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_ARGB => buffer.getData.map(ARGBPixel.apply)
-      case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_RGB => buffer.getData.map(RGBPixel.apply)
+      case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_ARGB => buffer.getData.map(ARGBIntPixel.apply)
+      case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_RGB => buffer.getData.map(RGBIntPixel.apply)
       case buffer: DataBufferByte if awt.getType == BufferedImage.TYPE_4BYTE_ABGR =>
-        buffer.getData.grouped(4).map { abgr => ARGBPixel(abgr.head, abgr(3), abgr(1), abgr(2)) }.toArray
+        buffer.getData.grouped(4).map { abgr => ARGBIntPixel(abgr(3), abgr(1), abgr(2), abgr.head) }.toArray
       case _ =>
         val pixels = Array.ofDim[Pixel](width * height)
         for ( x <- 0 until width; y <- 0 until height ) {
-          pixels(y * width + x) = ARGBPixel(awt.getRGB(x, y))
+          pixels(y * width + x) = ARGBIntPixel(awt.getRGB(x, y))
         }
         pixels
     }
@@ -44,7 +44,7 @@ abstract class AwtImage[R](awt: BufferedImage) extends ReadOnlyOperations[R] wit
     points.foreach {
       case (x, y) =>
         val newpixel = f(x, y, pixel(x, y))
-        awt.setRGB(x, y, newpixel.toInt)
+        awt.setRGB(x, y, newpixel.toARGBInt)
     }
   }
 

@@ -132,7 +132,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
    *
    * @return the ARGB value of the pixel
    */
-  def pixel(x: Int, y: Int): Pixel = new ARGBPixel(awt.getRGB(x, y))
+  def pixel(x: Int, y: Int): Pixel = new ARGBIntPixel(awt.getRGB(x, y))
 
   /**
    * Uses linear interpolation to get a sub-pixel.
@@ -205,7 +205,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
     val matrix = Array.ofDim[Pixel](subWidth * subHeight)
     // Simply copy the pixels over, one by one.
     for ( yIndex <- 0 until subHeight; xIndex <- 0 until subWidth ) {
-      matrix(PixelTools.coordinateToOffset(xIndex, yIndex, subWidth)) = ARGBPixel(subpixel(xIndex + x, yIndex + y))
+      matrix(PixelTools.coordinateToOffset(xIndex, yIndex, subWidth)) = ARGBIntPixel(subpixel(xIndex + x, yIndex + y))
     }
     Image(subWidth, subHeight, matrix)
   }
@@ -282,7 +282,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
       val r = (p.red * p.alpha + color.getRed * color.getAlpha * (255 - p.alpha) / 255) / 255
       val g = (p.green * p.alpha + color.getGreen * color.getAlpha * (255 - p.alpha) / 255) / 255
       val b = (p.blue * p.alpha + color.getBlue * color.getAlpha * (255 - p.alpha) / 255) / 255
-      RGBPixel(r, g, b).toInt
+      RGBIntPixel(r, g, b).toARGBInt
     }
 
     val pxs = pixels
@@ -502,7 +502,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
    * @return
    */
   def autocrop(color: Color): Image = {
-    def uniform(color: Color, pixels: Array[Pixel]) = pixels.forall(p => p.toInt == color.toInt)
+    def uniform(color: Color, pixels: Array[Pixel]) = pixels.forall(p => p.toARGBInt == color.toInt)
     def scanright(col: Int, image: Image): Int = {
       if (uniform(color, pixels(col, 0, 1, height))) scanright(col + 1, image)
       else col

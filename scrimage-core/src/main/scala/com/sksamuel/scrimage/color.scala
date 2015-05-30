@@ -25,15 +25,23 @@ trait Color {
 
   def toHSL: HSLColor = toRGB.toHSL
 
-  def toHex: String = toRGB.toHex
+  /**
+   * Returns a HEX String of this colour. Eg for 0,255,0, this method will return 00FF00.
+   */
+  def toHex: String = Integer.toHexString(toRGB.toInt & 0xffffff).toUpperCase.reverse.padTo(6, '0').reverse
 
   /**
-   * Returns an AWT Color representation of this colour.
-   * AWT Colors are in the RGB color model.
+   * Returns this instance as a java.awt.Color.
+   * AWT Colors use the RGB color model.
    */
   def toAWT: java.awt.Color = {
     val rgb = toRGB
     new java.awt.Color(rgb.red, rgb.green, rgb.blue, rgb.alpha)
+  }
+
+  def toPixel: Pixel = {
+    val rgb = toRGB
+    ARGBIntPixel(rgb.red, rgb.green, rgb.blue, rgb.alpha)
   }
 
   private[scrimage] def paint: Paint = new java.awt.Color(this.toRGB.toInt)
@@ -61,6 +69,8 @@ object Color {
 
 /**
  * Red/Green/Blue
+ *
+ * The red, green, blue, and alpha components should be between [0,255].
  */
 case class RGBColor(red: Int, green: Int, blue: Int, alpha: Int = 255) extends Color {
   require(0 <= red && red <= 255, "Red component is invalid")
@@ -74,8 +84,6 @@ case class RGBColor(red: Int, green: Int, blue: Int, alpha: Int = 255) extends C
    * @return
    */
   def toInt: Int = ((alpha & 0xFF) << 24) | ((red & 0xFF) << 16) | ((green & 0xFF) << 8) | blue & 0xFF
-
-  def toPixel: RGBPixel = RGBPixel(red, green, blue)
 
   override def toRGB: RGBColor = this
 
@@ -111,6 +119,9 @@ case class RGBColor(red: Int, green: Int, blue: Int, alpha: Int = 255) extends C
     hue
   }
 
+  /**
+   * Returns this colour as a HSV color.
+   */
   override def toHSV: HSVColor = {
     val max = Math.max(Math.max(red, green), blue) / 255f
     val min = Math.min(Math.min(red, green), blue) / 255f
@@ -129,11 +140,6 @@ case class RGBColor(red: Int, green: Int, blue: Int, alpha: Int = 255) extends C
     }
     HSLColor(getHue(red, green, blue, max, min), saturation, sum / 2.0f, alpha)
   }
-
-  /**
-   * Returns a HEX String of this colour. Eg for 0,255,0, this method will return 00FF00.
-   */
-  override def toHex: String = Integer.toHexString(toInt & 0xffffff).toUpperCase.reverse.padTo(6, '0').reverse
 }
 
 case class CMYK(c: Float, m: Float, y: Float, k: Float) extends Color {

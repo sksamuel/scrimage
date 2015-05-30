@@ -4,7 +4,7 @@ import java.awt.image.{BufferedImage, ColorModel, DataBufferInt, Raster}
 import java.io.ByteArrayInputStream
 
 import ar.com.hjg.pngj.ImageLineInt
-import com.sksamuel.scrimage.{ARGBPixel, Image}
+import com.sksamuel.scrimage.{ARGBIntPixel, Image}
 
 object PngReader extends Reader {
 
@@ -21,14 +21,14 @@ object PngReader extends Reader {
 
       val matrix = Array.ofDim[Int](w * h)
 
-      for (row <- 0 until h) {
+      for ( row <- 0 until h ) {
         val scanline: Array[Int] = pngr.readRow().asInstanceOf[ImageLineInt].getScanline
         val pixels = scanline.grouped(channels).map { group =>
           channels match {
-            case 4 => ARGBPixel(group(3), group.head, group(1), group(2)) // note: the png reader is n RGBA
+            case 4 => ARGBIntPixel(group.head, group(1), group(2), group(3)) // note: the png reader is n RGBA
             case x => throw new UnsupportedOperationException(s"PNG Reader does not support $x channels")
           }
-        }.map(_.toInt).toArray
+        }.map(_.toARGBInt).toArray
         System.arraycopy(pixels, 0, matrix, row * w, w)
       }
       pngr.end()
@@ -37,8 +37,8 @@ object PngReader extends Reader {
       val bandMasks = Array(0xFF0000, 0xFF00, 0xFF, 0xFF000000)
       val raster = Raster.createPackedRaster(buffer, w, h, w, bandMasks, null)
 
-      val cm = ColorModel.getRGBdefault()
-      val image = new BufferedImage(cm, raster, cm.isAlphaPremultiplied(), null)
+      val cm = ColorModel.getRGBdefault
+      val image = new BufferedImage(cm, raster, cm.isAlphaPremultiplied, null)
 
       Option(new Image(image))
 

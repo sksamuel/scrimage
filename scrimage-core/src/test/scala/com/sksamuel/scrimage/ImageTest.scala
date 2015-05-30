@@ -54,7 +54,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
 
   test("when trimming the new image is not empty") {
     val trimmed = image.trim(3, 4, 5, 6)
-    assert(!trimmed.forall((x, y, p) => p.toInt == 0xFF000000 || p.toInt == 0xFFFFFFFF))
+    assert(!trimmed.forall((x, y, p) => p.toARGBInt == 0xFF000000 || p.toARGBInt == 0xFFFFFFFF))
   }
 
   test("when resizing by pixels then the output image has the given dimensions") {
@@ -81,12 +81,12 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     g.fillRect(10, 10, 10, 10)
     g.dispose()
     //image.updateFromAWT()
-    assert(0 === image.pixel(0, 0).toInt)
-    assert(0 === image.pixel(9, 10).toInt)
-    assert(0 === image.pixel(10, 9).toInt)
-    assert(0xFFFF0000 === image.pixel(10, 10).toInt)
-    assert(0xFFFF0000 === image.pixel(19, 19).toInt)
-    assert(0 === image.pixel(20, 20).toInt)
+    assert(0 === image.pixel(0, 0).toARGBInt)
+    assert(0 === image.pixel(9, 10).toARGBInt)
+    assert(0 === image.pixel(10, 9).toARGBInt)
+    assert(0xFFFF0000 === image.pixel(10, 10).toARGBInt)
+    assert(0xFFFF0000 === image.pixel(19, 19).toARGBInt)
+    assert(0 === image.pixel(20, 20).toARGBInt)
   }
 
   test("pixel array has correct number of pixels") {
@@ -101,8 +101,8 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     g.fillRect(10, 10, 10, 10)
     g.dispose()
     // image.updateFromAWT()
-    assert(0 === image.pixels(0).toInt)
-    assert(0xFFFF0000 === image.pixels(765).toInt)
+    assert(0 === image.pixels(0).toARGBInt)
+    assert(0xFFFF0000 === image.pixels(765).toARGBInt)
   }
 
   test("when created a filled copy then the dimensions are the same as the original") {
@@ -315,7 +315,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   test("pixel coordinate returns an ARGB integer for the pixel at that coordinate") {
     val image = Image.filled(20, 20, java.awt.Color.YELLOW)
     val pixel = image.pixel(10, 10)
-    assert(0xFFFFFF00 === pixel.toInt)
+    assert(0xFFFFFF00 === pixel.toARGBInt)
   }
 
   test("foreach accesses to each pixel") {
@@ -327,7 +327,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
 
   test("map modifies each pixel and returns new image") {
     val image = Image.empty(100, 100)
-    val mapped = image.map((_, _, _) => new ARGBPixel(0xFF00FF00))
+    val mapped = image.map((_, _, _) => new ARGBIntPixel(0xFF00FF00))
     for (component <- mapped.argb)
       assert(component === Array(255, 0, 255, 0))
   }
@@ -338,8 +338,8 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     assert(200 === resized.width)
     assert(200 === resized.height)
     for (x <- 0 until 100; y <- 0 until 100) assert(scaled.pixel(x, y) === resized.pixel(x, y))
-    for (x <- 0 until 200; y <- 100 until 200) assert(0xFFFFFFFF === resized.pixel(x, y).toInt)
-    for (x <- 100 until 200; y <- 0 until 100) assert(0xFFFFFFFF === resized.pixel(x, y).toInt)
+    for (x <- 0 until 200; y <- 100 until 200) assert(0xFFFFFFFF === resized.pixel(x, y).toARGBInt)
+    for (x <- 100 until 200; y <- 0 until 100) assert(0xFFFFFFFF === resized.pixel(x, y).toARGBInt)
   }
 
   test("overlay should retain source background") {
@@ -358,8 +358,8 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     val resized = scaled.resizeTo(200, 200, BottomRight)
     assert(200 === resized.width)
     assert(200 === resized.height)
-    for (x <- 0 until 100; y <- 0 until 200) assert(0xFFFFFFFF === resized.pixel(x, y).toInt)
-    for (x <- 100 until 200; y <- 0 until 100) assert(0xFFFFFFFF === resized.pixel(x, y).toInt)
+    for (x <- 0 until 100; y <- 0 until 200) assert(0xFFFFFFFF === resized.pixel(x, y).toARGBInt)
+    for (x <- 100 until 200; y <- 0 until 100) assert(0xFFFFFFFF === resized.pixel(x, y).toARGBInt)
     for (x <- 100 until 200; y <- 100 until 200) assert(scaled.pixel(x - 100, y - 100) === resized.pixel(x, y))
   }
 
@@ -369,8 +369,8 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     assert(200 === resized.width)
     assert(200 === resized.height)
 
-    for (x <- 0 until 100; y <- 0 until 200) assert(0xFFFFFFFF === resized.pixel(x, y).toInt)
-    for (x <- 100 until 200; y <- 100 until 200) assert(0xFFFFFFFF === resized.pixel(x, y).toInt)
+    for (x <- 0 until 100; y <- 0 until 200) assert(0xFFFFFFFF === resized.pixel(x, y).toARGBInt)
+    for (x <- 100 until 200; y <- 100 until 200) assert(0xFFFFFFFF === resized.pixel(x, y).toARGBInt)
     for (x <- 100 until 200; y <- 0 until 100) assert(scaled.pixel(x - 100, y) === resized.pixel(x, y))
   }
 
@@ -379,16 +379,16 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     val resized = scaled.resizeTo(200, 200, Center)
     assert(200 === resized.width)
     assert(200 === resized.height)
-    for (x <- 0 until 50; y <- 0 until 50) assert(0xFFFFFFFF === resized.pixel(x, y).toInt)
+    for (x <- 0 until 50; y <- 0 until 50) assert(0xFFFFFFFF === resized.pixel(x, y).toARGBInt)
     for (x <- 50 until 150; y <- 50 until 150) assert(scaled.pixel(x - 50, y - 50) === resized.pixel(x, y))
-    for (x <- 150 until 200; y <- 150 until 200) assert(0xFFFFFFFF === resized.pixel(x, y).toInt)
+    for (x <- 150 until 200; y <- 150 until 200) assert(0xFFFFFFFF === resized.pixel(x, y).toARGBInt)
   }
 
   test("when enlarging the background should be set to the specified parameter") {
     val scaled = image.scaleTo(100, 100)
     val resized = scaled.resizeTo(200, 200, Center, java.awt.Color.BLUE)
-    for (x <- 0 until 200; y <- 0 until 50) assert(0xFF0000FF === resized.pixel(x, y).toInt)
-    for (x <- 0 until 200; y <- 150 until 200) assert(0xFF0000FF === resized.pixel(x, y).toInt)
+    for (x <- 0 until 200; y <- 0 until 50) assert(0xFF0000FF === resized.pixel(x, y).toARGBInt)
+    for (x <- 0 until 200; y <- 150 until 200) assert(0xFF0000FF === resized.pixel(x, y).toARGBInt)
   }
 
   test("when bounding an image the dimensions should not exceed the bounds") {
@@ -430,36 +430,36 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("column") {
-    val striped = Image.empty(200, 100).map((x, y, p) => if (y % 2 == 0) new ARGBPixel(255) else new ARGBPixel(0))
+    val striped = Image.empty(200, 100).map((x, y, p) => if (y % 2 == 0) new ARGBIntPixel(255) else new ARGBIntPixel(0))
     val col = striped.col(51)
     assert(striped.height === col.length)
     for (y <- 0 until striped.height) {
-      if (y % 2 == 0) assert(new ARGBPixel(255) === col(y), "col was " + col(y))
-      else assert(new ARGBPixel(0) === col(y), "col was " + col(y))
+      if (y % 2 == 0) assert(new ARGBIntPixel(255) === col(y), "col was " + col(y))
+      else assert(new ARGBIntPixel(0) === col(y), "col was " + col(y))
     }
   }
 
   test("row") {
-    val striped = Image.empty(200, 100).map((x, y, p) => if (y % 2 == 0) new ARGBPixel(255) else new ARGBPixel(0))
+    val striped = Image.empty(200, 100).map((x, y, p) => if (y % 2 == 0) new ARGBIntPixel(255) else new ARGBIntPixel(0))
     val row1 = striped.row(44)
     assert(striped.width === row1.length)
-    assert(row1.forall(_ == new ARGBPixel(255)))
+    assert(row1.forall(_ == new ARGBIntPixel(255)))
     val row2 = striped.row(45)
     assert(striped.width === row2.length)
-    assert(row2.forall(_ == new ARGBPixel(0)))
+    assert(row2.forall(_ == new ARGBIntPixel(0)))
   }
 
   test("pixels region") {
-    val striped = Image.empty(200, 100).map((x, y, p) => if (y % 2 == 0) new ARGBPixel(255) else new ARGBPixel(0))
+    val striped = Image.empty(200, 100).map((x, y, p) => if (y % 2 == 0) new ARGBIntPixel(255) else new ARGBIntPixel(0))
     val pixels = striped.pixels(10, 10, 10, 10)
     for (k <- 0 until 10)
-      assert(new ARGBPixel(255) === pixels(k))
+      assert(new ARGBIntPixel(255) === pixels(k))
     for (k <- 10 until 19)
-      assert(0 === pixels(k).toInt)
+      assert(0 === pixels(k).toARGBInt)
     for (k <- 20 until 29)
-      assert(new ARGBPixel(255) === pixels(k))
+      assert(new ARGBIntPixel(255) === pixels(k))
     for (k <- 30 until 39)
-      assert(new ARGBPixel(0) === pixels(k))
+      assert(new ARGBIntPixel(0) === pixels(k))
   }
 
   test("subpixel happy path") {

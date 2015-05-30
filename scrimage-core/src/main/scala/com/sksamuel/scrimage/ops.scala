@@ -44,7 +44,7 @@ trait ReadOnlyOperations[R] {
     }
   }
 
-  lazy val points: Seq[(Int, Int)] = for (x <- 0 until width; y <- 0 until height) yield (x, y)
+  lazy val points: Seq[(Int, Int)] = for ( x <- 0 until width; y <- 0 until height ) yield (x, y)
 
   /**
    * Returns the centre coordinates for the image.
@@ -70,7 +70,8 @@ trait ReadOnlyOperations[R] {
    * @param color the pixel colour to look for.
    * @return true if there exists at least one pixel that has the given pixels color
    */
-  def exists(color: Color): Boolean = pixels.exists(pixel => pixel.toInt == color.toRGB.toInt)
+  def contains(color: Color): Boolean = pixels.exists(p => p.toARGBIntPixel == color.toPixel.toARGBIntPixel)
+  def exists(color: Color): Boolean = exists(color)
 
   /**
    * Returns the pixel at the given coordinates.
@@ -87,7 +88,7 @@ trait ReadOnlyOperations[R] {
    *
    * @return the RGBColor value of the pixel
    */
-  def color(x: Int, y: Int): RGBColor = pixel(x, y).toInt
+  def color(x: Int, y: Int): RGBColor = pixel(x, y).toARGBInt
 
   /**
    * Returns the ARGB components for the pixel at the given coordinates
@@ -161,7 +162,7 @@ trait ReadOnlyOperations[R] {
    *
    * @return the set of distinct Colors
    */
-  def colours: Set[RGBColor] = pixels.map(argb => Color(argb.toInt)).toSet
+  def colours: Set[RGBColor] = pixels.map(argb => Color(argb.toARGBInt)).toSet
 
   /**
    * Counts the number of pixels with the given colour.
@@ -169,7 +170,7 @@ trait ReadOnlyOperations[R] {
    * @param color the colour to detect.
    * @return the number of pixels that matched the colour of the given pixel
    */
-  def count(color: Color): Int = pixels.find(_.toInt == color.toInt).size
+  def count(color: Color): Int = pixels.find(_.toARGBInt == color.toInt).size
 
   /**
    * Creates a new image with the same data as this image.

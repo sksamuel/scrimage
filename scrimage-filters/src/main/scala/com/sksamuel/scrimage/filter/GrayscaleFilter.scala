@@ -15,7 +15,7 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.{ RGBPixel, PixelTools, Image, Filter }
+import com.sksamuel.scrimage.{Filter, Image, RGBIntPixel}
 
 /** @author Stephen Samuel */
 object GrayscaleFilter extends Filter {
@@ -25,7 +25,7 @@ object GrayscaleFilter extends Filter {
       val green = 0.71 * p.green
       val blue = 0.07 * p.blue
       val gray = red + green + blue
-      RGBPixel(gray.toInt, gray.toInt, gray.toInt)
+      RGBIntPixel(gray.toInt, gray.toInt, gray.toInt)
     })
   }
 }
