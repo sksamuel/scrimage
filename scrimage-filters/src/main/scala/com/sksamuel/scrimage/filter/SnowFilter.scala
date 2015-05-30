@@ -30,6 +30,5 @@ object SnowFilter extends Filter {
     g2.setComposite(new BlendComposite(BlendingMode.SCREEN, 1.0f))
     g2.drawImage(snow.scaleTo(image.width, image.height).awt, 0, 0, null)
     g2.dispose()
-    //image.updateFromAWT()
   }
 }

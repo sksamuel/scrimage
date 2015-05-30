@@ -29,7 +29,7 @@ trait Filter {
  * Filters that wish to provide an awt BufferedImageOp need to simply extend this class.
  */
 abstract class BufferedOpFilter extends Filter {
-  val op: BufferedImageOp
+  def op: BufferedImageOp
   def apply(image: Image): Unit = {
     val g2 = image.awt.getGraphics.asInstanceOf[Graphics2D]
     g2.drawImage(image.awt, op, 0, 0)
