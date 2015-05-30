@@ -44,7 +44,7 @@ trait ReadOnlyOperations[R] {
     }
   }
 
-  lazy val points: Seq[(Int, Int)] = for ( x <- 0 until width; y <- 0 until height ) yield (x, y)
+  lazy val points: Seq[(Int, Int)] = for (x <- 0 until width; y <- 0 until height) yield (x, y)
 
   /**
    * Returns the centre coordinates for the image.

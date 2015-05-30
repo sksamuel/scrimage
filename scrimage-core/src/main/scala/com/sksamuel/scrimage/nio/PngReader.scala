@@ -1,10 +1,10 @@
 package com.sksamuel.scrimage.nio
 
-import java.awt.image.{BufferedImage, ColorModel, DataBufferInt, Raster}
+import java.awt.image.{ BufferedImage, ColorModel, DataBufferInt, Raster }
 import java.io.ByteArrayInputStream
 
 import ar.com.hjg.pngj.ImageLineInt
-import com.sksamuel.scrimage.{ARGBIntPixel, Image}
+import com.sksamuel.scrimage.{ ARGBIntPixel, Image }
 
 object PngReader extends Reader {
 
@@ -21,7 +21,7 @@ object PngReader extends Reader {
 
       val matrix = Array.ofDim[Int](w * h)
 
-      for ( row <- 0 until h ) {
+      for (row <- 0 until h) {
         val scanline: Array[Int] = pngr.readRow().asInstanceOf[ImageLineInt].getScanline
         val pixels = scanline.grouped(channels).map { group =>
           channels match {

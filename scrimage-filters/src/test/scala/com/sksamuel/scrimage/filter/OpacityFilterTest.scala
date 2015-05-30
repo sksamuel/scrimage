@@ -1,5 +1,7 @@
 package com.sksamuel.scrimage.filter
 
+import java.io.File
+
 import com.sksamuel.scrimage.Image
 import org.scalatest.{ BeforeAndAfter, FunSuite, OneInstancePerTest }
 

@@ -11,7 +11,7 @@ import scala.language.implicitConversions
  * Another example is 4 bytes for ARGB components. This would be modelled by the ARGBBytePixel class.
  *
  * @author Stephen Samuel
- **/
+ */
 trait Pixel {
 
   /**
@@ -62,7 +62,7 @@ object ARGBIntPixel {
 
   implicit def int2pixel(pixel: Int): ARGBIntPixel = new ARGBIntPixel(pixel)
 
-  def apply(argb: Array[Int]): ARGBIntPixel = ARGBIntPixel(argb.head, argb(1), argb(2), argb(3))
+  //  def apply(argb: Array[Int]): ARGBIntPixel = ARGBIntPixel(argb.head, argb(1), argb(2), argb(3))
 
   def apply(r: Int, g: Int, b: Int, alpha: Int): ARGBIntPixel = {
     val int = alpha << 24 | (r & 0xFF) << 16 | (g & 0xFF) << 8 | (b & 0xFF) << 0
@@ -76,21 +76,4 @@ case class ABGRBytePixel(_alpha: Byte, _blue: Byte, _green: Byte, _red: Byte) ex
   def red: Int = _red
   def green: Int = _green
   def blue: Int = _blue
-}
-
-case class RGBIntPixel(rgb: Int) extends Pixel {
-
-  override def alpha: Int = 0
-  override def red: Int = rgb >> 16 & 0xFF
-  override def green: Int = rgb >> 8 & 0xFF
-  override def blue: Int = rgb & 0xFF
-
-  def toARGBPixel: ARGBIntPixel = ARGBIntPixel(red, green, blue, 0)
-}
-
-object RGBIntPixel {
-  def apply(r: Int, g: Int, b: Int): RGBIntPixel = {
-    val int = 0xFF << 24 | (r & 0xFF) << 16 | (g & 0xFF) << 8 | (b & 0xFF) << 0
-    RGBIntPixel(int)
-  }
 }

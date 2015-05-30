@@ -15,7 +15,7 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.{ARGBIntPixel, Filter, Image, Pixel}
+import com.sksamuel.scrimage.{ ARGBIntPixel, Filter, Image, Pixel }
 
 /** @author Stephen Samuel */
 class OpacityFilter(amount: Double) extends Filter {
@@ -24,7 +24,7 @@ class OpacityFilter(amount: Double) extends Filter {
     val _r = (pixel.red + (255 - pixel.red) * amount).toInt
     val _g = (pixel.green + (255 - pixel.green) * amount).toInt
     val _b = (pixel.blue + (255 - pixel.blue) * amount).toInt
-    ARGBIntPixel(pixel.alpha, _r, _g, _b)
+    ARGBIntPixel(_r, _g, _b, pixel.alpha)
   }
 
   def apply(image: Image) {

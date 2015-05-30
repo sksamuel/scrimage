@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage
 
 import java.awt.geom.AffineTransform
-import java.awt.image.{AffineTransformOp, BufferedImage, DataBufferByte, DataBufferInt}
+import java.awt.image.{ AffineTransformOp, BufferedImage, DataBufferByte, DataBufferInt }
 
 /**
  * A skeleton implementation of read only operations based on a backing AWT image.
@@ -19,12 +19,13 @@ abstract class AwtImage[R](awt: BufferedImage) extends ReadOnlyOperations[R] wit
   def pixels: Array[Pixel] = {
     awt.getRaster.getDataBuffer match {
       case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_ARGB => buffer.getData.map(ARGBIntPixel.apply)
-      case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_RGB => buffer.getData.map(RGBIntPixel.apply)
+      case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_RGB =>
+        buffer.getData.map(ARGBIntPixel.apply)
       case buffer: DataBufferByte if awt.getType == BufferedImage.TYPE_4BYTE_ABGR =>
         buffer.getData.grouped(4).map { abgr => ARGBIntPixel(abgr(3), abgr(1), abgr(2), abgr.head) }.toArray
       case _ =>
         val pixels = Array.ofDim[Pixel](width * height)
-        for ( x <- 0 until width; y <- 0 until height ) {
+        for (x <- 0 until width; y <- 0 until height) {
           pixels(y * width + x) = ARGBIntPixel(awt.getRGB(x, y))
         }
         pixels
@@ -49,7 +50,7 @@ abstract class AwtImage[R](awt: BufferedImage) extends ReadOnlyOperations[R] wit
   }
 
   protected def fillpx(color: Color): Unit = {
-    for ( x <- 0 until width; y <- 0 until height ) awt.setRGB(x, y, color.toInt)
+    for (x <- 0 until width; y <- 0 until height) awt.setRGB(x, y, color.toInt)
   }
 
   /**

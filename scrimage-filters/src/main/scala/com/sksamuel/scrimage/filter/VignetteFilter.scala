@@ -16,9 +16,9 @@
 package com.sksamuel.scrimage.filter
 
 import java.awt.geom.Point2D
-import java.awt.{Color, Graphics2D, RadialGradientPaint, RenderingHints}
+import java.awt.{ Color, Graphics2D, RadialGradientPaint, RenderingHints }
 
-import com.sksamuel.scrimage.{Filter, Image}
+import com.sksamuel.scrimage.{ Filter, Image }
 import thirdparty.romainguy.BlendComposite
 import thirdparty.romainguy.BlendComposite.BlendingMode
 
