@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage
 
 import java.awt.geom.AffineTransform
-import java.awt.image.{ AffineTransformOp, DataBufferInt, BufferedImage }
+import java.awt.image.{AffineTransformOp, BufferedImage, DataBufferByte, DataBufferInt}
 
 /**
  * A skeleton implementation of read only operations based on a backing AWT image.
@@ -19,32 +19,12 @@ abstract class AwtImage[R](awt: BufferedImage) extends ReadOnlyOperations[R] wit
   def pixels: Array[Pixel] = {
     awt.getRaster.getDataBuffer match {
       case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_ARGB => buffer.getData.map(ARGBPixel.apply)
-      // todo implement this using new instances of Pixel
-      //        case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_RGB => buffer.getData
-      //            case buffer: DataBufferByte if awt.getType == BufferedImage.TYPE_3BYTE_BGR =>
-      //                val array = new Array[Int](buffer.getData.length / 3)
-      //                for ( k <- 0 until array.length ) {
-      //                    val blue = array(k * 3)
-      //                    val green = array(k * 3 + 1)
-      //                    val red = array(k * 3 + 2)
-      //                    val pixel = red << 16 | green << 8 | blue << 0
-      //                    array(k) = pixel
-      //                }
-      //                array
-      //            case buffer: DataBufferByte if awt.getType == BufferedImage.TYPE_4BYTE_ABGR =>
-      //                val array = new Array[Int](buffer.getData.length / 4)
-      //                for ( k <- 0 until array.length ) {
-      //                    val alpha = array(k * 4)
-      //                    val blue = array(k * 4 + 1)
-      //                    val green = array(k * 4 + 2)
-      //                    val red = array(k * 4 + 3)
-      //                    val pixel = alpha << 24 | red << 16 | green << 8 | blue << 0
-      //                    array(k) = pixel
-      //                }
-      //                array
+      case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_RGB => buffer.getData.map(RGBPixel.apply)
+      case buffer: DataBufferByte if awt.getType == BufferedImage.TYPE_4BYTE_ABGR =>
+        buffer.getData.grouped(4).map { abgr => ARGBPixel(abgr.head, abgr(3), abgr(1), abgr(2)) }.toArray
       case _ =>
         val pixels = Array.ofDim[Pixel](width * height)
-        for (x <- 0 until width; y <- 0 until height) {
+        for ( x <- 0 until width; y <- 0 until height ) {
           pixels(y * width + x) = ARGBPixel(awt.getRGB(x, y))
         }
         pixels
@@ -69,7 +49,7 @@ abstract class AwtImage[R](awt: BufferedImage) extends ReadOnlyOperations[R] wit
   }
 
   protected def fillpx(color: Color): Unit = {
-    for (x <- 0 until width; y <- 0 until height) awt.setRGB(x, y, color.toInt)
+    for ( x <- 0 until width; y <- 0 until height ) awt.setRGB(x, y, color.toInt)
   }
 
   /**
