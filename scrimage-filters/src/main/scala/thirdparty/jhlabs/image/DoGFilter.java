@@ -16,9 +16,10 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
+import thirdparty.jhlabs.composite.SubtractComposite;
+
 import java.awt.*;
-import java.awt.image.*;
-import thirdparty.jhlabs.composite.*;
+import java.awt.image.BufferedImage;
 
 /**
  * Edge detection by difference of Gaussians.
@@ -36,10 +37,6 @@ public class DoGFilter extends AbstractBufferedImageOp {
 	
 	/**
 	 * Set the radius of the kernel, and hence the amount of blur. The bigger the radius, the longer this filter will take.
-	 * @param radius the radius of the blur in pixels.
-     * @min-value 0
-     * @max-value 100+
-     * @see #getRadius
 	 */
 	public void setRadius1(float radius1) {
 		this.radius1 = radius1;
@@ -48,7 +45,6 @@ public class DoGFilter extends AbstractBufferedImageOp {
 	/**
 	 * Get the radius of the kernel.
 	 * @return the radius
-     * @see #setRadius
 	 */
 	public float getRadius1() {
 		return radius1;
@@ -56,10 +52,6 @@ public class DoGFilter extends AbstractBufferedImageOp {
 
 	/**
 	 * Set the radius of the kernel, and hence the amount of blur. The bigger the radius, the longer this filter will take.
-	 * @param radius the radius of the blur in pixels.
-     * @min-value 0
-     * @max-value 100+
-     * @see #getRadius
 	 */
 	public void setRadius2(float radius2) {
 		this.radius2 = radius2;
@@ -68,7 +60,6 @@ public class DoGFilter extends AbstractBufferedImageOp {
 	/**
 	 * Get the radius of the kernel.
 	 * @return the radius
-     * @see #setRadius
 	 */
 	public float getRadius2() {
 		return radius2;

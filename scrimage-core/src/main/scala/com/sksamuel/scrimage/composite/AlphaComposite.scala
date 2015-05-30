@@ -1,4 +1,4 @@
-package com.sksamuel.scrimage.canvas.composite
+package com.sksamuel.scrimage.composite
 
 import com.sksamuel.scrimage.{ Image, Composite }
 import java.awt.Graphics2D

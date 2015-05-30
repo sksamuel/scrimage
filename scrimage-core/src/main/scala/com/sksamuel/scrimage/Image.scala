@@ -569,6 +569,21 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
   }
 
   /**
+   * Apply the given image with this image using the given composite.
+   * The original image is unchanged.
+   *
+   * @param composite the composite to use. See com.sksamuel.scrimage.Composite.
+   * @param applicative the image to apply with the composite.
+   *
+   * @return A new image with the given image applied using the given composite.
+   */
+  def composite(composite: Composite, applicative: Image): Image = {
+    val target = copy
+    composite.apply(target, applicative)
+    target
+  }
+
+  /**
    * Returns a new image that is scaled to fit the specified bounds while retaining the same aspect ratio
    * as the original image. The dimensions of the returned image will be the same as the result of the
    * scaling operation. That is, no extra padding will be added to match the bounded width and height. For an

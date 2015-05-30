@@ -244,8 +244,6 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   test("when scaling an image the output image should match as expected") {
     val scaled = image.scale(0.25)
     val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird_scale_025.png"))
-    scaled.output(new java.io.File("scaled.png"))
-    expected.output(new java.io.File("scaled_expected.png"))
     assert(expected.width === scaled.width)
     assert(expected.height === scaled.height)
   }
@@ -407,7 +405,6 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   test("bound operation happy path") {
     val bounded = image.max(200, 200)
     val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird_bound_200x200.png"))
-    bounded.output(new java.io.File("bounded.png"))
     assert(bounded === expected)
   }
 

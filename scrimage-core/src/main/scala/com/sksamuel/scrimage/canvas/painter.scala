@@ -6,6 +6,7 @@ import java.awt.image.{ Raster, ColorModel }
 import java.awt.geom.{ AffineTransform, Rectangle2D }
 import com.sksamuel.scrimage.RGBColor
 import sun.awt.image.IntegerComponentRaster
+import scala.language.implicitConversions
 import scala.util.Random
 
 /** @author Stephen Samuel */

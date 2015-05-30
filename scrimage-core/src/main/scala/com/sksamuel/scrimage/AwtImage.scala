@@ -11,6 +11,12 @@ abstract class AwtImage[R](awt: BufferedImage) extends ReadOnlyOperations[R] wit
   override lazy val width: Int = awt.getWidth
   override lazy val height: Int = awt.getHeight
 
+  /**
+   * Create a new Image which is a copy of this image.
+   * Any operations on the new image do not write back to the original.
+   *
+   * @return A copy of this image.
+   */
   override def copy: Image = new Image(toNewBufferedImage)
 
   /**

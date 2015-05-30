@@ -10,6 +10,7 @@ object Build extends Build {
 
   private val TwelveMonkeysVersion = "3.1.0"
   private val PngjVersion = "2.1.0"
+  private val MetadataExtractorVersion = "2.8.1"
 
   val scrimageSettings = scalariformSettings ++ Seq(
     organization := "com.sksamuel.scrimage",
@@ -23,10 +24,11 @@ object Build extends Build {
     scalacOptions := Seq("-unchecked", "-encoding", "utf8"),
     javacOptions ++= Seq("-source", "1.7", "-target", "1.7"),
     libraryDependencies ++= Seq(
-      "org.slf4j"             % "slf4j-api"         % "1.7.7",
-      "org.imgscalr"          % "imgscalr-lib"      % "4.2" % "test",
-      "org.scalatest"         %% "scalatest"        % "2.2.4" % "test",
-      "org.mockito"           % "mockito-all"       % "1.9.5" % "test"
+      "org.slf4j"             %     "slf4j-api"         % "1.7.7",
+      "org.imgscalr"          %     "imgscalr-lib"      % "4.2"       % "test",
+      "org.scalatest"         %%    "scalatest"         % "2.2.4"     % "test",
+      "org.mockito"           %     "mockito-all"       % "1.9.5"     % "test",
+      "com.sksamuel.scam"     %% "scam"                 % "0.5.2"     % "test"
     ),
     ScalariformKeys.preferences := ScalariformKeys.preferences.value
       .setPreference(AlignParameters, true)
@@ -87,8 +89,7 @@ object Build extends Build {
         "com.twelvemonkeys.common"  % "common-image"        % TwelveMonkeysVersion,
         "commons-io"                % "commons-io"          % "2.4",
         "ar.com.hjg"                % "pngj"                % PngjVersion,
-        "org.apache.commons"        % "commons-lang3"       % "3.3.2" % "test",
-        "com.sksamuel.scam"         %% "scam" % "0.5.2"     % "test"
+        "org.apache.commons"        % "commons-lang3"       % "3.3.2" % "test"
       )
     )
 
@@ -119,7 +120,7 @@ object Build extends Build {
     .settings(name := "scrimage-metadata")
     .settings(
       libraryDependencies ++= Seq(
-        "com.drewnoakes" % "metadata-extractor" % "2.8.1"
+        "com.drewnoakes" % "metadata-extractor" % MetadataExtractorVersion
       )
     ).dependsOn(core)
 

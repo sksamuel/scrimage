@@ -21,7 +21,7 @@ import java.awt.geom.AffineTransform
 import com.sksamuel.scrimage.{ Image, Filter }
 
 /** @author Stephen Samuel */
-class Watermark(text: String, font: Font, alpha: Double) extends Filter {
+class WatermarkFilter(text: String, font: Font, alpha: Double) extends Filter {
 
   def apply(image: Image): Unit = {
 

@@ -1,9 +1,8 @@
 package com.sksamuel.scrimage.canvas
 
-import java.awt.image.BufferedImage
 import java.awt.{ Font, Graphics2D, RenderingHints }
 
-import com.sksamuel.scrimage.{ Color, Composite, Image, X11Colorlist }
+import com.sksamuel.scrimage.{ Color, Image, X11Colorlist }
 
 import scala.language.implicitConversions
 
@@ -30,43 +29,24 @@ case class Canvas(image: Image,
   }
 
   def draw(drawables: Drawable*): Canvas = {
-    val copy = image.copy
-    val g = g2(copy)
+    val target = image.copy
+    val g = g2(target)
     drawables.foreach(_.draw(g))
     g.dispose()
-    copy
-    //  imageFromAWT(copy.awt)
+    target
   }
 
   def draw(drawables: Iterable[Drawable]): Canvas = {
-    val copy = image.copy
-    val g = g2(copy)
+    val target = image.copy
+    val g = g2(target)
     drawables.foreach(_.draw(g))
     g.dispose()
-    //imageFromAWT(copy.awt)
-    copy
+    target
   }
-
-  // TODO: check the type of the given image
-  def imageFromAWT(image: BufferedImage): Image = new Image(image)
 
   def watermark(text: String): Canvas = watermark(text, 0.5)
-  def watermark(text: String, alpha: Double): Canvas = image.filter(new Watermark(text, font, alpha))
+  def watermark(text: String, alpha: Double): Canvas = image.filter(new WatermarkFilter(text, font, alpha))
 
-  /**
-   * Apply the given image with this image using the given composite.
-   * The original image is unchanged.
-   *
-   * @param composite the composite to use. See com.sksamuel.scrimage.Composite.
-   * @param applicative the image to apply with the composite.
-   *
-   * @return A new image with the given image applied using the given composite.
-   */
-  def composite(composite: Composite, applicative: Image): Image = {
-    val copy = image.copy
-    composite.apply(copy, applicative)
-    imageFromAWT(copy.awt)
-  }
 }
 
 object Canvas {
