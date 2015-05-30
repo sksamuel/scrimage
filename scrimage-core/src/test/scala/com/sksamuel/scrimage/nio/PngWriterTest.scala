@@ -1,8 +1,7 @@
-package com.sksamuel.scrimage.io
+package com.sksamuel.scrimage.nio
 
 import com.sksamuel.scrimage.Image
-import com.sksamuel.scrimage.nio.{ PngReader, PngWriter }
-import org.scalatest.{ Matchers, WordSpec }
+import org.scalatest.{Matchers, WordSpec}
 
 /** @author Stephen Samuel */
 class PngWriterTest extends WordSpec with Matchers {

@@ -1,9 +1,8 @@
-package com.sksamuel.scrimage.io
+package com.sksamuel.scrimage.nio
 
 import java.io.File
 
 import com.sksamuel.scrimage.Image
-import com.sksamuel.scrimage.nio.PngWriter
 
 import scala.concurrent.duration._
 
