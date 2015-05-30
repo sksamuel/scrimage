@@ -8,8 +8,9 @@ class VintageFilterTest extends FunSuite with BeforeAndAfter with OneInstancePer
 
   val original = Image(getClass.getResourceAsStream("/bird_small.png"))
 
-  ignore("filter output matches expected") {
+  test("filter output matches expected") {
     val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_vintage.png"))
-    assert(original.filter(VintageFilter) === expected)
+    val actual = original.filter(VintageFilter)
+    assert(actual === expected)
   }
 }

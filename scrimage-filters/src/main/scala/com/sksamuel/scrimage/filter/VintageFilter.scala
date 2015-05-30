@@ -28,6 +28,5 @@ object VintageFilter extends Filter {
     val g2 = image.awt.getGraphics.asInstanceOf[Graphics2D]
     g2.drawImage(filtered, 0, 0, null)
     g2.dispose()
-    //image.raster.write(Image(filtered).raster.extract)
   }
 }

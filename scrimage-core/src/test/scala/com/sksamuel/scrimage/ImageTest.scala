@@ -2,8 +2,8 @@ package com.sksamuel.scrimage
 
 import java.awt.image.BufferedImage
 
-import com.sksamuel.scrimage.Position.{BottomRight, Center, TopLeft, TopRight}
-import org.scalatest.{BeforeAndAfter, FunSuite, Matchers}
+import com.sksamuel.scrimage.Position.{ BottomRight, Center, TopLeft, TopRight }
+import org.scalatest.{ BeforeAndAfter, FunSuite, Matchers }
 
 /** @author Stephen Samuel */
 class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
@@ -256,11 +256,9 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     assert(300 === scaled.height)
   }
 
-  ignore("when fitting an image the output image should match as expected") {
+  test("when fitting an image the output image should match as expected") {
     val fitted = image.fit(900, 300, java.awt.Color.RED)
     val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird_fitted2.png"))
-    fitted.output(new java.io.File("fitted.png"))
-    expected.output(new java.io.File("fitted_expected.png"))
     assert(fitted.pixels.length === fitted.pixels.length)
     assert(expected == fitted)
   }
@@ -406,11 +404,10 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     assert(20 === bounded.width)
   }
 
-  ignore("bound operation happy path") {
+  test("bound operation happy path") {
     val bounded = image.bound(200, 200)
     val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird_bound_200x200.png"))
     bounded.output(new java.io.File("bounded.png"))
-    expected.output(new java.io.File("bounded_expected.png"))
     assert(bounded === expected)
   }
 
@@ -420,11 +417,9 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     assert(66 === covered.height)
   }
 
-  ignore("cover operation happy path") {
+  test("cover operation happy path") {
     val covered = image.cover(200, 200)
     val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird_cover_200x200.png"))
-    covered.output(new java.io.File("covered.png"))
-    expected.output(new java.io.File("covered_expected.png"))
     assert(covered === expected)
   }
 
