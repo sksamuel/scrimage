@@ -101,7 +101,6 @@ object Build extends Build {
         "com.twelvemonkeys.imageio" % "imageio-bmp" % TwelveMonkeysVersion,
         "com.twelvemonkeys.imageio" % "imageio-jpeg" % TwelveMonkeysVersion,
         "com.twelvemonkeys.imageio" % "imageio-icns" % TwelveMonkeysVersion,
-        "com.twelvemonkeys.imageio" % "imageio-ico" % TwelveMonkeysVersion,
         "com.twelvemonkeys.imageio" % "imageio-iff" % TwelveMonkeysVersion,
         "com.twelvemonkeys.imageio" % "imageio-pcx" % TwelveMonkeysVersion,
         "com.twelvemonkeys.imageio" % "imageio-pict" % TwelveMonkeysVersion,
@@ -113,7 +112,7 @@ object Build extends Build {
         "com.twelvemonkeys.imageio" % "imageio-tga" % TwelveMonkeysVersion,
         "com.twelvemonkeys.imageio" % "imageio-thumbsdb" % TwelveMonkeysVersion
       )
-    )
+    ).dependsOn(core)
 
   lazy val metadata = Project("scrimage-metadata", file("scrimage-metadata"))
     .settings(scrimageSettings: _*)
@@ -122,7 +121,7 @@ object Build extends Build {
       libraryDependencies ++= Seq(
         "com.drewnoakes" % "metadata-extractor" % "2.8.1"
       )
-    )
+    ).dependsOn(core)
 
   lazy val filters = Project("scrimage-filters", file("scrimage-filters"))
     .dependsOn(core)

@@ -1,13 +1,25 @@
 package com.sksamuel.scrimage.metadata
 
-import java.io.InputStream
+import java.io.{ByteArrayInputStream, InputStream}
 
 import com.drew.imaging.ImageMetadataReader
 import com.drew.metadata.Metadata
+import com.sksamuel.scrimage.{Image, Format}
+
+import scala.language.implicitConversions
 
 object ImageMetadata {
 
+  implicit class RichImage(image: Image) {
+    def metadata: ImageMetadata = ImageMetadata.fromImage(image)
+  }
+
   import scala.collection.JavaConverters._
+
+  def fromImage(image: Image): ImageMetadata = {
+    val metadata = ImageMetadataReader.readMetadata(new ByteArrayInputStream(image.write(Format.PNG)))
+    fromMetadata(metadata)
+  }
 
   def fromStream(is: InputStream): ImageMetadata = {
     val metadata = ImageMetadataReader.readMetadata(is)
