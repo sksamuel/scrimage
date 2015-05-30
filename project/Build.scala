@@ -22,11 +22,10 @@ object Build extends Build {
     scalacOptions := Seq("-unchecked", "-encoding", "utf8"),
     javacOptions ++= Seq("-source", "1.7", "-target", "1.7"),
     libraryDependencies ++= Seq(
-      "org.slf4j" % "slf4j-api" % "1.7.5",
-      "org.imgscalr" % "imgscalr-lib" % "4.2" % "test",
-      "junit" % "junit" % "4.11" % "test",
-      "org.scalatest" %% "scalatest" % "2.1.6" % "test",
-      "org.mockito" % "mockito-all" % "1.9.5" % "test"
+      "org.slf4j"             % "slf4j-api"         % "1.7.7",
+      "org.imgscalr"          % "imgscalr-lib"      % "4.2" % "test",
+      "org.scalatest"         %% "scalatest"        % "2.2.4" % "test",
+      "org.mockito"           % "mockito-all"       % "1.9.5" % "test"
     ),
     ScalariformKeys.preferences := ScalariformKeys.preferences.value
       .setPreference(AlignParameters, true)

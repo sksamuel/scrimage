@@ -188,7 +188,7 @@ trait ImageLike[R] {
    * @param color the colour to detect.
    * @return the number of pixels that matched the colour of the given pixel
    */
-  def count(color: Color): Int = pixels.find(_ == color.toInt).size
+  def count(color: Color): Int = pixels.find(_.toInt == color.toInt).size
 
   /**
    * Creates a new image with the same data as this image.

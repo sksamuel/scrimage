@@ -41,7 +41,7 @@ object PngReader extends ImageReader {
     new Image(image)
   }
 
-  def supports(input: InputStream): Boolean = {
+  override def supports(input: InputStream): Boolean = {
 
     val buff = Array.ofDim[Byte](8)
     input.read(buff)
