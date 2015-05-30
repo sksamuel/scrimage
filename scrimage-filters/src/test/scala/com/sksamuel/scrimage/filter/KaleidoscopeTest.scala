@@ -2,7 +2,6 @@ package com.sksamuel.scrimage.filter
 
 import org.scalatest.{ OneInstancePerTest, BeforeAndAfter, FunSuite }
 import com.sksamuel.scrimage.Image
-import org.apache.sanselan.formats.png.PngWriter
 
 /** @author Stephen Samuel */
 class KaleidoscopeTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
