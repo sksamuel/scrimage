@@ -65,7 +65,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
    */
   def constrain(width: Int, height: Int): Image = {
     if (this.width <= width && this.height <= height) this
-    else bound(width, height)
+    else max(width, height)
   }
 
   /**
@@ -589,7 +589,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
    *
    * @return A new image that is the result of the binding.
    */
-  def bound(boundedWidth: Int, boundedHeight: Int): Image = {
+  def max(boundedWidth: Int, boundedHeight: Int): Image = {
     val dimensions = ImageTools.dimensionsToFit((boundedWidth, boundedHeight), (width, height))
     scaleTo(dimensions._1, dimensions._2)
   }

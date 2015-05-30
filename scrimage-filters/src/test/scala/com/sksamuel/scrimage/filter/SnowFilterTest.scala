@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage.filter
 
 import com.sksamuel.scrimage.Image
-import org.scalatest.{BeforeAndAfter, FunSuite, OneInstancePerTest}
+import org.scalatest.{ BeforeAndAfter, FunSuite, OneInstancePerTest }
 
 /** @author Stephen Samuel */
 class SnowFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
