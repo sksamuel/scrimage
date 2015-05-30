@@ -17,16 +17,14 @@
 package com.sksamuel.scrimage
 
 import java.awt._
-import java.awt.geom.AffineTransform
-import java.awt.image.{ AffineTransformOp, BufferedImage, ColorModel, DataBufferInt, Raster }
-import java.io.{ ByteArrayInputStream, File, InputStream }
-import java.nio.file.{ Files, Path }
+import java.awt.image.{ BufferedImage, ColorModel, DataBufferInt, Raster }
+import java.io.{ File, InputStream }
+import java.nio.file.Path
 import javax.imageio.ImageIO
 
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod._
-import com.sksamuel.scrimage.nio.{ ImageReader, PngWriter, ImageWriter }
-import org.apache.commons.io.{ FileUtils, IOUtils }
+import com.sksamuel.scrimage.nio.{ ImageReader, ImageWriter }
 import thirdparty.mortennobel.{ ResampleFilters, ResampleOp }
 
 import scala.List
@@ -35,47 +33,23 @@ import scala.language.implicitConversions
 class ImageParseException extends RuntimeException("Unparsable image")
 
 /**
- * An Image represents an abstraction over a set of pixels that allow operations such
- * as resize, scale, rotate, flip, trim, pad, cover, fit. An image does not
- * contain its underlying data directly, but instead delegates to a Raster. A Raster is a simple data
- * structure for a grid of pixels. An Image is immutable and all operations return new Images backed by new Rasters.
+ * An immutable Image backed by an AWT BufferedImage.
+ *
+ * An Image represents an abstraction that allow operations such
+ * as resize, scale, rotate, flip, trim, pad, cover, fit.
+ *
+ * All operations on an image are read only or return a cloned instance of this image.
+ * For operations that can be performed without a copying step, see MutableImage.
  *
  * @author Stephen Samuel
  */
-class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] {
+class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](awt) with ResizingOperations[Image] {
   require(awt != null, "Wrapping image cannot be null")
 
-  lazy val width: Int = awt.getWidth
-  lazy val height: Int = awt.getHeight
-
-  /**
-   * Returns a new AWT BufferedImage from this image.
-   *
-   * @return a new, non-shared, BufferedImage with the same data as this Image.
-   */
-  def toNewBufferedImage: BufferedImage = {
-    val buffered = new BufferedImage(width, height, awt.getType)
-    buffered.getGraphics.drawImage(awt, 0, 0, null)
-    buffered
-  }
-
-  override def empty: Image = Image.empty(width, height)
-
-  override def copy: Image = new Image(toNewBufferedImage)
-
-  def map(f: (Int, Int, Pixel) => Pixel): Image = {
+  override def map(f: (Int, Int, Pixel) => Pixel): Image = {
     val target = copy
     target.mapInPlace(f)
     target
-  }
-
-  private[scrimage] def mapInPlace(f: (Int, Int, Pixel) => Pixel): this.type = {
-    points.foreach {
-      case (x, y) =>
-        val newpixel = f(x, y, pixel(x, y))
-        awt.setRGB(x, y, newpixel.toInt)
-    }
-    this
   }
 
   /**
@@ -92,6 +66,17 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] {
   def constrain(width: Int, height: Int): Image = {
     if (this.width <= width && this.height <= height) this
     else bound(width, height)
+  }
+
+  /**
+   * Sets all pixels on this image to be the given color.
+   *
+   * @return The result of the pixels set to the given color.
+   */
+  override def fill(color: Color): Image = {
+    val target = copy
+    target.fillpx(color)
+    target
   }
 
   /**
@@ -268,44 +253,6 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] {
   }
 
   /**
-   * Returns the pixels of this image represented as an array of Pixels.
-   */
-  def pixels: Array[Pixel] = {
-    awt.getRaster.getDataBuffer match {
-      case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_ARGB => buffer.getData.map(ARGBPixel.apply)
-      // todo implement this using new instances of Pixel
-      //        case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_RGB => buffer.getData
-      //            case buffer: DataBufferByte if awt.getType == BufferedImage.TYPE_3BYTE_BGR =>
-      //                val array = new Array[Int](buffer.getData.length / 3)
-      //                for ( k <- 0 until array.length ) {
-      //                    val blue = array(k * 3)
-      //                    val green = array(k * 3 + 1)
-      //                    val red = array(k * 3 + 2)
-      //                    val pixel = red << 16 | green << 8 | blue << 0
-      //                    array(k) = pixel
-      //                }
-      //                array
-      //            case buffer: DataBufferByte if awt.getType == BufferedImage.TYPE_4BYTE_ABGR =>
-      //                val array = new Array[Int](buffer.getData.length / 4)
-      //                for ( k <- 0 until array.length ) {
-      //                    val alpha = array(k * 4)
-      //                    val blue = array(k * 4 + 1)
-      //                    val green = array(k * 4 + 2)
-      //                    val red = array(k * 4 + 3)
-      //                    val pixel = alpha << 24 | red << 16 | green << 8 | blue << 0
-      //                    array(k) = pixel
-      //                }
-      //                array
-      case _ =>
-        val pixels = Array.ofDim[Pixel](width * height)
-        for (x <- 0 until width; y <- 0 until height) {
-          pixels(y * width + x) = ARGBPixel(awt.getRGB(x, y))
-        }
-        pixels
-    }
-  }
-
-  /**
    * Creates a copy of this image with the given filter applied.
    * The original (this) image is unchanged.
    *
@@ -327,6 +274,8 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] {
    * @return the result of applying each filter in turn
    */
   def filter(filters: Filter*): Image = filters.foldLeft(this)((image, filter) => image.filter(filter))
+
+  override def empty: Image = Image.empty(width, height)
 
   /**
    * Returns a new image with the transarency replaced with the given color.
@@ -360,9 +309,9 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] {
    * @return The result of flipping this image horizontally.
    */
   def flipX: Image = {
-    val tx = AffineTransform.getScaleInstance(-1, 1)
-    tx.translate(-width, 0)
-    flip(tx)
+    val target = copy
+    target.fx()
+    target
   }
 
   /**
@@ -371,15 +320,9 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] {
    * @return The result of flipping this image vertically.
    */
   def flipY: Image = {
-    val tx = AffineTransform.getScaleInstance(1, -1)
-    tx.translate(0, -height)
-    flip(tx)
-  }
-
-  protected[scrimage] def flip(tx: AffineTransform): Image = {
-    val op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR)
-    val flipped = op.filter(awt, null)
-    new Image(flipped)
+    val target = copy
+    target.fy()
+    target
   }
 
   /**
@@ -700,7 +643,9 @@ object Image {
    */
   def apply(w: Int, h: Int, pixels: Array[Pixel]): Image = {
     require(w * h == pixels.length)
-    Image.empty(w, h).mapInPlace((x, y, p) => pixels(PixelTools.coordinateToOffset(x, y, w)))
+    val image = Image.empty(w, h)
+    image.mapInPlace((x, y, p) => pixels(PixelTools.coordinateToOffset(x, y, w)))
+    image
   }
 
   /**

@@ -1,10 +1,10 @@
 package com.sksamuel.scrimage.nio
 
-import java.awt.image.{ BufferedImage, ColorModel, DataBufferInt, Raster }
+import java.awt.image.{BufferedImage, ColorModel, DataBufferInt, Raster}
 import java.io.ByteArrayInputStream
 
-import ar.com.hjg.pngj.{ ImageLineInt, PngReader }
-import com.sksamuel.scrimage.{ ARGBPixel, Image }
+import ar.com.hjg.pngj.ImageLineInt
+import com.sksamuel.scrimage.{ARGBPixel, Image}
 
 object PngReader extends Reader {
 
@@ -12,7 +12,7 @@ object PngReader extends Reader {
 
     if (supports(bytes)) {
 
-      val pngr = new PngReader(new ByteArrayInputStream(bytes))
+      val pngr = new ar.com.hjg.pngj.PngReader(new ByteArrayInputStream(bytes))
 
       val channels = pngr.imgInfo.channels
       val bitDepth = pngr.imgInfo.bitDepth

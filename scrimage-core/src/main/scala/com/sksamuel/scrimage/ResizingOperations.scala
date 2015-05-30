@@ -20,11 +20,29 @@ import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod.Bicubic
 
 /**
- * Read-only image operations.
+ * Operations that only read from the data buffer.
  *
  * @author Stephen Samuel
  */
-trait ImageLike[R] {
+trait ReadOnlyOperations[R] {
+
+  def width: Int
+  def height: Int
+  def pixels: Array[Pixel]
+
+  // This tuple contains all the state that identifies this particular image.
+  private[scrimage] def imageState = (width, height, pixels.toList)
+
+  // See this Stack Overflow question to see why this is implemented this way.
+  // http://stackoverflow.com/questions/7370925/what-is-the-standard-idiom-for-implementing-equals-and-hashcode-in-scala
+  override def hashCode: Int = imageState.hashCode
+
+  override def equals(other: Any): Boolean = {
+    other match {
+      case that: ReadOnlyOperations[_] => imageState == that.imageState
+      case _ => false
+    }
+  }
 
   lazy val points: Seq[(Int, Int)] = for (x <- 0 until width; y <- 0 until height) yield (x, y)
 
@@ -40,14 +58,19 @@ trait ImageLike[R] {
    */
   lazy val ratio: Double = if (height == 0) 0 else width / height.toDouble
 
-  def width: Int
-  def height: Int
-
   def forall(f: (Int, Int, Pixel) => Boolean): Boolean = points.forall(p => f(p._1, p._2, pixel(p)))
   def foreach(f: (Int, Int, Pixel) => Unit): Unit = points.foreach(p => f(p._1, p._2, pixel(p)))
 
   def row(y: Int): Array[Pixel] = pixels(0, y, width, 1)
   def col(x: Int): Array[Pixel] = pixels(x, 0, 1, height)
+
+  /**
+   * Returns true if a pixel with the given color exists.
+   *
+   * @param color the pixel colour to look for.
+   * @return true if there exists at least one pixel that has the given pixels color
+   */
+  def exists(color: Color): Boolean = pixels.exists(pixel => pixel.toInt == color.toRGB.toInt)
 
   /**
    * Returns the pixel at the given coordinates.
@@ -127,6 +150,99 @@ trait ImageLike[R] {
   }
 
   /**
+   * Returns the number of pixels in the image.
+   *
+   * @return the number of pixels
+   */
+  def count: Int = pixels.length
+
+  /**
+   * Returns a set of the distinct colours used in this image.
+   *
+   * @return the set of distinct Colors
+   */
+  def colours: Set[RGBColor] = pixels.map(argb => Color(argb.toInt)).toSet
+
+  /**
+   * Counts the number of pixels with the given colour.
+   *
+   * @param color the colour to detect.
+   * @return the number of pixels that matched the colour of the given pixel
+   */
+  def count(color: Color): Int = pixels.find(_.toInt == color.toInt).size
+
+  /**
+   * Creates a new image with the same data as this image.
+   * Any operations to the copied image will not write back to the original.
+   *
+   * @return A copy of this image.
+   */
+  def copy: Image
+
+  /**
+   * Creates an empty Image with the same dimensions of this image.
+   *
+   * @return a new Image that is a clone of this image but with uninitialized data
+   */
+  def empty: Image
+}
+
+/**
+ * Operations that can be performed in place on an image.
+ */
+trait InPlaceOperations[R] extends ReadOnlyOperations[R] {
+
+  /**
+   * Sets all pixels on this image to be the given color.
+   *
+   * @return The result of the pixels set to the given color.
+   */
+  def fill(color: Color): R
+
+  /**
+   * Maps the pixels of this image into another image by applying the given function to each pixel.
+   *
+   * The function accepts three parameters: x,y,p where x and y are the coordinates of the pixel
+   * being transformed and p is the pixel at that location.
+   *
+   * @param f the function to transform pixel x,y with existing value p into new pixel value p' (p prime)
+   * @return
+   */
+  def map(f: (Int, Int, Pixel) => Pixel): R
+
+  /**
+   * Creates a copy of this image with the given filter applied.
+   * The original (this) image is unchanged.
+   *
+   * @param filter the filter to apply. See com.sksamuel.scrimage.Filter.
+   *
+   * @return A new image with the given filter applied.
+   */
+  def filter(filter: Filter): R
+
+  /**
+   * Flips this image horizontally.
+   *
+   * @return The result of flipping this image horizontally.
+   */
+  def flipX: R
+
+  /**
+   * Flips this image vertically.
+   *
+   * @return The result of flipping this image vertically.
+   */
+  def flipY: R
+}
+
+/**
+ * Operations that (can) change the size of the canvas and so require a new backing buffer.
+ *
+ * @author Stephen Samuel
+ */
+trait ResizingOperations[R] extends ReadOnlyOperations[R] {
+
+  /**
    * Creates a new image which is the result of this image
    * padded with the given number of pixels on each edge.
    *
@@ -161,68 +277,10 @@ trait ImageLike[R] {
    */
   def padTo(targetWidth: Int, targetHeight: Int, color: Color = X11Colorlist.White): R
 
-  /**
-   * Creates an empty Image with the same dimensions of this image.
-   *
-   * @return a new Image that is a clone of this image but with uninitialized data
-   */
-  def empty: Image
-
-  /**
-   * Returns the number of pixels in the image.
-   *
-   * @return the number of pixels
-   */
-  def count: Int = pixels.length
-
-  /**
-   * Returns a set of the distinct colours used in this image.
-   *
-   * @return the set of distinct Colors
-   */
-  def colours: Set[Color] = pixels.map(argb => Color(argb.toInt)).toSet
-
-  /**
-   * Counts the number of pixels with the given colour.
-   *
-   * @param color the colour to detect.
-   * @return the number of pixels that matched the colour of the given pixel
-   */
-  def count(color: Color): Int = pixels.find(_.toInt == color.toInt).size
-
-  /**
-   * Creates a new image with the same data as this image.
-   * Any operations to the copied image will not write back to the original.
-   *
-   * @return A copy of this image.
-   */
-  def copy: Image
-
   def cover(targetWidth: Int,
             targetHeight: Int,
             scaleMethod: ScaleMethod = Bicubic,
             position: Position = Center): R
-
-  /**
-   * Maps the pixels of this image into another image by applying the given function to each pixel.
-   *
-   * The function accepts three parameters: x,y,p where x and y are the coordinates of the pixel
-   * being transformed and p is the pixel at that location.
-   *
-   * @param f the function to transform pixel x,y with existing value p into new pixel value p' (p prime)
-   * @return
-   */
-  def map(f: (Int, Int, Pixel) => Pixel): R
-
-  /**
-   * Creates a copy of this image with the given filter applied.
-   * The original (this) image is unchanged.
-   *
-   * @param filter the filter to apply. See com.sksamuel.scrimage.Filter.
-   *
-   * @return A new image with the given filter applied.
-   */
-  def filter(filter: Filter): R
 
   def fit(targetWidth: Int, targetHeight: Int, color: Color, scaleMethod: ScaleMethod, position: Position): R
 
@@ -337,29 +395,5 @@ trait ImageLike[R] {
    */
   def scale(scaleFactor: Double, scaleMethod: ScaleMethod = Bicubic): R =
     scaleTo((width * scaleFactor).toInt, (height * scaleFactor).toInt, scaleMethod)
-
-  def pixels: Array[Pixel]
-
-  /**
-   * Returns true if a pixel with the given color exists.
-   *
-   * @param color the pixel colour to look for.
-   * @return true if there exists at least one pixel that has the given pixels color
-   */
-  def exists(color: Color): Boolean = pixels.exists(pixel => pixel.toInt == color.toRGB.toInt)
-
-  // This tuple contains all the state that identifies this particular image.
-  private[scrimage] def imageState = (width, height, pixels.toList)
-
-  // See this Stack Overflow question to see why this is implemented this way.
-  // http://stackoverflow.com/questions/7370925/what-is-the-standard-idiom-for-implementing-equals-and-hashcode-in-scala
-  override def hashCode: Int = imageState.hashCode
-
-  override def equals(other: Any): Boolean = {
-    other match {
-      case that: ImageLike[_] => imageState == that.imageState
-      case _ => false
-    }
-  }
 }
 

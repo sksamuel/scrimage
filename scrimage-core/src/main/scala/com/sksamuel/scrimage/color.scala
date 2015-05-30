@@ -5,7 +5,8 @@ import java.awt.Paint
 import scala.language.implicitConversions
 
 /**
- * @author Stephen Samuel */
+ * @author Stephen Samuel
+ */
 trait Color {
 
   /**
