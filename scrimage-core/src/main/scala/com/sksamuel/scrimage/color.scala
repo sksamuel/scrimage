@@ -4,18 +4,36 @@ import java.awt.Paint
 
 import scala.language.implicitConversions
 
-/** @author Stephen Samuel */
-
+/**
+ * @author Stephen Samuel */
 trait Color {
 
   /**
    * Returns a conversion of this Color into an RGBColor.
-   *
    * If this colour is already an instance of RGBColor then the same instance will be returned.
-   *
-   * @return an RGBColor conversion of this color.
    */
   def toRGB: RGBColor
+
+  /**
+   * Returns a conversion of this color into a CYMK color.
+   * If this colour is already a CYMK then the same instance will be returned.
+   */
+  def toCYMK: CMYK = toRGB.toCYMK
+
+  def toHSV: HSVColor = toRGB.toHSV
+
+  def toHSL: HSLColor = toRGB.toHSL
+
+  def toHex: String = toRGB.toHex
+
+  /**
+   * Returns an AWT Color representation of this colour.
+   * AWT Colors are in the RGB color model.
+   */
+  def toAWT: java.awt.Color = {
+    val rgb = toRGB
+    new java.awt.Color(rgb.red, rgb.green, rgb.blue, rgb.alpha)
+  }
 
   private[scrimage] def paint: Paint = new java.awt.Color(this.toRGB.toInt)
 }
@@ -24,7 +42,7 @@ object Color {
 
   implicit def int2color(argb: Int): RGBColor = apply(argb)
   implicit def color2rgb(color: Color): RGBColor = color.toRGB
-  implicit def color2awt(color: Color): java.awt.Color = new java.awt.Color(color.toRGB.argb)
+  implicit def color2awt(color: Color): java.awt.Color = new java.awt.Color(color.toRGB.toInt)
   implicit def awt2color(awt: java.awt.Color): RGBColor = RGBColor(awt.getRed, awt.getGreen, awt.getBlue, awt.getAlpha)
 
   def apply(red: Int, green: Int, blue: Int, alpha: Int = 255): RGBColor = RGBColor(red, green, blue, alpha)
@@ -40,32 +58,95 @@ object Color {
   val Black = RGBColor(0, 0, 0)
 }
 
+/**
+ * Red/Green/Blue
+ */
 case class RGBColor(red: Int, green: Int, blue: Int, alpha: Int = 255) extends Color {
-
   require(0 <= red && red <= 255, "Red component is invalid")
   require(0 <= green && green <= 255, "Green component is invalid")
   require(0 <= blue && blue <= 255, "Blue component is invalid")
   require(0 <= alpha && alpha <= 255, "Alpha component is invalid")
-
-  def toRGB: RGBColor = this
-  def toAWT: java.awt.Color = new java.awt.Color(red, green, blue, alpha)
 
   /**
    * Returns as an int the value of this color. The RGB and alpha components are packed
    * into the int as byes.
    * @return
    */
-  def argb: Int = ((alpha & 0xFF) << 24) | ((red & 0xFF) << 16) | ((green & 0xFF) << 8) | blue & 0xFF
-  def toInt: Int = argb
+  def toInt: Int = ((alpha & 0xFF) << 24) | ((red & 0xFF) << 16) | ((green & 0xFF) << 8) | blue & 0xFF
+
+  def toPixel: RGBPixel = RGBPixel(red, green, blue)
+
+  override def toRGB: RGBColor = this
+
+  /**
+   * Returns a conversion of this color into a CYMK color.
+   * If this colour is already a CYMK then the same instance will be returned.
+   */
+  override def toCYMK: CMYK = {
+    val max: Float = Math.max(Math.max(red, green), blue) / 255f
+    val k = 1.0f - max
+    if (max > 0.0f) {
+      CMYK(1.0f - (red / 255f) / max, 1.0f - (green / 255f) / max, 1.0f - (blue / 255f) / max, k)
+    } else {
+      CMYK(0, 0, 0, k)
+    }
+  }
+
+  private def getHue(red: Float, green: Float, blue: Float, max: Float, min: Float): Float = {
+    var hue = max - min
+    if (hue > 0.0f) {
+      if (max == red) {
+        hue = (green - blue) / hue
+        if (hue < 0.0f) {
+          hue += 6.0f
+        }
+      } else if (max == green) {
+        hue = 2.0f + (blue - red) / hue
+      } else {
+        hue = 4.0f + (red - green) / hue
+      }
+      hue /= 6.0f
+    }
+    hue
+  }
+
+  override def toHSV: HSVColor = {
+    val max = Math.max(Math.max(red, green), blue) / 255f
+    val min = Math.min(Math.min(red, green), blue) / 255f
+    var saturation = max - min
+    if (saturation > 0.0f) saturation = saturation / max
+    HSVColor(getHue(red, green, blue, max, min), saturation, max, alpha)
+  }
+
+  override def toHSL: HSLColor = {
+    val max = Math.max(Math.max(red, green), blue) / 255f
+    val min = Math.min(Math.min(red, green), blue) / 255f
+    val sum = max + min
+    var saturation = max - min
+    if (saturation > 0.0f) {
+      saturation = saturation / (if (sum > 1.0f) 2.0f - sum else sum)
+    }
+    HSLColor(getHue(red, green, blue, max, min), saturation, sum / 2.0f, alpha)
+  }
 
   /**
    * Returns a HEX String of this colour. Eg for 0,255,0, this method will return 00FF00.
    */
-  def toHex: String = Integer.toHexString(argb & 0xffffff).toUpperCase.reverse.padTo(6, '0').reverse
+  override def toHex: String = Integer.toHexString(toInt & 0xffffff).toUpperCase.reverse.padTo(6, '0').reverse
+}
+
+case class CMYK(c: Float, m: Float, y: Float, k: Float) extends Color {
+  override def toRGB: RGBColor = {
+    val red = 1.0f + c * k - k - c
+    val green = 1.0f + m * k - k - m
+    val blue = 1.0f + y * k - k - y
+    RGBColor((red * 255).toInt, (green * 255).toInt, (blue * 255).toInt, 0)
+  }
+  override def toCYMK: CMYK = this
 }
 
 /**
- * Also called HSB.
+ * Hue/Saturation/Value
  *
  * The hue component should be between 0.0 and 360.0
  * The saturation component should be between 0.0 and 1.0
@@ -77,6 +158,8 @@ case class HSVColor(hue: Float, saturation: Float, value: Float, alpha: Float) e
   require(0 <= saturation && saturation <= 1f, "Saturation component is invalid")
   require(0 <= value && value <= 1f, "Value component is invalid")
   require(0 <= alpha && alpha <= 1f, "Alpha component is invalid")
+
+  override def toHSV: HSVColor = this
 
   override def toRGB: RGBColor = {
 
@@ -103,6 +186,8 @@ case class HSVColor(hue: Float, saturation: Float, value: Float, alpha: Float) e
 }
 
 /**
+ * Hue/Saturation/Lightness
+ *
  * The hue component should be between 0.0 and 360.0
  * The saturation component should be between 0.0 and 1.0
  * The lightness component should be between 0.0 and 1.0
@@ -113,6 +198,8 @@ case class HSLColor(hue: Float, saturation: Float, lightness: Float, alpha: Floa
   require(0 <= saturation && saturation <= 1f, "Saturation component is invalid")
   require(0 <= lightness && lightness <= 1f, "Lightness component is invalid")
   require(0 <= alpha && alpha <= 1f, "Alpha component is invalid")
+
+  override def toHSL: HSLColor = this
 
   override def toRGB: RGBColor = {
     val h = (hue % 360f) / 360f

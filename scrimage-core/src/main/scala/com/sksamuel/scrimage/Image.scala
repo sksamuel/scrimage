@@ -563,7 +563,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] {
    * @return
    */
   def autocrop(color: Color): Image = {
-    def uniform(color: Color, pixels: Array[Pixel]) = pixels.forall(p => p.toInt == color.argb)
+    def uniform(color: Color, pixels: Array[Pixel]) = pixels.forall(p => p.toInt == color.toInt)
     def scanright(col: Int, image: Image): Int = {
       if (uniform(color, pixels(col, 0, 1, height))) scanright(col + 1, image)
       else col
