@@ -3,10 +3,11 @@ package com.sksamuel.scrimage
 import java.io.InputStream
 
 import com.sksamuel.scrimage.nio.PngReader
+import org.apache.commons.io.IOUtils
 
 class FormatDetector {
   def detect(in: InputStream): Option[Format] = {
-    if (PngReader.supports(in)) Some apply Format.PNG
+    if (PngReader.supports(IOUtils.toByteArray(in))) Some apply Format.PNG
     else None
   }
 }

@@ -1,9 +1,9 @@
 package com.sksamuel.scrimage.nio
 
-import java.io.{File, InputStream}
-import java.nio.file.{Files, Path}
+import java.io.{ File, InputStream }
+import java.nio.file.{ Files, Path }
 
-import com.sksamuel.scrimage.{Image, ImageParseException}
+import com.sksamuel.scrimage.{ Image, ImageParseException }
 import org.apache.commons.io.IOUtils
 
 import scala.util.Try
@@ -13,7 +13,7 @@ import scala.util.Try
  */
 object ImageReader {
 
-  private val readers = List(PngReader, JavaImageIOReader, JavaImageIO2Reader)
+  private val readers = List(JavaImageIOReader, PngReader, JavaImageIO2Reader)
 
   def read(file: File): Image = read(file.toPath)
 
@@ -22,7 +22,9 @@ object ImageReader {
   def read(bytes: Array[Byte]): Image = {
     readers.foldLeft(None: Option[Image])((image, reader) =>
       image orElse {
-        reader.read(bytes)
+        Try {
+          reader.read(bytes)
+        } getOrElse None
       }
     ).getOrElse(throw new ImageParseException)
   }

@@ -18,16 +18,16 @@ package com.sksamuel.scrimage
 
 import java.awt._
 import java.awt.geom.AffineTransform
-import java.awt.image.{AffineTransformOp, BufferedImage, ColorModel, DataBufferInt, Raster}
-import java.io.{ByteArrayInputStream, File, InputStream}
-import java.nio.file.{Files, Path}
+import java.awt.image.{ AffineTransformOp, BufferedImage, ColorModel, DataBufferInt, Raster }
+import java.io.{ ByteArrayInputStream, File, InputStream }
+import java.nio.file.{ Files, Path }
 import javax.imageio.ImageIO
 
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod._
-import com.sksamuel.scrimage.nio.{ImageReader, PngWriter, ImageWriter}
-import org.apache.commons.io.{FileUtils, IOUtils}
-import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
+import com.sksamuel.scrimage.nio.{ ImageReader, PngWriter, ImageWriter }
+import org.apache.commons.io.{ FileUtils, IOUtils }
+import thirdparty.mortennobel.{ ResampleFilters, ResampleOp }
 
 import scala.List
 import scala.language.implicitConversions
@@ -185,17 +185,17 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] {
       (xInt, xWeight) <- xIntsAndWeights;
       (yInt, yWeight) <- yIntsAndWeights
     ) yield {
-        val weight = xWeight * yWeight
-        if (weight == 0) List(0.0, 0.0, 0.0, 0.0)
-        else {
-          val px = pixel(xInt, yInt)
-          List(
-            weight * px.alpha,
-            weight * px.red,
-            weight * px.green,
-            weight * px.blue)
-        }
+      val weight = xWeight * yWeight
+      if (weight == 0) List(0.0, 0.0, 0.0, 0.0)
+      else {
+        val px = pixel(xInt, yInt)
+        List(
+          weight * px.alpha,
+          weight * px.red,
+          weight * px.green,
+          weight * px.blue)
       }
+    }
 
     // We perform the weighted averaging (a summation).
     // First though, we need to transpose so that we sum within channels,
@@ -298,7 +298,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] {
       //                array
       case _ =>
         val pixels = Array.ofDim[Pixel](width * height)
-        for ( x <- 0 until width; y <- 0 until height ) {
+        for (x <- 0 until width; y <- 0 until height) {
           pixels(y * width + x) = ARGBPixel(awt.getRGB(x, y))
         }
         pixels
@@ -771,7 +771,7 @@ object Image {
    */
   def filled(width: Int, height: Int, color: Color = Color.White): Image = {
     val target = empty(width, height)
-    for ( w <- 0 until width; h <- 0 until height )
+    for (w <- 0 until width; h <- 0 until height)
       target.awt.setRGB(w, h, color.toRGB.toInt)
     target
   }

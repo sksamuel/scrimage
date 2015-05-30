@@ -30,7 +30,8 @@ class PngWriterTest extends WordSpec with Matchers {
       }
     }
     "png reader detects the correct mime type" in {
-      PngReader.supports(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png")) shouldBe true
+      val bytes = IOUtils toByteArray getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png")
+      PngReader.supports(bytes) shouldBe true
     }
     "png reader reads an image correctly" in {
       val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png"))

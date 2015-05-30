@@ -31,6 +31,8 @@ object Build extends Build {
     ScalariformKeys.preferences := ScalariformKeys.preferences.value
       .setPreference(AlignParameters, true)
       .setPreference(DoubleIndentClassDeclaration, true)
+      .setPreference(SpaceInsideBrackets, false)
+      .setPreference(SpaceInsideParentheses, false)
       .setPreference(MultilineScaladocCommentsStartOnFirstLine, false)
       .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, false),
 

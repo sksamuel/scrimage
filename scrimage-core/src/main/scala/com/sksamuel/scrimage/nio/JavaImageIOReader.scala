@@ -35,25 +35,25 @@ object JavaImageIO2Reader extends Reader {
       .getImageReaders(new ByteArrayInputStream(bytes))
       .asScala
       .foldLeft(None: Option[Image]) { (valueOpt, reader) =>
-      // only bother to read if it hasn't already successfully been read
-      valueOpt orElse {
-        try {
-          reader.setInput(new ByteArrayInputStream(bytes), true, true)
-          val params = reader.getDefaultReadParam
-          val imageTypes = reader.getImageTypes(0)
-          while (imageTypes.hasNext) {
-            val imageTypeSpecifier = imageTypes.next()
-            val bufferedImageType = imageTypeSpecifier.getBufferedImageType
-            if (bufferedImageType == BufferedImage.TYPE_BYTE_GRAY) {
-              params.setDestinationType(imageTypeSpecifier)
+        // only bother to read if it hasn't already successfully been read
+        valueOpt orElse {
+          try {
+            reader.setInput(new ByteArrayInputStream(bytes), true, true)
+            val params = reader.getDefaultReadParam
+            val imageTypes = reader.getImageTypes(0)
+            while (imageTypes.hasNext) {
+              val imageTypeSpecifier = imageTypes.next()
+              val bufferedImageType = imageTypeSpecifier.getBufferedImageType
+              if (bufferedImageType == BufferedImage.TYPE_BYTE_GRAY) {
+                params.setDestinationType(imageTypeSpecifier)
+              }
             }
+            val bufferedImage = reader.read(0, params)
+            Some(Image(bufferedImage))
+          } catch {
+            case e: Exception => None
           }
-          val bufferedImage = reader.read(0, params)
-          Some(Image(bufferedImage))
-        } catch {
-          case e: Exception => None
         }
       }
-    }
   }
 }

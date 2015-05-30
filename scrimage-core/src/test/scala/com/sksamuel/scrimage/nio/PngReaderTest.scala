@@ -3,7 +3,7 @@ package com.sksamuel.scrimage.nio
 import java.io.File
 import java.nio.file.Files
 
-import org.apache.commons.io.{FileUtils, IOUtils}
+import org.apache.commons.io.{ FileUtils, IOUtils }
 import org.scalatest.{ Matchers, WordSpec }
 
 class PngReaderTest extends WordSpec with Matchers {
