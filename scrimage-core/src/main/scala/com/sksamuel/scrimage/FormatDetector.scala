@@ -2,13 +2,11 @@ package com.sksamuel.scrimage
 
 import java.io.InputStream
 
-import com.sksamuel.scrimage.nio.{ GifReader, JpegReader, PngReader }
+import com.sksamuel.scrimage.nio.PngReader
 
 class FormatDetector {
   def detect(in: InputStream): Option[Format] = {
     if (PngReader.supports(in)) Some apply Format.PNG
-    else if (JpegReader.supports(in)) Some apply Format.PNG
-    else if (GifReader.supports(in)) Some apply Format.PNG
     else None
   }
 }

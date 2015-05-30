@@ -1,7 +1,8 @@
 package com.sksamuel.scrimage.nio
 
 import com.sksamuel.scrimage.Image
-import org.scalatest.{Matchers, WordSpec}
+import org.apache.commons.io.IOUtils
+import org.scalatest.{ Matchers, WordSpec }
 
 /** @author Stephen Samuel */
 class PngWriterTest extends WordSpec with Matchers {
@@ -33,7 +34,7 @@ class PngWriterTest extends WordSpec with Matchers {
     }
     "png reader reads an image correctly" in {
       val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png"))
-      val actual = PngReader.read(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png"))
+      val actual = PngReader.read(IOUtils.toByteArray(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png"))).get
       actual.output(new java.io.File("read_withPNGReader.png"))(PngWriter.MaxCompression)
       assert(actual.width === expected.width)
       assert(actual.height === expected.height)

@@ -18,16 +18,16 @@ package com.sksamuel.scrimage
 
 import java.awt._
 import java.awt.geom.AffineTransform
-import java.awt.image.{ AffineTransformOp, BufferedImage, ColorModel, DataBufferInt, Raster }
-import java.io.{ ByteArrayInputStream, File, InputStream }
-import java.nio.file.Path
+import java.awt.image.{AffineTransformOp, BufferedImage, ColorModel, DataBufferInt, Raster}
+import java.io.{ByteArrayInputStream, File, InputStream}
+import java.nio.file.{Files, Path}
 import javax.imageio.ImageIO
 
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod._
-import com.sksamuel.scrimage.nio.{ PngWriter, ImageWriter }
-import org.apache.commons.io.{ FileUtils, IOUtils }
-import thirdparty.mortennobel.{ ResampleFilters, ResampleOp }
+import com.sksamuel.scrimage.nio.{PngWriter, ImageWriter}
+import org.apache.commons.io.{FileUtils, IOUtils}
+import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 
 import scala.List
 import scala.language.implicitConversions
@@ -185,17 +185,17 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] {
       (xInt, xWeight) <- xIntsAndWeights;
       (yInt, yWeight) <- yIntsAndWeights
     ) yield {
-      val weight = xWeight * yWeight
-      if (weight == 0) List(0.0, 0.0, 0.0, 0.0)
-      else {
-        val px = pixel(xInt, yInt)
-        List(
-          weight * px.alpha,
-          weight * px.red,
-          weight * px.green,
-          weight * px.blue)
+        val weight = xWeight * yWeight
+        if (weight == 0) List(0.0, 0.0, 0.0, 0.0)
+        else {
+          val px = pixel(xInt, yInt)
+          List(
+            weight * px.alpha,
+            weight * px.red,
+            weight * px.green,
+            weight * px.blue)
+        }
       }
-    }
 
     // We perform the weighted averaging (a summation).
     // First though, we need to transpose so that we sum within channels,
@@ -298,7 +298,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends ImageLike[Image] {
       //                array
       case _ =>
         val pixels = Array.ofDim[Pixel](width * height)
-        for (x <- 0 until width; y <- 0 until height) {
+        for ( x <- 0 until width; y <- 0 until height ) {
           pixels(y * width + x) = ARGBPixel(awt.getRGB(x, y))
         }
         pixels
@@ -704,7 +704,7 @@ object Image {
   }
 
   /**
-   * Create a new Image from a byte stream. This is intended to create
+   * Create a new Image from an array of bytes. This is intended to create
    * an image from an image format eg PNG, not from a stream of pixels.
    *
    * @param bytes the bytes from the format stream
@@ -742,6 +742,13 @@ object Image {
     }
   }
 
+  /**
+   * Create a new Image from an input stream. This is intended to create
+   * an image from an image format eg PNG, not from a stream of pixels.
+   *
+   * @param in the stream to read the bytes from
+   * @return a new Image
+   */
   def apply(in: InputStream): Image = {
     require(in != null)
     require(in.available > 0)
@@ -752,9 +759,12 @@ object Image {
     apply(bytes)
   }
 
+  /**
+   * Create a new Image from a file.
+   */
   def apply(file: File): Image = {
     require(file != null)
-    val in = FileUtils.openInputStream(file)
+    val in = Files.newInputStream(file.toPath)
     apply(in)
   }
 
@@ -795,12 +805,10 @@ object Image {
    * @return the new Image
    */
   def filled(width: Int, height: Int, color: Color = Color.White): Image = {
-    val target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
-    for (
-      w <- 0 until width;
-      h <- 0 until height
-    ) target.setRGB(w, h, color.toRGB.toInt)
-    new Image(target)
+    val target = empty(width, height)
+    for ( w <- 0 until width; h <- 0 until height )
+      target.awt.setRGB(w, h, color.toRGB.toInt)
+    target
   }
 
   /**
@@ -816,7 +824,6 @@ object Image {
     val target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
     new Image(target)
   }
-
 }
 
 sealed trait ScaleMethod

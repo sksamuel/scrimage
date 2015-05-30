@@ -1,16 +1,16 @@
 package com.sksamuel.scrimage.nio
 
-import java.awt.image.{ BufferedImage, ColorModel, DataBufferInt, Raster }
-import java.io.InputStream
+import java.awt.image.{BufferedImage, ColorModel, DataBufferInt, Raster}
+import java.io.{ByteArrayInputStream, InputStream}
 
-import ar.com.hjg.pngj.{ ImageLineInt, PngReader }
-import com.sksamuel.scrimage.{ ARGBPixel, Image }
+import ar.com.hjg.pngj.{ImageLineInt, PngReader}
+import com.sksamuel.scrimage.{ARGBPixel, Image}
 
-object PngReader extends ImageReader {
+object PngReader extends Reader {
 
-  override def read(in: InputStream): Image = {
+  override def read(bytes: Array[Byte]): Option[Image] = {
 
-    val pngr = new PngReader(in)
+    val pngr = new PngReader(new ByteArrayInputStream(bytes))
 
     val channels = pngr.imgInfo.channels
     val bitDepth = pngr.imgInfo.bitDepth
@@ -19,7 +19,7 @@ object PngReader extends ImageReader {
 
     val matrix = Array.ofDim[Int](w * h)
 
-    for (row <- 0 until h) {
+    for ( row <- 0 until h ) {
       val scanline: Array[Int] = pngr.readRow().asInstanceOf[ImageLineInt].getScanline
       val pixels = scanline.grouped(channels).map { group =>
         channels match {
@@ -38,10 +38,10 @@ object PngReader extends ImageReader {
     val cm = ColorModel.getRGBdefault()
     val image = new BufferedImage(cm, raster, cm.isAlphaPremultiplied(), null)
 
-    new Image(image)
+    Option(new Image(image))
   }
 
-  override def supports(input: InputStream): Boolean = {
+  def supports(input: InputStream): Boolean = {
 
     val buff = Array.ofDim[Byte](8)
     input.read(buff)

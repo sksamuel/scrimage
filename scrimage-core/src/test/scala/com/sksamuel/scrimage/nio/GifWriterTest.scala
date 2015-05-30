@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage.nio
 
 import com.sksamuel.scrimage.Image
-import org.scalatest.{BeforeAndAfter, FunSuite, OneInstancePerTest}
+import org.scalatest.{ BeforeAndAfter, FunSuite, OneInstancePerTest }
 
 /** @author Stephen Samuel */
 class GifWriterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
