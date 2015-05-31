@@ -105,15 +105,15 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("when created a filled copy then the dimensions are the same as the original") {
-    val copy1 = image.filled(java.awt.Color.RED)
+    val copy1 = image.fill(java.awt.Color.RED)
     assert(1944 === copy1.width)
     assert(1296 === copy1.height)
 
-    val copy2 = image.filled(0x00FF00FF)
+    val copy2 = image.fill(0x00FF00FF)
     assert(1944 === copy2.width)
     assert(1296 === copy2.height)
 
-    val copy3 = image.filled(java.awt.Color.WHITE)
+    val copy3 = image.fill(java.awt.Color.WHITE)
     assert(1944 === copy3.width)
     assert(1296 === copy3.height)
   }

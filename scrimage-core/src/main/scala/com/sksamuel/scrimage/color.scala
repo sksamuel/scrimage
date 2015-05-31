@@ -19,7 +19,7 @@ trait Color {
    * Returns a conversion of this color into a CYMK color.
    * If this colour is already a CYMK then the same instance will be returned.
    */
-  def toCYMK: CMYK = toRGB.toCYMK
+  def toCMYK: CMYKColor = toRGB.toCMYK
 
   def toHSV: HSVColor = toRGB.toHSV
 
@@ -91,13 +91,13 @@ case class RGBColor(red: Int, green: Int, blue: Int, alpha: Int = 255) extends C
    * Returns a conversion of this color into a CYMK color.
    * If this colour is already a CYMK then the same instance will be returned.
    */
-  override def toCYMK: CMYK = {
+  override def toCMYK: CMYKColor = {
     val max: Float = Math.max(Math.max(red, green), blue) / 255f
     val k = 1.0f - max
     if (max > 0.0f) {
-      CMYK(1.0f - (red / 255f) / max, 1.0f - (green / 255f) / max, 1.0f - (blue / 255f) / max, k)
+      CMYKColor(1.0f - (red / 255f) / max, 1.0f - (green / 255f) / max, 1.0f - (blue / 255f) / max, k)
     } else {
-      CMYK(0, 0, 0, k)
+      CMYKColor(0, 0, 0, k)
     }
   }
 
@@ -142,14 +142,14 @@ case class RGBColor(red: Int, green: Int, blue: Int, alpha: Int = 255) extends C
   }
 }
 
-case class CMYK(c: Float, m: Float, y: Float, k: Float) extends Color {
+case class CMYKColor(c: Float, m: Float, y: Float, k: Float) extends Color {
   override def toRGB: RGBColor = {
     val red = 1.0f + c * k - k - c
     val green = 1.0f + m * k - k - m
     val blue = 1.0f + y * k - k - y
-    RGBColor((red * 255).toInt, (green * 255).toInt, (blue * 255).toInt, 0)
+    RGBColor(Math.round(red * 255), Math.round(green * 255), Math.round(blue * 255), 255)
   }
-  override def toCYMK: CMYK = this
+  override def toCMYK: CMYKColor = this
 }
 
 /**
@@ -161,7 +161,7 @@ case class CMYK(c: Float, m: Float, y: Float, k: Float) extends Color {
  * The alpha component should be between 0.0 and 1.0
  */
 case class HSVColor(hue: Float, saturation: Float, value: Float, alpha: Float) extends Color {
-  require(0 <= hue && hue < 1f, "Hue component is invalid")
+  require(0 <= hue && hue <= 360f, "Hue component is invalid")
   require(0 <= saturation && saturation <= 1f, "Saturation component is invalid")
   require(0 <= value && value <= 1f, "Value component is invalid")
   require(0 <= alpha && alpha <= 1f, "Alpha component is invalid")
@@ -170,25 +170,28 @@ case class HSVColor(hue: Float, saturation: Float, value: Float, alpha: Float) e
 
   override def toRGB: RGBColor = {
 
-    def toRGB(r: Float, g: Float, b: Float): RGBColor = {
-      RGBColor((r * 255f + 0.5f).toInt, (g * 255f + 0.5f).toInt, (b * 255f + 0.5f).toInt, (alpha * 255f + 0.5f).toInt)
-    }
+    // assumes h is in th range [0,1] not [0,360) so must convert
+    val h = hue / 360f
+    val s = saturation
+    val v = value
 
-    val h = (hue * 6).toInt
-    val f = hue * 6 - h
-    val p = value * (1 - saturation)
-    val q = value * (1 - f * saturation)
-    val t = value * (1 - (1 - f) * saturation)
+    val i: Float = Math.floor(h * 6f).toFloat
+    val f: Float = h * 6f - i
+    val p: Float = v * (1 - s)
+    val q: Float = v * (1 - f * s)
+    val t: Float = v * (1 - (1 - f) * s)
 
-    h match {
-      case 0 => toRGB(value, t, p);
-      case 1 => toRGB(q, value, p);
-      case 2 => toRGB(p, value, t);
-      case 3 => toRGB(p, q, value);
-      case 4 => toRGB(t, p, value);
-      case 5 => toRGB(value, p, q);
+    val (r, g, b) = i % 6 match {
+      case 0 => (v, t, p)
+      case 1 => (q, v, p)
+      case 2 => (p, v, t)
+      case 3 => (p, q, v)
+      case 4 => (t, p, v)
+      case 5 => (v, p, q)
       case _ => throw new RuntimeException(s"Cannot convert from HSV to RGB ($this)")
     }
+
+    RGBColor(Math.round(r * 255), Math.round(g * 255), Math.round(b * 255), 255)
   }
 }
 
@@ -209,27 +212,34 @@ case class HSLColor(hue: Float, saturation: Float, lightness: Float, alpha: Floa
   override def toHSL: HSLColor = this
 
   override def toRGB: RGBColor = {
-    val h = (hue % 360f) / 360f
-    val q = {
-      if (lightness < 0.5) lightness * (1 + saturation)
-      else (lightness + saturation) - (saturation * lightness)
-    }
-    val p = 2 * lightness - q
-    def hue2rgb(p: Float, q: Float, h: Float): Float = {
-      val hprime = {
-        if (h < 0) h + 1
-        else if (h > 1) h - 1
-        else h
-      }
-      if (hprime * 6 < 1f) p + (q - p) * 6 * hprime
-      else if (hprime * 6 < 2f) q
-      else if (hprime * 6 < 3f) p + (q - p) * (2f / 3f - hprime) * 6
+    // credit to https://github.com/mjackson/mjijackson.github.com/blob/master/2008/02/rgb-to-hsl-and-rgb-to-hsv-color-model-conversion-algorithms-in-javascript.txt
+
+    // assumes h is in th range [0,1] not [0,360) so must convert
+    val h = hue / 360f
+
+    def hue2rgb(p: Float, q: Float, t: Float): Float = {
+      val tprime: Float = if (t < 0) t + 1f else if (t > 1f) t - 1f else t
+      if (tprime < 1f / 6f) p + (q - p) * 6f * tprime
+      else if (tprime < 1f / 2f) q
+      else if (tprime < 2f / 3f) p + (q - p) * (2f / 3f - tprime) * 6f
       else p
     }
-    val r = Math.max(0, hue2rgb(p, q, h + (1.0f / 3.0f)))
-    val g = Math.max(0, hue2rgb(p, q, h))
-    val b = Math.max(0, hue2rgb(p, q, h - (1.0f / 3.0f)))
 
-    RGBColor((r * 255f + 0.5f).toInt, (g * 255f + 0.5f).toInt, (b * 255f + 0.5f).toInt, (alpha * 255f + 0.5f).toInt)
+    if (saturation == 0) {
+      // achromatic
+      RGBColor(
+        Math.round(lightness * 255),
+        Math.round(lightness * 255),
+        Math.round(lightness * 255),
+        Math.round(alpha * 255)
+      )
+    } else {
+      val q = if (lightness < 0.5f) lightness * (1f + saturation) else lightness + saturation - lightness * saturation
+      val p = 2f * lightness - q
+      val r = hue2rgb(p, q, h + 1f / 3f)
+      val g = hue2rgb(p, q, h)
+      val b = hue2rgb(p, q, h - 1f / 3f)
+      RGBColor(Math.round(r * 255), Math.round(g * 255), Math.round(b * 255), 255)
+    }
   }
 }
