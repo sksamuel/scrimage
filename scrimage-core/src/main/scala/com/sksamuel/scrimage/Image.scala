@@ -17,15 +17,15 @@
 package com.sksamuel.scrimage
 
 import java.awt._
-import java.awt.image.{ BufferedImage, ColorModel, DataBufferInt, Raster }
-import java.io.{ File, InputStream }
+import java.awt.image.{BufferedImage, ColorModel, DataBufferInt, Raster}
+import java.io.{File, InputStream}
 import java.nio.file.Path
 import javax.imageio.ImageIO
 
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod._
-import com.sksamuel.scrimage.nio.{ ImageReader, ImageWriter }
-import thirdparty.mortennobel.{ ResampleFilters, ResampleOp }
+import com.sksamuel.scrimage.nio.{ImageReader, ImageWriter}
+import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 
 import scala.List
 import scala.language.implicitConversions
@@ -69,17 +69,6 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
   }
 
   /**
-   * Sets all pixels on this image to be the given color.
-   *
-   * @return The result of the pixels set to the given color.
-   */
-  override def fill(color: Color): Image = {
-    val target = copy
-    target.fillpx(color)
-    target
-  }
-
-  /**
    * Removes the given amount of pixels from each edge; like a crop operation.
    *
    * @param amount the number of pixels to trim from each edge
@@ -99,7 +88,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
    * @return a new Image with the dimensions width-trim*2, height-trim*2
    */
   def trim(left: Int, top: Int, right: Int, bottom: Int): Image = {
-    Image.empty(width - left - right, height - bottom - top).overlay(this, -left, -top)
+    Image.blank(width - left - right, height - bottom - top).overlay(this, -left, -top)
   }
 
   /**
@@ -110,7 +99,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
    * @return a new Image with this image translated.
    */
   def translate(x: Int, y: Int, background: Color = Color.White): Image = {
-    filled(background).overlay(this, x, y)
+    fill(background).overlay(this, x, y)
   }
 
   /**
@@ -170,17 +159,17 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
       (xInt, xWeight) <- xIntsAndWeights;
       (yInt, yWeight) <- yIntsAndWeights
     ) yield {
-      val weight = xWeight * yWeight
-      if (weight == 0) List(0.0, 0.0, 0.0, 0.0)
-      else {
-        val px = pixel(xInt, yInt)
-        List(
-          weight * px.alpha,
-          weight * px.red,
-          weight * px.green,
-          weight * px.blue)
+        val weight = xWeight * yWeight
+        if (weight == 0) List(0.0, 0.0, 0.0, 0.0)
+        else {
+          val px = pixel(xInt, yInt)
+          List(
+            weight * px.alpha,
+            weight * px.red,
+            weight * px.green,
+            weight * px.blue)
+        }
       }
-    }
 
     // We perform the weighted averaging (a summation).
     // First though, we need to transpose so that we sum within channels,
@@ -204,7 +193,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
 
     val matrix = Array.ofDim[Pixel](subWidth * subHeight)
     // Simply copy the pixels over, one by one.
-    for (yIndex <- 0 until subHeight; xIndex <- 0 until subWidth) {
+    for ( yIndex <- 0 until subHeight; xIndex <- 0 until subWidth ) {
       matrix(PixelTools.coordinateToOffset(xIndex, yIndex, subWidth)) = ARGBIntPixel(subpixel(xIndex + x, yIndex + y))
     }
     Image(subWidth, subHeight, matrix)
@@ -231,21 +220,30 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
       yWidth.round.toInt)
   }
 
+  def offset(x: Int, y: Int): Int = PixelTools.coordinateToOffset(x, y, width)
+
+  def patch(x: Int, y: Int, patchWidth: Int, patchHeight: Int): Array[Pixel] = {
+    val px = pixels
+    val patch = Array.ofDim[Pixel](patchWidth * patchHeight)
+    for ( i <- y until y + patchHeight ) {
+      System.arraycopy(px, offset(x, y), patch, offset(0, y), patchWidth)
+    }
+    patch
+  }
+
   /**
    * Returns all the patches of a given size in the image, assuming pixel
    * alignment (no subpixel extraction).
    *
-   * The patches are returned as a sequence of closures.
+   * The patches are returned as a sequence of pixel matrices closures
    */
-  def patches(patchWidth: Int, patchHeight: Int): IndexedSeq[() => Image] = {
-    // to do reimplement
-    //    for (
-    //      row <- 0 to height - patchHeight;
-    //      col <- 0 to width - patchWidth
-    //    ) yield {
-    //      () => new Image(raster.patch(col, row, patchWidth, patchHeight))
-    //    }
-    ???
+  def patches(patchWidth: Int, patchHeight: Int): IndexedSeq[() => Array[Pixel]] = {
+    for (
+      row <- 0 to height - patchHeight;
+      col <- 0 to width - patchWidth
+    ) yield {
+      () => patch(col, row, patchWidth, patchHeight)
+    }
   }
 
   /**
@@ -271,7 +269,12 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
    */
   def filter(filters: Filter*): Image = filters.foldLeft(this)((image, filter) => image.filter(filter))
 
-  override def empty: Image = Image.empty(width, height)
+  /**
+   * Returns a new blank image with the same dimensions of this image.
+   *
+   * @return a new Image that has the same dimensions of this image but with uninitialized data
+   */
+  override def blank: Image = Image.blank(width, height)
 
   /**
    * Returns a new image with the transarency replaced with the given color.
@@ -399,7 +402,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
     val scaled = scaleTo(coveredDimensions._1, coveredDimensions._2, scaleMethod)
     val x = ((targetWidth - coveredDimensions._1) / 2.0).toInt
     val y = ((targetHeight - coveredDimensions._2) / 2.0).toInt
-    Image.empty(targetWidth, targetHeight).overlay(scaled, x, y)
+    Image.blank(targetWidth, targetHeight).overlay(scaled, x, y)
   }
 
   /**
@@ -419,7 +422,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
 
     scaleMethod match {
       case FastScale =>
-        val target = Image.empty(targetWidth, targetHeight)
+        val target = Image.blank(targetWidth, targetHeight)
         val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
         g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR)
         g2.drawImage(awt, 0, 0, targetWidth, targetHeight, null)
@@ -583,6 +586,16 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
     target
   }
 
+  def bound(boundedWidth: Int, boundedHeight: Int): Image = {
+    val dimensions = {
+      if (width <= boundedWidth && height <= boundedHeight)
+        (width, height)
+      else
+        ImageTools.dimensionsToFit((boundedWidth, boundedHeight), (width, height))
+    }
+    scaleTo(dimensions._1, dimensions._2)
+  }
+
   /**
    * Returns a new image that is scaled to fit the specified bounds while retaining the same aspect ratio
    * as the original image. The dimensions of the returned image will be the same as the result of the
@@ -599,13 +612,13 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
    *
    * Requesting a bound of 100,1000 on an image of 50,50 will result in a scale to 100,100.
    *
-   * @param boundedWidth the maximum width
-   * @param boundedHeight the maximum height
+   * @param maxW the maximum width
+   * @param maxH the maximum height
    *
    * @return A new image that is the result of the binding.
    */
-  def max(boundedWidth: Int, boundedHeight: Int): Image = {
-    val dimensions = ImageTools.dimensionsToFit((boundedWidth, boundedHeight), (width, height))
+  def max(maxW: Int, maxH: Int): Image = {
+    val dimensions = ImageTools.dimensionsToFit((maxW, maxH), (width, height))
     scaleTo(dimensions._1, dimensions._2)
   }
 
@@ -624,11 +637,11 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
 
   /**
    * Creates a new Image with the same dimensions of this image and with
-   * all the pixels initialized by the given color.
+   * all the pixels initialized to the given color.
    *
    * @return a new Image with the same dimensions as this
    */
-  def filled(color: Color = Color.White): Image = Image.filled(width, height, color)
+  def fill(color: Color = Color.White): Image = Image.filled(width, height, color)
 
   def bytes(implicit writer: ImageWriter): Array[Byte] = forWriter(writer).bytes
 
@@ -654,7 +667,7 @@ object Image {
    */
   def apply(w: Int, h: Int, pixels: Array[Pixel]): Image = {
     require(w * h == pixels.length)
-    val image = Image.empty(w, h)
+    val image = Image.blank(w, h)
     image.mapInPlace((x, y, p) => pixels(PixelTools.coordinateToOffset(x, y, w)))
     image
   }
@@ -726,8 +739,8 @@ object Image {
    * @return the new Image
    */
   def filled(width: Int, height: Int, color: Color = Color.White): Image = {
-    val target = empty(width, height)
-    for (w <- 0 until width; h <- 0 until height)
+    val target = blank(width, height)
+    for ( w <- 0 until width; h <- 0 until height )
       target.awt.setRGB(w, h, color.toRGB.toInt)
     target
   }
@@ -741,7 +754,7 @@ object Image {
    *
    * @return the new Image with the given width and height
    */
-  def empty(width: Int, height: Int): Image = {
+  def blank(width: Int, height: Int): Image = {
     val target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
     new Image(target)
   }

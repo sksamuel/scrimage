@@ -170,7 +170,7 @@ trait ReadOnlyOperations[R] {
    * @param color the colour to detect.
    * @return the number of pixels that matched the colour of the given pixel
    */
-  def count(color: Color): Int = pixels.find(_.toARGBInt == color.toInt).size
+  def count(color: Color): Int = pixels.find(_.toARGBInt == color.toRGB.toInt).size
 
   /**
    * Creates a new image with the same data as this image.
@@ -185,7 +185,7 @@ trait ReadOnlyOperations[R] {
    *
    * @return a new Image that is a clone of this image but with uninitialized data
    */
-  def empty: Image
+  def blank: Image
 }
 
 /**

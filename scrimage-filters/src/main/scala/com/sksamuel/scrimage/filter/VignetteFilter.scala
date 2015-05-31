@@ -31,7 +31,7 @@ class VignetteFilter(start: Double, end: Double, blur: Double, color: Color = Co
 
   private def background(image: Image): Image = {
 
-    val target = image.empty
+    val target = image.blank
     val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
     val radius = image.radius * end
 
