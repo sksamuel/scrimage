@@ -146,37 +146,37 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("when creating a new empty image then the dimensions are as specified") {
-    val image = Image.blank(80, 90)
+    val image = Image.apply(80, 90)
     assert(80 === image.width)
     assert(90 === image.height)
   }
 
   test("when padding to a width smaller than the image width then the width is not reduced") {
-    val image = Image.blank(85, 56)
+    val image = Image.apply(85, 56)
     val padded = image.padTo(55, 162)
     assert(85 === padded.width)
   }
 
   test("when padding to a height smaller than the image height then the height is not reduced") {
-    val image = Image.blank(85, 56)
+    val image = Image.apply(85, 56)
     val padded = image.padTo(90, 15)
     assert(56 === padded.height)
   }
 
   test("when padding to a width larger than the image width then the width is increased") {
-    val image = Image.blank(85, 56)
+    val image = Image.apply(85, 56)
     val padded = image.padTo(151, 162)
     assert(151 === padded.width)
   }
 
   test("when padding to a height larger than the image height then the height is increased") {
-    val image = Image.blank(85, 56)
+    val image = Image.apply(85, 56)
     val padded = image.padTo(90, 77)
     assert(77 === padded.height)
   }
 
   test("when padding to a size larger than the image then the image canvas is increased") {
-    val image = Image.blank(85, 56)
+    val image = Image.apply(85, 56)
     val padded = image.padTo(515, 643)
     assert(515 === padded.width)
     assert(643 === padded.height)
@@ -189,7 +189,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("trim should revert padWith") {
-    val image = Image.blank(85, 56)
+    val image = Image.apply(85, 56)
     val same = image.padWith(10, 2, 5, 7).trim(10, 2, 5, 7)
     assert(image.width === same.width)
     assert(image.height === same.height)
@@ -314,14 +314,14 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("foreach accesses to each pixel") {
-    val image = Image.blank(100, 100)
+    val image = Image.apply(100, 100)
     var count = 0
     image.foreach((_, _, _) => count = count + 1)
     assert(10000 === count)
   }
 
   test("map modifies each pixel and returns new image") {
-    val image = Image.blank(100, 100)
+    val image = Image.apply(100, 100)
     val mapped = image.map((_, _, _) => new ARGBIntPixel(0xFF00FF00))
     for (component <- mapped.argb)
       assert(component === Array(255, 0, 255, 0))
@@ -421,7 +421,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("column") {
-    val striped = Image.blank(200, 100).map((x, y, p) => if (y % 2 == 0) new ARGBIntPixel(255) else new ARGBIntPixel(0))
+    val striped = Image.apply(200, 100).map((x, y, p) => if (y % 2 == 0) new ARGBIntPixel(255) else new ARGBIntPixel(0))
     val col = striped.col(51)
     assert(striped.height === col.length)
     for (y <- 0 until striped.height) {
@@ -431,7 +431,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("row") {
-    val striped = Image.blank(200, 100).map((x, y, p) => if (y % 2 == 0) new ARGBIntPixel(255) else new ARGBIntPixel(0))
+    val striped = Image.apply(200, 100).map((x, y, p) => if (y % 2 == 0) new ARGBIntPixel(255) else new ARGBIntPixel(0))
     val row1 = striped.row(44)
     assert(striped.width === row1.length)
     assert(row1.forall(_ == new ARGBIntPixel(255)))
@@ -441,7 +441,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("pixels region") {
-    val striped = Image.blank(200, 100).map((x, y, p) => if (y % 2 == 0) new ARGBIntPixel(255) else new ARGBIntPixel(0))
+    val striped = Image.apply(200, 100).map((x, y, p) => if (y % 2 == 0) new ARGBIntPixel(255) else new ARGBIntPixel(0))
     val pixels = striped.pixels(10, 10, 10, 10)
     for (k <- 0 until 10)
       assert(new ARGBIntPixel(255) === pixels(k))

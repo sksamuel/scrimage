@@ -1,8 +1,8 @@
 package com.sksamuel.scrimage
 
 import java.awt.geom.AffineTransform
-import java.awt.image.{AffineTransformOp, BufferedImage, BufferedImageOp, DataBufferByte, DataBufferInt}
-import java.awt.{Graphics2D, RenderingHints}
+import java.awt.image.{ AffineTransformOp, BufferedImage, BufferedImageOp, DataBufferByte, DataBufferInt }
+import java.awt.{ Graphics2D, RenderingHints }
 
 /**
  * A skeleton implementation of read only operations based on a backing AWT image.
@@ -32,7 +32,7 @@ abstract class AwtImage[R](awt: BufferedImage) extends ReadOnlyOperations[R] wit
         buffer.getData.grouped(4).map { abgr => ARGBIntPixel(abgr(3), abgr(1), abgr(2), abgr.head) }.toArray
       case _ =>
         val pixels = Array.ofDim[Pixel](width * height)
-        for ( x <- 0 until width; y <- 0 until height ) {
+        for (x <- 0 until width; y <- 0 until height) {
           pixels(y * width + x) = ARGBIntPixel(awt.getRGB(x, y))
         }
         pixels
@@ -46,7 +46,7 @@ abstract class AwtImage[R](awt: BufferedImage) extends ReadOnlyOperations[R] wit
   }
 
   protected[scrimage] def fastscale(targetWidth: Int, targetHeight: Int): Image = {
-    val target = Image.blank(targetWidth, targetHeight)
+    val target = Image.apply(targetWidth, targetHeight)
     val g2 = target.graphics
     g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR)
     g2.drawImage(awt, 0, 0, targetWidth, targetHeight, null)
@@ -66,7 +66,7 @@ abstract class AwtImage[R](awt: BufferedImage) extends ReadOnlyOperations[R] wit
       val b = (p.blue * p.alpha + color.getBlue * color.getAlpha * (255 - p.alpha) / 255) / 255
       ARGBIntPixel(r, g, b, 255)
     }
-    for ( w <- 0 until width; h <- 0 until height ) {
+    for (w <- 0 until width; h <- 0 until height) {
       awt.setRGB(w, h, rmTransparency(ARGBIntPixel(awt.getRGB(w, h))).toARGBInt)
     }
   }
@@ -91,7 +91,7 @@ abstract class AwtImage[R](awt: BufferedImage) extends ReadOnlyOperations[R] wit
   protected[scrimage] def graphics: Graphics2D = awt.getGraphics.asInstanceOf[Graphics2D]
 
   protected[scrimage] def rotate(angle: Double): Image = {
-    val target = Image.blank(height, width)
+    val target = Image(height, width)
     val g2 = target.graphics
     val offset = angle match {
       case a if a < 0 => (0, width)
@@ -106,8 +106,10 @@ abstract class AwtImage[R](awt: BufferedImage) extends ReadOnlyOperations[R] wit
   }
 
   protected def fillpx(color: Color): Unit = {
-    for ( x <- 0 until width;
-          y <- 0 until height ) awt.setRGB(x, y, color.toInt)
+    for (
+      x <- 0 until width;
+      y <- 0 until height
+    ) awt.setRGB(x, y, color.toInt)
   }
 
   /**

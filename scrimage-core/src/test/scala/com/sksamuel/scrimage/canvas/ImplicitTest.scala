@@ -8,12 +8,12 @@ import com.sksamuel.scrimage.canvas.Canvas._
 class ImplicitTest extends FlatSpec {
 
   "an image" should "be implicitly convertable to a canvas" in {
-    val image = Image.blank(100, 100)
+    val image = Image.apply(100, 100)
     val canvas = image.draw(Rect(0, 0, 10, 10).fill)
   }
 
   "a canvas" should "be implicitly convertable to an image" in {
-    val image = Image.blank(100, 100)
+    val image = Image.apply(100, 100)
     val canvas: Canvas = new Canvas(image)
     canvas.width // operation on an image
   }
