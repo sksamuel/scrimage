@@ -1,13 +1,9 @@
+resolvers += "sonatype-releases" at "https://oss.sonatype.org/content/repositories/releases/"
+
 resolvers += Classpaths.sbtPluginReleases
-
-addSbtPlugin("com.sksamuel.scoverage" %% "sbt-scoverage" % "0.95.7")
-
-addSbtPlugin("com.sksamuel.scoverage" %% "sbt-coveralls" % "0.0.5")
-
-addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "0.3.2")
-
-addSbtPlugin("com.typesafe.sbt" % "sbt-pgp" % "0.8")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-scalariform" % "1.3.0")
 
-resolvers += "sonatype-releases" at "https://oss.sonatype.org/content/repositories/releases/"
+addSbtPlugin("com.typesafe.sbt" % "sbt-pgp" % "0.8.3")
+
+addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.0.2")
