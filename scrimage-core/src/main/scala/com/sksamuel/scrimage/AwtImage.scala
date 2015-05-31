@@ -25,15 +25,15 @@ abstract class AwtImage[R](awt: BufferedImage) extends ReadOnlyOperations[R] wit
    */
   def pixels: Array[Pixel] = {
     awt.getRaster.getDataBuffer match {
-      case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_ARGB => buffer.getData.map(ARGBIntPixel.apply)
+      case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_ARGB => buffer.getData.map(Pixel.apply)
       case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_RGB =>
-        buffer.getData.map(ARGBIntPixel.apply)
+        buffer.getData.map(Pixel.apply)
       case buffer: DataBufferByte if awt.getType == BufferedImage.TYPE_4BYTE_ABGR =>
-        buffer.getData.grouped(4).map { abgr => ARGBIntPixel(abgr(3), abgr(1), abgr(2), abgr.head) }.toArray
+        buffer.getData.grouped(4).map { abgr => Pixel(abgr(3), abgr(1), abgr(2), abgr.head) }.toArray
       case _ =>
         val pixels = Array.ofDim[Pixel](width * height)
         for (x <- 0 until width; y <- 0 until height) {
-          pixels(y * width + x) = ARGBIntPixel(awt.getRGB(x, y))
+          pixels(y * width + x) = Pixel(awt.getRGB(x, y))
         }
         pixels
     }
@@ -60,14 +60,14 @@ abstract class AwtImage[R](awt: BufferedImage) extends ReadOnlyOperations[R] wit
   }
 
   protected[scrimage] def removetrans(color: java.awt.Color): Unit = {
-    def rmTransparency(p: ARGBIntPixel): ARGBIntPixel = {
+    def rmTransparency(p: Pixel): Pixel = {
       val r = (p.red * p.alpha + color.getRed * color.getAlpha * (255 - p.alpha) / 255) / 255
       val g = (p.green * p.alpha + color.getGreen * color.getAlpha * (255 - p.alpha) / 255) / 255
       val b = (p.blue * p.alpha + color.getBlue * color.getAlpha * (255 - p.alpha) / 255) / 255
-      ARGBIntPixel(r, g, b, 255)
+      Pixel(r, g, b, 255)
     }
     for (w <- 0 until width; h <- 0 until height) {
-      awt.setRGB(w, h, rmTransparency(ARGBIntPixel(awt.getRGB(w, h))).toARGBInt)
+      awt.setRGB(w, h, rmTransparency(Pixel(awt.getRGB(w, h))).toInt)
     }
   }
 
@@ -84,7 +84,7 @@ abstract class AwtImage[R](awt: BufferedImage) extends ReadOnlyOperations[R] wit
     points.foreach {
       case (x, y) =>
         val newpixel = f(x, y, pixel(x, y))
-        awt.setRGB(x, y, newpixel.toARGBInt)
+        awt.setRGB(x, y, newpixel.toInt)
     }
   }
 

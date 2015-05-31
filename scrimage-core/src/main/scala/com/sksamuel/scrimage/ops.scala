@@ -70,7 +70,7 @@ trait ReadOnlyOperations[R] {
    * @param color the pixel colour to look for.
    * @return true if there exists at least one pixel that has the given pixels color
    */
-  def contains(color: Color): Boolean = pixels.exists(p => p.toARGBIntPixel == color.toPixel.toARGBIntPixel)
+  def contains(color: Color): Boolean = pixels.exists(p => p.toInt == color.toPixel.toInt)
   def exists(color: Color): Boolean = exists(color)
 
   /**
@@ -86,9 +86,9 @@ trait ReadOnlyOperations[R] {
   /**
    * Returns the color at the given coordinates.
    *
-   * @return the RGBColor value of the pixel
+   * @return the RGBColor value at the coords
    */
-  def color(x: Int, y: Int): RGBColor = pixel(x, y).toARGBInt
+  def color(x: Int, y: Int): RGBColor = pixel(x, y).toInt
 
   /**
    * Returns the ARGB components for the pixel at the given coordinates
@@ -162,7 +162,7 @@ trait ReadOnlyOperations[R] {
    *
    * @return the set of distinct Colors
    */
-  def colours: Set[RGBColor] = pixels.map(argb => Color(argb.toARGBInt)).toSet
+  def colours: Set[RGBColor] = pixels.map(pixel => pixel.toColor).toSet
 
   /**
    * Counts the number of pixels with the given colour.
@@ -170,7 +170,7 @@ trait ReadOnlyOperations[R] {
    * @param color the colour to detect.
    * @return the number of pixels that matched the colour of the given pixel
    */
-  def count(color: Color): Int = pixels.find(_.toARGBInt == color.toRGB.toInt).size
+  def count(color: Color): Int = pixels.count(_.toColor == color)
 
   /**
    * Creates a new image with the same data as this image.

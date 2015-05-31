@@ -4,7 +4,7 @@ import java.awt.image.{ BufferedImage, ColorModel, DataBufferInt, Raster }
 import java.io.ByteArrayInputStream
 
 import ar.com.hjg.pngj.ImageLineInt
-import com.sksamuel.scrimage.{ ARGBIntPixel, Image }
+import com.sksamuel.scrimage.{ Image, Pixel }
 
 object PngReader extends Reader {
 
@@ -25,10 +25,10 @@ object PngReader extends Reader {
         val scanline: Array[Int] = pngr.readRow().asInstanceOf[ImageLineInt].getScanline
         val pixels = scanline.grouped(channels).map { group =>
           channels match {
-            case 4 => ARGBIntPixel(group.head, group(1), group(2), group(3)) // note: the png reader is n RGBA
+            case 4 => Pixel(group.head, group(1), group(2), group(3)) // note: the png reader is n RGBA
             case x => throw new UnsupportedOperationException(s"PNG Reader does not support $x channels")
           }
-        }.map(_.toARGBInt).toArray
+        }.map(_.toInt).toArray
         System.arraycopy(pixels, 0, matrix, row * w, w)
       }
       pngr.end()

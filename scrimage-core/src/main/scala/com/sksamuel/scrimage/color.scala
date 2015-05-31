@@ -41,7 +41,7 @@ trait Color {
 
   def toPixel: Pixel = {
     val rgb = toRGB
-    ARGBIntPixel(rgb.red, rgb.green, rgb.blue, rgb.alpha)
+    Pixel(rgb.red, rgb.green, rgb.blue, rgb.alpha)
   }
 
   private[scrimage] def paint: Paint = new java.awt.Color(this.toRGB.toInt)
