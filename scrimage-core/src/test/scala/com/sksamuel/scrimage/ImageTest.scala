@@ -386,26 +386,26 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     for (x <- 0 until 200; y <- 150 until 200) assert(0xFF0000FF === resized.pixel(x, y).toInt)
   }
 
-  test("when bounding an image the dimensions should not exceed the bounds") {
-    val bounded = image.max(20, 20)
-    assert(bounded.width <= 20)
-    assert(bounded.height <= 20)
+  test("when maxing an image the dimensions should not exceed the bounds") {
+    val maxed = image.max(20, 20)
+    assert(maxed.width <= 20)
+    assert(maxed.height <= 20)
   }
 
-  test("when bounding an image vertically the height should equal the target height parameter") {
-    val bounded = image.max(200, 20)
-    assert(20 === bounded.height)
+  test("when maxing an image vertically the height should equal the target height parameter") {
+    val maxed = image.max(200, 20)
+    assert(20 === maxed.height)
   }
 
-  test("when bounding an image horizontally the width should equal the target width parameter") {
-    val bounded = image.max(20, 156)
-    assert(20 === bounded.width)
+  test("when maxing an image horizontally the width should equal the target width parameter") {
+    val maxed = image.max(20, 156)
+    assert(20 === maxed.width)
   }
 
-  test("bound operation happy path") {
-    val bounded = image.max(200, 200)
+  test("max operation happy path") {
+    val maxed = image.max(200, 200)
     val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird_bound_200x200.png"))
-    assert(bounded === expected)
+    assert(maxed === expected)
   }
 
   test("when covering an image the output image should have the specified dimensions") {
