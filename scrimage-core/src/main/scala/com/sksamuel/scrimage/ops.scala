@@ -20,7 +20,7 @@ import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod.Bicubic
 
 /**
- * Operations that only read from the data buffer.
+ * Operations that only read from the raster.
  *
  * @author Stephen Samuel
  */

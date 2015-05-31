@@ -16,8 +16,7 @@
 
 package com.sksamuel.scrimage
 
-import java.awt._
-import java.awt.image.{BufferedImage, ColorModel, DataBufferInt, Raster}
+import java.awt.image.BufferedImage
 import java.io.{File, InputStream}
 import java.nio.file.Path
 import javax.imageio.ImageIO
@@ -27,7 +26,6 @@ import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.nio.{ImageReader, ImageWriter}
 import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 
-import scala.List
 import scala.language.implicitConversions
 
 class ImageParseException extends RuntimeException("Unparsable image")
@@ -279,25 +277,11 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
   /**
    * Returns a new image with the transarency replaced with the given color.
    */
+  def removeTransparency(color: Color): Image = removeTransparency(color: Color)
   def removeTransparency(color: java.awt.Color): Image = {
-
-    def rmTransparency(p: Pixel): Int = {
-      val r = (p.red * p.alpha + color.getRed * color.getAlpha * (255 - p.alpha) / 255) / 255
-      val g = (p.green * p.alpha + color.getGreen * color.getAlpha * (255 - p.alpha) / 255) / 255
-      val b = (p.blue * p.alpha + color.getBlue * color.getAlpha * (255 - p.alpha) / 255) / 255
-      ARGBIntPixel(r, g, b, 255).toARGBInt
-    }
-
-    val pxs = pixels
-    val rgb = pxs.map(rmTransparency)
-    val buffer = new DataBufferInt(rgb, rgb.length)
-
-    val bandMasks = Array(0xFF0000, 0xFF00, 0xFF, 0xFF000000)
-    val raster = Raster.createPackedRaster(buffer, width, height, width, bandMasks, null)
-
-    val cm = ColorModel.getRGBdefault()
-    val target = new BufferedImage(cm, raster, cm.isAlphaPremultiplied(), null)
-    new Image(target)
+    val target = copy
+    target.removetrans(color)
+    target
   }
 
   override def toString: String = s"Image [width=$width, height=$height, type=${awt.getType}]"
@@ -329,28 +313,21 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
    *
    * @return
    */
-  def rotateLeft: Image = rotate(Math.PI / 2)
+  def rotateLeft: Image = {
+    val target = copy
+    target.rotate(Math.PI / 2)
+    target
+  }
 
   /**
    * Returns a copy of this image rotated 90 degrees clockwise.
    *
    * @return
    */
-  def rotateRight: Image = rotate(-Math.PI / 2)
-
-  private def rotate(angle: Double): Image = {
-    val target = new BufferedImage(height, width, awt.getType)
-    val g2 = target.getGraphics.asInstanceOf[Graphics2D]
-    val offset = angle match {
-      case a if a < 0 => (0, width)
-      case a if a > 0 => (height, 0)
-      case _ => (0, 0)
-    }
-    g2.translate(offset._1, offset._2)
-    g2.rotate(angle)
-    g2.drawImage(awt, 0, 0, null)
-    g2.dispose()
-    new Image(target)
+  def rotateRight: Image = {
+    val target = copy
+    target.rotate(-Math.PI / 2)
+    target
   }
 
   /**
@@ -419,15 +396,8 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
    * @return a new Image that is the result of scaling this image
    */
   def scaleTo(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): Image = {
-
     scaleMethod match {
-      case FastScale =>
-        val target = Image.blank(targetWidth, targetHeight)
-        val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
-        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR)
-        g2.drawImage(awt, 0, 0, targetWidth, targetHeight, null)
-        g2.dispose()
-        target
+      case FastScale => fastscale(targetWidth, targetHeight)
       // todo put this back
       // case Bicubic =>
       // ResampleOpScala.scaleTo(ResampleOpScala.bicubicFilter)(this)(targetWidth, targetHeight, Image.SCALE_THREADS)
@@ -439,11 +409,8 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
           case Lanczos3 => ResampleFilters.lanczos3Filter
           case _ => ResampleFilters.biCubicFilter
         }
-        val op = new ResampleOp(Image.SCALE_THREADS, method, targetWidth, targetHeight)
-        val scaled = op.filter(awt, null)
-        Image(scaled)
+        super.op(new ResampleOp(Image.SCALE_THREADS, method, targetWidth, targetHeight))
     }
-
   }
 
   /**
@@ -486,9 +453,9 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
    * @return a new Image with the given image overlaid.
    */
   def overlay(overlayImage: Image, x: Int = 0, y: Int = 0): Image = {
-    val copy = toNewBufferedImage
-    copy.getGraphics.drawImage(overlayImage.awt, x, y, null)
-    new Image(copy)
+    val target = copy
+    target.overlayInPlace(overlayImage, x, y)
+    target
   }
 
   /**
@@ -709,15 +676,7 @@ object Image {
    *
    * @return a new Scrimage Image
    */
-  def apply(awt: java.awt.Image): Image = {
-    require(awt != null, "AWT image cannot be null")
-    // todo optimisation to check for TYPE_INT_ARGB before copying
-    val target = new BufferedImage(awt.getWidth(null), awt.getHeight(null), BufferedImage.TYPE_INT_ARGB)
-    val g2 = target.getGraphics.asInstanceOf[Graphics2D]
-    g2.drawImage(awt, 0, 0, null)
-    g2.dispose()
-    new Image(target)
-  }
+  def apply(awt: java.awt.Image): Image = Image(awt)
 
   /**
    * Creates a new Image which is a copy of the given image.

@@ -1,7 +1,8 @@
 package com.sksamuel.scrimage
 
 import java.awt.geom.AffineTransform
-import java.awt.image.{ AffineTransformOp, BufferedImage, DataBufferByte, DataBufferInt }
+import java.awt.image.{AffineTransformOp, BufferedImage, BufferedImageOp, DataBufferByte, DataBufferInt}
+import java.awt.{Graphics2D, RenderingHints}
 
 /**
  * A skeleton implementation of read only operations based on a backing AWT image.
@@ -31,10 +32,42 @@ abstract class AwtImage[R](awt: BufferedImage) extends ReadOnlyOperations[R] wit
         buffer.getData.grouped(4).map { abgr => ARGBIntPixel(abgr(3), abgr(1), abgr(2), abgr.head) }.toArray
       case _ =>
         val pixels = Array.ofDim[Pixel](width * height)
-        for (x <- 0 until width; y <- 0 until height) {
+        for ( x <- 0 until width; y <- 0 until height ) {
           pixels(y * width + x) = ARGBIntPixel(awt.getRGB(x, y))
         }
         pixels
+    }
+  }
+
+  protected[scrimage] def overlayInPlace(overlayImage: Image, x: Int = 0, y: Int = 0): Unit = {
+    val g2 = graphics
+    g2.drawImage(overlayImage.awt, x, y, null)
+    g2.dispose()
+  }
+
+  protected[scrimage] def fastscale(targetWidth: Int, targetHeight: Int): Image = {
+    val target = Image.blank(targetWidth, targetHeight)
+    val g2 = target.graphics
+    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR)
+    g2.drawImage(awt, 0, 0, targetWidth, targetHeight, null)
+    g2.dispose()
+    target
+  }
+
+  protected[scrimage] def op(op: BufferedImageOp): Image = {
+    val scaled = op.filter(awt, null)
+    Image(scaled)
+  }
+
+  protected[scrimage] def removetrans(color: java.awt.Color): Unit = {
+    def rmTransparency(p: ARGBIntPixel): ARGBIntPixel = {
+      val r = (p.red * p.alpha + color.getRed * color.getAlpha * (255 - p.alpha) / 255) / 255
+      val g = (p.green * p.alpha + color.getGreen * color.getAlpha * (255 - p.alpha) / 255) / 255
+      val b = (p.blue * p.alpha + color.getBlue * color.getAlpha * (255 - p.alpha) / 255) / 255
+      ARGBIntPixel(r, g, b, 255)
+    }
+    for ( w <- 0 until width; h <- 0 until height ) {
+      awt.setRGB(0, 0, rmTransparency(ARGBIntPixel(awt.getRGB(w, h))).toARGBInt)
     }
   }
 
@@ -55,8 +88,23 @@ abstract class AwtImage[R](awt: BufferedImage) extends ReadOnlyOperations[R] wit
     }
   }
 
+  private def graphics: Graphics2D = awt.getGraphics.asInstanceOf[Graphics2D]
+
+  protected[scrimage] def rotate(angle: Double): Unit = {
+    val g2 = graphics
+    val offset = angle match {
+      case a if a < 0 => (0, width)
+      case a if a > 0 => (height, 0)
+      case _ => (0, 0)
+    }
+    g2.translate(offset._1, offset._2)
+    g2.rotate(angle)
+    g2.drawImage(awt, 0, 0, null)
+    g2.dispose()
+  }
+
   protected def fillpx(color: Color): Unit = {
-    for (x <- 0 until width; y <- 0 until height) awt.setRGB(x, y, color.toInt)
+    for ( x <- 0 until width; y <- 0 until height ) awt.setRGB(x, y, color.toInt)
   }
 
   /**
@@ -83,13 +131,15 @@ abstract class AwtImage[R](awt: BufferedImage) extends ReadOnlyOperations[R] wit
   }
 
   /**
-   * Returns a new AWT BufferedImage from this image.
+   * Returns a new AWT BufferedImage from this image using the same AWT type.
    *
    * @return a new, non-shared, BufferedImage with the same data as this Image.
    */
   def toNewBufferedImage: BufferedImage = {
-    val buffered = new BufferedImage(width, height, awt.getType)
-    buffered.getGraphics.drawImage(awt, 0, 0, null)
-    buffered
+    val target = new BufferedImage(width, height, awt.getType)
+    val g2 = target.getGraphics
+    g2.drawImage(awt, 0, 0, null)
+    g2.dispose()
+    target
   }
 }
