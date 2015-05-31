@@ -123,26 +123,68 @@ case class RGBColor(red: Int, green: Int, blue: Int, alpha: Int = 255) extends C
    * Returns this colour as a HSV color.
    */
   override def toHSV: HSVColor = {
-    val max = Math.max(Math.max(red, green), blue) / 255f
-    val min = Math.min(Math.min(red, green), blue) / 255f
-    var saturation = max - min
-    if (saturation > 0.0f) saturation = saturation / max
-    HSVColor(getHue(red, green, blue, max, min), saturation, max, alpha)
+
+    val r = red / 255f
+    val g = green / 255f
+    val b = blue / 255f
+
+    val max = Set(r, g, b).max
+    val min = Set(r, g, b).min
+
+    val d = max - min
+    val s = if (max == 0) 0 else d / max
+    val v = max
+
+    val h = if (max == min) {
+      // achromatic
+      0f
+    } else {
+      val h = max match {
+        case `r` => (g - b) / d + (if (g < b) 6 else 0)
+        case `g` => (b - r) / d + 2;
+        case `b` => (r - g) / d + 4;
+      }
+      h / 6f
+    }
+
+    HSVColor(h * 360f, s, v, 1f)
   }
 
   override def toHSL: HSLColor = {
-    val max = Math.max(Math.max(red, green), blue) / 255f
-    val min = Math.min(Math.min(red, green), blue) / 255f
-    val sum = max + min
-    var saturation = max - min
-    if (saturation > 0.0f) {
-      saturation = saturation / (if (sum > 1.0f) 2.0f - sum else sum)
+
+    val r = red / 255f
+    val g = green / 255f
+    val b = blue / 255f
+
+    val max = Set(r, g, b).max
+    val min = Set(r, g, b).min
+
+    val l = (max + min) / 2f
+
+    val (h: Float, s: Float) = if (max == min) {
+      // achromatic
+      (0, 0)
+    } else {
+      val d = max - min
+      val s = if (l > 0.5) d / (2 - max - min) else d / (max + min)
+      val h = max match {
+        case `r` => (g - b) / d + (if (g < b) 6 else 0)
+        case `g` => (b - r) / d + 2
+        case `b` => (r - g) / d + 4
+      }
+      (h / 6, s)
     }
-    HSLColor(getHue(red, green, blue, max, min), saturation, sum / 2.0f, alpha)
+
+    HSLColor(h * 360f, s, l, 1f)
   }
 }
 
 case class CMYKColor(c: Float, m: Float, y: Float, k: Float) extends Color {
+  require(0 <= c && c <= 1f, s"cyan component is invalid $c")
+  require(0 <= m && m <= 1f, s"magenta component is invalid $m")
+  require(0 <= y && y <= 1f, s"yellow component is invalid $y")
+  require(0 <= k && k <= 1f, s"black component is invalid $k")
+
   override def toRGB: RGBColor = {
     val red = 1.0f + c * k - k - c
     val green = 1.0f + m * k - k - m
@@ -204,9 +246,9 @@ case class HSVColor(hue: Float, saturation: Float, value: Float, alpha: Float) e
  * The alpha component should be between 0.0 and 1.0
  */
 case class HSLColor(hue: Float, saturation: Float, lightness: Float, alpha: Float) extends Color {
-  require(0 <= hue && hue <= 360f, "Hue component is invalid")
-  require(0 <= saturation && saturation <= 1f, "Saturation component is invalid")
-  require(0 <= lightness && lightness <= 1f, "Lightness component is invalid")
+  require(0 <= hue && hue <= 360f, s"Hue component is invalid $hue")
+  require(0 <= saturation && saturation <= 1f, s"Saturation component is invalid $saturation")
+  require(0 <= lightness && lightness <= 1f, s"Lightness component is invalid $lightness")
   require(0 <= alpha && alpha <= 1f, "Alpha component is invalid")
 
   override def toHSL: HSLColor = this
