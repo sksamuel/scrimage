@@ -17,14 +17,14 @@
 package com.sksamuel.scrimage
 
 import java.awt.image.BufferedImage
-import java.io.{ File, InputStream }
+import java.io.{File, InputStream}
 import java.nio.file.Path
 import javax.imageio.ImageIO
 
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod._
-import com.sksamuel.scrimage.nio.{ ImageReader, ImageWriter }
-import thirdparty.mortennobel.{ ResampleFilters, ResampleOp }
+import com.sksamuel.scrimage.nio.{ImageReader, ImageWriter}
+import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 
 import scala.language.implicitConversions
 
@@ -157,17 +157,17 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
       (xInt, xWeight) <- xIntsAndWeights;
       (yInt, yWeight) <- yIntsAndWeights
     ) yield {
-      val weight = xWeight * yWeight
-      if (weight == 0) List(0.0, 0.0, 0.0, 0.0)
-      else {
-        val px = pixel(xInt, yInt)
-        List(
-          weight * px.alpha,
-          weight * px.red,
-          weight * px.green,
-          weight * px.blue)
+        val weight = xWeight * yWeight
+        if (weight == 0) List(0.0, 0.0, 0.0, 0.0)
+        else {
+          val px = pixel(xInt, yInt)
+          List(
+            weight * px.alpha,
+            weight * px.red,
+            weight * px.green,
+            weight * px.blue)
+        }
       }
-    }
 
     // We perform the weighted averaging (a summation).
     // First though, we need to transpose so that we sum within channels,
@@ -191,7 +191,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
 
     val matrix = Array.ofDim[Pixel](subWidth * subHeight)
     // Simply copy the pixels over, one by one.
-    for (yIndex <- 0 until subHeight; xIndex <- 0 until subWidth) {
+    for ( yIndex <- 0 until subHeight; xIndex <- 0 until subWidth ) {
       matrix(PixelTools.coordinateToOffset(xIndex, yIndex, subWidth)) = ARGBIntPixel(subpixel(xIndex + x, yIndex + y))
     }
     Image(subWidth, subHeight, matrix)
@@ -223,7 +223,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
   def patch(x: Int, y: Int, patchWidth: Int, patchHeight: Int): Array[Pixel] = {
     val px = pixels
     val patch = Array.ofDim[Pixel](patchWidth * patchHeight)
-    for (i <- y until y + patchHeight) {
+    for ( i <- y until y + patchHeight ) {
       System.arraycopy(px, offset(x, y), patch, offset(0, y), patchWidth)
     }
     patch
@@ -677,11 +677,15 @@ object Image {
    * @return a new Scrimage Image
    */
   def apply(awt: java.awt.Image): Image = {
-    val target = new BufferedImage(awt.getWidth(null), awt.getHeight(null), BufferedImage.TYPE_INT_ARGB)
-    val g2 = target.getGraphics
-    g2.drawImage(awt, 0, 0, null)
-    g2.dispose()
-    new Image(target)
+    awt match {
+      case buffered: BufferedImage => new Image(buffered)
+      case _ =>
+        val target = new BufferedImage(awt.getWidth(null), awt.getHeight(null), BufferedImage.TYPE_INT_ARGB)
+        val g2 = target.getGraphics
+        g2.drawImage(awt, 0, 0, null)
+        g2.dispose()
+        new Image(target)
+    }
   }
 
   /**
@@ -705,7 +709,7 @@ object Image {
    */
   def filled(width: Int, height: Int, color: Color = Color.White): Image = {
     val target = blank(width, height)
-    for (w <- 0 until width; h <- 0 until height)
+    for ( w <- 0 until width; h <- 0 until height )
       target.awt.setRGB(w, h, color.toRGB.toInt)
     target
   }
