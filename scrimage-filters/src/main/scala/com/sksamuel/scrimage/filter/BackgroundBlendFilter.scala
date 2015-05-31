@@ -8,7 +8,7 @@ import thirdparty.romainguy.BlendComposite._
 object BackgroundBlendFilter extends Filter {
   def apply(image: Image) {
 
-    val background = image.filled(new Color(51, 0, 0))
+    val background = image.fill(new Color(51, 0, 0))
     val g3 = image.awt.getGraphics.asInstanceOf[Graphics2D]
     g3.setComposite(getInstance(BlendingMode.ADD, 1f))
     g3.drawImage(background.awt, 0, 0, null)

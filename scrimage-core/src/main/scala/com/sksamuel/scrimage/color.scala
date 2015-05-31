@@ -101,27 +101,7 @@ case class RGBColor(red: Int, green: Int, blue: Int, alpha: Int = 255) extends C
     }
   }
 
-  private def getHue(red: Float, green: Float, blue: Float, max: Float, min: Float): Float = {
-    var hue = max - min
-    if (hue > 0.0f) {
-      if (max == red) {
-        hue = (green - blue) / hue
-        if (hue < 0.0f) {
-          hue += 6.0f
-        }
-      } else if (max == green) {
-        hue = 2.0f + (blue - red) / hue
-      } else {
-        hue = 4.0f + (red - green) / hue
-      }
-      hue /= 6.0f
-    }
-    hue
-  }
-
-  /**
-   * Returns this colour as a HSV color.
-   */
+  // credit to https://github.com/mjackson/mjijackson.github.com/blob/master/2008/02/rgb-to-hsl-and-rgb-to-hsv-color-model-conversion-algorithms-in-javascript.txt
   override def toHSV: HSVColor = {
 
     val r = red / 255f
@@ -150,6 +130,7 @@ case class RGBColor(red: Int, green: Int, blue: Int, alpha: Int = 255) extends C
     HSVColor(h * 360f, s, v, 1f)
   }
 
+  // credit to https://github.com/mjackson/mjijackson.github.com/blob/master/2008/02/rgb-to-hsl-and-rgb-to-hsv-color-model-conversion-algorithms-in-javascript.txt
   override def toHSL: HSLColor = {
 
     val r = red / 255f
@@ -210,6 +191,7 @@ case class HSVColor(hue: Float, saturation: Float, value: Float, alpha: Float) e
 
   override def toHSV: HSVColor = this
 
+  // credit to https://github.com/mjackson/mjijackson.github.com/blob/master/2008/02/rgb-to-hsl-and-rgb-to-hsv-color-model-conversion-algorithms-in-javascript.txt
   override def toRGB: RGBColor = {
 
     // assumes h is in th range [0,1] not [0,360) so must convert
@@ -253,8 +235,8 @@ case class HSLColor(hue: Float, saturation: Float, lightness: Float, alpha: Floa
 
   override def toHSL: HSLColor = this
 
+  // credit to https://github.com/mjackson/mjijackson.github.com/blob/master/2008/02/rgb-to-hsl-and-rgb-to-hsv-color-model-conversion-algorithms-in-javascript.txt
   override def toRGB: RGBColor = {
-    // credit to https://github.com/mjackson/mjijackson.github.com/blob/master/2008/02/rgb-to-hsl-and-rgb-to-hsv-color-model-conversion-algorithms-in-javascript.txt
 
     // assumes h is in th range [0,1] not [0,360) so must convert
     val h = hue / 360f

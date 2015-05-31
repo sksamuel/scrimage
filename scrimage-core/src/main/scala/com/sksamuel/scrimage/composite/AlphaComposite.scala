@@ -13,5 +13,5 @@ class AlphaComposite(alpha: Double) extends Composite {
   }
 }
 object AlphaComposite {
-  def apply(alpha: Double) = new AlphaComposite(alpha)
+  def apply(alpha: Double): AlphaComposite = new AlphaComposite(alpha)
 }
