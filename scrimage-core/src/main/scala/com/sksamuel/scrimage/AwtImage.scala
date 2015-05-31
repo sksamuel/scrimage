@@ -67,7 +67,7 @@ abstract class AwtImage[R](awt: BufferedImage) extends ReadOnlyOperations[R] wit
       ARGBIntPixel(r, g, b, 255)
     }
     for (w <- 0 until width; h <- 0 until height) {
-      awt.setRGB(0, 0, rmTransparency(ARGBIntPixel(awt.getRGB(w, h))).toARGBInt)
+      awt.setRGB(w, h, rmTransparency(ARGBIntPixel(awt.getRGB(w, h))).toARGBInt)
     }
   }
 

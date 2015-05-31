@@ -676,7 +676,13 @@ object Image {
    *
    * @return a new Scrimage Image
    */
-  def apply(awt: java.awt.Image): Image = Image(awt)
+  def apply(awt: java.awt.Image): Image = {
+    val target = new BufferedImage(awt.getWidth(null), awt.getHeight(null), BufferedImage.TYPE_INT_ARGB)
+    val g2 = target.getGraphics
+    g2.drawImage(awt, 0, 0, null)
+    g2.dispose()
+    new Image(target)
+  }
 
   /**
    * Creates a new Image which is a copy of the given image.
