@@ -11,6 +11,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   val in = getClass.getResourceAsStream("/com/sksamuel/scrimage/bird.jpg")
   val image = Image(in)
   val small = Image.fromResource("/bird_small.png")
+  val chip = Image.fromResource("/transparent_chip.png")
   val turing = Image.fromResource("/com/sksamuel/scrimage/turing.jpg")
 
   test("ratio happy path") {
@@ -151,6 +152,13 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     val image = Image.apply(80, 90)
     assert(80 === image.width)
     assert(90 === image.height)
+  }
+
+  test("padding should keep alpha") {
+    chip
+      .padWith(10, 20, 30, 40, Color.translucent)
+      .underlay(Image.filled(1000, 1000, X11Colorlist.Firebrick)) shouldBe
+      Image.fromResource("/com/sksamuel/scrimage/chip_pad.png")
   }
 
   test("when padding to a width smaller than the image width then the width is not reduced") {

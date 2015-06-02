@@ -49,6 +49,8 @@ trait Color {
 
 object Color {
 
+  def translucent: RGBColor = RGBColor(100, 255, 50, 0)
+
   implicit def int2color(argb: Int): RGBColor = apply(argb)
   implicit def color2rgb(color: Color): RGBColor = color.toRGB
   implicit def color2awt(color: Color): java.awt.Color = new java.awt.Color(color.toRGB.toInt)

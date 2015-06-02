@@ -417,10 +417,15 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
    * If the image to render exceeds the boundaries of the source image, then the excess
    * pixels will be ignored.
    *
-   * @param overlayImage the image to overlay.
-   *
    * @return a new Image with the given image overlaid.
    */
+  def underlay(underlayImage: Image, x: Int = 0, y: Int = 0): Image = {
+    val target = this.blank
+    target.overlayInPlace(underlayImage, x, y)
+    target.overlayInPlace(this, x, y)
+    target
+  }
+
   def overlay(overlayImage: Image, x: Int = 0, y: Int = 0): Image = {
     val target = copy
     target.overlayInPlace(overlayImage, x, y)
