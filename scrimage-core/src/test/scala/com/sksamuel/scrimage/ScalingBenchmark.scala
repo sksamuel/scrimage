@@ -99,7 +99,7 @@ class ScalingBenchmark { // extends FunSuite {
   start = System.currentTimeMillis()
   counter = 0
   while (counter < COUNT) {
-    val scaled = ResampleOpScala.scaleTo(ResampleOpScala.bicubicFilter)(scrimage)(width / 3, height / 3, Image.SCALE_THREADS)
+    val scaled = ResampleOpScala.scaleTo(ResampleOpScala.bicubicFilter)(scrimage)(width / 3, height / 3)
     assert(scaled.width == width / 3)
     assert(scaled.height == height / 3)
     counter += 1
