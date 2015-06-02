@@ -2,6 +2,7 @@
 
 [![Join the chat at https://gitter.im/sksamuel/scrimage](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/sksamuel/scrimage?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+This readme is for the 2.0.x versions. For 1.4.x please see the old [README1.4.md](readme).
 Scrimage is a Scala image library for manipulating and processing of images. The aim of the this library is to provide a
 quick and easy way to do the kinds of image operations that most people need, such as scaling, rotating,
 converting between formats and applying filters. It is not intended to provide functionality that might be required by a

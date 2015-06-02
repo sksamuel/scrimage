@@ -17,14 +17,14 @@
 package com.sksamuel.scrimage
 
 import java.awt.image.BufferedImage
-import java.io.{ File, InputStream }
-import java.nio.file.Path
+import java.io.{File, InputStream}
+import java.nio.file.{Paths, Path}
 import javax.imageio.ImageIO
 
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod._
-import com.sksamuel.scrimage.nio.{ ImageReader, ImageWriter }
-import thirdparty.mortennobel.{ ResampleFilters, ResampleOp }
+import com.sksamuel.scrimage.nio.{ImageReader, ImageWriter}
+import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 
 import scala.language.implicitConversions
 
@@ -157,17 +157,17 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
       (xInt, xWeight) <- xIntsAndWeights;
       (yInt, yWeight) <- yIntsAndWeights
     ) yield {
-      val weight = xWeight * yWeight
-      if (weight == 0) List(0.0, 0.0, 0.0, 0.0)
-      else {
-        val px = pixel(xInt, yInt)
-        List(
-          weight * px.alpha,
-          weight * px.red,
-          weight * px.green,
-          weight * px.blue)
+        val weight = xWeight * yWeight
+        if (weight == 0) List(0.0, 0.0, 0.0, 0.0)
+        else {
+          val px = pixel(xInt, yInt)
+          List(
+            weight * px.alpha,
+            weight * px.red,
+            weight * px.green,
+            weight * px.blue)
+        }
       }
-    }
 
     // We perform the weighted averaging (a summation).
     // First though, we need to transpose so that we sum within channels,
@@ -191,7 +191,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
 
     val matrix = Array.ofDim[Pixel](subWidth * subHeight)
     // Simply copy the pixels over, one by one.
-    for (yIndex <- 0 until subHeight; xIndex <- 0 until subWidth) {
+    for ( yIndex <- 0 until subHeight; xIndex <- 0 until subWidth ) {
       matrix(PixelTools.coordinateToOffset(xIndex, yIndex, subWidth)) = Pixel(subpixel(xIndex + x, yIndex + y))
     }
     Image(subWidth, subHeight, matrix)
@@ -223,7 +223,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
   def patch(x: Int, y: Int, patchWidth: Int, patchHeight: Int): Array[Pixel] = {
     val px = pixels
     val patch = Array.ofDim[Pixel](patchWidth * patchHeight)
-    for (i <- y until y + patchHeight) {
+    for ( i <- y until y + patchHeight ) {
       System.arraycopy(px, offset(x, y), patch, offset(0, y), patchWidth)
     }
     patch
@@ -327,24 +327,23 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
    * where the original image has been scaled to fit completely
    * inside the new dimensions whilst retaining the original aspect ratio.
    *
-   * @param targetWidth the target width
-   * @param targetHeight the target height
+   * @param canvasWidth the target width
+   * @param canvasHeight the target height
    * @param scaleMethod the algorithm to use for the scaling operation. See ScaleMethod.
    * @param color the color to use as the "padding" colour should the scaled original not fit exactly inside the new dimensions
    * @param position where to position the image inside the new canvas
    *
    * @return a new Image with the original image scaled to fit inside
    */
-  def fit(targetWidth: Int,
-          targetHeight: Int,
+  def fit(canvasWidth: Int,
+          canvasHeight: Int,
           color: Color = X11Colorlist.White,
           scaleMethod: ScaleMethod = Bicubic,
           position: Position = Center): Image = {
-    val fittedDimensions = ImageTools.dimensionsToFit((targetWidth, targetHeight), (width, height))
-    val x = ((targetWidth - fittedDimensions._1) / 2.0).toInt
-    val y = ((targetHeight - fittedDimensions._2) / 2.0).toInt
-    val scaled = scaleTo(fittedDimensions._1, fittedDimensions._2, scaleMethod)
-    Image.filled(targetWidth, targetHeight, color).overlay(scaled, x, y)
+    val (w, h) = ImageTools.dimensionsToFit((canvasWidth, canvasHeight), (width, height))
+    val (x, y) = position.calculateXY(canvasWidth, canvasHeight, w, h)
+    val scaled = scaleTo(w, h, scaleMethod)
+    Image.filled(canvasWidth, canvasHeight, color).overlay(scaled, x, y)
   }
 
   /**
@@ -602,8 +601,8 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
 
   def bytes(implicit writer: ImageWriter): Array[Byte] = forWriter(writer).bytes
 
+  def output(path: String)(implicit writer: ImageWriter): Path = forWriter(writer).write(Paths.get(path))
   def output(file: File)(implicit writer: ImageWriter): File = forWriter(writer).write(file)
-
   def output(path: Path)(implicit writer: ImageWriter): Path = forWriter(writer).write(path)
 
   def forWriter(writer: ImageWriter): WriteContext = new WriteContext(writer, this)
@@ -651,6 +650,8 @@ object Image {
     ImageReader.read(in)
   }
 
+  def fromResource(path: String): Image = apply(getClass.getResourceAsStream(path))
+
   /**
    * Create a new Image from a file.
    */
@@ -695,7 +696,7 @@ object Image {
    */
   def filled(width: Int, height: Int, color: Color = Color.White): Image = {
     val target = apply(width, height)
-    for (w <- 0 until width; h <- 0 until height)
+    for ( w <- 0 until width; h <- 0 until height )
       target.awt.setRGB(w, h, color.toRGB.toInt)
     target
   }
