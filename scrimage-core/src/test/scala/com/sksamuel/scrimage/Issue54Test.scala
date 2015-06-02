@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage
 
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.{ FunSuite, Matchers }
 
 /** @author Stephen Samuel */
 class Issue54Test extends FunSuite with Matchers {

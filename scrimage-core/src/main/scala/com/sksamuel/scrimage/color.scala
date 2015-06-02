@@ -25,7 +25,7 @@ trait Color {
 
   def toHSL: HSLColor = toRGB.toHSL
 
-  def toGreyscale : Grayscale = {
+  def toGreyscale: Grayscale = {
     val rgb = toRGB
     val red = 0.21 * rgb.red
     val green = 0.71 * rgb.green

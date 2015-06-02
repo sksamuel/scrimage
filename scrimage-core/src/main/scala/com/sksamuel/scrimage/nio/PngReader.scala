@@ -1,10 +1,10 @@
 package com.sksamuel.scrimage.nio
 
-import java.awt.image.{BufferedImage, ColorModel, DataBufferInt, Raster}
+import java.awt.image.{ BufferedImage, ColorModel, DataBufferInt, Raster }
 import java.io.ByteArrayInputStream
 
-import ar.com.hjg.pngj.{ImageLineHelper, ImageLineInt}
-import com.sksamuel.scrimage.{Image, Pixel}
+import ar.com.hjg.pngj.{ ImageLineHelper, ImageLineInt }
+import com.sksamuel.scrimage.{ Image, Pixel }
 
 object PngReader extends Reader {
 
@@ -23,7 +23,7 @@ object PngReader extends Reader {
 
       pngr.imgInfo.indexed match {
         case true =>
-          for ( row <- 0 until h ) {
+          for (row <- 0 until h) {
             val scanline = pngr.readRow().asInstanceOf[ImageLineInt]
             if (bitDepth < 8)
               ImageLineHelper.scaleUp(scanline)
@@ -34,7 +34,7 @@ object PngReader extends Reader {
             System.arraycopy(mapped, 0, matrix, row * w, w)
           }
         case false =>
-          for ( row <- 0 until h ) {
+          for (row <- 0 until h) {
             val scanline: Array[Int] = pngr.readRow().asInstanceOf[ImageLineInt].getScanline
             val pixels = scanline.grouped(channels).map { group =>
               channels match {
