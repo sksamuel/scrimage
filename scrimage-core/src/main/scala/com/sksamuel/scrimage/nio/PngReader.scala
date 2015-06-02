@@ -1,10 +1,10 @@
 package com.sksamuel.scrimage.nio
 
-import java.awt.image.{ BufferedImage, ColorModel, DataBufferInt, Raster }
+import java.awt.image.{BufferedImage, ColorModel, DataBufferInt, Raster}
 import java.io.ByteArrayInputStream
 
 import ar.com.hjg.pngj.ImageLineInt
-import com.sksamuel.scrimage.{ Image, Pixel }
+import com.sksamuel.scrimage.{Image, Pixel}
 
 object PngReader extends Reader {
 
@@ -15,26 +15,23 @@ object PngReader extends Reader {
       val pngr = new ar.com.hjg.pngj.PngReader(new ByteArrayInputStream(bytes))
 
       val channels = pngr.imgInfo.channels
-      val bitDepth = pngr.imgInfo.bitDepth
+      // val bitDepth = pngr.imgInfo.bitDepth
       val w = pngr.imgInfo.cols
       val h = pngr.imgInfo.rows
 
       val matrix = Array.ofDim[Int](w * h)
 
-      for (row <- 0 until h) {
-        try {
-          val scanline: Array[Int] = pngr.readRow().asInstanceOf[ImageLineInt].getScanline
-          val pixels = scanline.grouped(channels).map { group =>
-            channels match {
-              case 4 => Pixel(group.head, group(1), group(2), group(3)) // note: the png reader is n RGBA
-              case 3 => Pixel(group.head, group(1), group(2), 255) // if no alpha then 255 is full opacity
-              case x => throw new UnsupportedOperationException(s"PNG Reader does not support $x channels")
-            }
-          }.map(_.toInt).toArray
-          System.arraycopy(pixels, 0, matrix, row * w, w)
-        } catch {
-          case e : Exception => println(e)
-        }
+      for ( row <- 0 until h ) {
+        val scanline: Array[Int] = pngr.readRow().asInstanceOf[ImageLineInt].getScanline
+        val pixels = scanline.grouped(channels).map { group =>
+          channels match {
+            case 4 => Pixel(group.head, group(1), group(2), group(3)) // note: the png reader is n RGBA
+            case 3 => Pixel(group.head, group(1), group(2), 255) // if no alpha then 255 is full opacity
+            case 2 => Pixel(group.head, group.head, group.head, group(1))
+            case 1 => Pixel(group.head, group.head, group.head, 255) // greyscale no alpha
+          }
+        }.map(_.toInt).toArray
+        System.arraycopy(pixels, 0, matrix, row * w, w)
       }
       pngr.end()
 

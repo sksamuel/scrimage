@@ -25,6 +25,15 @@ trait Color {
 
   def toHSL: HSLColor = toRGB.toHSL
 
+  def toGreyscale : Grayscale = {
+    val rgb = toRGB
+    val red = 0.21 * rgb.red
+    val green = 0.71 * rgb.green
+    val blue = 0.07 * rgb.blue
+    val gray = red + green + blue
+    Grayscale(Math.round(gray * 255).toInt, rgb.alpha)
+  }
+
   /**
    * Returns a HEX String of this colour. Eg for 0,255,0, this method will return 00FF00.
    */
@@ -268,4 +277,8 @@ case class HSLColor(hue: Float, saturation: Float, lightness: Float, alpha: Floa
       RGBColor(Math.round(r * 255), Math.round(g * 255), Math.round(b * 255), 255)
     }
   }
+}
+
+case class Grayscale(grey: Int, alpha: Int = 255) extends Color {
+  override def toRGB: RGBColor = RGBColor(grey, grey, grey, alpha)
 }
