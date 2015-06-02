@@ -6,8 +6,11 @@
  */
 package thirdparty.mortennobel;
 
+import scala.concurrent.ExecutionContext;
+
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Based on work from Java Image Util ( http://schmidt.devlib.org/jiu/ )
@@ -21,8 +24,9 @@ public class ResampleOp extends AdvancedResizeOp {
 
   private final static int MAX_CHANNEL_VALUE = 255;
 
-  private final int numberOfThreads;
+  private final ExecutionContext executionContext;
   private final ResampleFilter filter;
+  private final int numberOfTasks;
 
   private int nrChannels;
   private int srcWidth;
@@ -47,10 +51,14 @@ public class ResampleOp extends AdvancedResizeOp {
   private SubSamplingData horizontalSubsamplingData;
   private SubSamplingData verticalSubsamplingData;
 
-  public ResampleOp(final int numberOfThreads, final ResampleFilter filter, final int destWidth, final int destHeight) {
+  public ResampleOp(final ExecutionContext executionContext,
+                    final ResampleFilter filter,
+                    final int destWidth,
+                    final int destHeight) {
     super(destWidth, destHeight);
-    this.numberOfThreads = numberOfThreads;
+    this.executionContext = executionContext;
     this.filter = filter;
+    this.numberOfTasks = Runtime.getRuntime().availableProcessors();
   }
 
   public BufferedImage doFilter(BufferedImage srcImg, BufferedImage dest, int dstWidth, int dstHeight) {
@@ -81,35 +89,45 @@ public class ResampleOp extends AdvancedResizeOp {
 
     final BufferedImage scrImgCopy = srcImg;
     final byte[][] workPixelsCopy = workPixels;
-    Thread[] threads = new Thread[numberOfThreads - 1];
-    for (int i = 1; i < numberOfThreads; i++) {
+
+    final CountDownLatch latch1 = new CountDownLatch(numberOfTasks - 1);
+    for (int i = 1; i < numberOfTasks; i++) {
       final int finalI = i;
-      threads[i - 1] = new Thread(new Runnable() {
+      executionContext.execute(new Runnable() {
         public void run() {
-          horizontallyFromSrcToWork(scrImgCopy, workPixelsCopy, finalI, numberOfThreads);
+          horizontallyFromSrcToWork(scrImgCopy, workPixelsCopy, finalI, numberOfTasks);
+          latch1.countDown();
         }
       });
-      threads[i - 1].start();
     }
-    horizontallyFromSrcToWork(scrImgCopy, workPixelsCopy, 0, numberOfThreads);
-    waitForAllThreads(threads);
+    horizontallyFromSrcToWork(scrImgCopy, workPixelsCopy, 0, numberOfTasks);
+    try {
+      latch1.await();
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
 
     byte[] outPixels = new byte[dstWidth * dstHeight * nrChannels];
     // --------------------------------------------------
     // Apply filter to sample vertically from Work to Dst
     // --------------------------------------------------
     final byte[] outPixelsCopy = outPixels;
-    for (int i = 1; i < numberOfThreads; i++) {
+    final CountDownLatch latch2 = new CountDownLatch(numberOfTasks - 1);
+    for (int i = 1; i < numberOfTasks; i++) {
       final int finalI = i;
-      threads[i - 1] = new Thread(new Runnable() {
+      executionContext.execute(new Runnable() {
         public void run() {
-          verticalFromWorkToDst(workPixelsCopy, outPixelsCopy, finalI, numberOfThreads);
+          verticalFromWorkToDst(workPixelsCopy, outPixelsCopy, finalI, numberOfTasks);
+          latch2.countDown();
         }
       });
-      threads[i - 1].start();
     }
-    verticalFromWorkToDst(workPixelsCopy, outPixelsCopy, 0, numberOfThreads);
-    waitForAllThreads(threads);
+    verticalFromWorkToDst(workPixelsCopy, outPixelsCopy, 0, numberOfTasks);
+    try {
+      latch2.await();
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
 
     //noinspection UnusedAssignment
     workPixels = null; // free memory
@@ -130,17 +148,6 @@ public class ResampleOp extends AdvancedResizeOp {
 
     ImageUtils.setBGRPixels(outPixels, out, 0, 0, dstWidth, dstHeight);
     return out;
-  }
-
-  private void waitForAllThreads(Thread[] threads) {
-    try {
-      for (Thread t : threads) {
-        t.join(Long.MAX_VALUE);
-      }
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-      throw new RuntimeException(e);
-    }
   }
 
   static SubSamplingData createSubSampling(ResampleFilter filter,
@@ -254,7 +261,7 @@ public class ResampleOp extends AdvancedResizeOp {
 
   private void verticalFromWorkToDst(byte[][] workPixels, byte[] outPixels, int start, int delta) {
     if (nrChannels == 1) {
-      verticalFromWorkToDstGray(workPixels, outPixels, start, numberOfThreads);
+      verticalFromWorkToDstGray(workPixels, outPixels, start, numberOfTasks);
       return;
     }
     boolean useChannel3 = nrChannels > 3;
@@ -296,7 +303,6 @@ public class ResampleOp extends AdvancedResizeOp {
 
   private void verticalFromWorkToDstGray(byte[][] workPixels, byte[] outPixels, int start, int delta) {
     for (int x = start; x < dstWidth; x += delta) {
-      final int xLocation = x;
       for (int y = dstHeight - 1; y >= 0; y--) {
         final int yTimesNumContributors = y * verticalSubsamplingData.numContributors;
         final int max = verticalSubsamplingData.arrN[y];
@@ -307,7 +313,7 @@ public class ResampleOp extends AdvancedResizeOp {
         for (int j = max - 1; j >= 0; j--) {
           int valueLocation = verticalSubsamplingData.arrPixel[index];
           float arrWeight = verticalSubsamplingData.arrWeight[index];
-          sample0 += (workPixels[valueLocation][xLocation] & 0xff) * arrWeight;
+          sample0 += (workPixels[valueLocation][x] & 0xff) * arrWeight;
 
           index++;
         }
@@ -343,7 +349,6 @@ public class ResampleOp extends AdvancedResizeOp {
         float sample1 = 0.0f;
         float sample2 = 0.0f;
         float sample3 = 0.0f;
-
         int index = i * horizontalSubsamplingData.numContributors;
         for (int j = max - 1; j >= 0; j--) {
           float arrWeight = horizontalSubsamplingData.arrWeight[index];
@@ -356,7 +361,7 @@ public class ResampleOp extends AdvancedResizeOp {
             sample3 += (srcPixels[pixelIndex + 3] & 0xff) * arrWeight;
           }
           index++;
-          }
+        }
 
         workPixels[k][sampleLocation] = toByte(sample0);
         workPixels[k][sampleLocation + 1] = toByte(sample1);
@@ -382,7 +387,6 @@ public class ResampleOp extends AdvancedResizeOp {
       ImageUtils.getPixelsBGR(srcImg, k, srcWidth, srcPixels, tempPixels);
 
       for (int i = dstWidth - 1; i >= 0; i--) {
-        int sampleLocation = i;
         final int max = horizontalSubsamplingData.arrN[i];
 
         float sample0 = 0.0f;
@@ -395,7 +399,7 @@ public class ResampleOp extends AdvancedResizeOp {
           index++;
         }
 
-        workPixels[k][sampleLocation] = toByte(sample0);
+        workPixels[k][i] = toByte(sample0);
       }
     }
   }

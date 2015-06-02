@@ -15,13 +15,16 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.{ Image, Filter }
 import java.awt.Graphics2D
+
+import com.sksamuel.scrimage.{ Filter, Image }
 import thirdparty.romainguy.BlendComposite
 import thirdparty.romainguy.BlendComposite.BlendingMode
 
+import scala.concurrent.ExecutionContext
+
 /** @author Stephen Samuel */
-object SnowFilter extends Filter {
+class SnowFilter(implicit executor: ExecutionContext) extends Filter {
 
   val snow = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/filter/snow1.jpg"))
 
@@ -31,4 +34,8 @@ object SnowFilter extends Filter {
     g2.drawImage(snow.scaleTo(image.width, image.height).awt, 0, 0, null)
     g2.dispose()
   }
+}
+
+object SnowFilter {
+  def apply()(implicit executor: ExecutionContext): SnowFilter = new SnowFilter()
 }

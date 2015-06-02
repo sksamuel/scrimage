@@ -2,13 +2,14 @@ package com.sksamuel.scrimage.composite
 
 import java.io.File
 
-import com.sksamuel.scrimage.canvas.Canvas._
 import com.sksamuel.scrimage.nio.JpegWriter
 import com.sksamuel.scrimage.{ Composite, Image }
 import org.apache.commons.io.FileUtils
 
 /** @author Stephen Samuel */
 object CompositeExampleGenerator extends App {
+
+  import scala.concurrent.ExecutionContext.Implicits.global
 
   val composites: List[(String, (Double => Composite))] = List(
     ("alpha", new AlphaComposite(_)),

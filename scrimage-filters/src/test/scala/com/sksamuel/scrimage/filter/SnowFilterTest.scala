@@ -6,11 +6,13 @@ import org.scalatest.{ BeforeAndAfter, FunSuite, OneInstancePerTest }
 /** @author Stephen Samuel */
 class SnowFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
 
+  import scala.concurrent.ExecutionContext.Implicits.global
+
   val original = Image(getClass.getResourceAsStream("/bird_small.png"))
 
   test("snow filter output matches expected") {
     val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_snow.png"))
-    val actual = original.filter(SnowFilter)
+    val actual = original.filter(SnowFilter())
     assert(actual === expected)
   }
 }

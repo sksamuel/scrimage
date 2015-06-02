@@ -19,8 +19,10 @@ import com.sksamuel.scrimage.{ Image, Filter }
 import java.awt.Graphics2D
 import thirdparty.romainguy.BlendComposite
 
+import scala.concurrent.ExecutionContext
+
 /** @author Stephen Samuel */
-class SummerFilter(vignette: Boolean) extends Filter {
+class SummerFilter(vignette: Boolean)(implicit executor: ExecutionContext) extends Filter {
 
   val summer = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/filter/summer1.jpg"))
 
@@ -36,5 +38,5 @@ class SummerFilter(vignette: Boolean) extends Filter {
 }
 
 object SummerFilter {
-  def apply(vignette: Boolean = true): SummerFilter = new SummerFilter(true)
+  def apply(vignette: Boolean = true)(implicit executor: ExecutionContext): SummerFilter = new SummerFilter(true)
 }

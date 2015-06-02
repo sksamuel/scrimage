@@ -9,6 +9,8 @@ import org.apache.commons.io.FileUtils
 /** @author Stephen Samuel */
 object ExampleGenerator extends App {
 
+  import scala.concurrent.ExecutionContext.Implicits.global
+
   val image1 = Image(getClass.getResourceAsStream("/bird.jpg"))
   val image2 = Image(getClass.getResourceAsStream("/colosseum.jpg"))
   val image3 = Image(getClass.getResourceAsStream("/lanzarote.jpg"))
@@ -53,7 +55,7 @@ object ExampleGenerator extends App {
     ("rylanders", RylandersFilter),
     ("sepia", SepiaFilter),
     ("smear_circles", SmearFilter(SmearType.Circles)),
-    ("snow", SnowFilter),
+    ("snow", new SnowFilter()),
     ("sobels", SobelsFilter),
     ("solarize", SolarizeFilter),
     ("sparkle", SparkleFilter()),

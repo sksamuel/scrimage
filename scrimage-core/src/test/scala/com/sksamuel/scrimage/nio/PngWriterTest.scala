@@ -7,6 +7,8 @@ import org.scalatest.{ Matchers, WordSpec }
 /** @author Stephen Samuel */
 class PngWriterTest extends WordSpec with Matchers {
 
+  import scala.concurrent.ExecutionContext.Implicits.global
+
   val original = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird.jpg")).scaleTo(300, 200)
 
   "png write" should {

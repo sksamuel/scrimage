@@ -1,13 +1,14 @@
 package com.sksamuel.scrimage.filter
 
 import com.sksamuel.scrimage.{ Image, Filter }
-import sun.awt.resources.awt
 import thirdparty.misc.DaisyFilter
 import java.awt.Graphics2D
 import thirdparty.romainguy.BlendComposite
 
 /** @author Stephen Samuel */
 object OldPhotoFilter extends Filter {
+
+  import scala.concurrent.ExecutionContext.Implicits.global
 
   val film = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/filter/film1.jpg"))
 

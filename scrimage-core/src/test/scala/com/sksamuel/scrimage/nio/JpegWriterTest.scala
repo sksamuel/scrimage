@@ -6,6 +6,8 @@ import org.scalatest.{ BeforeAndAfter, FunSuite, OneInstancePerTest }
 /** @author Stephen Samuel */
 class JpegWriterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
 
+  import scala.concurrent.ExecutionContext.Implicits.global
+
   val original = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird.jpg")).scaleTo(600, 400)
 
   test("jpeg compression happy path") {

@@ -6,6 +6,8 @@ import org.scalatest.FunSuite
 /** @author Stephen Samuel */
 class SummerFilterTest extends FunSuite {
 
+  import scala.concurrent.ExecutionContext.Implicits.global
+
   val original = Image(getClass.getResourceAsStream("/bird_small.png"))
 
   test("summer filter output matches expected") {
