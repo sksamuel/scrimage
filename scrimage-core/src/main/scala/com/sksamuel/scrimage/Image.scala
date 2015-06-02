@@ -287,28 +287,6 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
   override def toString: String = s"Image [width=$width, height=$height, type=${awt.getType}]"
 
   /**
-   * Flips this image horizontally.
-   *
-   * @return The result of flipping this image horizontally.
-   */
-  def flipX: Image = {
-    val target = copy
-    target.fx()
-    target
-  }
-
-  /**
-   * Flips this image vertically.
-   *
-   * @return The result of flipping this image vertically.
-   */
-  def flipY: Image = {
-    val target = copy
-    target.fy()
-    target
-  }
-
-  /**
    * Returns a copy of this image rotated 90 degrees anti-clockwise (counter clockwise to US English speakers).
    *
    * @return

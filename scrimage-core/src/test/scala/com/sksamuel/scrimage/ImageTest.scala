@@ -203,6 +203,14 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     assert(1296 === flipped.height)
   }
 
+  test("when flipping on x axis the image is flipped horizontally") {
+    turing.flipX shouldBe Image.fromResource("/com/sksamuel/scrimage/turing_flipx.png")
+  }
+
+  test("when flipping on y axis the image is flipped vertically") {
+    turing.flipY shouldBe Image.fromResource("/com/sksamuel/scrimage/turing_flipy.png")
+  }
+
   test("when flipping on y axis the dimensions are retained") {
     val flipped = image.flipY
     assert(1944 === flipped.width)
