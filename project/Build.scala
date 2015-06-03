@@ -3,9 +3,6 @@ import com.typesafe.sbt.SbtScalariform._
 import sbt.Keys._
 import sbt._
 
-import com.typesafe.sbt.SbtScalariform.ScalariformKeys
-import scalariform.formatter.preferences._
-
 object Build extends Build {
 
   private val TwelveMonkeysVersion = "3.1.0"
@@ -28,16 +25,8 @@ object Build extends Build {
       "org.imgscalr"          %     "imgscalr-lib"      % "4.2"       % "test",
       "org.scalatest"         %%    "scalatest"         % "2.2.4"     % "test",
       "org.mockito"           %     "mockito-all"       % "1.9.5"     % "test",
-      "com.sksamuel.scam"     %% "scam"                 % "0.5.2"     % "test"
+      "com.sksamuel.scam"     %%    "scam"                 % "0.5.2"     % "test"
     ),
-    ScalariformKeys.preferences := ScalariformKeys.preferences.value
-      .setPreference(AlignParameters, true)
-      .setPreference(DoubleIndentClassDeclaration, true)
-      .setPreference(SpaceInsideBrackets, false)
-      .setPreference(SpaceInsideParentheses, false)
-      .setPreference(MultilineScaladocCommentsStartOnFirstLine, false)
-      .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, false),
-
     publishTo := {
       val nexus = "https://oss.sonatype.org/"
       if (isSnapshot.value)

@@ -1,8 +1,8 @@
 package com.sksamuel.scrimage
 
 import java.awt.geom.AffineTransform
-import java.awt.image.{ AffineTransformOp, BufferedImage, BufferedImageOp, RescaleOp }
-import java.awt.{ Graphics2D, RenderingHints }
+import java.awt.image.{AffineTransformOp, BufferedImage, BufferedImageOp, RescaleOp}
+import java.awt.{Graphics2D, RenderingHints}
 
 /**
  * A skeleton implementation of read only operations based on a backing AWT image.
@@ -85,7 +85,7 @@ abstract class AwtImage[R](awt: BufferedImage) extends PixelOps[R] with InPlaceO
       val b = (p.blue * p.alpha + color.getBlue * color.getAlpha * (255 - p.alpha) / 255) / 255
       Pixel(r, g, b, 255)
     }
-    for (w <- 0 until width; h <- 0 until height) {
+    for ( w <- 0 until width; h <- 0 until height ) {
       awt.setRGB(w, h, rmTransparency(Pixel(awt.getRGB(w, h))).toInt)
     }
   }
