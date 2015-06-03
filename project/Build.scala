@@ -1,5 +1,4 @@
 import com.typesafe.sbt.SbtPgp._
-import com.typesafe.sbt.SbtScalariform._
 import sbt.Keys._
 import sbt._
 
@@ -9,10 +8,10 @@ object Build extends Build {
   private val PngjVersion = "2.1.0"
   private val MetadataExtractorVersion = "2.8.1"
 
-  val scrimageSettings = scalariformSettings ++ Seq(
+  val scrimageSettings = Seq(
     organization := "com.sksamuel.scrimage",
     name := "scrimage",
-    version := "2.0.0-M1",
+    version := "2.0.0-M2",
     scalaVersion := "2.11.6",
     crossScalaVersions := Seq("2.10.5", "2.11.6"),
     publishMavenStyle := true,
