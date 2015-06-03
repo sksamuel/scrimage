@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage
 
 import java.awt.geom.AffineTransform
-import java.awt.image.{ AffineTransformOp, BufferedImage, BufferedImageOp, DataBufferByte, DataBufferInt }
+import java.awt.image.{ AffineTransformOp, BufferedImage, BufferedImageOp, DataBufferByte, DataBufferInt, RescaleOp }
 import java.awt.{ Graphics2D, RenderingHints }
 
 /**
@@ -19,6 +19,12 @@ abstract class AwtImage[R](awt: BufferedImage) extends ReadOnlyOperations[R] wit
    * @return A copy of this image.
    */
   override def copy: Image = new Image(toNewBufferedImage)
+
+  protected def rescale(factor: Double): Unit = {
+    val rescale = new RescaleOp(factor.toFloat, 0f,
+      new RenderingHints(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY))
+    rescale.filter(awt, awt)
+  }
 
   /**
    * Returns the pixels of this image represented as an array of Pixels.
@@ -55,8 +61,8 @@ abstract class AwtImage[R](awt: BufferedImage) extends ReadOnlyOperations[R] wit
   }
 
   protected[scrimage] def op(op: BufferedImageOp): Image = {
-    val scaled = op.filter(awt, null)
-    Image(scaled)
+    val after = op.filter(awt, null)
+    Image(after)
   }
 
   protected[scrimage] def removetrans(color: java.awt.Color): Unit = {

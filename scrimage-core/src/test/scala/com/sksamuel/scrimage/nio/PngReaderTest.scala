@@ -11,7 +11,7 @@ class PngReaderTest extends WordSpec with Matchers {
     "be able to read pngs of all channels" in {
       val files = new File(getClass.getResource("/png").getFile).listFiles()
       val images = files map { file => PngReader.read(Files.readAllBytes(file.toPath)).get }
-      images.length shouldBe 14
+      images.length shouldBe 13
     }
   }
 }

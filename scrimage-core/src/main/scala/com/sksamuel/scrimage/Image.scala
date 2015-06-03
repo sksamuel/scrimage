@@ -52,6 +52,15 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
   }
 
   /**
+   * Returns a new Image with the brightness adjusted.
+   */
+  def brightness(factor: Double): Image = {
+    val target = copy
+    target.rescale(factor)
+    target
+  }
+
+  /**
    * Returns an image that is no larger than the given width and height.
    *
    * If the current image is already within the given dimensions then the same image will be returned.
@@ -62,7 +71,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
    * @param height the maximum height
    * @return the constrained image.
    */
-  def constrain(width: Int, height: Int)(implicit executor: ExecutionContext): Image = {
+  def bound(width: Int, height: Int)(implicit executor: ExecutionContext): Image = {
     if (this.width <= width && this.height <= height) this
     else max(width, height)
   }
@@ -567,7 +576,8 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
    * @return the zoomed image
    */
   def zoom(factor: Double,
-           method: ScaleMethod = ScaleMethod.Bicubic)(implicit executor: ExecutionContext): Image = scale(factor, method)
+           method: ScaleMethod = ScaleMethod.Bicubic)(implicit executor: ExecutionContext): Image = scale(factor,
+    method)
     .resizeTo(width, height)
 
   /**
