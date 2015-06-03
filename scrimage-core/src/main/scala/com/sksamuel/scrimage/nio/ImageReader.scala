@@ -33,10 +33,6 @@ object ImageReader {
     val bytes = IOUtils.toByteArray(in)
     read(bytes)
   }
-
-  def supports(in: InputStream): Boolean = Try {
-    read(in)
-  }.isSuccess
 }
 
 trait Reader {
