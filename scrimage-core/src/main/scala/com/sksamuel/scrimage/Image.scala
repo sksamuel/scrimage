@@ -530,14 +530,6 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
     target
   }
 
-  def bound(boundedWidth: Int, boundedHeight: Int)(implicit executor: ExecutionContext): Image = {
-    if (width <= boundedWidth && height <= boundedHeight) this
-    else {
-      val dimensions = ImageTools.dimensionsToFit((boundedWidth, boundedHeight), (width, height))
-      scaleTo(dimensions._1, dimensions._2)
-    }
-  }
-
   /**
    * Returns a new image that is scaled to fit the specified bounds while retaining the same aspect ratio
    * as the original image. The dimensions of the returned image will be the same as the result of the
