@@ -63,4 +63,6 @@ object PixelTools {
     (factor * blue(pixel)).round.toInt)
 
   def coordinateToOffset(x: Int, y: Int, w: Int): Int = y * w + x
+
+  def offsetToCoordinate(k: Int, w: Int): (Int, Int) = (k % w, k / w)
 }

@@ -1,9 +1,9 @@
 package com.sksamuel.scrimage
 
-import org.scalatest.{ OneInstancePerTest, BeforeAndAfter, FunSuite }
+import org.scalatest.{FunSuite, Matchers}
 
 /** @author Stephen Samuel */
-class PixelToolsTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
+class PixelToolsTest extends FunSuite with Matchers {
 
   val white = 0xFFFFFFFF
   val yellow = 0xFFFFFF00
@@ -45,5 +45,13 @@ class PixelToolsTest extends FunSuite with BeforeAndAfter with OneInstancePerTes
     assert(160 === PixelTools.coordinateToOffset(10, 3, 50))
     assert(10 === PixelTools.coordinateToOffset(10, 0, 50))
     assert(99 === PixelTools.coordinateToOffset(49, 1, 50))
+  }
+
+  test("offset to coordinate") {
+    PixelTools.offsetToCoordinate(0, 100) shouldBe 0 -> 0
+    PixelTools.offsetToCoordinate(100, 100) shouldBe 0 -> 1
+    PixelTools.offsetToCoordinate(99, 100) shouldBe 99 -> 0
+    PixelTools.offsetToCoordinate(199, 100) shouldBe 99 -> 1
+    PixelTools.offsetToCoordinate(101, 100) shouldBe 1 -> 1
   }
 }

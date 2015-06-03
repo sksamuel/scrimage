@@ -122,16 +122,6 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
   def subimage(x: Int, y: Int, w: Int, h: Int): Image = Image(w, h, pixels(x, y, w, h))
 
   /**
-   * Returns the pixel at the given coordinates as a integer in ARGB format.
-   *
-   * @param x the x coordinate of the pixel to grab
-   * @param y the y coordinate of the pixel to grab
-   *
-   * @return the ARGB value of the pixel
-   */
-  def pixel(x: Int, y: Int): Pixel = new Pixel(awt.getRGB(x, y))
-
-  /**
    * Uses linear interpolation to get a sub-pixel.
    *
    * Legal values for `x` and `y` are in [0, width) and [0, height),

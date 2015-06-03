@@ -1,13 +1,13 @@
 package com.sksamuel.scrimage
 
 import java.awt.geom.AffineTransform
-import java.awt.image.{ AffineTransformOp, BufferedImage, BufferedImageOp, DataBufferByte, DataBufferInt, RescaleOp }
+import java.awt.image.{ AffineTransformOp, BufferedImage, BufferedImageOp, RescaleOp }
 import java.awt.{ Graphics2D, RenderingHints }
 
 /**
  * A skeleton implementation of read only operations based on a backing AWT image.
  */
-abstract class AwtImage[R](awt: BufferedImage) extends ReadOnlyOperations[R] with InPlaceOperations[R] {
+abstract class AwtImage[R](awt: BufferedImage) extends PixelOps[R] with InPlaceOperations[R] {
 
   override lazy val width: Int = awt.getWidth
   override lazy val height: Int = awt.getHeight
@@ -26,24 +26,37 @@ abstract class AwtImage[R](awt: BufferedImage) extends ReadOnlyOperations[R] wit
     rescale.filter(awt, awt)
   }
 
-  /**
-   * Returns the pixels of this image represented as an array of Pixels.
-   */
-  def pixels: Array[Pixel] = {
-    awt.getRaster.getDataBuffer match {
-      case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_ARGB => buffer.getData.map(Pixel.apply)
-      case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_RGB =>
-        buffer.getData.map(Pixel.apply)
-      case buffer: DataBufferByte if awt.getType == BufferedImage.TYPE_4BYTE_ABGR =>
-        buffer.getData.grouped(4).map { abgr => Pixel(abgr(3), abgr(1), abgr(2), abgr.head) }.toArray
-      case _ =>
-        val pixels = Array.ofDim[Pixel](width * height)
-        for (x <- 0 until width; y <- 0 until height) {
-          pixels(y * width + x) = Pixel(awt.getRGB(x, y))
-        }
-        pixels
+  final override def pixel(x: Int, y: Int): Pixel = Pixel(awt.getRGB(x, y))
+
+  override def iterator: Iterator[Pixel] = new Iterator[Pixel] {
+    private var k = 0
+    def hasNext: Boolean = k < AwtImage.this.count
+    def next(): Pixel = {
+      val (x, y) = PixelTools.offsetToCoordinate(k, width)
+      val rgb = awt.getRGB(x, y)
+      k = k + 1
+      Pixel(rgb)
     }
   }
+
+  //  /**
+  //   * Returns the pixels of this image represented as an array of Pixels.
+  //   */
+  //  override def pixels: Array[Pixel] = {
+  //    awt.getRaster.getDataBuffer match {
+  //      case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_ARGB => buffer.getData.map(Pixel.apply)
+  //      case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_RGB =>
+  //        buffer.getData.map(Pixel.apply)
+  //      case buffer: DataBufferByte if awt.getType == BufferedImage.TYPE_4BYTE_ABGR =>
+  //        buffer.getData.grouped(4).map { abgr => Pixel(abgr(3), abgr(1), abgr(2), abgr.head) }.toArray
+  //      case _ =>
+  //        val pixels = Array.ofDim[Pixel](width * height)
+  //        for ( x <- 0 until width; y <- 0 until height ) {
+  //          pixels(y * width + x) = Pixel(awt.getRGB(x, y))
+  //        }
+  //        pixels
+  //    }
+  //  }
 
   protected[scrimage] def overlayInPlace(overlayImage: Image, x: Int = 0, y: Int = 0): Unit = {
     val g2 = graphics
