@@ -17,14 +17,14 @@
 package com.sksamuel.scrimage
 
 import java.awt.image.BufferedImage
-import java.io.{ File, InputStream }
-import java.nio.file.{ Paths, Path }
+import java.io.{File, InputStream}
+import java.nio.file.{Paths, Path}
 import javax.imageio.ImageIO
 
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod._
-import com.sksamuel.scrimage.nio.{ ImageReader, ImageWriter }
-import thirdparty.mortennobel.{ ResampleFilters, ResampleOp }
+import com.sksamuel.scrimage.nio.{ImageReader, ImageWriter}
+import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 
 import scala.concurrent.ExecutionContext
 import scala.language.implicitConversions
@@ -71,7 +71,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
    * @param height the maximum height
    * @return the constrained image.
    */
-  def bound(width: Int, height: Int)(implicit executor: ExecutionContext): Image = {
+  def bound(width: Int, height: Int): Image = {
     if (this.width <= width && this.height <= height) this
     else max(width, height)
   }
@@ -157,17 +157,17 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
       (xInt, xWeight) <- xIntsAndWeights;
       (yInt, yWeight) <- yIntsAndWeights
     ) yield {
-      val weight = xWeight * yWeight
-      if (weight == 0) List(0.0, 0.0, 0.0, 0.0)
-      else {
-        val px = pixel(xInt, yInt)
-        List(
-          weight * px.alpha,
-          weight * px.red,
-          weight * px.green,
-          weight * px.blue)
+        val weight = xWeight * yWeight
+        if (weight == 0) List(0.0, 0.0, 0.0, 0.0)
+        else {
+          val px = pixel(xInt, yInt)
+          List(
+            weight * px.alpha,
+            weight * px.red,
+            weight * px.green,
+            weight * px.blue)
+        }
       }
-    }
 
     // We perform the weighted averaging (a summation).
     // First though, we need to transpose so that we sum within channels,
@@ -191,7 +191,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
 
     val matrix = Array.ofDim[Pixel](subWidth * subHeight)
     // Simply copy the pixels over, one by one.
-    for (yIndex <- 0 until subHeight; xIndex <- 0 until subWidth) {
+    for ( yIndex <- 0 until subHeight; xIndex <- 0 until subWidth ) {
       matrix(PixelTools.coordinateToOffset(xIndex, yIndex, subWidth)) = Pixel(subpixel(xIndex + x, yIndex + y))
     }
     Image(subWidth, subHeight, matrix)
@@ -223,7 +223,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
   def patch(x: Int, y: Int, patchWidth: Int, patchHeight: Int): Array[Pixel] = {
     val px = pixels
     val patch = Array.ofDim[Pixel](patchWidth * patchHeight)
-    for (i <- y until y + patchHeight) {
+    for ( i <- y until y + patchHeight ) {
       System.arraycopy(px, offset(x, y), patch, offset(0, y), patchWidth)
     }
     patch
@@ -317,7 +317,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
           canvasHeight: Int,
           color: Color = X11Colorlist.White,
           scaleMethod: ScaleMethod = Bicubic,
-          position: Position = Center)(implicit executor: ExecutionContext): Image = {
+          position: Position = Center): Image = {
     val (w, h) = ImageTools.dimensionsToFit((canvasWidth, canvasHeight), (width, height))
     val (x, y) = position.calculateXY(canvasWidth, canvasHeight, w, h)
     val scaled = scaleTo(w, h, scaleMethod)
@@ -343,7 +343,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
   def cover(targetWidth: Int,
             targetHeight: Int,
             scaleMethod: ScaleMethod = Bicubic,
-            position: Position = Center)(implicit executor: ExecutionContext): Image = {
+            position: Position = Center): Image = {
     val coveredDimensions = ImageTools.dimensionsToCover((targetWidth, targetHeight), (width, height))
     val scaled = scaleTo(coveredDimensions._1, coveredDimensions._2, scaleMethod)
     val x = ((targetWidth - coveredDimensions._1) / 2.0).toInt
@@ -366,7 +366,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
    */
   def scaleTo(targetWidth: Int,
               targetHeight: Int,
-              scaleMethod: ScaleMethod = Bicubic)(implicit executor: ExecutionContext): Image = {
+              scaleMethod: ScaleMethod = Bicubic): Image = {
     scaleMethod match {
       case FastScale => fastscale(targetWidth, targetHeight)
       // todo put this back
@@ -380,7 +380,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
           case Lanczos3 => ResampleFilters.lanczos3Filter
           case _ => ResampleFilters.biCubicFilter
         }
-        super.op(new ResampleOp(executor, method, targetWidth, targetHeight))
+        super.op(new ResampleOp(method, targetWidth, targetHeight))
     }
   }
 
@@ -550,7 +550,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
    *
    * @return A new image that is the result of the binding.
    */
-  def max(maxW: Int, maxH: Int)(implicit executor: ExecutionContext): Image = {
+  def max(maxW: Int, maxH: Int): Image = {
     val dimensions = ImageTools.dimensionsToFit((maxW, maxH), (width, height))
     scaleTo(dimensions._1, dimensions._2)
   }
@@ -565,10 +565,7 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
    * @param method how to apply the scaling method
    * @return the zoomed image
    */
-  def zoom(factor: Double,
-           method: ScaleMethod = ScaleMethod.Bicubic)(implicit executor: ExecutionContext): Image = scale(factor,
-    method)
-    .resizeTo(width, height)
+  def zoom(factor: Double, method: ScaleMethod = ScaleMethod.Bicubic): Image = scale(factor, method).resizeTo(width, height)
 
   /**
    * Creates a new Image with the same dimensions of this image and with
@@ -674,7 +671,7 @@ object Image {
    */
   def filled(width: Int, height: Int, color: Color = Color.White): Image = {
     val target = apply(width, height)
-    for (w <- 0 until width; h <- 0 until height)
+    for ( w <- 0 until width; h <- 0 until height )
       target.awt.setRGB(w, h, color.toRGB.toInt)
     target
   }

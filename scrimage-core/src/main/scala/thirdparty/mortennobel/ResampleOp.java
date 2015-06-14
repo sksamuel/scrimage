@@ -6,11 +6,8 @@
  */
 package thirdparty.mortennobel;
 
-import scala.concurrent.ExecutionContext;
-
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * Based on work from Java Image Util ( http://schmidt.devlib.org/jiu/ )
@@ -24,9 +21,7 @@ public class ResampleOp extends AdvancedResizeOp {
 
   private final static int MAX_CHANNEL_VALUE = 255;
 
-  private final ExecutionContext executionContext;
   private final ResampleFilter filter;
-  private final int numberOfTasks;
 
   private int nrChannels;
   private int srcWidth;
@@ -51,14 +46,11 @@ public class ResampleOp extends AdvancedResizeOp {
   private SubSamplingData horizontalSubsamplingData;
   private SubSamplingData verticalSubsamplingData;
 
-  public ResampleOp(final ExecutionContext executionContext,
-                    final ResampleFilter filter,
+  public ResampleOp(final ResampleFilter filter,
                     final int destWidth,
                     final int destHeight) {
     super(destWidth, destHeight);
-    this.executionContext = executionContext;
     this.filter = filter;
-    this.numberOfTasks = Runtime.getRuntime().availableProcessors();
   }
 
   public BufferedImage doFilter(BufferedImage srcImg, BufferedImage dest, int dstWidth, int dstHeight) {
@@ -90,44 +82,13 @@ public class ResampleOp extends AdvancedResizeOp {
     final BufferedImage scrImgCopy = srcImg;
     final byte[][] workPixelsCopy = workPixels;
 
-    final CountDownLatch latch1 = new CountDownLatch(numberOfTasks - 1);
-    for (int i = 1; i < numberOfTasks; i++) {
-      final int finalI = i;
-      executionContext.execute(new Runnable() {
-        public void run() {
-          horizontallyFromSrcToWork(scrImgCopy, workPixelsCopy, finalI, numberOfTasks);
-          latch1.countDown();
-        }
-      });
-    }
-    horizontallyFromSrcToWork(scrImgCopy, workPixelsCopy, 0, numberOfTasks);
-    try {
-      latch1.await();
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    }
+    horizontallyFromSrcToWork(scrImgCopy, workPixelsCopy, 0, 1);
 
     byte[] outPixels = new byte[dstWidth * dstHeight * nrChannels];
     // --------------------------------------------------
     // Apply filter to sample vertically from Work to Dst
     // --------------------------------------------------
-    final byte[] outPixelsCopy = outPixels;
-    final CountDownLatch latch2 = new CountDownLatch(numberOfTasks - 1);
-    for (int i = 1; i < numberOfTasks; i++) {
-      final int finalI = i;
-      executionContext.execute(new Runnable() {
-        public void run() {
-          verticalFromWorkToDst(workPixelsCopy, outPixelsCopy, finalI, numberOfTasks);
-          latch2.countDown();
-        }
-      });
-    }
-    verticalFromWorkToDst(workPixelsCopy, outPixelsCopy, 0, numberOfTasks);
-    try {
-      latch2.await();
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    }
+    verticalFromWorkToDst(workPixelsCopy, outPixels, 0, 1);
 
     //noinspection UnusedAssignment
     workPixels = null; // free memory
@@ -261,7 +222,7 @@ public class ResampleOp extends AdvancedResizeOp {
 
   private void verticalFromWorkToDst(byte[][] workPixels, byte[] outPixels, int start, int delta) {
     if (nrChannels == 1) {
-      verticalFromWorkToDstGray(workPixels, outPixels, start, numberOfTasks);
+      verticalFromWorkToDstGray(workPixels, outPixels, start, 1);
       return;
     }
     boolean useChannel3 = nrChannels > 3;
