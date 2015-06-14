@@ -4,7 +4,7 @@ import sbt._
 
 object Build extends Build {
 
-  private val TwelveMonkeysVersion = "3.1.0"
+  private val TwelveMonkeysVersion = "3.1.1"
   private val PngjVersion = "2.1.0"
   private val MetadataExtractorVersion = "2.8.1"
 
@@ -24,7 +24,7 @@ object Build extends Build {
       "org.imgscalr"          %     "imgscalr-lib"      % "4.2"       % "test",
       "org.scalatest"         %%    "scalatest"         % "2.2.4"     % "test",
       "org.mockito"           %     "mockito-all"       % "1.9.5"     % "test",
-      "com.sksamuel.scam"     %%    "scam"                 % "0.5.2"     % "test"
+      "com.sksamuel.scam"     %%    "scam"              % "0.5.2"     % "test"
     ),
     publishTo := {
       val nexus = "https://oss.sonatype.org/"
