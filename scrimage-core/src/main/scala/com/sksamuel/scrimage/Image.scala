@@ -625,12 +625,20 @@ object Image {
     ImageReader.read(in)
   }
 
+  /**
+   * Creates a new Image from the resource on the classpath.
+   *
+   * @param path
+   * @return
+   */
   def fromResource(path: String): Image = apply(getClass.getResourceAsStream(path))
 
   /**
    * Create a new Image from a file.
    */
-  def apply(file: File): Image = {
+  @deprecated("use fromFile", "2.0")
+  def apply(file: File): Image = fromFile(file)
+  def fromFile(file:File):Image = {
     require(file != null)
     ImageReader.read(file)
   }
