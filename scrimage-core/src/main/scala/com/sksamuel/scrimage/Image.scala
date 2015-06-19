@@ -24,6 +24,7 @@ import javax.imageio.ImageIO
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.nio.{ImageReader, ImageWriter}
+import sun.awt.resources.awt
 import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 
 import scala.concurrent.ExecutionContext
@@ -565,7 +566,8 @@ class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](aw
    * @param method how to apply the scaling method
    * @return the zoomed image
    */
-  def zoom(factor: Double, method: ScaleMethod = ScaleMethod.Bicubic): Image = scale(factor, method).resizeTo(width, height)
+  def zoom(factor: Double, method: ScaleMethod = ScaleMethod.Bicubic): Image = scale(factor, method)
+    .resizeTo(width, height)
 
   /**
    * Creates a new Image with the same dimensions of this image and with
@@ -619,7 +621,9 @@ object Image {
    * @param in the stream to read the bytes from
    * @return a new Image
    */
-  def apply(in: InputStream): Image = {
+  @deprecated("use fromStream", "2.0")
+  def apply(in: InputStream): Image = fromStream(in)
+  def fromStream(in: InputStream): Image = {
     require(in != null)
     require(in.available > 0)
     ImageReader.read(in)
@@ -627,9 +631,6 @@ object Image {
 
   /**
    * Creates a new Image from the resource on the classpath.
-   *
-   * @param path
-   * @return
    */
   def fromResource(path: String): Image = apply(getClass.getResourceAsStream(path))
 
@@ -638,7 +639,7 @@ object Image {
    */
   @deprecated("use fromFile", "2.0")
   def apply(file: File): Image = fromFile(file)
-  def fromFile(file:File):Image = {
+  def fromFile(file: File): Image = {
     require(file != null)
     ImageReader.read(file)
   }
@@ -650,7 +651,9 @@ object Image {
    *
    * @return a new Scrimage Image
    */
-  def apply(awt: java.awt.Image): Image = {
+  @deprecated("use fromAwt", "2.0")
+  def apply(awt: java.awt.Image): Image = fromAwt(awt)
+  def fromAwt(awt: java.awt.Image): Image = {
     val target = new BufferedImage(awt.getWidth(null), awt.getHeight(null), BufferedImage.TYPE_INT_ARGB)
     val g2 = target.getGraphics
     g2.drawImage(awt, 0, 0, null)
