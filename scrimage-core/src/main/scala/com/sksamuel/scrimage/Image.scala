@@ -43,7 +43,7 @@ class ImageParseException extends RuntimeException("Unparsable image")
  *
  * @author Stephen Samuel
  */
-class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](awt) with ResizingOperations[Image] {
+class Image(private[scrimage] val awt: BufferedImage) extends AwtImage[Image](awt) with ScaleOps[Image] {
   require(awt != null, "Wrapping image cannot be null")
 
   override def map(f: (Int, Int, Pixel) => Pixel): Image = {
