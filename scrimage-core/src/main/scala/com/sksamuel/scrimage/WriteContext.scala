@@ -5,7 +5,7 @@ import java.nio.file.{ Files, Paths, Path }
 
 import com.sksamuel.scrimage.nio.ImageWriter
 
-class WriteContext(writer: ImageWriter, image: Image) {
+class WriteContext(writer: ImageWriter, image: AbstractImage) {
 
   def bytes: Array[Byte] = {
     val bos = new ByteArrayOutputStream

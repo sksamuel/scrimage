@@ -15,11 +15,11 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.{ Pixel, Filter, Image }
+import com.sksamuel.scrimage.{AbstractImage, Filter, Pixel}
 
 /** @author Stephen Samuel */
 object GrayscaleFilter extends Filter {
-  def apply(image: Image) {
+  def apply(image: AbstractImage) {
     image.mapInPlace((x, y, p) => {
       val red = 0.21 * p.red
       val green = 0.71 * p.green

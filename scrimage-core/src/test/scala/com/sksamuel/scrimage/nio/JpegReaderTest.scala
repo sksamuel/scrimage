@@ -10,7 +10,7 @@ class JpegReaderTest extends WordSpec with Matchers {
   "ImageIO" should {
     "be able to read all jpegs" in {
       val files = new File(getClass.getResource("/jpeg").getFile).listFiles()
-      val images = files map { file => JavaImageIOReader.read(Files.readAllBytes(file.toPath)) }
+      val images = files map { file => JavaImageIOReader.fromBytes(Files.readAllBytes(file.toPath)) }
       files.size shouldBe images.length
     }
   }

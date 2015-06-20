@@ -25,10 +25,10 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     assert(1 === Image(awt3).ratio)
 
     val awt4 = new BufferedImage(333, 111, BufferedImage.TYPE_INT_ARGB)
-    assert(3.0 === Image(awt4).ratio)
+    assert(3.0 === Image.fromAwt(awt4).ratio)
 
     val awt5 = new BufferedImage(111, 333, BufferedImage.TYPE_INT_ARGB)
-    assert(1 / 3d === Image(awt5).ratio)
+    assert(1 / 3d === Image.fromAwt(awt5).ratio)
   }
 
   test("copy returns a new backing image") {
@@ -228,15 +228,17 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("when rotating left the width and height are reversed") {
-    val flipped = image.rotateLeft
-    assert(1296 === flipped.width)
-    assert(1944 === flipped.height)
+    val rotated = small.rotateLeft
+    assert(259 === rotated.width)
+    assert(388 === rotated.height)
+    rotated shouldBe Image.fromResource("/com/sksamuel/scrimage/bird_rotated_left.png")
   }
 
   test("when rotating right the width and height are reversed") {
-    val flipped = image.rotateRight
-    assert(1296 === flipped.width)
-    assert(1944 === flipped.height)
+    val rotated = small.rotateRight
+    assert(259 === rotated.width)
+    assert(388 === rotated.height)
+    rotated shouldBe Image.fromResource("/com/sksamuel/scrimage/bird_rotated_right.png")
   }
 
   test("when fitting an image the output image should have the specified dimensions") {
@@ -316,7 +318,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
 
   test("when scaling an image the output image should match as expected") {
     val scaled = image.scale(0.25)
-    val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird_scale_025.png"))
+    val expected = Image.fromResource("/com/sksamuel/scrimage/bird_scale_025.png")
     assert(expected.width === scaled.width)
     assert(expected.height === scaled.height)
   }
@@ -329,7 +331,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
 
   test("when fitting an image the output image should match as expected") {
     val fitted = image.fit(900, 300, java.awt.Color.RED)
-    val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird_fitted2.png"))
+    val expected = Image.fromResource("/com/sksamuel/scrimage/bird_fitted2.png")
     assert(fitted.pixels.length === fitted.pixels.length)
     assert(expected == fitted)
   }

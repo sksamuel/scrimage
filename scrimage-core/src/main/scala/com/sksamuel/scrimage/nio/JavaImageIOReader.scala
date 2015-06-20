@@ -23,37 +23,38 @@ import com.sksamuel.scrimage.Image
 
 /** @author Stephen Samuel */
 object JavaImageIOReader extends Reader {
-  def read(bytes: Array[Byte]): Option[Image] = Option(Image(ImageIO.read(new ByteArrayInputStream(bytes))))
+  def fromBytes(bytes: Array[Byte], `type`: Int = Image.CANONICAL_DATA_TYPE): Option[Image] = {
+    Option(Image.wrapAwt(ImageIO.read(new ByteArrayInputStream(bytes)), `type`))
+  }
 }
 
 object JavaImageIO2Reader extends Reader {
 
   import scala.collection.JavaConverters._
 
-  def read(bytes: Array[Byte]): Option[Image] = {
+  def fromBytes(bytes: Array[Byte], `type`: Int = Image.CANONICAL_DATA_TYPE): Option[Image] = {
     ImageIO
-      .getImageReaders(new ByteArrayInputStream(bytes))
-      .asScala
+      .getImageReaders(new ByteArrayInputStream(bytes)).asScala
       .foldLeft(None: Option[Image]) { (valueOpt, reader) =>
-        // only bother to read if it hasn't already successfully been read
-        valueOpt orElse {
-          try {
-            reader.setInput(new ByteArrayInputStream(bytes), true, true)
-            val params = reader.getDefaultReadParam
-            val imageTypes = reader.getImageTypes(0)
-            while (imageTypes.hasNext) {
-              val imageTypeSpecifier = imageTypes.next()
-              val bufferedImageType = imageTypeSpecifier.getBufferedImageType
-              if (bufferedImageType == BufferedImage.TYPE_BYTE_GRAY) {
-                params.setDestinationType(imageTypeSpecifier)
-              }
+      // only bother to read if it hasn't already successfully been read
+      valueOpt orElse {
+        try {
+          reader.setInput(new ByteArrayInputStream(bytes), true, true)
+          val params = reader.getDefaultReadParam
+          val imageTypes = reader.getImageTypes(0)
+          while (imageTypes.hasNext) {
+            val imageTypeSpecifier = imageTypes.next()
+            val bufferedImageType = imageTypeSpecifier.getBufferedImageType
+            if (bufferedImageType == BufferedImage.TYPE_BYTE_GRAY) {
+              params.setDestinationType(imageTypeSpecifier)
             }
-            val bufferedImage = reader.read(0, params)
-            Some(Image(bufferedImage))
-          } catch {
-            case e: Exception => None
           }
+          val bufferedImage = reader.read(0, params)
+          Some(Image.wrapAwt(bufferedImage))
+        } catch {
+          case e: Exception => None
         }
       }
+    }
   }
 }

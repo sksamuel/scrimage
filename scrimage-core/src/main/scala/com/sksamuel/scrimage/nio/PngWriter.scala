@@ -16,12 +16,12 @@
 
 package com.sksamuel.scrimage.nio
 
-import java.awt.image.{ BufferedImage, DataBufferInt, SinglePixelPackedSampleModel }
+import java.awt.image.{BufferedImage, DataBufferInt, SinglePixelPackedSampleModel}
 import java.io.OutputStream
 import javax.imageio.ImageIO
 
-import ar.com.hjg.pngj.{ FilterType, ImageInfo, ImageLineInt }
-import com.sksamuel.scrimage.Image
+import ar.com.hjg.pngj.{FilterType, ImageInfo, ImageLineInt}
+import com.sksamuel.scrimage.AbstractImage
 
 /** @author Stephen Samuel */
 case class PngWriter(compressionLevel: Int) extends ImageWriter {
@@ -32,7 +32,7 @@ case class PngWriter(compressionLevel: Int) extends ImageWriter {
   def withMinCompression: PngWriter = MinCompression
   def withCompression(c: Int): PngWriter = copy(compressionLevel = c)
 
-  override def write(image: Image, out: OutputStream): Unit = {
+  override def write(image: AbstractImage, out: OutputStream): Unit = {
 
     if (image.awt.getType == BufferedImage.TYPE_INT_ARGB) {
       val imi = new ImageInfo(image.width, image.height, 8, true)

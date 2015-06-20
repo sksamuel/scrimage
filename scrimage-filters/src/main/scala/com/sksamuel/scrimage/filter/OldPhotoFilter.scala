@@ -1,18 +1,17 @@
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.{ Image, Filter }
-import thirdparty.misc.DaisyFilter
 import java.awt.Graphics2D
+
+import com.sksamuel.scrimage.{AbstractImage, Filter, Image}
+import thirdparty.misc.DaisyFilter
 import thirdparty.romainguy.BlendComposite
 
 /** @author Stephen Samuel */
 object OldPhotoFilter extends Filter {
 
-  import scala.concurrent.ExecutionContext.Implicits.global
+  val film = Image.fromResource("/com/sksamuel/scrimage/filter/film1.jpg")
 
-  val film = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/filter/film1.jpg"))
-
-  def apply(image: Image) {
+  def apply(image: AbstractImage) {
 
     val daisy = new DaisyFilter()
     val filtered = daisy.filter(image.awt)

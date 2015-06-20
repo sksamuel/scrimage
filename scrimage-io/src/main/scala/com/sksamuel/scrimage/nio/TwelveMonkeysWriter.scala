@@ -3,14 +3,14 @@ package com.sksamuel.scrimage.nio
 import java.io.OutputStream
 import javax.imageio.{ IIOImage, ImageIO }
 
-import com.sksamuel.scrimage.Image
+import com.sksamuel.scrimage.{AbstractImage, Image}
 import org.apache.commons.io.IOUtils
 
 trait TwelveMonkeysWriter extends ImageWriter {
 
   def format: String
 
-  override def write(image: Image, out: OutputStream): Unit = {
+  override def write(image: AbstractImage, out: OutputStream): Unit = {
 
     import scala.collection.JavaConverters._
 

@@ -20,7 +20,7 @@ import java.awt.Graphics2D
 
 /** @author Stephen Samuel */
 trait Filter {
-  def apply(image: Image): Unit
+  def apply(image: AbstractImage): Unit
 }
 
 /**
@@ -30,7 +30,7 @@ trait Filter {
  */
 abstract class BufferedOpFilter extends Filter {
   def op: BufferedImageOp
-  def apply(image: Image): Unit = {
+  def apply(image: AbstractImage): Unit = {
     val g2 = image.awt.getGraphics.asInstanceOf[Graphics2D]
     g2.drawImage(image.awt, op, 0, 0)
     g2.dispose()
@@ -38,5 +38,5 @@ abstract class BufferedOpFilter extends Filter {
 }
 
 class PipelineFilter(filters: Filter*) extends Filter {
-  def apply(image: Image): Unit = filters.foreach(_.apply(image))
+  def apply(image: AbstractImage): Unit = filters.foreach(_.apply(image))
 }

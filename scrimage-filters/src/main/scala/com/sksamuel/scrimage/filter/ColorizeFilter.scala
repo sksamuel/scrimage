@@ -15,12 +15,13 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.{ Image, Filter }
-import java.awt.{ Color, Graphics2D }
+import java.awt.{Color, Graphics2D}
+
+import com.sksamuel.scrimage.{AbstractImage, Filter}
 
 /** @author Stephen Samuel */
 class ColorizeFilter(color: Color) extends Filter {
-  def apply(image: Image) {
+  def apply(image: AbstractImage) {
     val g2 = image.awt.getGraphics.asInstanceOf[Graphics2D]
     g2.setColor(color)
     g2.fillRect(0, 0, image.width, image.height)

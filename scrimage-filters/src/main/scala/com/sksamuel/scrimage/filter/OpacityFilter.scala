@@ -15,7 +15,7 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.{ Pixel$, Filter, Image, Pixel }
+import com.sksamuel.scrimage.{AbstractImage, Filter, Pixel}
 
 /** @author Stephen Samuel */
 class OpacityFilter(amount: Double) extends Filter {
@@ -27,7 +27,7 @@ class OpacityFilter(amount: Double) extends Filter {
     Pixel(_r, _g, _b, pixel.alpha)
   }
 
-  def apply(image: Image) {
+  def apply(image: AbstractImage) {
     image.mapInPlace((x, y, p) => filter(x, y, p))
   }
 }

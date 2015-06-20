@@ -10,6 +10,6 @@ class SharpenFilterTest extends FunSuite with BeforeAndAfter with OneInstancePer
 
   test("filter output matches expected") {
     val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_sharpen.png"))
-    assert(Image(original).filter(SharpenFilter) === expected)
+    assert(original.copy.filter(SharpenFilter) === expected)
   }
 }

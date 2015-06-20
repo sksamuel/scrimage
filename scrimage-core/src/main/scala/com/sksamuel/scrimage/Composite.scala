@@ -22,5 +22,5 @@ trait Composite {
    * Apply the overlay image onto the given source image using
    * this composite.
    */
-  def apply(src: Image, overlay: Image)
+  def apply(src: AbstractImage, overlay: AbstractImage)
 }
