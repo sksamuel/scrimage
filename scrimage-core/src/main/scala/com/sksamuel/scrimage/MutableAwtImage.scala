@@ -1,14 +1,15 @@
 package com.sksamuel.scrimage
 
-import java.awt.geom.AffineTransform
-import java.awt.{RenderingHints, Graphics2D}
-import java.awt.image.{AffineTransformOp, RescaleOp, BufferedImage}
+import java.awt.image.{BufferedImage, RescaleOp}
+import java.awt.{Graphics2D, RenderingHints}
 
 /**
  * Contains methods that operate on an AWT BufferedImage by mutating the buffer in place.
  * All methods in this class should return Unit
  */
-abstract class MutableAwtImage(awt: BufferedImage) extends AwtImage(awt) {
+trait MutableAwtImage extends AwtImage {
+
+  def awt: BufferedImage
 
   /**
    * Maps the pixels of this image into another image by applying the given function to each pixel.
@@ -51,9 +52,9 @@ abstract class MutableAwtImage(awt: BufferedImage) extends AwtImage(awt) {
   /**
    * Applies the given image over the current buffer.
    */
-  protected[scrimage] def overlayInPlace(overlayImage: AbstractImage, x: Int = 0, y: Int = 0): Unit = {
+  protected[scrimage] def overlayInPlace(overlay: BufferedImage, x: Int = 0, y: Int = 0): Unit = {
     val g2 = awt.getGraphics.asInstanceOf[Graphics2D]
-    g2.drawImage(overlayImage.awt, x, y, null)
+    g2.drawImage(overlay, x, y, null)
     g2.dispose()
   }
 

@@ -7,7 +7,9 @@ import java.awt.image.BufferedImage
  * You can think of this as a pimped-immutable-BufferedImage.
  * None of the operaitons in this class will mutate the underlying awt buffer.
  */
-abstract class AwtImage(awt: BufferedImage) {
+trait AwtImage {
+
+  def awt: BufferedImage
 
   /**
    * @return the width of the image

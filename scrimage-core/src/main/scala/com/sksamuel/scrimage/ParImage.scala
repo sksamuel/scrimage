@@ -5,17 +5,18 @@ import java.awt.image.BufferedImage
 import com.sksamuel.scrimage.ScaleMethod.{BSpline, Bicubic, Bilinear, FastScale, Lanczos3}
 import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 
-class ParImage(awt: BufferedImage, metadata: ImageMetadata) extends AbstractImage(awt, metadata) {
+class ParImage(val awt: BufferedImage, val metadata: ImageMetadata) extends AbstractImage {
+  type R = ParImage
 
-  override protected[scrimage] def wrapAwt(awt: BufferedImage, metadata: ImageMetadata): ParImage.this.type = {
+  override protected[scrimage] def wrapAwt(awt: BufferedImage, metadata: ImageMetadata): R = {
     new ParImage(awt, metadata).asInstanceOf[ParImage.this.type]
   }
 
   override protected[scrimage] def wrapPixels(w: Int,
                                               h: Int,
                                               pixels: Array[Pixel],
-                                              metadata: ImageMetadata): ParImage.this.type = {
-    Image(w, h, pixels).withMetadata(metadata).asInstanceOf[ParImage.this.type]
+                                              metadata: ImageMetadata): R = {
+    Image(w, h, pixels).withMetadata(metadata).asInstanceOf[R]
   }
 
   /**
@@ -33,7 +34,7 @@ class ParImage(awt: BufferedImage, metadata: ImageMetadata) extends AbstractImag
    */
   override def scaleTo(targetWidth: Int,
                        targetHeight: Int,
-                       scaleMethod: ScaleMethod = Bicubic): ParImage.this.type = {
+                       scaleMethod: ScaleMethod = Bicubic): R = {
     scaleMethod match {
       case FastScale => wrapAwt(fastscale(targetWidth, targetHeight), metadata)
       // todo put this back
@@ -47,7 +48,7 @@ class ParImage(awt: BufferedImage, metadata: ImageMetadata) extends AbstractImag
           case Lanczos3 => ResampleFilters.lanczos3Filter
           case _ => ResampleFilters.biCubicFilter
         }
-        super.op(new ResampleOp(method, targetWidth, targetHeight))
+        super.op(new ResampleOp(method, targetWidth, targetHeight)).asInstanceOf[R]
     }
   }
 }

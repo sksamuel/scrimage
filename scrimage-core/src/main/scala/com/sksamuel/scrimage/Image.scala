@@ -40,8 +40,8 @@ class ImageParseException extends RuntimeException("Unparsable image")
  *
  * @author Stephen Samuel
  */
-class Image(awt: BufferedImage, metadata: ImageMetadata)
-  extends AbstractImage(awt, metadata) {
+class Image(val awt: BufferedImage, val metadata: ImageMetadata) extends AbstractImage {
+  type R = Image
 
   require(awt != null, "Wrapping image cannot be null")
 

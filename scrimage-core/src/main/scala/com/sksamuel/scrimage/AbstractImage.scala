@@ -9,10 +9,14 @@ import java.nio.file.{Path, Paths}
 import com.sksamuel.scrimage.nio.ImageWriter
 
 /**
- * A skeleton implementation of read only operations based on a backing AWT image.
+ * A base implementation of Scrimage image methods.
  */
-abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val metadata: ImageMetadata)
-  extends MutableAwtImage(awt) {
+trait AbstractImage extends MutableAwtImage {
+  type R <: AbstractImage
+  private val self = this.asInstanceOf[R]
+
+  def awt: BufferedImage
+  def metadata: ImageMetadata
 
   import Position._
   import ScaleMethod._
@@ -25,15 +29,15 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    * It is the responsibility of the caller to ensure that the awt image passed in
    * is a non-shared buffer.
    */
-  protected[scrimage] def wrapAwt(awt: BufferedImage, metadata: ImageMetadata): this.type
+  protected[scrimage] def wrapAwt(awt: BufferedImage, metadata: ImageMetadata): R
 
-  protected[scrimage] def wrapPixels(w: Int, h: Int, pixels: Array[Pixel], metadata: ImageMetadata): this.type
+  protected[scrimage] def wrapPixels(w: Int, h: Int, pixels: Array[Pixel], metadata: ImageMetadata): R
 
   /**
    * Creates an empty image of the same concrete type as this type with the given dimensions.
    * If the optional color is specified then the background pixels will all be set to that color.
    */
-  final protected[scrimage] def blank(w: Int, h: Int, color: Option[Color] = None): this.type = {
+  final protected[scrimage] def blank(w: Int, h: Int, color: Option[Color] = None): R = {
     val target = wrapAwt(new BufferedImage(w, h, awt.getType), metadata)
     color.foreach(target.fillInPlace)
     target
@@ -45,9 +49,9 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    *
    * @return A copy of this image.
    */
-  def copy: this.type = {
+  def copy: R = {
     val target = blank(width, height)
-    target.overlayInPlace(this, 0, 0)
+    target.overlayInPlace(awt, 0, 0)
     target
   }
 
@@ -56,13 +60,13 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    *
    * @return a new Image that is a clone of this image but with uninitialized data
    */
-  def blank: this.type = blank(width, height)
+  def blank: R = blank(width, height)
 
   /**
    * Returns a new image with the transarency replaced with the given color.
    */
-  def removeTransparency(color: Color): this.type = removeTransparency(color.toAWT)
-  def removeTransparency(color: java.awt.Color): this.type = {
+  def removeTransparency(color: Color): R = removeTransparency(color.toAWT)
+  def removeTransparency(color: java.awt.Color): R = {
     val target = copy
     target.removetrans(color)
     target
@@ -96,7 +100,7 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
     target
   }
 
-  protected[scrimage] def op(op: BufferedImageOp): this.type = {
+  protected[scrimage] def op(op: BufferedImageOp): R = {
     val after = op.filter(awt, null)
     wrapAwt(after, metadata)
   }
@@ -110,7 +114,7 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    * @param h the height of the subimage
    * @return a new Image that is the subimage
    */
-  def subimage(x: Int, y: Int, w: Int, h: Int): this.type = wrapPixels(w, h, pixels(x, y, w, h), metadata)
+  def subimage(x: Int, y: Int, w: Int, h: Int): R = wrapPixels(w, h, pixels(x, y, w, h), metadata)
 
   protected[scrimage] def rotate(angle: Double): BufferedImage = {
     val target = new BufferedImage(height, width, awt.getType)
@@ -140,28 +144,28 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    * @param color the color to match
    * @return
    */
-  def autocrop(color: Color): this.type = {
+  def autocrop(color: Color): R = {
     def uniform(color: Color, pixels: Array[Pixel]) = pixels.forall(p => p.toInt == color.toInt)
-    def scanright(col: Int, image: this.type): Int = {
+    def scanright(col: Int, image: R): Int = {
       if (uniform(color, pixels(col, 0, 1, height))) scanright(col + 1, image)
       else col
     }
-    def scanleft(col: Int, image: this.type): Int = {
+    def scanleft(col: Int, image: R): Int = {
       if (uniform(color, pixels(col, 0, 1, height))) scanleft(col - 1, image)
       else col
     }
-    def scandown(row: Int, image: this.type): Int = {
+    def scandown(row: Int, image: R): Int = {
       if (uniform(color, pixels(0, row, width, 1))) scandown(row + 1, image)
       else row
     }
-    def scanup(row: Int, image: this.type): Int = {
+    def scanup(row: Int, image: R): Int = {
       if (uniform(color, pixels(0, row, width, 1))) scanup(row - 1, image)
       else row
     }
-    val x1 = scanright(0, this)
-    val x2 = scanleft(width - 1, this)
-    val y1 = scandown(0, this)
-    val y2 = scanup(height - 1, this)
+    val x1 = scanright(0, self)
+    val x2 = scanleft(width - 1, self)
+    val y1 = scandown(0, self)
+    val y2 = scanup(height - 1, self)
     subimage(x1, y1, x2 - x1, y2 - y1)
   }
 
@@ -174,7 +178,7 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    *
    * @return A new image with the given image applied using the given composite.
    */
-  def composite(composite: Composite, applicative: AbstractImage): this.type = {
+  def composite(composite: Composite, applicative: AbstractImage): R = {
     val target = copy
     composite.apply(target, applicative)
     target
@@ -193,7 +197,7 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    *
    * @return The result of flipping this image horizontally.
    */
-  def flipX: this.type = {
+  def flipX: R = {
     val tx = AffineTransform.getScaleInstance(-1, 1)
     tx.translate(-width, 0)
     wrapAwt(affineTransform(tx), metadata)
@@ -204,7 +208,7 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    *
    * @return The result of flipping this image vertically.
    */
-  def flipY: this.type = {
+  def flipY: R = {
     val tx = AffineTransform.getScaleInstance(1, -1)
     tx.translate(0, -height)
     wrapAwt(affineTransform(tx), metadata)
@@ -244,7 +248,7 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    *
    * @return A new image that is the result of the binding.
    */
-  def max(maxW: Int, maxH: Int): this.type = {
+  def max(maxW: Int, maxH: Int): R = {
     val dimensions = ImageTools.dimensionsToFit((maxW, maxH), (width, height))
     scaleTo(dimensions._1, dimensions._2)
   }
@@ -269,11 +273,11 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
   def resizeTo(targetWidth: Int,
                targetHeight: Int,
                position: Position = Center,
-               background: Color = X11Colorlist.White): this.type = {
-    if (targetWidth == width && targetHeight == height) this
+               background: Color = X11Colorlist.White): R = {
+    if (targetWidth == width && targetHeight == height) self
     else {
       val (x, y) = position.calculateXY(targetWidth, targetHeight, width, height)
-      blank(targetWidth, targetHeight, Some(background)).overlay(this, x, y)
+      blank(targetWidth, targetHeight, Some(background)).overlay(this, x, y).asInstanceOf[R]
     }
   }
 
@@ -283,7 +287,7 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    *
    * @return a new Image with the same dimensions as this
    */
-  def fill(color: Color = Color.White): this.type = {
+  def fill(color: Color = Color.White): R = {
     val target = blank
     target.fillInPlace(color)
     target
@@ -299,10 +303,10 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    *
    * @return a new Image with the given image overlaid.
    */
-  def underlay(underlayImage: AbstractImage, x: Int = 0, y: Int = 0): this.type = {
+  def underlay(underlayImage: AbstractImage, x: Int = 0, y: Int = 0): R = {
     val target = this.blank
-    target.overlayInPlace(underlayImage, x, y)
-    target.overlayInPlace(this, x, y)
+    target.overlayInPlace(underlayImage.awt, x, y)
+    target.overlayInPlace(awt, x, y)
     target
   }
 
@@ -316,9 +320,9 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    *
    * @return a new Image with the given image overlaid.
    */
-  def overlay(overlayImage: AbstractImage, x: Int = 0, y: Int = 0): this.type = {
+  def overlay(overlayImage: AwtImage, x: Int = 0, y: Int = 0): R = {
     val target = copy
-    target.overlayInPlace(overlayImage, x, y)
+    target.overlayInPlace(overlayImage.awt, x, y)
     target
   }
 
@@ -332,7 +336,7 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    *
    * @return a new Image that is the result of resizing the canvas.
    */
-  def resize(scaleFactor: Double, position: Position = Center, background: Color = White): this.type = {
+  def resize(scaleFactor: Double, position: Position = Center, background: Color = White): R = {
     resizeTo((width * scaleFactor).toInt, (height * scaleFactor).toInt, position, background)
   }
 
@@ -344,7 +348,7 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    *
    * @return a new Image that is the result of resizing the canvas.
    */
-  def resizeToHeight(targetHeight: Int, position: Position = Center, background: Color = White): this.type = {
+  def resizeToHeight(targetHeight: Int, position: Position = Center, background: Color = White): R = {
     resizeTo((targetHeight / height.toDouble * height).toInt, targetHeight, position, background)
   }
 
@@ -356,7 +360,7 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    *
    * @return a new Image that is the result of resizing the canvas.
    */
-  def resizeToWidth(targetWidth: Int, position: Position = Center, background: Color = White): this.type = {
+  def resizeToWidth(targetWidth: Int, position: Position = Center, background: Color = White): R = {
     resizeTo(targetWidth, (targetWidth / width.toDouble * height).toInt, position, background)
   }
 
@@ -371,8 +375,8 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    * @param height the maximum height
    * @return the constrained image.
    */
-  def bound(width: Int, height: Int): this.type = {
-    if (this.width <= width && this.height <= height) this
+  def bound(width: Int, height: Int): R = {
+    if (this.width <= width && this.height <= height) self
     else max(width, height)
   }
 
@@ -395,12 +399,12 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
   def cover(targetWidth: Int,
             targetHeight: Int,
             scaleMethod: ScaleMethod = Bicubic,
-            position: Position = Center): this.type = {
+            position: Position = Center): R = {
     val coveredDimensions = ImageTools.dimensionsToCover((targetWidth, targetHeight), (width, height))
     val scaled = scaleTo(coveredDimensions._1, coveredDimensions._2, scaleMethod)
     val x = ((targetWidth - coveredDimensions._1) / 2.0).toInt
     val y = ((targetHeight - coveredDimensions._2) / 2.0).toInt
-    blank(targetWidth, targetHeight).overlay(scaled, x, y)
+    blank(targetWidth, targetHeight).overlay(scaled, x, y).asInstanceOf[R]
   }
 
   /**
@@ -420,11 +424,11 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
           canvasHeight: Int,
           color: Color = White,
           scaleMethod: ScaleMethod = Bicubic,
-          position: Position = Center): this.type = {
+          position: Position = Center): R = {
     val (w, h) = ImageTools.dimensionsToFit((canvasWidth, canvasHeight), (width, height))
     val (x, y) = position.calculateXY(canvasWidth, canvasHeight, w, h)
     val scaled = scaleTo(w, h, scaleMethod)
-    blank(canvasWidth, canvasHeight).fill(color).overlay(scaled, x, y)
+    blank(canvasWidth, canvasHeight).fill(color).overlay(scaled, x, y).asInstanceOf[R]
   }
 
   /**
@@ -439,7 +443,7 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    *
    * @return A new image that is the result of the padding
    */
-  def pad(size: Int, color: Color = X11Colorlist.White): this.type = {
+  def pad(size: Int, color: Color = X11Colorlist.White): R = {
     padTo(width + size * 2, height + size * 2, color)
   }
 
@@ -460,7 +464,7 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    *
    * @return A new image that is the result of the padding
    */
-  def padTo(targetWidth: Int, targetHeight: Int, color: Color = X11Colorlist.White): this.type = {
+  def padTo(targetWidth: Int, targetHeight: Int, color: Color = X11Colorlist.White): R = {
     val w = if (width < targetWidth) targetWidth else width
     val h = if (height < targetHeight) targetHeight else height
     val x = ((w - width) / 2.0).toInt
@@ -479,10 +483,10 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    *
    * @return A new image that is the result of the padding operation.
    */
-  def padWith(left: Int, top: Int, right: Int, bottom: Int, color: Color = White): this.type = {
+  def padWith(left: Int, top: Int, right: Int, bottom: Int, color: Color = White): R = {
     val w = width + left + right
     val h = height + top + bottom
-    blank(w, h, Some(color)).overlay(this, left, top)
+    blank(w, h, Some(color)).overlay(self, left, top).asInstanceOf[R]
   }
 
   /**
@@ -500,7 +504,7 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    *
    * @return a new Image that is the result of scaling this image
    */
-  def scaleToWidth(targetWidth: Int, scaleMethod: ScaleMethod = Bicubic): this.type = {
+  def scaleToWidth(targetWidth: Int, scaleMethod: ScaleMethod = Bicubic): R = {
     scaleTo(targetWidth, (targetWidth / width.toDouble * height).toInt, scaleMethod)
   }
 
@@ -519,7 +523,7 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    *
    * @return a new Image that is the result of scaling this image
    */
-  def scaleToHeight(targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): this.type = {
+  def scaleToHeight(targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): R = {
     scaleTo((targetHeight / height.toDouble * width).toInt, targetHeight, scaleMethod)
   }
 
@@ -532,7 +536,7 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    *
    * @return a new Image that is the result of scaling this image
    */
-  def scale(scaleFactor: Double, scaleMethod: ScaleMethod = Bicubic): this.type = {
+  def scale(scaleFactor: Double, scaleMethod: ScaleMethod = Bicubic): R = {
     scaleTo((width * scaleFactor).toInt, (height * scaleFactor).toInt, scaleMethod)
   }
 
@@ -546,7 +550,7 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    *
    * @return a new Image that is the result of scaling this image
    */
-  def scaleTo(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): this.type
+  def scaleTo(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): R
 
   /**
    * Returns an image that is the result of translating the image while keeping the same
@@ -555,8 +559,8 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    *
    * @return a new Image with this image translated.
    */
-  def translate(x: Int, y: Int, background: Color = Color.White): this.type = {
-    fill(background).overlay(this, x, y)
+  def translate(x: Int, y: Int, background: Color = Color.White): R = {
+    fill(background).overlay(self, x, y).asInstanceOf[R]
   }
 
   /**
@@ -566,7 +570,7 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    *
    * @return a new Image with the dimensions width-trim*2, height-trim*2
    */
-  def trim(amount: Int): this.type = trim(amount, amount, amount, amount)
+  def trim(amount: Int): R = trim(amount, amount, amount, amount)
 
   /**
    * Removes the given amount of pixels from each edge; like a crop operation.
@@ -578,8 +582,8 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    *
    * @return a new Image with the dimensions width-trim*2, height-trim*2
    */
-  def trim(left: Int, top: Int, right: Int, bottom: Int): this.type = {
-    blank(width - left - right, height - bottom - top).overlay(this, -left, -top)
+  def trim(left: Int, top: Int, right: Int, bottom: Int): R = {
+    blank(width - left - right, height - bottom - top).overlay(self, -left, -top).asInstanceOf[R]
   }
 
   /**
@@ -592,8 +596,8 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    * @param method how to apply the scaling method
    * @return the zoomed image
    */
-  def zoom(factor: Double, method: ScaleMethod = ScaleMethod.Bicubic): this.type = {
-    scale(factor, method).resizeTo(width, height)
+  def zoom(factor: Double, method: ScaleMethod = ScaleMethod.Bicubic): R = {
+    scale(factor, method).resizeTo(width, height).asInstanceOf[R]
   }
 
   def bytes(implicit writer: ImageWriter): Array[Byte] = forWriter(writer).bytes
@@ -611,24 +615,24 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    * @param filters the sequence filters to apply
    * @return the result of applying each filter in turn
    */
-  def filter(filters: Filter*): this.type = {
-    filters.foldLeft(this)((image, filter) => image.filter(filter)).asInstanceOf[this.type]
+  def filter(filters: Filter*): R = {
+    val qq = filters.foldLeft(this)((image, filter) => image.filter(filter))
+    qq.asInstanceOf[R]
   }
-
 
   /**
    * Returns a copy of this image rotated 90 degrees anti-clockwise (counter clockwise to US English speakers).
    *
    * @return
    */
-  def rotateLeft: this.type = wrapAwt(rotate(Math.PI / 2), metadata)
+  def rotateLeft: R = wrapAwt(rotate(Math.PI / 2), metadata)
 
   /**
    * Returns a copy of this image rotated 90 degrees clockwise.
    *
    * @return
    */
-  def rotateRight: this.type = wrapAwt(rotate(-Math.PI / 2), metadata)
+  def rotateRight: R = wrapAwt(rotate(-Math.PI / 2), metadata)
 
   /**
    * Creates a copy of this image with the given filter applied.
@@ -638,7 +642,7 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    *
    * @return A new image with the given filter applied.
    */
-  def filter(filter: Filter): this.type = {
+  def filter(filter: Filter): R = {
     val target = copy
     filter.apply(target)
     target
@@ -647,7 +651,7 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
   /**
    * Returns a new Image with the brightness adjusted.
    */
-  def brightness(factor: Double): this.type = {
+  def brightness(factor: Double): R = {
     val target = copy
     target.rescale(factor)
     target
@@ -659,7 +663,7 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
   def subpixelSubimage(x: Double,
                        y: Double,
                        subWidth: Int,
-                       subHeight: Int): this.type = {
+                       subHeight: Int): R = {
     require(x >= 0)
     require(x + subWidth < width)
     require(y >= 0)
@@ -667,7 +671,8 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
 
     val matrix = Array.ofDim[Pixel](subWidth * subHeight)
     // Simply copy the pixels over, one by one.
-    for ( yIndex <- 0 until subHeight; xIndex <- 0 until subWidth ) {
+    for ( yIndex <- 0 until subHeight;
+          xIndex <- 0 until subWidth ) {
       matrix(PixelTools.coordinateToOffset(xIndex, yIndex, subWidth)) = Pixel(subpixel(xIndex + x, yIndex + y))
     }
     wrapPixels(subWidth, subHeight, matrix, metadata)
@@ -679,7 +684,7 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
   def subpixelSubimageCenteredAtPoint(x: Double,
                                       y: Double,
                                       xRadius: Double,
-                                      yRadius: Double): this.type = {
+                                      yRadius: Double): R = {
     val xWidth = 2 * xRadius
     val yWidth = 2 * yRadius
 
@@ -703,7 +708,7 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    * @param f the function to transform pixel x,y with existing value p into new pixel value p' (p prime)
    * @return
    */
-  def map(f: (Int, Int, Pixel) => Pixel): this.type = {
+  def map(f: (Int, Int, Pixel) => Pixel): R = {
     val target = copy
     target.mapInPlace(f)
     target

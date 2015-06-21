@@ -15,8 +15,8 @@
  */
 package com.sksamuel.scrimage
 
-import java.awt.image.BufferedImageOp
 import java.awt.Graphics2D
+import java.awt.image.BufferedImageOp
 
 /** @author Stephen Samuel */
 trait Filter {
