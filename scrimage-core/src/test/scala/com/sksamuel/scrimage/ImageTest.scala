@@ -241,6 +241,11 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     rotated shouldBe Image.fromResource("/com/sksamuel/scrimage/bird_rotated_right.png")
   }
 
+  test("brightness happy path") {
+    val brightened = small.brightness(1.5)
+    brightened shouldBe Image.fromResource("/com/sksamuel/scrimage/bird_small_brightened.png")
+  }
+
   test("when fitting an image the output image should have the specified dimensions") {
     val fitted = image.fit(51, 66)
     assert(51 === fitted.width)
