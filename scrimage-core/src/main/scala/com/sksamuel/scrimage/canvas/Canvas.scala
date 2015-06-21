@@ -1,8 +1,8 @@
 package com.sksamuel.scrimage.canvas
 
-import java.awt.{ Font, Graphics2D, RenderingHints }
+import java.awt.{Font, Graphics2D, RenderingHints}
 
-import com.sksamuel.scrimage.{ Color, Image, X11Colorlist }
+import com.sksamuel.scrimage.{Color, Image, X11Colorlist}
 
 import scala.language.implicitConversions
 
@@ -44,9 +44,11 @@ case class Canvas(image: Image,
     target
   }
 
+  @deprecated("use image.watermarker.method", "2.1.0")
   def watermark(text: String): Canvas = watermark(text, 0.5)
-  def watermark(text: String, alpha: Double): Canvas = image.filter(new WatermarkFilter(text, font, alpha))
 
+  @deprecated("use image.watermarker.method", "2.1.0")
+  def watermark(text: String, alpha: Double): Canvas = image.filter(new WatermarkFilter(text, font, alpha))
 }
 
 object Canvas {
