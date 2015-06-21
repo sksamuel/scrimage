@@ -5,25 +5,26 @@ import java.awt.image.BufferedImage
 /**
  * Read only operations on a BufferedImage.
  * You can think of this as a pimped-immutable-BufferedImage.
- * None of the operaitons in this class will mutate the underlying awt buffer.
+ * None of the operations in this class will mutate the underlying awt buffer.
  */
 class AwtImage(val awt: BufferedImage) {
 
-  /**
-   * @return the width of the image
-   */
   lazy val width: Int = awt.getWidth
-
-  /**
-   * @return the height of the image
-   */
   lazy val height: Int = awt.getHeight
 
   /**
-   * Returns the centre coordinates for the image.
+   * The centre coordinates for the image as an (x, y) tuple.
    */
   lazy val center: (Int, Int) = (width / 2, height / 2)
+
+  /**
+   * The radius of the image defined as the centre to the corners.
+   */
   lazy val radius: Int = Math.sqrt(Math.pow(width / 2.0, 2) + Math.pow(height / 2.0, 2)).toInt
+
+  /**
+   * A tuple of the (width, height)
+   */
   lazy val dimensions: (Int, Int) = (width, height)
 
   /**
@@ -84,14 +85,33 @@ class AwtImage(val awt: BufferedImage) {
    */
   lazy val count: Int = width * height
 
+  /**
+   * Returns true if the predicate is true for all pixels in the image.
+   *
+   * @param f a predicate function that accepts 3 parameters - the x,y coordinate and the pixel at that coordinate
+   * @return true if f holds for at least one pixel
+   */
   def forall(f: (Int, Int, Pixel) => Boolean): Boolean = points.forall(p => f(p._1, p._2, pixel(p)))
+
+  /**
+   * Executes the given side effecting function on each pixel.
+   *
+   * @param f a function that accepts 3 parameters - the x,y coordinate and the pixel at that coordinate
+   */
   def foreach(f: (Int, Int, Pixel) => Unit): Unit = points.foreach(p => f(p._1, p._2, pixel(p)))
 
+  /**
+   * @return the pixels in the row identified by the y coordinate. 0 indexed.
+   */
   def row(y: Int): Array[Pixel] = pixels(0, y, width, 1)
+
+  /**
+   * @return the pixels for the column identified by the x co-ordinate. 0 indexed.
+   */
   def col(x: Int): Array[Pixel] = pixels(x, 0, 1, height)
 
   /**
-   * Returns true if a pixel with the given color exists.
+   * Returns true if a pixel with the given color exists
    *
    * @param color the pixel colour to look for.
    * @return true if there exists at least one pixel that has the given pixels color
@@ -99,7 +119,8 @@ class AwtImage(val awt: BufferedImage) {
   def contains(color: Color): Boolean = exists(p => p.toInt == color.toPixel.toInt)
 
   /**
-   * Returns true if the predicate holds on the image
+   * Returns true if the predicate is true for at least one pixel on the image.
+   *
    * @param p a predicate
    * @return true if p holds for at least one pixel
    */
