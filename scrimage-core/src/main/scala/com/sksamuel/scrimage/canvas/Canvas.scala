@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.canvas
 
-import java.awt.{Font, Graphics2D, RenderingHints}
+import java.awt.{Graphics2D, RenderingHints}
 
 import com.sksamuel.scrimage.{Color, Image, X11Colorlist}
 
