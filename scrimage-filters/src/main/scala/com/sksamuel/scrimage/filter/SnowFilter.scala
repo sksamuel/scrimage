@@ -18,7 +18,7 @@ package com.sksamuel.scrimage.filter
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 
-import com.sksamuel.scrimage.{AbstractImage, Filter, Image}
+import com.sksamuel.scrimage.{MutableAwtImage, AwtImage, Image, Filter}
 import thirdparty.romainguy.BlendComposite
 import thirdparty.romainguy.BlendComposite.BlendingMode
 
@@ -29,7 +29,7 @@ class SnowFilter(implicit executor: ExecutionContext) extends Filter {
 
   val snow = Image.fromResource("/com/sksamuel/scrimage/filter/snow1.jpg")
 
-  def apply(image: AbstractImage) {
+  def apply(image: Image) {
     val scaled = Image.wrapAwt(snow.scaleTo(image.width, image.height).awt, BufferedImage.TYPE_INT_ARGB)
     val g2 = image.awt.getGraphics.asInstanceOf[Graphics2D]
     g2.setComposite(new BlendComposite(BlendingMode.SCREEN, 1.0f))

@@ -19,12 +19,12 @@ package com.sksamuel.scrimage.canvas
 import java.awt._
 import java.awt.geom.AffineTransform
 
-import com.sksamuel.scrimage.{AbstractImage, Filter}
+import com.sksamuel.scrimage.{MutableAwtImage, AwtImage, Image, Filter}
 
 /** @author Stephen Samuel */
 class WatermarkFilter(text: String, font: Font, alpha: Double) extends Filter {
 
-  def apply(image: AbstractImage): Unit = {
+  def apply(image: Image): Unit = {
 
     val g2 = image.awt.getGraphics.asInstanceOf[Graphics2D]
     g2.setColor(java.awt.Color.white)

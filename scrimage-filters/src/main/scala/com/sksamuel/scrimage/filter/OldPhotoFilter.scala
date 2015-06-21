@@ -2,7 +2,7 @@ package com.sksamuel.scrimage.filter
 
 import java.awt.Graphics2D
 
-import com.sksamuel.scrimage.{AbstractImage, Filter, Image}
+import com.sksamuel.scrimage.{MutableAwtImage, AwtImage, Image, Filter}
 import thirdparty.misc.DaisyFilter
 import thirdparty.romainguy.BlendComposite
 
@@ -11,7 +11,7 @@ object OldPhotoFilter extends Filter {
 
   val film = Image.fromResource("/com/sksamuel/scrimage/filter/film1.jpg")
 
-  def apply(image: AbstractImage) {
+  def apply(image: Image) {
 
     val daisy = new DaisyFilter()
     val filtered = daisy.filter(image.awt)

@@ -15,7 +15,7 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.{AbstractImage, Filter}
+import com.sksamuel.scrimage.{MutableAwtImage, AwtImage, Image, Filter}
 import thirdparty.marvin.image.{MarvinAbstractImagePlugin, MarvinAttributes, MarvinImage, MarvinImageMask}
 
 /**
@@ -29,7 +29,7 @@ abstract class MarvinFilter extends Filter {
 
   def plugin: MarvinAbstractImagePlugin
 
-  def apply(image: AbstractImage) {
+  def apply(image: Image) {
 
     val input = new MarvinImage(image.awt)
     val output = input.clone()

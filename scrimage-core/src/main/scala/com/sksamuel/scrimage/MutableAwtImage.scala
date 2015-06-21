@@ -7,9 +7,7 @@ import java.awt.{Graphics2D, RenderingHints}
  * Contains methods that operate on an AWT BufferedImage by mutating the buffer in place.
  * All methods in this class should return Unit
  */
-trait MutableAwtImage extends AwtImage {
-
-  def awt: BufferedImage
+class MutableAwtImage(awt: BufferedImage) extends AwtImage(awt) {
 
   /**
    * Maps the pixels of this image into another image by applying the given function to each pixel.

@@ -15,14 +15,15 @@
  */
 package com.sksamuel.scrimage.composite
 
-import com.sksamuel.scrimage.{AbstractImage, Image, Composite}
 import java.awt.Graphics2D
-import thirdparty.romainguy.BlendComposite.BlendingMode
+
+import com.sksamuel.scrimage.{AwtImage, Composite, Image}
 import thirdparty.romainguy.BlendComposite
+import thirdparty.romainguy.BlendComposite.BlendingMode
 
 /** @author Stephen Samuel */
 class BlenderComposite(mode: BlendingMode, alpha: Double) extends Composite {
-  def apply(src: AbstractImage, applicative: AbstractImage) {
+  def apply(src: AwtImage, applicative: AwtImage) {
     val g2 = src.awt.getGraphics.asInstanceOf[Graphics2D]
     g2.setComposite(BlendComposite.getInstance(mode, alpha.toFloat))
     g2.drawImage(applicative.awt, 0, 0, null)

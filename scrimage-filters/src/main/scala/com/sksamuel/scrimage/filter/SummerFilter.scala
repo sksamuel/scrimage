@@ -17,7 +17,7 @@ package com.sksamuel.scrimage.filter
 
 import java.awt.image.BufferedImage
 
-import com.sksamuel.scrimage.{AbstractImage, Image, Filter}
+import com.sksamuel.scrimage.{MutableAwtImage, AwtImage, Image, Filter}
 import java.awt.Graphics2D
 import thirdparty.romainguy.BlendComposite
 
@@ -28,7 +28,7 @@ class SummerFilter(vignette: Boolean)(implicit executor: ExecutionContext) exten
 
   val summer = Image.fromResource("/com/sksamuel/scrimage/filter/summer1.jpg")
 
-  def apply(image: AbstractImage) {
+  def apply(image: Image) {
     val scaled = Image.wrapAwt(summer.scaleTo(image.width, image.height).awt, BufferedImage.TYPE_INT_ARGB)
     val g2 = image.awt.getGraphics.asInstanceOf[Graphics2D]
     g2.setComposite(BlendComposite.getInstance(BlendComposite.BlendingMode.INVERSE_COLOR_BURN, 0.5f))

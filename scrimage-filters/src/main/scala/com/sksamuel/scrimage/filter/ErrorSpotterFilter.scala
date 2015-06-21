@@ -1,13 +1,13 @@
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.{AbstractImage, Color, Filter, Image, RGBColor}
+import com.sksamuel.scrimage.{MutableAwtImage, AwtImage, Image, Color, Filter, RGBColor}
 
 /**
  * Created by guw on 23/09/14.
  */
 case class ErrorSpotterFilter(base: Image, ratio: Int = 50) extends Filter {
 
-  def apply(src: AbstractImage): Unit = {
+  def apply(src: Image): Unit = {
     assert(src.width == base.width)
     assert(src.height == base.height)
 

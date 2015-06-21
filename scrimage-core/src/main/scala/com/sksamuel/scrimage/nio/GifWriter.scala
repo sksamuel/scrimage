@@ -20,7 +20,7 @@ import java.io.OutputStream
 import javax.imageio.stream.MemoryCacheImageOutputStream
 import javax.imageio.{IIOImage, ImageIO, ImageWriteParam}
 
-import com.sksamuel.scrimage.AbstractImage
+import com.sksamuel.scrimage.Image
 import org.apache.commons.io.IOUtils
 
 /** @author Stephen Samuel */
@@ -28,7 +28,7 @@ case class GifWriter(progressive: Boolean) extends ImageWriter {
 
   def withProgressive(progressive: Boolean): GifWriter = GifWriter.Progressive
 
-  override def write(image: AbstractImage, out: OutputStream): Unit = {
+  override def write(image: Image, out: OutputStream): Unit = {
 
     val writer = ImageIO.getImageWritersByFormatName("gif").next()
     val params = writer.getDefaultWriteParam

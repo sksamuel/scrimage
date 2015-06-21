@@ -7,9 +7,7 @@ import java.awt.image.BufferedImage
  * You can think of this as a pimped-immutable-BufferedImage.
  * None of the operaitons in this class will mutate the underlying awt buffer.
  */
-trait AwtImage {
-
-  def awt: BufferedImage
+class AwtImage(val awt: BufferedImage) {
 
   /**
    * @return the width of the image
@@ -269,6 +267,24 @@ trait AwtImage {
    * @return the number of pixels that evaluated true
    */
   def count(p: Pixel => Boolean): Int = iterator.count(p)
+
+  /**
+   * Returns a new AWT BufferedImage from this image using the same AWT type.
+   * @return a new, non-shared, BufferedImage with the same data as this Image.
+   */
+  def toNewBufferedImage: BufferedImage = {
+    val target = new BufferedImage(width, height, awt.getType)
+    val g2 = target.getGraphics
+    g2.drawImage(awt, 0, 0, null)
+    g2.dispose()
+    target
+  }
+
+  /**
+   * Returns a new AWT BufferedImage with the same dimensions and same AWT type.
+   * The data is uninitialized.
+   */
+  def empty: AwtImage = new AwtImage(new BufferedImage(width, height, awt.getType))
 
   // See this Stack Overflow question to see why this is implemented this way.
   // http://stackoverflow.com/questions/7370925/what-is-the-standard-idiom-for-implementing-equals-and-hashcode-in-scala

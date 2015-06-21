@@ -11,7 +11,7 @@ import scala.collection.JavaConverters._
 
 object ImageMetadata {
 
-  def fromImage(image: AbstractImage): ImageMetadata = {
+  def fromImage(image: Image): ImageMetadata = {
     val metadata = ImageMetadataReader.readMetadata(new ByteArrayInputStream(image.bytes(PngWriter.NoCompression)))
     fromMetadata(metadata)
   }

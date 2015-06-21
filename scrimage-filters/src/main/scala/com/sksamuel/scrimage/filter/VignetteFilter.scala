@@ -18,7 +18,7 @@ package com.sksamuel.scrimage.filter
 import java.awt.geom.Point2D
 import java.awt.{Color, Graphics2D, RadialGradientPaint, RenderingHints}
 
-import com.sksamuel.scrimage.{AbstractImage, Filter}
+import com.sksamuel.scrimage.{Filter, Image}
 import thirdparty.romainguy.BlendComposite
 import thirdparty.romainguy.BlendComposite.BlendingMode
 
@@ -29,7 +29,7 @@ class VignetteFilter(start: Double, end: Double, blur: Double, color: Color = Co
   require(blur >= 0)
   require(blur <= 1)
 
-  private def background(image: AbstractImage): AbstractImage = {
+  private def background(image: Image): Image = {
 
     val target = image.blank
     val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
@@ -52,7 +52,7 @@ class VignetteFilter(start: Double, end: Double, blur: Double, color: Color = Co
     target
   }
 
-  def apply(image: AbstractImage) {
+  def apply(image: Image) {
     val bg = background(image).filter(GaussianBlurFilter((image.radius * blur).toInt))
     val g3 = image.awt.getGraphics.asInstanceOf[Graphics2D]
     g3.setComposite(new BlendComposite(BlendingMode.MULTIPLY, 1.0f))

@@ -17,11 +17,11 @@ package com.sksamuel.scrimage.filter
 
 import java.awt.{Color, Graphics2D}
 
-import com.sksamuel.scrimage.{AbstractImage, Filter}
+import com.sksamuel.scrimage.{MutableAwtImage, AwtImage, Image, Filter}
 
 /** @author Stephen Samuel */
 class BorderFilter(width: Int, color: Color = Color.BLACK) extends Filter {
-  def apply(image: AbstractImage) {
+  def apply(image: Image) {
     val g2 = image.awt.getGraphics.asInstanceOf[Graphics2D]
     g2.setColor(color)
     g2.fillRect(0, 0, width, image.height) // left

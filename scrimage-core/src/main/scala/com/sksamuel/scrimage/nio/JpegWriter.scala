@@ -4,7 +4,7 @@ import java.io.OutputStream
 import javax.imageio.stream.MemoryCacheImageOutputStream
 import javax.imageio.{ IIOImage, ImageIO, ImageWriteParam }
 
-import com.sksamuel.scrimage.AbstractImage
+import com.sksamuel.scrimage.Image
 import org.apache.commons.io.IOUtils
 
 case class JpegWriter(compression: Int, progressive: Boolean) extends ImageWriter {
@@ -17,7 +17,7 @@ case class JpegWriter(compression: Int, progressive: Boolean) extends ImageWrite
 
   def withProgressive(progressive: Boolean): JpegWriter = copy(progressive = progressive)
 
-  override def write(image: AbstractImage, out: OutputStream): Unit = {
+  override def write(image: Image, out: OutputStream): Unit = {
 
     val writer = ImageIO.getImageWritersByFormatName("jpeg").next()
     val params = writer.getDefaultWriteParam
