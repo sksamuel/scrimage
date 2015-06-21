@@ -8,21 +8,20 @@ import org.scalatest.{BeforeAndAfter, FunSuite, Matchers}
 /** @author Stephen Samuel */
 class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
 
-  val in = getClass.getResourceAsStream("/com/sksamuel/scrimage/bird.jpg")
-  val image = Image(in)
+  val image = Image.fromResource("/com/sksamuel/scrimage/bird.jpg")
   val small = Image.fromResource("/bird_small.png")
   val chip = Image.fromResource("/transparent_chip.png")
   val turing = Image.fromResource("/com/sksamuel/scrimage/turing.jpg")
 
   test("ratio happy path") {
     val awt1 = new BufferedImage(200, 400, BufferedImage.TYPE_INT_ARGB)
-    assert(0.5 === Image(awt1).ratio)
+    assert(0.5 === Image.fromAwt(awt1).ratio)
 
     val awt2 = new BufferedImage(400, 200, BufferedImage.TYPE_INT_ARGB)
-    assert(2 === Image(awt2).ratio)
+    assert(2 === Image.fromAwt(awt2).ratio)
 
     val awt3 = new BufferedImage(333, 333, BufferedImage.TYPE_INT_ARGB)
-    assert(1 === Image(awt3).ratio)
+    assert(1 === Image.fromAwt(awt3).ratio)
 
     val awt4 = new BufferedImage(333, 111, BufferedImage.TYPE_INT_ARGB)
     assert(3.0 === Image.fromAwt(awt4).ratio)
@@ -65,7 +64,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
 
   test("dimensions happy path") {
     val awt = new BufferedImage(200, 400, BufferedImage.TYPE_INT_ARGB)
-    assert((200, 400) === Image(awt).dimensions)
+    assert((200, 400) === Image.fromAwt(awt).dimensions)
   }
 
   test("pixel returns correct ARGB integer") {
@@ -114,16 +113,12 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("hashCode and equals reflects proper object equality") {
-    val bird = {
-      val in = getClass.getResourceAsStream("/com/sksamuel/scrimage/bird.jpg")
-      Image(in)
-    }
+    val bird = Image.fromResource("/com/sksamuel/scrimage/bird.jpg")
 
     assert(image.hashCode === bird.hashCode)
     assert(image === bird)
 
-    val otherImage =
-      Image(new BufferedImage(445, 464, Image.CANONICAL_DATA_TYPE))
+    val otherImage = Image.fromAwt(new BufferedImage(445, 464, Image.CANONICAL_DATA_TYPE))
     assert(otherImage.hashCode != image.hashCode)
     assert(otherImage != image)
   }
@@ -507,7 +502,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
 
   test("max operation happy path") {
     val maxed = image.max(200, 200)
-    val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird_bound_200x200.png"))
+    val expected = Image.fromResource("/com/sksamuel/scrimage/bird_bound_200x200.png")
     assert(maxed === expected)
   }
 
@@ -519,7 +514,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
 
   test("cover operation happy path") {
     val covered = image.cover(200, 200)
-    val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird_cover_200x200.png"))
+    val expected = Image.fromResource("/com/sksamuel/scrimage/bird_cover_200x200.png")
     assert(covered === expected)
   }
 
@@ -570,17 +565,16 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("autocrop removes background") {
-    val image = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/dyson.png"))
+    val image = Image.fromResource("/com/sksamuel/scrimage/dyson.png")
     val autocropped = image.autocrop(java.awt.Color.WHITE)
     assert(282 === autocropped.width)
     assert(193 === autocropped.height)
-    val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/dyson_autocropped.png"))
+    val expected = Image.fromResource("/com/sksamuel/scrimage/dyson_autocropped.png")
     assert(expected == autocropped)
   }
 
   test("removeTransparency conserve pixels on non transparent image") {
-    val in = getClass.getResourceAsStream("/com/sksamuel/scrimage/jazz.jpg")
-    val image = Image(in)
+    val image = Image.fromResource("/com/sksamuel/scrimage/jazz.jpg")
     val withoutTransparency = image.removeTransparency(java.awt.Color.BLACK)
     val pixels = image.pixels
     val pxwt = withoutTransparency.pixels
