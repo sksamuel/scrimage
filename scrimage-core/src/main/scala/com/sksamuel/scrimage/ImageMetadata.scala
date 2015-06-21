@@ -40,6 +40,7 @@ object ImageMetadata {
 }
 
 case class ImageMetadata(directories: List[Directory]) {
+  def tag(`type`: Int): Option[Tag] = tags.find(_.`type` == `type`)
   def tags: List[Tag] = directories.flatMap(_.tags)
 }
 

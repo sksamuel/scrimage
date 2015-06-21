@@ -93,7 +93,11 @@ class Image(awt: BufferedImage, metadata: ImageMetadata)
 
   def toPar: ParImage = new ParImage(awt, metadata)
 
-  def withMetadata(metadata: ImageMetadata): Image = new Image(awt, metadata)
+  /**
+   * Returns this image, with metadata attached.
+   * @interal both the original and the new image will share a buffer
+   */
+  private[scrimage] def withMetadata(metadata: ImageMetadata): Image = new Image(awt, metadata)
 }
 
 object Image {
@@ -128,6 +132,7 @@ object Image {
 
   @deprecated("use fromStream", "2.0")
   def apply(in: InputStream): Image = fromStream(in)
+
   /**
    * Create a new Image from an input stream. This is intended to create
    * an image from an image format eg PNG, not from a stream of pixels.
@@ -142,7 +147,8 @@ object Image {
     val bytes = IOUtils.toByteArray(in)
     val image = ImageReader.fromStream(new ByteArrayInputStream(bytes), `type`)
     val metadata = ImageMetadata.fromStream(new ByteArrayInputStream(bytes))
-    new Image(image.awt, metadata)
+    // detect iphone mode, and rotate
+    IphoneOrientation.reorient(image, metadata).withMetadata(metadata)
   }
 
   /**
@@ -160,9 +166,8 @@ object Image {
    */
   def fromFile(file: File): Image = {
     require(file != null)
-    val image = ImageReader.fromFile(file)
     val metadata = ImageMetadata.fromFile(file)
-    new Image(image.awt, metadata)
+    ImageReader.fromFile(file).withMetadata(metadata)
   }
 
   /**
