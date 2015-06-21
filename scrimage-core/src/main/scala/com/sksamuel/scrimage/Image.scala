@@ -167,15 +167,6 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
     blank(targetWidth, targetHeight).overlay(scaled, x, y)
   }
 
-  protected[scrimage] def fastscale(targetWidth: Int, targetHeight: Int): BufferedImage = {
-    val target = new BufferedImage(targetWidth, targetHeight, awt.getType)
-    val g2 = target.getGraphics.asInstanceOf[Graphics2D]
-    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR)
-    g2.drawImage(awt, 0, 0, targetWidth, targetHeight, null)
-    g2.dispose()
-    target
-  }
-
   /**
    * Creates a new Image with the same dimensions of this image and with
    * all the pixels initialized to the given color.

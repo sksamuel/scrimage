@@ -38,15 +38,6 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
     target
   }
 
-  protected[scrimage] def fastscale(targetWidth: Int, targetHeight: Int): BufferedImage = {
-    val target = new BufferedImage(targetWidth, targetHeight, awt.getType)
-    val g2 = target.getGraphics.asInstanceOf[Graphics2D]
-    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR)
-    g2.drawImage(awt, 0, 0, targetWidth, targetHeight, null)
-    g2.dispose()
-    target
-  }
-
   /**
    * Creates a new image with the same data as this image.
    * Any operations to the copied image will not write back to the original.

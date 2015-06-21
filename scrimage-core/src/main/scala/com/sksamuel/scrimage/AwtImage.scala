@@ -1,5 +1,6 @@
 package com.sksamuel.scrimage
 
+import java.awt.{RenderingHints, Graphics2D}
 import java.awt.image.BufferedImage
 
 /**
@@ -319,5 +320,17 @@ class AwtImage(val awt: BufferedImage) {
           (iterator sameElements that.iterator)
       case _ => false
     }
+  }
+
+  /**
+   * Returns a new AWT Image scaled using nearest-neighbour.
+   */
+  protected[scrimage] def fastscale(targetWidth: Int, targetHeight: Int): BufferedImage = {
+    val target = new BufferedImage(targetWidth, targetHeight, awt.getType)
+    val g2 = target.getGraphics.asInstanceOf[Graphics2D]
+    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR)
+    g2.drawImage(awt, 0, 0, targetWidth, targetHeight, null)
+    g2.dispose()
+    target
   }
 }
