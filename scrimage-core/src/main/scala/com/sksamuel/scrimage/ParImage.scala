@@ -1,8 +1,8 @@
 package com.sksamuel.scrimage
 
+import java.awt.Graphics2D
 import java.awt.geom.AffineTransform
-import java.awt.{RenderingHints, Graphics2D}
-import java.awt.image.{AffineTransformOp, BufferedImageOp, BufferedImage}
+import java.awt.image.{AffineTransformOp, BufferedImage, BufferedImageOp}
 
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod.{BSpline, Bicubic, Bilinear, FastScale, Lanczos3}
@@ -339,41 +339,24 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
   def subimage(x: Int, y: Int, w: Int, h: Int): ParImage = wrapPixels(w, h, pixels(x, y, w, h), metadata)
 
   /**
-   * Crops an image by removing cols and rows that are composed only of a single
-   * given color.
+   * Crops an image by removing cols and rows that are composed only of a single given color.
    *
    * Eg, if an image had a 20 pixel row of white at the top, and this method was
-   * invoked with Color.White then the image returned would have that 20 pixel row
-   * removed.
+   * invoked with Color.White then the image returned would have that 20 pixel row removed.
    *
    * This method is useful when images have an abudance of a single colour around them.
    *
    * @param color the color to match
    * @return
    */
-  def autocrop(color: Color): ParImage = {
-    def uniform(color: Color, pixels: Array[Pixel]) = pixels.forall(p => p.toInt == color.toInt)
-    def scanright(col: Int, image: ParImage): Int = {
-      if (uniform(color, pixels(col, 0, 1, height))) scanright(col + 1, image)
-      else col
+  def autocrop(color: Color)(implicit executor: ExecutionContext): Future[ParImage] = {
+    val x1F = Future(AutocropOps.scanright(color, height, 0, pixels))
+    val x2F = Future(AutocropOps.scanleft(color, height, width - 1, pixels))
+    val y1F = Future(AutocropOps.scandown(color, width, 0, pixels))
+    val y2F = Future(AutocropOps.scanup(color, width, height - 1, pixels))
+    for ( x1 <- x1F; x2 <- x2F; y1 <- y1F; y2 <- y2F ) yield {
+      subimage(x1, y1, x2 - x1, y2 - y1)
     }
-    def scanleft(col: Int, image: ParImage): Int = {
-      if (uniform(color, pixels(col, 0, 1, height))) scanleft(col - 1, image)
-      else col
-    }
-    def scandown(row: Int, image: ParImage): Int = {
-      if (uniform(color, pixels(0, row, width, 1))) scandown(row + 1, image)
-      else row
-    }
-    def scanup(row: Int, image: ParImage): Int = {
-      if (uniform(color, pixels(0, row, width, 1))) scanup(row - 1, image)
-      else row
-    }
-    val x1 = scanright(0, this)
-    val x2 = scanleft(width - 1, this)
-    val y1 = scandown(0, this)
-    val y2 = scanup(height - 1, this)
-    subimage(x1, y1, x2 - x1, y2 - y1)
   }
 
   /**

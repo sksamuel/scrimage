@@ -55,6 +55,11 @@ object PixelTools {
     (red(pixel) + green(pixel) + blue(pixel)) / 3
 
   /**
+   * Returns true if all pixels in the array have the same color
+   */
+  def uniform(color: Color, pixels: Array[Pixel]): Boolean = pixels.forall(p => p.toInt == color.toInt)
+
+  /**
    * Scales the brightness of a pixel.
    */
   def scale(factor: Double, pixel: Int): Int = rgb(

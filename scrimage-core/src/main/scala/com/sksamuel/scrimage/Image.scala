@@ -16,9 +16,9 @@
 
 package com.sksamuel.scrimage
 
+import java.awt.Graphics2D
 import java.awt.geom.AffineTransform
 import java.awt.image.{AffineTransformOp, BufferedImage, BufferedImageOp}
-import java.awt.{Graphics2D, RenderingHints}
 import java.io.{ByteArrayInputStream, File, InputStream}
 import java.nio.file.{Path, Paths}
 import javax.imageio.ImageIO
@@ -71,27 +71,10 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
    * @return
    */
   def autocrop(color: Color): Image = {
-    def uniform(color: Color, pixels: Array[Pixel]) = pixels.forall(p => p.toInt == color.toInt)
-    def scanright(col: Int, image: Image): Int = {
-      if (uniform(color, pixels(col, 0, 1, height))) scanright(col + 1, image)
-      else col
-    }
-    def scanleft(col: Int, image: Image): Int = {
-      if (uniform(color, pixels(col, 0, 1, height))) scanleft(col - 1, image)
-      else col
-    }
-    def scandown(row: Int, image: Image): Int = {
-      if (uniform(color, pixels(0, row, width, 1))) scandown(row + 1, image)
-      else row
-    }
-    def scanup(row: Int, image: Image): Int = {
-      if (uniform(color, pixels(0, row, width, 1))) scanup(row - 1, image)
-      else row
-    }
-    val x1 = scanright(0, this)
-    val x2 = scanleft(width - 1, this)
-    val y1 = scandown(0, this)
-    val y2 = scanup(height - 1, this)
+    val x1 = AutocropOps.scanright(color, height, 0, pixels)
+    val x2 = AutocropOps.scanleft(color, height, width - 1, pixels)
+    val y1 = AutocropOps.scandown(color, width, 0, pixels)
+    val y2 = AutocropOps.scanup(color, width, height - 1, pixels)
     subimage(x1, y1, x2 - x1, y2 - y1)
   }
 
