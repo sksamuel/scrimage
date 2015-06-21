@@ -423,21 +423,6 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
    */
   def rotateRight: Image = wrapAwt(rotate(-Math.PI / 2), metadata)
 
-  protected[scrimage] def rotate(angle: Double): BufferedImage = {
-    val target = new BufferedImage(height, width, awt.getType)
-    val g2 = target.getGraphics.asInstanceOf[Graphics2D]
-    val offset = angle match {
-      case a if a < 0 => (0, width)
-      case a if a > 0 => (height, 0)
-      case _ => (0, 0)
-    }
-    g2.translate(offset._1, offset._2)
-    g2.rotate(angle)
-    g2.drawImage(awt, 0, 0, null)
-    g2.dispose()
-    target
-  }
-
   /**
    * Creates a new image which is the result of this image
    * padded with the given number of pixels on each edge.
