@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage
 
-import java.awt.image.{BufferedImage, RescaleOp}
+import java.awt.image.{DataBufferByte, BufferedImage, RescaleOp}
 import java.awt.{Graphics2D, RenderingHints}
 
 /**
@@ -56,6 +56,8 @@ class MutableAwtImage(awt: BufferedImage) extends AwtImage(awt) {
     g2.dispose()
   }
 
+  def setPixel(x: Int, y: Int, pixel: Pixel): Unit = awt.setRGB(x, y, pixel.argb)
+
   /**
    * Mutates this image by scaling all pixel values by the given factor (brightness in other words).
    */
@@ -63,5 +65,15 @@ class MutableAwtImage(awt: BufferedImage) extends AwtImage(awt) {
     val rescale = new RescaleOp(factor.toFloat, 0f,
       new RenderingHints(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY))
     rescale.filter(awt, awt)
+  }
+
+  protected def contrastInPlace(factor: Double): Unit = {
+    for ( x <- 0 until width; y <- 0 until height ) {
+      val p = pixel(x, y)
+      val r = PixelTools.truncate((factor * (p.red - 128)) + 128)
+      val g = PixelTools.truncate((factor * (p.green - 128)) + 128)
+      val b = PixelTools.truncate((factor * (p.blue - 128)) + 128)
+      setPixel(x, y, Pixel(r, g, b, p.alpha))
+    }
   }
 }

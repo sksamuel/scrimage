@@ -54,6 +54,8 @@ object PixelTools {
   def gray(pixel: Int): Int =
     (red(pixel) + green(pixel) + blue(pixel)) / 3
 
+  def truncate(value: Double): Int = if (value < 0) 0 else if (value > 255) 255 else value.toInt
+
   /**
    * Returns true if all pixels in the array have the same color
    */

@@ -43,6 +43,7 @@ class ImageParseException extends RuntimeException("Unparsable image")
  * @author Stephen Samuel
  */
 class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtImage(awt) {
+
   require(awt != null, "Wrapping image cannot be null")
 
   import Position._
@@ -652,6 +653,12 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
   def brightness(factor: Double): Image = {
     val target = copy
     target.rescale(factor)
+    target
+  }
+
+  def contrast(factor: Double) :Image = {
+    val target = copy
+    target.contrastInPlace(factor)
     target
   }
 
