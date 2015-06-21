@@ -14,15 +14,7 @@ class Watermarker(image: Image) {
     val target = image.copy
 
     val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
-
-    if (style.antiAlias)
-      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
-
-    val alphaComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, style.alpha.toFloat)
-    g2.setComposite(alphaComposite)
-    g2.setColor(style.color)
-
-    g2.setFont(new java.awt.Font(style.font.name, style.font.style, style.size))
+    setupGraphics(g2, style)
 
     val fontMetrics = g2.getFontMetrics
     val bounds = fontMetrics.getStringBounds(text + " ", g2)
@@ -45,20 +37,34 @@ class Watermarker(image: Image) {
     target
   }
 
+  private def setupGraphics(g2: Graphics2D, style: TextStyle): Unit = {
+    if (style.antiAlias)
+      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
+    g2.setColor(style.color)
+    val alphaComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, style.alpha.toFloat)
+    g2.setComposite(alphaComposite)
+    g2.setFont(new java.awt.Font(style.font.name, style.font.style, style.size))
+  }
+
+  def at(text: String, x: Int, y: Int, style: TextStyle): Image = {
+    require(style.size >= 6, "Font size must be >= 6")
+
+    val target = image.copy
+    val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
+    setupGraphics(g2, style)
+
+    g2.drawString(text, x, y)
+    g2.dispose()
+
+    target
+  }
+
   def centered(text: String, style: TextStyle): Image = {
     require(style.size >= 6, "Font size must be >= 6")
 
     val target = image.copy
     val g2 = target.awt.getGraphics.asInstanceOf[Graphics2D]
-    g2.setColor(style.color)
-
-    if (style.antiAlias)
-      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
-
-    val alphaComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, style.alpha.toFloat)
-    g2.setComposite(alphaComposite)
-
-    g2.setFont(new java.awt.Font(style.font.name, style.font.style, style.size))
+    setupGraphics(g2, style)
 
     val fontMetrics = g2.getFontMetrics
     val bounds = fontMetrics.getStringBounds(text, g2)

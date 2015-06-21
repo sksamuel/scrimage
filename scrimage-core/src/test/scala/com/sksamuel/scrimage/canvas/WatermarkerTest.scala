@@ -18,5 +18,9 @@ class WatermarkerTest extends WordSpec with Matchers {
       val marked = image.watermarker.centered("watermark", TextStyle(size = 48, alpha = 0.2))
       marked shouldBe Image.fromResource("/com/sksamuel/scrimage/canvas/watermarked_centered.png")
     }
+    "add located watermark" in {
+      val marked = image.watermarker.at("watermark", 25, image.height - 100, TextStyle(size = 48, alpha = 0.2))
+      marked shouldBe Image.fromResource("/com/sksamuel/scrimage/canvas/watermark_at.png")
+    }
   }
 }
