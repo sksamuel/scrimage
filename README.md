@@ -181,6 +181,17 @@ Note: This will only work if you use `Image.fromStream`, `Image.fromResource`, o
 There is a full list of X11 defined colors in the X11Colorlist class. This can be imported `import X11Colorlist._` and used when you want to programatically
 specify colours, and gives more options than the standard 20 or so that are built into java.awt.Colo.
 
+### Migration from 1.4.x to 2.0.0
+
+The major difference in 2.0.0 is the way the outputting works. See the earlier input/output section on how to update your code to use the new writers.
+
+Changelist:
+* Changed output methods to use typeclass approach
+* Removal of Mutableimage and replacement of AsyncImage with ParImage
+* Introduction of "Pixel" abstraction for methods that operate directly on pixels
+* Addition of metadata
+* Addition of io packag
+
 ### Benchmarks
 
 Some noddy benchmarks comparing the speed of rescaling an image. I've compared the basic getScaledInstance method in java.awt.Image with ImgScalr and Scrimage. ImgScalr delegates to awt.Graphics2D for its rendering. Scrimage adapts the methods implemented by Morten Nobel.
