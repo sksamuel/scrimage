@@ -1,21 +1,22 @@
 package com.sksamuel.scrimage
 
 import java.awt.geom.AffineTransform
-import java.awt.image.{AffineTransformOp, BufferedImage, BufferedImageOp, RescaleOp}
+import java.awt.image.{AffineTransformOp, BufferedImage, BufferedImageOp}
 import java.awt.{Graphics2D, RenderingHints}
 import java.io.File
-import java.nio.file.{Paths, Path}
+import java.nio.file.{Path, Paths}
 
 import com.sksamuel.scrimage.nio.ImageWriter
 
 /**
  * A skeleton implementation of read only operations based on a backing AWT image.
  */
-abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val metadata: ImageMetadata) {
+abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val metadata: ImageMetadata)
+  extends MutableAwtImage(awt) {
 
-  import X11Colorlist._
-  import ScaleMethod._
   import Position._
+  import ScaleMethod._
+  import X11Colorlist._
 
   /**
    * Create a new image from the given BufferedImage.
@@ -39,109 +40,6 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
   }
 
   /**
-   * @return the width of the image
-   */
-  lazy val width: Int = awt.getWidth
-
-  /**
-   * @return the height of the image
-   */
-  lazy val height: Int = awt.getHeight
-
-  /**
-   * Returns the centre coordinates for the image.
-   */
-  lazy val center: (Int, Int) = (width / 2, height / 2)
-  lazy val radius: Int = Math.sqrt(Math.pow(width / 2.0, 2) + Math.pow(height / 2.0, 2)).toInt
-  lazy val dimensions: (Int, Int) = (width, height)
-
-  /**
-   * @return Returns the aspect ratio for this image.
-   */
-  lazy val ratio: Double = if (height == 0) 0 else width / height.toDouble
-
-  /**
-   * Returns all the pixels for the image
-   *
-   * @return an array of pixels for this image
-   */
-  def pixels: Array[Pixel] = iterator.toArray
-
-  /**
-   * Returns the pixels of the image as an iterator.
-   * The iterator is the most efficient way to lazily iterator over the pixels as the pixels will only
-   * be fetched from the raster as needed.
-   * @return the iterator
-   */
-  def iterator: Iterator[Pixel] = new Iterator[Pixel] {
-    private var k = 0
-    def hasNext: Boolean = k < AbstractImage.this.count
-    def next(): Pixel = {
-      val (x, y) = PixelTools.offsetToCoordinate(k, width)
-      val rgb = awt.getRGB(x, y)
-      k = k + 1
-      Pixel(rgb)
-    }
-  }
-
-  /**
-   * Returns the pixel at the given coordinates.
-   *
-   * @param x the x coordinate of the pixel to grab
-   * @param y the y coordinate of the pixel to grab
-   *
-   * @return the Pixel at the location
-   */
-  def pixel(x: Int, y: Int): Pixel = Pixel(awt.getRGB(x, y))
-
-  /**
-   * Returns the pixel at the given coordinate.
-   *
-   * @param p the pixel as an integer tuple
-   * @return the pixel
-   */
-  def pixel(p: (Int, Int)): Pixel = pixel(p._1, p._2)
-
-  // This tuple contains all the state that identifies this particular image.
-  private[scrimage] def imageState = (width, height, pixels.toList)
-
-  // See this Stack Overflow question to see why this is implemented this way.
-  // http://stackoverflow.com/questions/7370925/what-is-the-standard-idiom-for-implementing-equals-and-hashcode-in-scala
-  override def hashCode: Int = imageState.hashCode
-
-  override def equals(other: Any): Boolean = {
-    other match {
-      case that: AbstractImage =>
-        this.width == that.width &&
-          this.height == that.height &&
-          (iterator sameElements that.iterator)
-      case _ => false
-    }
-  }
-
-  lazy val points: Seq[(Int, Int)] = for ( x <- 0 until width; y <- 0 until height ) yield (x, y)
-
-  /**
-   * Returns the number of pixels in the image.
-   * @return the number of pixels
-   */
-  lazy val count: Int = width * height
-
-  def forall(f: (Int, Int, Pixel) => Boolean): Boolean = points.forall(p => f(p._1, p._2, pixel(p)))
-  def foreach(f: (Int, Int, Pixel) => Unit): Unit = points.foreach(p => f(p._1, p._2, pixel(p)))
-
-  def row(y: Int): Array[Pixel] = pixels(0, y, width, 1)
-  def col(x: Int): Array[Pixel] = pixels(x, 0, 1, height)
-
-  /**
-   * Returns true if a pixel with the given color exists.
-   *
-   * @param color the pixel colour to look for.
-   * @return true if there exists at least one pixel that has the given pixels color
-   */
-  def contains(color: Color): Boolean = exists(p => p.toInt == color.toPixel.toInt)
-
-  /**
    * Creates a new image with the same data as this image.
    * Any operations to the copied image will not write back to the original.
    *
@@ -154,131 +52,11 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
   }
 
   /**
-   * Returns true if the predicate holds on the image
-   * @param p a predicate
-   * @return true if p holds for at least one pixel
-   */
-  def exists(p: Pixel => Boolean): Boolean = iterator.exists(p)
-
-  /**
-   * Returns the color at the given coordinates.
-   *
-   * @return the RGBColor value at the coords
-   */
-  def color(x: Int, y: Int): RGBColor = pixel(x, y).toInt
-
-  /**
-   * Returns the ARGB components for the pixel at the given coordinates
-   *
-   * @param x the x coordinate of the pixel component to grab
-   * @param y the y coordinate of the pixel component to grab
-   *
-   * @return an array containing ARGB components in that order.
-   */
-  def argb(x: Int, y: Int): Array[Int] = {
-    val p = pixel(x, y)
-    Array(p.alpha, p.red, p.green, p.blue)
-  }
-
-  /**
-   * Returns the ARGB components for all pixels in this image
-   *
-   * @return an array containing ARGB components in that order.
-   */
-  def argb: Array[Array[Int]] = {
-    pixels.map(p => Array(p.alpha, p.red, p.green, p.blue))
-  }
-
-  def rgb(x: Int, y: Int): Array[Int] = {
-    val p = pixel(x, y)
-    Array(p.red, p.green, p.blue)
-  }
-
-  def rgb: Array[Array[Int]] = {
-    pixels.map(p => Array(p.red, p.green, p.blue))
-  }
-
-  /**
-   * Returns a rectangular region within the given boundaries as a single
-   * dimensional array of integers.
-   *
-   * Eg, pixels(10, 10, 30, 20) would result in an array of size 600 with
-   * the first row of the region in indexes 0,..,29, second row 30,..,59 etc.
-   *
-   * @param x the start x coordinate
-   * @param y the start y coordinate
-   * @param w the width of the region
-   * @param h the height of the region
-   * @return an Array of pixels for the region
-   */
-  def pixels(x: Int, y: Int, w: Int, h: Int): Array[Pixel] = {
-    for (
-      y1 <- Array.range(y, y + h);
-      x1 <- Array.range(x, x + w)
-    ) yield pixel(x1, y1)
-  }
-
-  /**
-   * Returns a set of the distinct colours used in this image.
-   * @return the set of distinct Colors
-   */
-  def colours: Set[RGBColor] = iterator.map(pixel => pixel.toColor).toSet
-
-  /**
-   * Counts the number of pixels with the given colour.
-   *
-   * @param color the colour to detect.
-   * @return the number of pixels that matched the colour of the given pixel
-   */
-  def count(color: Color): Int = iterator.count(_.toColor == color)
-
-  /**
-   * Counts the number of pixels that are true for the given predicate
-   * @param p a predicate
-   * @return the number of pixels that evaluated true
-   */
-  def count(p: Pixel => Boolean): Int = iterator.count(p)
-
-  /**
    * Creates an empty Image with the same dimensions of this image.
    *
    * @return a new Image that is a clone of this image but with uninitialized data
    */
   def blank: this.type = blank(width, height)
-
-  /**
-   * Mutates this image by scaling all pixel values by the given factor (brightness in other words).
-   * @mutable
-   */
-  protected def rescale(factor: Double): Unit = {
-    val rescale = new RescaleOp(factor.toFloat, 0f,
-      new RenderingHints(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY))
-    rescale.filter(awt, awt)
-  }
-
-  def patch(x: Int, y: Int, patchWidth: Int, patchHeight: Int): Array[Pixel] = {
-    val px = pixels
-    val patch = Array.ofDim[Pixel](patchWidth * patchHeight)
-    for ( i <- y until y + patchHeight ) {
-      System.arraycopy(px, offset(x, y), patch, offset(0, y), patchWidth)
-    }
-    patch
-  }
-
-  /**
-   * Returns all the patches of a given size in the image, assuming pixel
-   * alignment (no subpixel extraction).
-   *
-   * The patches are returned as a sequence of pixel matrices closures
-   */
-  def patches(patchWidth: Int, patchHeight: Int): IndexedSeq[() => Array[Pixel]] = {
-    for (
-      row <- 0 to height - patchHeight;
-      col <- 0 to width - patchWidth
-    ) yield {
-      () => patch(col, row, patchWidth, patchHeight)
-    }
-  }
 
   /**
    * Returns a new image with the transarency replaced with the given color.
@@ -321,35 +99,6 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
   protected[scrimage] def op(op: BufferedImageOp): this.type = {
     val after = op.filter(awt, null)
     wrapAwt(after, metadata)
-  }
-
-  protected[scrimage] def removetrans(color: java.awt.Color): Unit = {
-    def rmTransparency(p: Pixel): Pixel = {
-      val r = (p.red * p.alpha + color.getRed * color.getAlpha * (255 - p.alpha) / 255) / 255
-      val g = (p.green * p.alpha + color.getGreen * color.getAlpha * (255 - p.alpha) / 255) / 255
-      val b = (p.blue * p.alpha + color.getBlue * color.getAlpha * (255 - p.alpha) / 255) / 255
-      Pixel(r, g, b, 255)
-    }
-    for ( w <- 0 until width; h <- 0 until height ) {
-      awt.setRGB(w, h, rmTransparency(Pixel(awt.getRGB(w, h))).toInt)
-    }
-  }
-
-  /**
-   * Maps the pixels of this image into another image by applying the given function to each pixel.
-   *
-   * The function accepts three parameters: x,y,p where x and y are the coordinates of the pixel
-   * being transformed and p is the pixel at that location.
-   *
-   * @param f the function to transform pixel x,y with existing value p into new pixel value p' (p prime)
-   * @return
-   */
-  protected[scrimage] def mapInPlace(f: (Int, Int, Pixel) => Pixel): Unit = {
-    points.foreach {
-      case (x, y) =>
-        val newpixel = f(x, y, pixel(x, y))
-        awt.setRGB(x, y, newpixel.toInt)
-    }
   }
 
   /**
@@ -432,14 +181,11 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
   }
 
   /**
-   * Fills all pixels the given color on the existing image.
-   * @mutable
+   * Applies an affine transform in place.
    */
-  protected def fillInPlace(color: Color): Unit = {
-    for (
-      x <- 0 until width;
-      y <- 0 until height
-    ) awt.setRGB(x, y, color.toInt)
+  protected[scrimage] def affineTransform(tx: AffineTransform): BufferedImage = {
+    val op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR)
+    op.filter(awt, null)
   }
 
   /**
@@ -462,15 +208,6 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
     val tx = AffineTransform.getScaleInstance(1, -1)
     tx.translate(0, -height)
     wrapAwt(affineTransform(tx), metadata)
-  }
-
-  /**
-   * Applies an affine transform returning a new BufferedImage.
-   * @mutable
-   */
-  protected[scrimage] def affineTransform(tx: AffineTransform): BufferedImage = {
-    val op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR)
-    op.filter(awt, null)
   }
 
   /**
@@ -548,8 +285,7 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
    */
   def fill(color: Color = Color.White): this.type = {
     val target = blank
-    for ( w <- 0 until width; h <- 0 until height )
-      target.awt.setRGB(w, h, color.toRGB.toInt)
+    target.fillInPlace(color)
     target
   }
 
@@ -584,16 +320,6 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
     val target = copy
     target.overlayInPlace(overlayImage, x, y)
     target
-  }
-
-  /**
-   * Applies the given image over the current buffer.
-   * @mutable
-   */
-  protected[scrimage] def overlayInPlace(overlayImage: AbstractImage, x: Int = 0, y: Int = 0): Unit = {
-    val g2 = awt.getGraphics.asInstanceOf[Graphics2D]
-    g2.drawImage(overlayImage.awt, x, y, null)
-    g2.dispose()
   }
 
   /**
@@ -889,7 +615,6 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
     filters.foldLeft(this)((image, filter) => image.filter(filter)).asInstanceOf[this.type]
   }
 
-  override def toString: String = s"Image [width=$width, height=$height, type=${awt.getType}]"
 
   /**
    * Returns a copy of this image rotated 90 degrees anti-clockwise (counter clockwise to US English speakers).
@@ -919,8 +644,6 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
     target
   }
 
-  def offset(x: Int, y: Int): Int = PixelTools.coordinateToOffset(x, y, width)
-
   /**
    * Returns a new Image with the brightness adjusted.
    */
@@ -931,68 +654,12 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
   }
 
   /**
-   * Uses linear interpolation to get a sub-pixel.
-   *
-   * Legal values for `x` and `y` are in [0, width) and [0, height),
-   * respectively.
-   */
-  def subpixel(x: Double, y: Double): Int = {
-    require(x >= 0 && x < width && y >= 0 && y < height)
-
-    // As a part of linear interpolation, determines the integer coordinates
-    // of the pixel's neighbors, as well as the amount of weight each should
-    // get in the weighted average.
-    // Operates on one dimension at a time.
-    def integerPixelCoordinatesAndWeights(double: Double, numPixels: Int): List[(Int, Double)] = {
-      if (double <= 0.5) List((0, 1.0))
-      else if (double >= numPixels - 0.5) List((numPixels - 1, 1.0))
-      else {
-        val shifted = double - 0.5
-        val floor = shifted.floor
-        val floorWeight = 1 - (shifted - floor)
-        val ceil = shifted.ceil
-        val ceilWeight = 1 - floorWeight
-        assert(floorWeight + ceilWeight == 1)
-        List((floor.toInt, floorWeight), (ceil.toInt, ceilWeight))
-      }
-    }
-
-    val xIntsAndWeights = integerPixelCoordinatesAndWeights(x, width)
-    val yIntsAndWeights = integerPixelCoordinatesAndWeights(y, height)
-
-    // These are the summands in the weighted averages.
-    // Note there are 4 weighted averages: one for each channel (a, r, g, b).
-    val summands = for (
-      (xInt, xWeight) <- xIntsAndWeights;
-      (yInt, yWeight) <- yIntsAndWeights
-    ) yield {
-        val weight = xWeight * yWeight
-        if (weight == 0) List(0.0, 0.0, 0.0, 0.0)
-        else {
-          val px = pixel(xInt, yInt)
-          List(
-            weight * px.alpha,
-            weight * px.red,
-            weight * px.green,
-            weight * px.blue)
-        }
-      }
-
-    // We perform the weighted averaging (a summation).
-    // First though, we need to transpose so that we sum within channels,
-    // not within pixels.
-    val List(a, r, g, b) = summands.transpose.map(_.sum)
-
-    PixelTools.argb(a.round.toInt, r.round.toInt, g.round.toInt, b.round.toInt)
-  }
-
-  /**
    * Extracts a subimage, but using subpixel interpolation.
    */
   def subpixelSubimage(x: Double,
                        y: Double,
                        subWidth: Int,
-                       subHeight: Int): Image = {
+                       subHeight: Int): this.type = {
     require(x >= 0)
     require(x + subWidth < width)
     require(y >= 0)
@@ -1003,7 +670,7 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
     for ( yIndex <- 0 until subHeight; xIndex <- 0 until subWidth ) {
       matrix(PixelTools.coordinateToOffset(xIndex, yIndex, subWidth)) = Pixel(subpixel(xIndex + x, yIndex + y))
     }
-    Image(subWidth, subHeight, matrix)
+    wrapPixels(subWidth, subHeight, matrix, metadata)
   }
 
   /**
@@ -1012,7 +679,7 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val met
   def subpixelSubimageCenteredAtPoint(x: Double,
                                       y: Double,
                                       xRadius: Double,
-                                      yRadius: Double): Image = {
+                                      yRadius: Double): this.type = {
     val xWidth = 2 * xRadius
     val yWidth = 2 * yRadius
 
