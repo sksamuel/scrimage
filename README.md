@@ -3,42 +3,44 @@
 [![Join the chat at https://gitter.im/sksamuel/scrimage](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/sksamuel/scrimage?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 This readme is for the 2.0.x versions. For 1.4.x please see the old [README1.4.md](readme).
-Scrimage is a Scala image library for manipulating and processing of images. The aim of the this library is to provide a
-quick and easy way to do the kinds of image operations that most people need, such as scaling, rotating,
-converting between formats and applying filters. It is not intended to provide functionality that might be required by a
-more "serious" image application - such as face recognition or movement tracking.
+
+Scrimage is a consistent, idiomatic, and immutable scala library for manipulating and processing of images. 
+The aim of the this library is to provide a quick and easy way to do the kinds of image operations that are most common, 
+such as scaling, rotating, converting between formats and applying filters. It is not intended to provide functionality that might be required by a
+more "serious" image processing application - such as face recognition or movement tracking.
 
 A typical use case for this library would be creating thumbnails of images uploaded by users in a web app, or resizing a
 set of images to have a consistent size, or optimizing PNG uploads by users to apply maximum compression, or applying a grayscale filter in a print application.
 
-Scrimage has a consistent, idiomatic scala, and mostly immutable API that builds on the java.awt.Image methods.
-I say mostly immutable because for some operations creating a copy of the underlying image
-would prove expensive (think an in place filter on a 8000 x 6000 image where you do not care about
-keeping the original in memory). For these kinds of operations Scrimage supports a MutableImage
-instance where operations that can be performed in place mutate the original instead of returning a copy.
+Scrimage mostly builds on the functionality provided by java.awt.* along with selected other third party libraries.
 
 [![Build Status](https://travis-ci.org/sksamuel/scrimage.png)](https://travis-ci.org/sksamuel/scrimage) 
 
 ### Image Operations
 
-These operations all operate on an existing image, returning a copy of that image. The more complicated operations have a link to more detailed documentation.
+These operations all operate on an existing image, returning a copy of that image. 
+The more complicated operations have a link to more detailed documentation.
 
 | Operation        | Description |
 | ------------- |-------------|
 | [autocrop](https://github.com/sksamuel/scrimage/blob/master/guide/autocrop.md) | Removes any "excess" background, returning just the image proper |
+| blank | Creates a new image but without initializing the data buffer to any specific values.|
 | bound | Ensures that the image is no larger than specified dimensions. If the original is bigger, it will be scaled down, otherwise the original is returned. <br/><br/>This is useful when you want to ensure images do need exceed a certain size but you don't want to scale up if smaller. |
 | copy | Creates a new clone of this image with a new pixel buffer. Any operations on the copy do not write back to the original.|
 | [cover](https://github.com/sksamuel/scrimage/blob/master/guide/cover.md) | Resizes the canvas to the given dimensions and scales the original image so that it is the minimum size needed to cover the new dimensions without leaving any background visible.<br/><br/>This operation is useful if you want to generate an avatar/thumbnail style image from a larger image where having no background is more important than cropping part of the image. Think a facebook style profile thumbnail. |
-| empty | Creates a new image but without initializing the data buffer to any specific values.|
 | filled | Creates a new image and initializes the data buffer to the given color. |
+| filter | Returns a new image with the given filter applied. See the filters section for examples of the filters available. Filters can be chained and are applied in sequence. |
 | [fit](https://github.com/sksamuel/scrimage/blob/master/guide/fit.md) | Resizes the canvas to the given dimensions and scales the original image so that it is the maximum possible size inside the canvas while maintaining aspect ratio.<br/><br/>This operation is useful if you want a group of images to all have the same canvas dimensions while maintaining the original aspect ratios. Think thumbnails on a site like amazon where they are padded with white background. |
 | flip | Flips the image either horizontally or vertically. |
-| filter | Returns a new image with the given filter applied. See the filters section for examples of the filters available. Filters can be chained and are applied in sequence. |
-| pad | Resizes the canvas by adding a number of pixels around the image in a given color. |
+| max | Returns an image that is as large as possible to fit into the specified dimensions whilst maintaining aspect ratio and without adding padding. Note: The difference between this and fit, is that fit will pad out the canvas to the specified dimensions, whereas max will not |
+| overlay | Returns a new image which is the original image plus a specified one overlaid on top |
+| pad | Resizes the canvas by adding a number of pixels around the edges in a given color. |
 | resize | Resizes the canvas to the given dimensions. This does not scale the image but simply changes the dimensions of the canvas on which the image is sitting. Specifying a larger size will pad the image with a background color and specifying a smaller size will crop the image. This is the operation most people want when they think of crop. |
 | rotate | Rotates the image clockwise or anti-clockwise. |
 | scale | Scales the image to given dimensions. This operation will change both the canvas and the image. This is what most people think of when they want a "resize" operation. |
+| translate | Returns a new image with the original image translated (moved) the specified number of pixels |
 | [trim](https://github.com/sksamuel/scrimage/blob/master/guide/trim.md) | Removes a specified amount of pixels from each edge, essentially sugar to a crop operation. |
+| underlay | Returns a new image which is the original image overload on top of the specified image |
 
 ### Quick Examples
 
@@ -46,49 +48,50 @@ Reading an image, scaling it to 50% using the Bicubic method, and writing out as
 ```scala
 val in = ... // input stream
 val out = ... // output stream
-Image(in).scale(0.5, Bicubic).write(out) // Png is default
+Image.fromStream(in).scale(0.5, Bicubic).output(out) // an implicit PNG writer is in scope by default
 ```
 
 Reading an image from a java File, applying a blur filter, then flipping it on the horizontal axis, then writing out as a Jpeg
 ```scala
 val inFile = ... // input File
 val outFile = ... // output File
-Image(inFile).filter(BlurFilter).flipX.write(outFile, Format.Jpeg) // specified Jpeg
+Image.fromFile(inFile).filter(BlurFilter).flipX.output(outFile)(JpegWriter()) // specified Jpeg
 ```
 
 Padding an image with a 20 pixel border around the edges in red
 ```scala
 val in = ... // input stream
 val out = ... // output stream
-Image(in).pad(20, Color.Red)
+Image.fromStream(in).pad(20, Color.Red)
 ```
 
-Enlarging the canvas of an image without scaling the image (resize method changes canvas size, scale method scales image)
+Enlarging the canvas of an image without scaling the image. Note: the resize methods change the canvas size, 
+and the scale methods are used to scale/resize the actual image. This terminology is consistent with Photoshop.
 ```scala
 val in = ... // input stream
 val out = ... // output stream
-Image(in).resize(600,400)
+Image.fromStream(in).resize(600,400)
 ```
 
 Scaling an image to a specific size using a fast non-smoothed scale
 ```scala
 val in = ... // input stream
 val out = ... // output stream
-Image(in).scale(300, 200, FastScale)
+Image.fromStream(in).scale(300, 200, FastScale)
 ```
 
 Writing out a heavily compressed Jpeg thumbnail
 ```scala
 val in = ... // input stream
 val out = ... // output stream
-Image(in).fit(180,120).writer(Format.JPEG).withCompression(50).write(out)
+Image.fromStream(in).fit(180,120).writer(Format.JPEG).withCompression(50).write(out)
 ```
 
 Printing the sizes and ratio of the image
 ```scala
 val in = ... // input stream
 val out = ... // output stream
-val image = Image(in)
+val image = Image.fromStream(in)
 println(s"Width: ${image.width} Height: ${image.height} Ratio: ${image.ratio}")
 ```
 
@@ -96,66 +99,87 @@ Converting a byte array in JPEG to a byte array in PNG
 ```
 val in : Array[Byte] = ... // array of bytes in JPEG say
 val out = Image(in).write // default is PNG
-val out2 = Image(in).write(Format.PNG) // to be explicit about the output format
+val out2 = Image(in).bytes) // an implicit PNG writer is in scope by default with max compression
 ```
 
-Coverting an input stream to a maximum compressed PNG
+Coverting an input stream to a PNG with no compression
 ```
 val in : InputStream = ... // some input stream
 val out : OutputStream = ... // some output stream
-val compressed = Image(in).writer(Format.PNG).withMaxCompression.write(out)
+val compressed = Image.fromStream(in).output(PngWriter.NoCompression)
 ```
 
 ### Input / Output
 
-Scrimage supports loading and saving of images in the common web formats (currently png, jpeg, gif, tiff). In addition it extends jav'sa image.io support by giving you an easy way to compress / optimize / interlace the images when saving.
+Scrimage supports loading and saving of images in the common web formats (currently png, jpeg, gif, tiff). 
+In addition it extends javas image.io support by giving you an easy way to compress / optimize / interlace the images when saving.
 
-To load an image simply use the Image apply methods on an input stream, file, filepath (String) or a byte array. The format does not matter as the underlying reader will determine that. Eg, 
+To load an image simply use the Image companion methods on an input stream, file, filepath (String) or a byte array. 
+The format does not matter as the underlying reader will determine that. Eg, 
 ```scala
 val in = ... // a handle to an input stream
 val image = Image(in)
 ```
 
-To save a method, Scrimage provides an ImageWriter for each format it supports. An ImageWriter supports saving to a File, filepath (String), byte array, or OutputStream. The quickest way to use an ImageWriter is to call write() on an image, which will get a handle to an ImageWriter with the default configuration and use it for you. Eg,
+To save a method, Scrimage requires an ImageWriter. You can use this implicitly or explicitly. A PngWriter is in scope
+by default.
 
 ```scala
 val image = ... // some image
-image.write(new File("/home/sam/spaghetti.png"))
+image.output(new File("/home/sam/spaghetti.png")) // use implicit writer
+image.output(new File("/home/sam/spaghetti.png"))(writer) // use explicit writer
 ```
 
-If you want to override the configuration for a writer then you will need to get a handle to the writer itself using the writer() method which returns an ImageWriter instance. From here you can then configure it before writing. A common example would be optimising a PNG to use compression (uses a modified version of PngTastic behind the scenes). Eg,
+To set your own implicit writer, just define it in scope and it will override the default:
 
 ```scala
+implicit val writer = PngWriter.NoCompression
 val image = ... // some image
-image.writer(Format.PNG).withCompression(9).write(new File("/home/sam/compressed_spahgetti.png"))
+image.output(new File("/home/sam/spaghetti.png")) // use custom implicit writer instead of default
 ```
-Note the writers are immutable and are created per image.
 
-
-### Async
-
-In version 1.1.0 support for asynchronous operations was added. This is achieved using the AsyncImage class. First, get an instance of AsyncImage from an Image or other source:
+If you want to override the configuration for a writer then you can do this when you create the writer. Eg:
 
 ```scala
-val in = ... // input stream
-val a = AsyncImage(in)
+implicit val writer = JpegWriter().withCompression(50).withProgressive(true)
+val image = ... // some image
+image.output(new File("/home/sam/compressed_spahgetti.png"))
 ```
 
-Then any operations that act on that image return a Future[Image] instead of a standard Image. They will operate on the scala.concurrent implicit execution context.
+### Metadata
+
+Scrimage builds on the [metadata-extractor](https://github.com/drewnoakes/metadata-extractor) project to provide the ability to read metadata.
+
+This can be done in two ways. Firstly, the metadata is attached to the image if it was available when you loaded the image 
+from the `Image.fromStream`, `Image.fromResource`, or `Image.fromFile` methods. Then you can call `image.metadata` to get
+a handle to the metadata object.
+
+Secondly, the metadata can be loaded without an Image being needed, by using the methods on ImageMetadata.
+
+Once you have the metadata object, you can invoke `directories` or `tags` to see the information.
+
+### Format Detection
+
+If you are interested in detecting the format of an image (which you don't need to do when simply loading an image, as Scrimage will figure it out for you) 
+then you can use the FormatDetector. The detector recognises PNG, JPEG and GIF.
 
 ```scala
-... given an async image
-val filtered = a.filter(VintageFilter) // filtered has type Future[Image]
+FormatDetector.detect(bytes) // returns an Option[Format] with the detected format if any
+FormatDetector.detect(in) // same thing from an input stream
 ```
 
-A more complicated example would be to load all images instead a directory, apply a grayscale filter, and then re-save them out as optimized PNGs.
+### IPhone Orientation
 
-```scala
-val dir = new File("/home/sam/images")
-dir.listFiles().foreach(file => AsyncImage(file).filter(GrayscaleFilter).onSuccess {
-case image => image.writer(Format.PNG).withMaxCompression.write(file)
-})
-```
+Apple iPhone's have this annoying "feature" where an image taken when the phone is rotated is not saved as a rotated file. Instead the image is always
+saved as landscape with a flag set to whether it was portrait or not. Scrimage will detect this flag, if it is present on the file, and correct the
+orientation for you automatically. Most image readers do this, such as web browsers, but you might have noticed some things do not, such as intellij.
+
+Note: This will only work if you use `Image.fromStream`, `Image.fromResource`, or `Image.fromFile`, as otherwise the metadata will not be available.
+
+### X11 Colors
+
+There is a full list of X11 defined colors in the X11Colorlist class. This can be imported `import X11Colorlist._` and used when you want to programatically
+specify colours, and gives more options than the standard 20 or so that are built into java.awt.Colo.
 
 ### Benchmarks
 
@@ -177,22 +201,21 @@ As you can see, ImgScalr is the fastest for a simple rescale, but Scrimage is mu
 ### Including Scrimage in your project
 
 Scrimage is available on maven central. There are several dependencies. 
-One is the core library which is required. The others are filters and canvas.
-They are split because the image filters is a large jar, 
-and most people just want the basic resize/scale/load/save functionality. 
+One is the `scrimage-core` library which is required. The others are `scrimage-filters` and `scrimage-io`.
+They are split because the image filters is a large jar, and most people just want the basic resize/scale/load/save functionality.
+The`scrimage-io` package brings in readers/writers for less common formats such as BMP Tiff or PCX.
 
-Include the canvas dependency if you want to be able to do AWT style graphics manipulating (drawRect, etc).
-Include the filters dependency if you need the image filters.
+Note: The canvas operations are now part of the core library since 2.0.0
 
 Scrimage is cross compiled for scala 2.11 and 2.10.
 
 If using SBT then you want:
 ```scala
-libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-core" % "1.4.2"
+libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-core" % "2.0.0"
 
-libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-canvas" % "1.4.2"
+libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-io" % "2.0.0"
 
-libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-filters" % "1.4.2"
+libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-filters" % "2.0.0"
 ```
 
 Maven:
@@ -200,17 +223,17 @@ Maven:
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage-core_2.11</artifactId>
-    <version>1.4.2</version>
+    <version>2.0.0</version>
 </dependency>
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
-    <artifactId>scrimage-canvas_2.11</artifactId>
-    <version>1.4.2</version>
+    <artifactId>scrimage-io_2.11</artifactId>
+    <version>2.0.0</version>
 </dependency>
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage-filters_2.11</artifactId>
-    <version>1.4.2</version>
+    <version>2.0.0</version>
 </dependency>
 ```
 
@@ -323,7 +346,7 @@ Click on an example to see it full screen.
 ```
 This software is licensed under the Apache 2 license, quoted below.
 
-Copyright 2013 Stephen Samuel
+Copyright 2013-2015 Stephen Samuel
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not
 use this file except in compliance with the License. You may obtain a copy of

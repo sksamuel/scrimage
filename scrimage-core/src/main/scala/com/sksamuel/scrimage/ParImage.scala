@@ -1,6 +1,5 @@
 package com.sksamuel.scrimage
 
-import java.awt.Graphics2D
 import java.awt.geom.AffineTransform
 import java.awt.image.{AffineTransformOp, BufferedImage, BufferedImageOp}
 
@@ -190,9 +189,12 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
   }
 
   /**
-   * Returns a new image with the transarency replaced with the given color.
+   * Returns a new image with the transparency replaced with the given color.
+   *
+   * @return a new image with the transparency replaced.
    */
   def removeTransparency(color: Color): ParImage = removeTransparency(color.toAWT)
+
   def removeTransparency(color: java.awt.Color): ParImage = {
     val target = copy
     target.removetrans(color)
