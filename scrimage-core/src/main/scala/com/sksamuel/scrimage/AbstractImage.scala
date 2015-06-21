@@ -335,6 +335,8 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage) {
     }
   }
 
+  def metadata = ImageMetadata.fromImage(this)
+
   /**
    * Maps the pixels of this image into another image by applying the given function to each pixel.
    *

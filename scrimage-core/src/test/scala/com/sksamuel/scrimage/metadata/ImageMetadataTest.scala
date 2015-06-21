@@ -1,5 +1,6 @@
 package com.sksamuel.scrimage.metadata
 
+import com.sksamuel.scrimage.{Tag, ImageMetadata}
 import org.scalatest.{ Matchers, WordSpec }
 
 /** @author Stephen Samuel */

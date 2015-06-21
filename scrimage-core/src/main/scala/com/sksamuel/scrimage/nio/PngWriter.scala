@@ -48,10 +48,10 @@ case class PngWriter(compressionLevel: Int) extends ImageWriter {
       val line = new ImageLineInt(imi)
       val dbbuf = db.getData
 
-      for (row <- 0 until imi.rows) {
+      for ( row <- 0 until imi.rows ) {
         var elem = samplemodel.getOffset(0, row)
         var j = 0
-        for (col <- 0 until imi.cols) {
+        for ( col <- 0 until imi.cols ) {
           val sample = dbbuf(elem)
           elem = elem + 1
           line.getScanline()(j) = (sample & 0xFF0000) >> 16; // R
@@ -77,6 +77,7 @@ object PngWriter {
 
   val MaxCompression = PngWriter(9)
   val MinCompression = PngWriter(1)
+  val NoCompression = PngWriter(0)
 
   def apply(): PngWriter = MaxCompression
 }

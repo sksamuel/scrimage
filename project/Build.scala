@@ -63,7 +63,7 @@ object Build extends Build {
   lazy val root = Project("scrimage", file("."))
     .settings(scrimageSettings: _*)
     .settings(publishArtifact := false)
-    .aggregate(core, filters, metadata, io)
+    .aggregate(core, filters, io)
 
   lazy val core = Project("scrimage-core", file("scrimage-core"))
     .settings(scrimageSettings: _*)
@@ -75,6 +75,7 @@ object Build extends Build {
         "com.twelvemonkeys.common"  % "common-lang"         % TwelveMonkeysVersion,
         "com.twelvemonkeys.common"  % "common-io"           % TwelveMonkeysVersion,
         "com.twelvemonkeys.common"  % "common-image"        % TwelveMonkeysVersion,
+        "com.drewnoakes"            % "metadata-extractor"  % MetadataExtractorVersion,
         "commons-io"                % "commons-io"          % "2.4",
         "ar.com.hjg"                % "pngj"                % PngjVersion,
         "org.apache.commons"        % "commons-lang3"       % "3.3.2" % "test"
@@ -100,15 +101,6 @@ object Build extends Build {
         "com.twelvemonkeys.imageio" % "imageio-tiff"      % TwelveMonkeysVersion,
         "com.twelvemonkeys.imageio" % "imageio-tga"       % TwelveMonkeysVersion,
         "com.twelvemonkeys.imageio" % "imageio-thumbsdb"  % TwelveMonkeysVersion
-      )
-    ).dependsOn(core)
-
-  lazy val metadata = Project("scrimage-metadata", file("scrimage-metadata"))
-    .settings(scrimageSettings: _*)
-    .settings(name := "scrimage-metadata")
-    .settings(
-      libraryDependencies ++= Seq(
-        "com.drewnoakes" % "metadata-extractor" % MetadataExtractorVersion
       )
     ).dependsOn(core)
 

@@ -1,26 +1,21 @@
-package com.sksamuel.scrimage.metadata
+package com.sksamuel.scrimage
 
-import java.io.{ ByteArrayInputStream, InputStream }
+import java.io.{ByteArrayInputStream, InputStream}
 
 import com.drew.imaging.ImageMetadataReader
 import com.drew.metadata.Metadata
-import com.sksamuel.scrimage.Image
 import com.sksamuel.scrimage.nio.PngWriter
 
-import scala.language.implicitConversions
+import scala.collection.JavaConverters._
 
 object ImageMetadata {
 
-  implicit class RichImage(image: Image) {
-    def metadata: ImageMetadata = ImageMetadata.fromImage(image)
-  }
-
-  import scala.collection.JavaConverters._
-
-  def fromImage(image: Image): ImageMetadata = {
-    val metadata = ImageMetadataReader.readMetadata(new ByteArrayInputStream(image.bytes(PngWriter.MinCompression)))
+  def fromImage(image: AbstractImage): ImageMetadata = {
+    val metadata = ImageMetadataReader.readMetadata(new ByteArrayInputStream(image.bytes(PngWriter.NoCompression)))
     fromMetadata(metadata)
   }
+
+  def fromResource(resource: String): ImageMetadata = fromStream(getClass.getResourceAsStream(resource))
 
   def fromStream(is: InputStream): ImageMetadata = {
     val metadata = ImageMetadataReader.readMetadata(is)
@@ -31,6 +26,7 @@ object ImageMetadata {
 
     val directories = metadata.getDirectories.asScala.map { directory =>
       val tags = directory.getTags.asScala.map { tag =>
+        println(tag)
         Tag(tag.getTagName, tag.getTagType, directory.getString(tag.getTagType), tag.getDescription)
       }
       Directory(directory.getName, tags.toList)
