@@ -9,12 +9,12 @@ import scala.language.implicitConversions
 /** @author Stephen Samuel */
 case class Canvas(image: Image,
                   painter: Painter = X11Colorlist.Black,
-                  font: Font = new Font(Font.SERIF, 0, 24),
+                  font: java.awt.Font = new java.awt.Font(java.awt.Font.SERIF, 0, 24),
                   aliasing: Boolean = false) {
 
   def withPainter(painter: Painter): Canvas = copy(painter = painter)
   def withPainter(color: Color): Canvas = copy(painter = color)
-  def withFont(font: Font): Canvas = copy(font = font)
+  def withFont(font: java.awt.Font): Canvas = copy(font = font)
   def withAliasing(aliasing: Boolean): Canvas = copy(aliasing = aliasing)
 
   private def g2(image: Image): Graphics2D = {
