@@ -2,17 +2,20 @@ package com.sksamuel.scrimage
 
 import java.awt.image.BufferedImage
 
-import com.sksamuel.scrimage.ScaleMethod.{Lanczos3, BSpline, Bilinear, FastScale, Bicubic}
-import thirdparty.mortennobel.{ResampleOp, ResampleFilters}
+import com.sksamuel.scrimage.ScaleMethod.{BSpline, Bicubic, Bilinear, FastScale, Lanczos3}
+import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 
-class ParImage(awt: BufferedImage) extends AbstractImage(awt) {
+class ParImage(awt: BufferedImage, metadata: ImageMetadata) extends AbstractImage(awt, metadata) {
 
-  override protected[scrimage] def wrapAwt(awt: BufferedImage): ParImage.this.type = {
-    new ParImage(awt).asInstanceOf[ParImage.this.type]
+  override protected[scrimage] def wrapAwt(awt: BufferedImage, metadata: ImageMetadata): ParImage.this.type = {
+    new ParImage(awt, metadata).asInstanceOf[ParImage.this.type]
   }
 
-  override protected[scrimage] def wrapPixels(w: Int, h: Int, pixels: Array[Pixel]): ParImage.this.type = {
-    Image(w,h,pixels).toPar.asInstanceOf[ParImage.this.type]
+  override protected[scrimage] def wrapPixels(w: Int,
+                                              h: Int,
+                                              pixels: Array[Pixel],
+                                              metadata: ImageMetadata): ParImage.this.type = {
+    Image(w, h, pixels).withMetadata(metadata).asInstanceOf[ParImage.this.type]
   }
 
   /**
@@ -32,7 +35,7 @@ class ParImage(awt: BufferedImage) extends AbstractImage(awt) {
                        targetHeight: Int,
                        scaleMethod: ScaleMethod = Bicubic): ParImage.this.type = {
     scaleMethod match {
-      case FastScale => wrapAwt(fastscale(targetWidth, targetHeight))
+      case FastScale => wrapAwt(fastscale(targetWidth, targetHeight), metadata)
       // todo put this back
       // case Bicubic =>
       // ResampleOpScala.scaleTo(ResampleOpScala.bicubicFilter)(this)(targetWidth, targetHeight, Image.SCALE_THREADS)

@@ -4,7 +4,7 @@ import java.awt.image.{BufferedImage, ColorModel, DataBufferInt, Raster}
 import java.io.ByteArrayInputStream
 
 import ar.com.hjg.pngj.{ImageLineHelper, ImageLineInt}
-import com.sksamuel.scrimage.{Image, Pixel}
+import com.sksamuel.scrimage.{ImageMetadata, Image, Pixel}
 
 object PngReader extends Reader {
 
@@ -56,7 +56,7 @@ object PngReader extends Reader {
       val cm = ColorModel.getRGBdefault
       val image = new BufferedImage(cm, raster, cm.isAlphaPremultiplied, null)
 
-      Option(new Image(image))
+      Option(new Image(image, ImageMetadata.empty))
 
     } else {
       None

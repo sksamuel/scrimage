@@ -17,11 +17,12 @@
 package com.sksamuel.scrimage
 
 import java.awt.image.BufferedImage
-import java.io.{File, InputStream}
+import java.io.{ByteArrayInputStream, File, InputStream}
 import javax.imageio.ImageIO
 
 import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.nio.ImageReader
+import org.apache.commons.io.IOUtils
 import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 
 import scala.language.implicitConversions
@@ -39,16 +40,21 @@ class ImageParseException extends RuntimeException("Unparsable image")
  *
  * @author Stephen Samuel
  */
-class Image(awt: BufferedImage)
-  extends AbstractImage(awt) {
+class Image(awt: BufferedImage, metadata: ImageMetadata)
+  extends AbstractImage(awt, metadata) {
+
   require(awt != null, "Wrapping image cannot be null")
 
-  override protected[scrimage] def wrapAwt(awt: BufferedImage): Image.this.type = {
-    new Image(awt).asInstanceOf[Image.this.type]
+  override protected[scrimage] def wrapAwt(awt: BufferedImage, metadata: ImageMetadata): Image.this.type = {
+    new Image(awt, metadata).asInstanceOf[Image.this.type]
   }
 
-  override protected[scrimage] def wrapPixels(w: Int, h: Int, pixels: Array[Pixel]): Image.this.type = {
-    Image(w, h, pixels).asInstanceOf[Image.this.type]
+  override protected[scrimage] def wrapPixels(w: Int,
+                                              h: Int,
+                                              pixels: Array[Pixel],
+                                              metadata: ImageMetadata): Image.this.type = {
+    val image = Image(w, h, pixels)
+    new Image(image.awt, metadata).asInstanceOf[Image.this.type]
   }
 
   /**
@@ -68,7 +74,7 @@ class Image(awt: BufferedImage)
               targetHeight: Int,
               scaleMethod: ScaleMethod = Bicubic): Image.this.type = {
     val i = scaleMethod match {
-      case FastScale => wrapAwt(fastscale(targetWidth, targetHeight))
+      case FastScale => wrapAwt(fastscale(targetWidth, targetHeight), metadata)
       // todo put this back
       // case Bicubic =>
       // ResampleOpScala.scaleTo(ResampleOpScala.bicubicFilter)(this)(targetWidth, targetHeight, Image.SCALE_THREADS)
@@ -85,7 +91,9 @@ class Image(awt: BufferedImage)
     i.asInstanceOf[Image.this.type]
   }
 
-  def toPar: ParImage = new ParImage(awt)
+  def toPar: ParImage = new ParImage(awt, metadata)
+
+  def withMetadata(metadata: ImageMetadata): Image = new Image(awt, metadata)
 }
 
 object Image {
@@ -118,19 +126,23 @@ object Image {
   def apply(bytes: Array[Byte]): Image = ImageReader.fromBytes(bytes, CANONICAL_DATA_TYPE)
   def apply(bytes: Array[Byte], `type`: Int): Image = ImageReader.fromBytes(bytes, `type`)
 
+  @deprecated("use fromStream", "2.0")
+  def apply(in: InputStream): Image = fromStream(in)
   /**
    * Create a new Image from an input stream. This is intended to create
    * an image from an image format eg PNG, not from a stream of pixels.
+   * This method will also attach metadata if available.
    *
    * @param in the stream to read the bytes from
    * @return a new Image
    */
-  @deprecated("use fromStream", "2.0")
-  def apply(in: InputStream): Image = fromStream(in)
   def fromStream(in: InputStream, `type`: Int = CANONICAL_DATA_TYPE): Image = {
     require(in != null)
     require(in.available > 0)
-    ImageReader.fromStream(in, `type`)
+    val bytes = IOUtils.toByteArray(in)
+    val image = ImageReader.fromStream(new ByteArrayInputStream(bytes), `type`)
+    val metadata = ImageMetadata.fromStream(new ByteArrayInputStream(bytes))
+    new Image(image.awt, metadata)
   }
 
   /**
@@ -140,14 +152,17 @@ object Image {
     fromStream(getClass.getResourceAsStream(path), `type`)
   }
 
-  /**
-   * Create a new Image from a file.
-   */
   @deprecated("use fromFile", "2.0")
   def apply(file: File): Image = fromFile(file)
+  /**
+   * Create a new Image from a file.
+   * This method will also attach metadata.
+   */
   def fromFile(file: File): Image = {
     require(file != null)
-    ImageReader.fromFile(file)
+    val image = ImageReader.fromFile(file)
+    val metadata = ImageMetadata.fromFile(file)
+    new Image(image.awt, metadata)
   }
 
   /**
@@ -165,7 +180,7 @@ object Image {
     val g2 = target.getGraphics
     g2.drawImage(awt, 0, 0, null)
     g2.dispose()
-    new Image(target)
+    new Image(target, ImageMetadata.empty)
   }
 
   /**
@@ -179,7 +194,7 @@ object Image {
    * @return a new Scrimage Image
    */
   def wrapAwt(awt: BufferedImage, `type`: Int = -1): Image = {
-    if (`type` == -1 || awt.getType == `type`) new Image(awt)
+    if (`type` == -1 || awt.getType == `type`) new Image(awt, ImageMetadata.empty)
     else fromAwt(awt)
   }
 
@@ -208,9 +223,10 @@ object Image {
    *
    * @return the new Image with the given width and height
    */
-  def apply(width: Int, height: Int, `type`: Int = CANONICAL_DATA_TYPE): Image = {
+  def apply(width: Int, height: Int): Image = apply(width, height, CANONICAL_DATA_TYPE)
+  def apply(width: Int, height: Int, `type`: Int): Image = {
     val target = new BufferedImage(width, height, `type`)
-    new Image(target)
+    new Image(target, ImageMetadata.empty)
   }
 }
 

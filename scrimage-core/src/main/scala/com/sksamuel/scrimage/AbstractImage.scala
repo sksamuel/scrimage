@@ -11,7 +11,7 @@ import com.sksamuel.scrimage.nio.ImageWriter
 /**
  * A skeleton implementation of read only operations based on a backing AWT image.
  */
-abstract class AbstractImage(protected[scrimage] val awt: BufferedImage) {
+abstract class AbstractImage(protected[scrimage] val awt: BufferedImage, val metadata: ImageMetadata) {
 
   import X11Colorlist._
   import ScaleMethod._
@@ -24,16 +24,16 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage) {
    * It is the responsibility of the caller to ensure that the awt image passed in
    * is a non-shared buffer.
    */
-  protected[scrimage] def wrapAwt(awt: BufferedImage): this.type
+  protected[scrimage] def wrapAwt(awt: BufferedImage, metadata: ImageMetadata): this.type
 
-  protected[scrimage] def wrapPixels(w: Int, h: Int, pixels: Array[Pixel]): this.type
+  protected[scrimage] def wrapPixels(w: Int, h: Int, pixels: Array[Pixel], metadata: ImageMetadata): this.type
 
   /**
    * Creates an empty image of the same concrete type as this type with the given dimensions.
    * If the optional color is specified then the background pixels will all be set to that color.
    */
   final protected[scrimage] def blank(w: Int, h: Int, color: Option[Color] = None): this.type = {
-    val target = wrapAwt(new BufferedImage(w, h, awt.getType))
+    val target = wrapAwt(new BufferedImage(w, h, awt.getType), metadata)
     color.foreach(target.fillInPlace)
     target
   }
@@ -320,7 +320,7 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage) {
 
   protected[scrimage] def op(op: BufferedImageOp): this.type = {
     val after = op.filter(awt, null)
-    wrapAwt(after)
+    wrapAwt(after, metadata)
   }
 
   protected[scrimage] def removetrans(color: java.awt.Color): Unit = {
@@ -334,8 +334,6 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage) {
       awt.setRGB(w, h, rmTransparency(Pixel(awt.getRGB(w, h))).toInt)
     }
   }
-
-  def metadata = ImageMetadata.fromImage(this)
 
   /**
    * Maps the pixels of this image into another image by applying the given function to each pixel.
@@ -363,7 +361,7 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage) {
    * @param h the height of the subimage
    * @return a new Image that is the subimage
    */
-  def subimage(x: Int, y: Int, w: Int, h: Int): this.type = wrapPixels(w, h, pixels(x, y, w, h))
+  def subimage(x: Int, y: Int, w: Int, h: Int): this.type = wrapPixels(w, h, pixels(x, y, w, h), metadata)
 
   protected[scrimage] def rotate(angle: Double): BufferedImage = {
     val target = new BufferedImage(height, width, awt.getType)
@@ -452,7 +450,7 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage) {
   def flipX: this.type = {
     val tx = AffineTransform.getScaleInstance(-1, 1)
     tx.translate(-width, 0)
-    wrapAwt(affineTransform(tx))
+    wrapAwt(affineTransform(tx), metadata)
   }
 
   /**
@@ -463,7 +461,7 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage) {
   def flipY: this.type = {
     val tx = AffineTransform.getScaleInstance(1, -1)
     tx.translate(0, -height)
-    wrapAwt(affineTransform(tx))
+    wrapAwt(affineTransform(tx), metadata)
   }
 
   /**
@@ -898,14 +896,14 @@ abstract class AbstractImage(protected[scrimage] val awt: BufferedImage) {
    *
    * @return
    */
-  def rotateLeft: this.type = wrapAwt(rotate(Math.PI / 2))
+  def rotateLeft: this.type = wrapAwt(rotate(Math.PI / 2), metadata)
 
   /**
    * Returns a copy of this image rotated 90 degrees clockwise.
    *
    * @return
    */
-  def rotateRight: this.type = wrapAwt(rotate(-Math.PI / 2))
+  def rotateRight: this.type = wrapAwt(rotate(-Math.PI / 2), metadata)
 
   /**
    * Creates a copy of this image with the given filter applied.
