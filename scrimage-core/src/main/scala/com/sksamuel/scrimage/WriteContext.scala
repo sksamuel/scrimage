@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage
 
-import java.io.{ OutputStream, File, ByteArrayOutputStream }
-import java.nio.file.{ Files, Paths, Path }
+import java.io.{ByteArrayInputStream, OutputStream, File, ByteArrayOutputStream}
+import java.nio.file.{Files, Paths, Path}
 
 import com.sksamuel.scrimage.nio.ImageWriter
 
@@ -12,6 +12,8 @@ class WriteContext(writer: ImageWriter, image: Image) {
     writer.write(image, bos)
     bos.toByteArray
   }
+
+  def stream: ByteArrayInputStream = new ByteArrayInputStream(bytes)
 
   def write(path: String): Path = write(Paths.get(path))
 
