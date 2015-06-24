@@ -647,6 +647,8 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
 
   def forWriter(writer: ImageWriter): WriteContext = new WriteContext(writer, this)
 
+  def stream(implicit writer: ImageWriter): ByteArrayInputStream = forWriter(writer).stream
+
   /**
    * Returns a new Image with the brightness adjusted.
    */
