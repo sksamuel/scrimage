@@ -291,11 +291,12 @@ class AwtImage(val awt: BufferedImage) {
   def count(p: Pixel => Boolean): Int = iterator.count(p)
 
   /**
-   * Returns a new AWT BufferedImage from this image using the same AWT type.
+   * Returns a new AWT BufferedImage from this image.
+   * @param type the type of buffered image to create, if not specified then defaults to the current image type
    * @return a new, non-shared, BufferedImage with the same data as this Image.
    */
-  def toNewBufferedImage: BufferedImage = {
-    val target = new BufferedImage(width, height, awt.getType)
+  def toNewBufferedImage(`type`: Int = awt.getType): BufferedImage = {
+    val target = new BufferedImage(width, height, `type`)
     val g2 = target.getGraphics
     g2.drawImage(awt, 0, 0, null)
     g2.dispose()
