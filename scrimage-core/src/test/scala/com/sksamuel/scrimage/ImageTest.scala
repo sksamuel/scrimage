@@ -143,9 +143,14 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
 
   test("padding should keep alpha") {
     chip
-      .padWith(10, 20, 30, 40, Color.translucent)
+      .padWith(10, 20, 30, 40, RGBColor(100, 255, 50, 0))
       .underlay(Image.filled(1000, 1000, X11Colorlist.Firebrick)) shouldBe
       Image.fromResource("/com/sksamuel/scrimage/chip_pad.png")
+  }
+
+  test("fit should keep alpha") {
+    chip.fit(200,300 , Color.Transparent) shouldBe
+      Image.fromResource("/com/sksamuel/scrimage/chip_fit.png")
   }
 
   test("when padding to a width smaller than the image width then the width is not reduced") {

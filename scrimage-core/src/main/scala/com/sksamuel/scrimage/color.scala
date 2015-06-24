@@ -58,7 +58,7 @@ trait Color {
 
 object Color {
 
-  def translucent: RGBColor = RGBColor(100, 255, 50, 0)
+  def Transparent: RGBColor = RGBColor(255, 255, 255, 0)
 
   implicit def int2color(argb: Int): RGBColor = apply(argb)
   implicit def color2rgb(color: Color): RGBColor = color.toRGB
