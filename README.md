@@ -14,6 +14,8 @@ set of images to have a consistent size, or optimizing PNG uploads by users to a
 
 Scrimage mostly builds on the functionality provided by java.awt.* along with selected other third party libraries.
 
+Latest Release: 2.0.1
+
 [![Build Status](https://travis-ci.org/sksamuel/scrimage.png)](https://travis-ci.org/sksamuel/scrimage) 
 
 ### Image Operations
@@ -216,17 +218,17 @@ One is the `scrimage-core` library which is required. The others are `scrimage-f
 They are split because the image filters is a large jar, and most people just want the basic resize/scale/load/save functionality.
 The`scrimage-io` package brings in readers/writers for less common formats such as BMP Tiff or PCX.
 
-Note: The canvas operations are now part of the core library since 2.0.0
+Note: The canvas operations are now part of the core library since 2.0.1
 
 Scrimage is cross compiled for scala 2.11 and 2.10.
 
 If using SBT then you want:
 ```scala
-libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-core" % "2.0.0"
+libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-core" % "2.0.1"
 
-libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-io" % "2.0.0"
+libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-io" % "2.0.1"
 
-libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-filters" % "2.0.0"
+libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-filters" % "2.0.1"
 ```
 
 Maven:
