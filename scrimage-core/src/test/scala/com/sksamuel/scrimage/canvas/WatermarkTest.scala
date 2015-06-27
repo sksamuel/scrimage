@@ -3,7 +3,7 @@ package com.sksamuel.scrimage.canvas
 import com.sksamuel.scrimage.Image
 import org.scalatest.{WordSpec, Matchers}
 
-class WatermarkerTest extends WordSpec with Matchers {
+class WatermarkTest extends WordSpec with Matchers {
 
   val image = Image.fromResource("/gibson.jpg")
 

@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.canvas
 
-import com.sksamuel.scrimage.{Image, Pixel, X11Colorlist}
+import com.sksamuel.scrimage.{Color, Image, Pixel, X11Colorlist}
 import org.scalatest.FunSuite
 
 class DrawableTest extends FunSuite {
@@ -43,7 +43,7 @@ class DrawableTest extends FunSuite {
     assert(img.pixel(110, 110) === Pixel(black))
   }
 
-  test("Rectangle and polygones draw the same thing") {
+  test("Rectangles and polygons draw the same thing") {
     val canvas1 = new Canvas(blank).draw(
       Rect(10, 20, 30, 30),
       Rect(100, 120, 50, 20).fill

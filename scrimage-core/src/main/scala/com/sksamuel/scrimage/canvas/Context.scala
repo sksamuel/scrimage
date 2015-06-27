@@ -5,8 +5,8 @@ import java.awt.{RenderingHints, AlphaComposite, Graphics2D, Composite}
 import com.sksamuel.scrimage.Color
 
 case class Context(composite: Composite = AlphaComposite.getInstance(AlphaComposite.SRC),
-                   color: Color = Color.White,
-                   antiAlias: Boolean = true,
+                   color: Color = Color.Black,
+                   antiAlias: Boolean = false,
                    font: Option[Font] = None,
                    textSize: Int = 12,
                    painter: Option[Painter] = None) {

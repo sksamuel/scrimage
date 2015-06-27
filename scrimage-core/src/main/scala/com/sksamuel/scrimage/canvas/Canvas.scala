@@ -2,7 +2,8 @@ package com.sksamuel.scrimage.canvas
 
 import java.awt.Graphics2D
 
-import com.sksamuel.scrimage.Image
+import com.sksamuel.scrimage.{Color, Image}
+import com.sksamuel.scrimage.canvas.Context
 
 import scala.language.implicitConversions
 
@@ -20,6 +21,18 @@ case class Canvas(image: Image) {
     g.dispose()
   }
 
+  def draw(context: Context, drawables: Drawable*): Canvas = draw(context, drawables)
+  def draw(context: Context, drawables: Iterable[Drawable]): Canvas = {
+    val target = image.copy
+    val g = g2(target)
+    drawables.foreach { d =>
+      d.context.configure(g)
+      context.configure(g)
+      d.draw(g)
+    }
+    g.dispose()
+    new Canvas(target)
+  }
   def draw(drawables: Drawable*): Canvas = draw(drawables)
   def draw(drawables: Iterable[Drawable]): Canvas = {
     val target = image.copy
@@ -29,7 +42,7 @@ case class Canvas(image: Image) {
       d.draw(g)
     }
     g.dispose()
-    target
+    new Canvas(target)
   }
 
   @deprecated("use WatermarkFilter", "2.1.0")
