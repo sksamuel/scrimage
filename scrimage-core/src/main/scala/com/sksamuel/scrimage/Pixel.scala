@@ -13,7 +13,8 @@ case class Pixel(argb: Int) extends AnyVal {
   def green: Int = argb >> 8 & 0xFF
   def blue: Int = argb & 0xFF
 
-  def toInt: Int = argb
+  def toInt: Int = toARGBInt
+  def toARGBInt: Int = argb
   def toColor: RGBColor = RGBColor(red, green, blue, alpha)
 
   def mapByComponent(f: Int => Int): Pixel = Pixel(f(red), f(green), f(blue), alpha)

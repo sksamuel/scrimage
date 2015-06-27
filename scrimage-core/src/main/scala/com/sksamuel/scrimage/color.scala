@@ -58,6 +58,7 @@ trait Color {
 
 object Color {
 
+  // by setting other colours to 255, then this will default to white if transparency is not available on the image.
   def Transparent: RGBColor = RGBColor(255, 255, 255, 0)
 
   implicit def int2color(argb: Int): RGBColor = apply(argb)
@@ -94,7 +95,8 @@ case class RGBColor(red: Int, green: Int, blue: Int, alpha: Int = 255) extends C
    * into the int as byes.
    * @return
    */
-  def toInt: Int = ((alpha & 0xFF) << 24) | ((red & 0xFF) << 16) | ((green & 0xFF) << 8) | blue & 0xFF
+  def toInt: Int = toARGBInt
+  def toARGBInt: Int = ((alpha & 0xFF) << 24) | ((red & 0xFF) << 16) | ((green & 0xFF) << 8) | blue & 0xFF
 
   override def toRGB: RGBColor = this
 

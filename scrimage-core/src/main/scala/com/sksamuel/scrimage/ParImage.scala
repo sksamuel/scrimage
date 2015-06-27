@@ -5,7 +5,6 @@ import java.awt.image.{AffineTransformOp, BufferedImage, BufferedImageOp}
 
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod.{BSpline, Bicubic, Bilinear, FastScale, Lanczos3}
-import com.sksamuel.scrimage.X11Colorlist._
 import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -22,11 +21,42 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
   }
 
   /**
+   * Crops an image by removing cols and rows that are composed only of a single given color.
+   *
+   * Eg, if an image had a 20 pixel row of white at the top, and this method was
+   * invoked with Color.White then the image returned would have that 20 pixel row removed.
+   *
+   * This method is useful when images have an abudance of a single colour around them.
+   *
+   * @param color the color to match
+   * @return
+   */
+  def autocrop(color: Color)(implicit executor: ExecutionContext): Future[ParImage] = {
+    val x1F = Future(AutocropOps.scanright(color, height, 0, pixels))
+    val x2F = Future(AutocropOps.scanleft(color, height, width - 1, pixels))
+    val y1F = Future(AutocropOps.scandown(color, width, 0, pixels))
+    val y2F = Future(AutocropOps.scanup(color, width, height - 1, pixels))
+    for ( x1 <- x1F; x2 <- x2F; y1 <- y1F; y2 <- y2F ) yield {
+      subimage(x1, y1, x2 - x1, y2 - y1)
+    }
+  }
+
+  /**
    * Creates an empty Image with the same dimensions of this image.
    *
    * @return a new Image that is a clone of this image but with uninitialized data
    */
   def blank: ParImage = blank(width, height)
+
+  /**
+   * Creates an empty image of the same concrete type as this type with the given dimensions.
+   * If the optional color is specified then the background pixels will all be set to that color.
+   */
+  final protected[scrimage] def blank(w: Int, h: Int, color: Option[Color] = None): ParImage = {
+    val target = wrapAwt(new BufferedImage(w, h, awt.getType), metadata)
+    color.foreach(target.fillInPlace)
+    target
+  }
 
   /**
    * Returns a new Image with the brightness adjusted.
@@ -50,13 +80,32 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
   }
 
   /**
-   * Creates an empty image of the same concrete type as this type with the given dimensions.
-   * If the optional color is specified then the background pixels will all be set to that color.
+   * Returns a copy of the canvas with the given dimensions where the
+   * original image has been scaled to completely cover the new dimensions
+   * whilst retaining the original aspect ratio.
+   *
+   * If the new dimensions have a different aspect ratio than the old image
+   * then the image will be cropped so that it still covers the new area
+   * without leaving any background.
+   *
+   * @param targetWidth the target width
+   * @param targetHeight the target height
+   * @param scaleMethod the type of scaling method to use. Defaults to Bicubic
+   * @param position where to position the image inside the new canvas
+   *
+   * @return a new Image with the original image scaled to cover the new dimensions
    */
-  final protected[scrimage] def blank(w: Int, h: Int, color: Option[Color] = None): ParImage = {
-    val target = wrapAwt(new BufferedImage(w, h, awt.getType), metadata)
-    color.foreach(target.fillInPlace)
-    target
+  def cover(targetWidth: Int,
+            targetHeight: Int,
+            scaleMethod: ScaleMethod = Bicubic,
+            position: Position = Center)
+           (implicit executor: ExecutionContext): Future[ParImage] = {
+    val coveredDimensions = DimensionTools.dimensionsToCover((targetWidth, targetHeight), (width, height))
+    scaleTo(coveredDimensions._1, coveredDimensions._2, scaleMethod) map { scaled =>
+      val x = ((targetWidth - coveredDimensions._1) / 2.0).toInt
+      val y = ((targetHeight - coveredDimensions._2) / 2.0).toInt
+      blank(targetWidth, targetHeight).overlay(scaled, x, y)
+    }
   }
 
   /**
@@ -102,23 +151,6 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
   }
 
   /**
-   * Returns a new Image that is the result of overlaying this image over the supplied image.
-   * That is, the existing image ends up being "on top" of the image parameter.
-   * The x / y parameters determine where the (0,0) coordinate of the overlay should be placed.
-   *
-   * If the image to render exceeds the boundaries of the source image, then the excess
-   * pixels will be ignored.
-   *
-   * @return a new Image with the given image overlaid.
-   */
-  def underlay(underlayImage: Image, x: Int = 0, y: Int = 0): ParImage = {
-    val target = this.blank
-    target.overlayInPlace(underlayImage.awt, x, y)
-    target.overlayInPlace(awt, x, y)
-    target
-  }
-
-  /**
    * Returns a new image that is the result of overlaying the given image over this image.
    * That is, the existing image ends up being "under" the image parameter.
    * The x / y parameters determine where the (0,0) coordinate of the overlay should be placed.
@@ -154,7 +186,7 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
   def resizeTo(targetWidth: Int,
                targetHeight: Int,
                position: Position = Center,
-               background: Color = X11Colorlist.White): ParImage = {
+               background: Color = Color.Transparent): ParImage = {
     if (targetWidth == width && targetHeight == height) this
     else {
       val (x, y) = position.calculateXY(targetWidth, targetHeight, width, height)
@@ -172,7 +204,7 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
    *
    * @return a new Image that is the result of resizing the canvas.
    */
-  def resize(scaleFactor: Double, position: Position = Center, background: Color = White): ParImage = {
+  def resize(scaleFactor: Double, position: Position = Center, background: Color = Color.Transparent): ParImage = {
     resizeTo((width * scaleFactor).toInt, (height * scaleFactor).toInt, position, background)
   }
 
@@ -184,7 +216,9 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
    *
    * @return a new Image that is the result of resizing the canvas.
    */
-  def resizeToHeight(targetHeight: Int, position: Position = Center, background: Color = White): ParImage = {
+  def resizeToHeight(targetHeight: Int,
+                     position: Position = Center,
+                     background: Color = Color.Transparent): ParImage = {
     resizeTo((targetHeight / height.toDouble * height).toInt, targetHeight, position, background)
   }
 
@@ -202,35 +236,6 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
   }
 
   /**
-   * Returns a copy of the canvas with the given dimensions where the
-   * original image has been scaled to completely cover the new dimensions
-   * whilst retaining the original aspect ratio.
-   *
-   * If the new dimensions have a different aspect ratio than the old image
-   * then the image will be cropped so that it still covers the new area
-   * without leaving any background.
-   *
-   * @param targetWidth the target width
-   * @param targetHeight the target height
-   * @param scaleMethod the type of scaling method to use. Defaults to Bicubic
-   * @param position where to position the image inside the new canvas
-   *
-   * @return a new Image with the original image scaled to cover the new dimensions
-   */
-  def cover(targetWidth: Int,
-            targetHeight: Int,
-            scaleMethod: ScaleMethod = Bicubic,
-            position: Position = Center)
-           (implicit executor: ExecutionContext): Future[ParImage] = {
-    val coveredDimensions = DimensionTools.dimensionsToCover((targetWidth, targetHeight), (width, height))
-    scaleTo(coveredDimensions._1, coveredDimensions._2, scaleMethod) map { scaled =>
-      val x = ((targetWidth - coveredDimensions._1) / 2.0).toInt
-      val y = ((targetHeight - coveredDimensions._2) / 2.0).toInt
-      blank(targetWidth, targetHeight).overlay(scaled, x, y)
-    }
-  }
-
-  /**
    * Resize will resize the canvas, it will not scale the image.
    * This is like a "canvas resize" in Photoshop.
    *
@@ -238,7 +243,7 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
    *
    * @return a new Image that is the result of resizing the canvas.
    */
-  def resizeToWidth(targetWidth: Int, position: Position = Center, background: Color = White): ParImage = {
+  def resizeToWidth(targetWidth: Int, position: Position = Center, background: Color = Color.Transparent): ParImage = {
     resizeTo(targetWidth, (targetWidth / width.toDouble * height).toInt, position, background)
   }
 
@@ -268,7 +273,7 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
    *
    * @return A new image that is the result of the padding
    */
-  def pad(size: Int, color: Color = X11Colorlist.White): ParImage = {
+  def pad(size: Int, color: Color = Color.Transparent): ParImage = {
     padTo(width + size * 2, height + size * 2, color)
   }
 
@@ -289,7 +294,7 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
    *
    * @return A new image that is the result of the padding
    */
-  def padTo(targetWidth: Int, targetHeight: Int, color: Color = White): ParImage = {
+  def padTo(targetWidth: Int, targetHeight: Int, color: Color = Color.Transparent): ParImage = {
     val w = if (width < targetWidth) targetWidth else width
     val h = if (height < targetHeight) targetHeight else height
     val x = ((w - width) / 2.0).toInt
@@ -308,7 +313,7 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
    *
    * @return A new image that is the result of the padding operation.
    */
-  def padWith(left: Int, top: Int, right: Int, bottom: Int, color: Color = White): ParImage = {
+  def padWith(left: Int, top: Int, right: Int, bottom: Int, color: Color = Color.Transparent): ParImage = {
     val w = width + left + right
     val h = height + top + bottom
     blank(w, h, Some(color)).overlay(this, left, top)
@@ -324,27 +329,6 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
    * @return a new Image that is the subimage
    */
   def subimage(x: Int, y: Int, w: Int, h: Int): ParImage = wrapPixels(w, h, pixels(x, y, w, h), metadata)
-
-  /**
-   * Crops an image by removing cols and rows that are composed only of a single given color.
-   *
-   * Eg, if an image had a 20 pixel row of white at the top, and this method was
-   * invoked with Color.White then the image returned would have that 20 pixel row removed.
-   *
-   * This method is useful when images have an abudance of a single colour around them.
-   *
-   * @param color the color to match
-   * @return
-   */
-  def autocrop(color: Color)(implicit executor: ExecutionContext): Future[ParImage] = {
-    val x1F = Future(AutocropOps.scanright(color, height, 0, pixels))
-    val x2F = Future(AutocropOps.scanleft(color, height, width - 1, pixels))
-    val y1F = Future(AutocropOps.scandown(color, width, 0, pixels))
-    val y2F = Future(AutocropOps.scanup(color, width, height - 1, pixels))
-    for ( x1 <- x1F; x2 <- x2F; y1 <- y1F; y2 <- y2F ) yield {
-      subimage(x1, y1, x2 - x1, y2 - y1)
-    }
-  }
 
   /**
    * Apply the given image with this image using the given composite.
@@ -418,7 +402,7 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
    */
   def fit(canvasWidth: Int,
           canvasHeight: Int,
-          color: Color = White,
+          color: Color = Color.Transparent,
           scaleMethod: ScaleMethod = Bicubic,
           position: Position = Center)
          (implicit executor: ExecutionContext): Future[ParImage] = {
@@ -451,7 +435,7 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
    *
    * @return a new Image with this image translated.
    */
-  def translate(x: Int, y: Int, background: Color = Color.White): ParImage = {
+  def translate(x: Int, y: Int, background: Color = Color.Transparent): ParImage = {
     fill(background).overlay(this, x, y)
   }
 
@@ -481,21 +465,6 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
    */
   def trim(left: Int, top: Int, right: Int, bottom: Int): ParImage = {
     blank(width - left - right, height - bottom - top).overlay(this, -left, -top)
-  }
-
-  /**
-   * Returns a new image that is the result of scaling this image but without changing the canvas size.
-   *
-   * This can be thought of as zooming in on a camera - the viewpane does not change but the image increases
-   * in size with the outer columns/rows being dropped as required.
-   *
-   * @param factor how much to zoom by
-   * @param method how to apply the scaling method
-   * @return the zoomed image
-   */
-  def zoom(factor: Double, method: ScaleMethod = ScaleMethod.Bicubic)
-          (implicit executor: ExecutionContext): Future[ParImage] = {
-    scale(factor, method).map(_.resizeTo(width, height))
   }
 
   /**
@@ -586,6 +555,38 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
           op(new ResampleOp(method, targetWidth, targetHeight))
       }
     }
+  }
+
+  /**
+   * Returns a new Image that is the result of overlaying this image over the supplied image.
+   * That is, the existing image ends up being "on top" of the image parameter.
+   * The x / y parameters determine where the (0,0) coordinate of the overlay should be placed.
+   *
+   * If the image to render exceeds the boundaries of the source image, then the excess
+   * pixels will be ignored.
+   *
+   * @return a new Image with the given image overlaid.
+   */
+  def underlay(underlayImage: Image, x: Int = 0, y: Int = 0): ParImage = {
+    val target = this.blank
+    target.overlayInPlace(underlayImage.awt, x, y)
+    target.overlayInPlace(awt, x, y)
+    target
+  }
+
+  /**
+   * Returns a new image that is the result of scaling this image but without changing the canvas size.
+   *
+   * This can be thought of as zooming in on a camera - the viewpane does not change but the image increases
+   * in size with the outer columns/rows being dropped as required.
+   *
+   * @param factor how much to zoom by
+   * @param method how to apply the scaling method
+   * @return the zoomed image
+   */
+  def zoom(factor: Double, method: ScaleMethod = ScaleMethod.Bicubic)
+          (implicit executor: ExecutionContext): Future[ParImage] = {
+    scale(factor, method).map(_.resizeTo(width, height))
   }
 
   def toImage: Image = new Image(awt, metadata)

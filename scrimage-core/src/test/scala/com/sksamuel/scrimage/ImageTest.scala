@@ -149,7 +149,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("fit should keep alpha") {
-    chip.fit(200,300 , Color.Transparent) shouldBe
+    chip.fit(200, 300, Color.Transparent) shouldBe
       Image.fromResource("/com/sksamuel/scrimage/chip_fit.png")
   }
 
@@ -415,11 +415,12 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   test("enlarging a canvas with TopLeft should position the image to the left and top") {
     val scaled = image.scaleTo(100, 100)
     val resized = scaled.resizeTo(200, 200, TopLeft)
+    resized.output("resized.png")
     assert(200 === resized.width)
     assert(200 === resized.height)
     for ( x <- 0 until 100; y <- 0 until 100 ) assert(scaled.pixel(x, y) === resized.pixel(x, y))
-    for ( x <- 0 until 200; y <- 100 until 200 ) assert(0xFFFFFFFF === resized.pixel(x, y).toInt)
-    for ( x <- 100 until 200; y <- 0 until 100 ) assert(0xFFFFFFFF === resized.pixel(x, y).toInt)
+    for ( x <- 0 until 200; y <- 100 until 200 ) resized.pixel(x, y).toARGBInt shouldBe RGBColor(0, 0, 0, 0).toARGBInt
+    for ( x <- 100 until 200; y <- 0 until 100 ) resized.pixel(x, y).toARGBInt shouldBe RGBColor(0, 0, 0, 0).toARGBInt
   }
 
   test("overlay should retain source background") {
@@ -438,8 +439,8 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     val resized = scaled.resizeTo(200, 200, BottomRight)
     assert(200 === resized.width)
     assert(200 === resized.height)
-    for ( x <- 0 until 100; y <- 0 until 200 ) assert(0xFFFFFFFF === resized.pixel(x, y).toInt)
-    for ( x <- 100 until 200; y <- 0 until 100 ) assert(0xFFFFFFFF === resized.pixel(x, y).toInt)
+    for ( x <- 0 until 100; y <- 0 until 200 )  resized.pixel(x, y).toARGBInt shouldBe RGBColor(0, 0, 0, 0).toARGBInt
+    for ( x <- 100 until 200; y <- 0 until 100 ) resized.pixel(x, y).toARGBInt shouldBe RGBColor(0, 0, 0, 0).toARGBInt
     for ( x <- 100 until 200; y <- 100 until 200 ) assert(scaled.pixel(x - 100, y - 100) === resized.pixel(x, y))
   }
 
@@ -449,8 +450,8 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     assert(200 === resized.width)
     assert(200 === resized.height)
 
-    for ( x <- 0 until 100; y <- 0 until 200 ) assert(0xFFFFFFFF === resized.pixel(x, y).toInt)
-    for ( x <- 100 until 200; y <- 100 until 200 ) assert(0xFFFFFFFF === resized.pixel(x, y).toInt)
+    for ( x <- 0 until 100; y <- 0 until 200 ) resized.pixel(x, y).toARGBInt shouldBe RGBColor(0, 0, 0, 0).toARGBInt
+    for ( x <- 100 until 200; y <- 100 until 200 ) resized.pixel(x, y).toARGBInt shouldBe RGBColor(0, 0, 0, 0).toARGBInt
     for ( x <- 100 until 200; y <- 0 until 100 ) assert(scaled.pixel(x - 100, y) === resized.pixel(x, y))
   }
 
@@ -459,9 +460,9 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     val resized = scaled.resizeTo(200, 200, Center)
     assert(200 === resized.width)
     assert(200 === resized.height)
-    for ( x <- 0 until 50; y <- 0 until 50 ) assert(0xFFFFFFFF === resized.pixel(x, y).toInt)
+    for ( x <- 0 until 50; y <- 0 until 50 )  resized.pixel(x, y).toARGBInt shouldBe RGBColor(0, 0, 0, 0).toARGBInt
     for ( x <- 50 until 150; y <- 50 until 150 ) assert(scaled.pixel(x - 50, y - 50) === resized.pixel(x, y))
-    for ( x <- 150 until 200; y <- 150 until 200 ) assert(0xFFFFFFFF === resized.pixel(x, y).toInt)
+    for ( x <- 150 until 200; y <- 150 until 200 )resized.pixel(x, y).toARGBInt shouldBe RGBColor(0, 0, 0, 0).toARGBInt
   }
 
   test("when enlarging the background should be set to the specified parameter") {

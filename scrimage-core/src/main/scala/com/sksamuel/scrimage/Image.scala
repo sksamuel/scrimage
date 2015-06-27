@@ -16,7 +16,6 @@
 
 package com.sksamuel.scrimage
 
-import java.awt.Graphics2D
 import java.awt.geom.AffineTransform
 import java.awt.image.{AffineTransformOp, BufferedImage, BufferedImageOp}
 import java.io.{ByteArrayInputStream, File, InputStream}
@@ -48,7 +47,6 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
 
   import Position._
   import ScaleMethod._
-  import X11Colorlist._
 
   protected[scrimage] def wrapAwt(awt: BufferedImage, metadata: ImageMetadata): Image = {
     new Image(awt, metadata)
@@ -102,6 +100,9 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
    * If the current image is already within the given dimensions then the same image will be returned.
    * If not, then a scaled image, with the same aspect ratio as the original, and with dimensions
    * inside the constraints will be returned.
+   *
+   * This operation differs from max, in that max will scale an image up to be as large as it can be
+   * inside the constrains. Bound will keep the image the same if its already within the constraints.
    *
    * @param width the maximum width
    * @param height the maximum height
@@ -203,7 +204,7 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
    */
   def fit(canvasWidth: Int,
           canvasHeight: Int,
-          color: Color = White,
+          color: Color = Color.Transparent,
           scaleMethod: ScaleMethod = Bicubic,
           position: Position = Center): Image = {
     val (w, h) = DimensionTools.dimensionsToFit((canvasWidth, canvasHeight), (width, height))
@@ -311,33 +312,7 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
   def output(file: File)(implicit writer: ImageWriter): File = forWriter(writer).write(file)
   def output(path: Path)(implicit writer: ImageWriter): Path = forWriter(writer).write(path)
 
-  /**
-   * Resize will resize the canvas, it will not scale the image.
-   * This is like a "canvas resize" in Photoshop.
-   *
-   * If the dimensions are smaller than the current canvas size
-   * then the image will be cropped.
-   *
-   * The position parameter determines how the original image will be positioned on the new
-   * canvas.
-   *
-   * @param targetWidth the target width
-   * @param targetHeight the target height
-   * @param position where to position the original image after the canvas size change
-   * @param background the background color if the canvas was enlarged
-   *
-   * @return a new Image that is the result of resizing the canvas.
-   */
-  def resizeTo(targetWidth: Int,
-               targetHeight: Int,
-               position: Position = Center,
-               background: Color = X11Colorlist.White): Image = {
-    if (targetWidth == width && targetHeight == height) this
-    else {
-      val (x, y) = position.calculateXY(targetWidth, targetHeight, width, height)
-      blank(targetWidth, targetHeight, Some(background)).overlay(this, x, y)
-    }
-  }
+
 
   /**
    * Returns a new Image that is the result of overlaying this image over the supplied image.
@@ -378,12 +353,40 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
    *
    * @param scaleFactor the scaleFactor. 1 retains original size. 0.5 is half. 2 double. etc
    * @param position where to position the original image after the canvas size change. Defaults to centre.
-   * @param background the color to use for expande background areas. Defaults to White.
+   * @param background the color to use for expande background areas.
    *
    * @return a new Image that is the result of resizing the canvas.
    */
-  def resize(scaleFactor: Double, position: Position = Center, background: Color = White): Image = {
+  def resize(scaleFactor: Double, position: Position = Center, background: Color = Color.Transparent): Image = {
     resizeTo((width * scaleFactor).toInt, (height * scaleFactor).toInt, position, background)
+  }
+
+  /**
+   * Resize will resize the canvas, it will not scale the image.
+   * This is like a "canvas resize" in Photoshop.
+   *
+   * If the dimensions are smaller than the current canvas size
+   * then the image will be cropped.
+   *
+   * The position parameter determines how the original image will be positioned on the new
+   * canvas.
+   *
+   * @param targetWidth the target width
+   * @param targetHeight the target height
+   * @param position where to position the original image after the canvas size change
+   * @param background the background color if the canvas was enlarged
+   *
+   * @return a new Image that is the result of resizing the canvas.
+   */
+  def resizeTo(targetWidth: Int,
+               targetHeight: Int,
+               position: Position = Center,
+               background: Color = Color.Transparent): Image = {
+    if (targetWidth == width && targetHeight == height) this
+    else {
+      val (x, y) = position.calculateXY(targetWidth, targetHeight, width, height)
+      blank(targetWidth, targetHeight, Some(background)).overlay(this, x, y)
+    }
   }
 
   /**
@@ -394,7 +397,7 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
    *
    * @return a new Image that is the result of resizing the canvas.
    */
-  def resizeToHeight(targetHeight: Int, position: Position = Center, background: Color = White): Image = {
+  def resizeToHeight(targetHeight: Int, position: Position = Center, background: Color = Color.Transparent): Image = {
     resizeTo((targetHeight / height.toDouble * height).toInt, targetHeight, position, background)
   }
 
@@ -406,7 +409,7 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
    *
    * @return a new Image that is the result of resizing the canvas.
    */
-  def resizeToWidth(targetWidth: Int, position: Position = Center, background: Color = White): Image = {
+  def resizeToWidth(targetWidth: Int, position: Position = Center, background: Color = Color.Transparent): Image = {
     resizeTo(targetWidth, (targetWidth / width.toDouble * height).toInt, position, background)
   }
 
@@ -436,7 +439,7 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
    *
    * @return A new image that is the result of the padding
    */
-  def pad(size: Int, color: Color = X11Colorlist.White): Image = {
+  def pad(size: Int, color: Color = Color.Transparent): Image = {
     padTo(width + size * 2, height + size * 2, color)
   }
 
@@ -457,7 +460,7 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
    *
    * @return A new image that is the result of the padding
    */
-  def padTo(targetWidth: Int, targetHeight: Int, color: Color = X11Colorlist.White): Image = {
+  def padTo(targetWidth: Int, targetHeight: Int, color: Color = Color.Transparent): Image = {
     val w = if (width < targetWidth) targetWidth else width
     val h = if (height < targetHeight) targetHeight else height
     val x = ((w - width) / 2.0).toInt
@@ -476,14 +479,14 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
    *
    * @return A new image that is the result of the padding operation.
    */
-  def padWith(left: Int, top: Int, right: Int, bottom: Int, color: Color = White): Image = {
+  def padWith(left: Int, top: Int, right: Int, bottom: Int, color: Color = Color.Transparent): Image = {
     val w = width + left + right
     val h = height + top + bottom
     blank(w, h, Some(color)).overlay(this, left, top)
   }
 
   /**
-   * Returns a new image with the transarency replaced with the given color.
+   * Returns a new image with transparency replaced with the given color.
    */
   def removeTransparency(color: Color): Image = removeTransparency(color.toAWT)
   def removeTransparency(color: java.awt.Color): Image = {
@@ -596,7 +599,7 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
    *
    * @return a new Image with this image translated.
    */
-  def translate(x: Int, y: Int, background: Color = Color.White): Image = {
+  def translate(x: Int, y: Int, background: Color = Color.Transparent): Image = {
     fill(background).overlay(this, x, y)
   }
 
