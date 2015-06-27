@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.canvas
 
-import com.sksamuel.scrimage.{ Image, Pixel, X11Colorlist }
+import com.sksamuel.scrimage.{Image, Pixel, X11Colorlist}
 import org.scalatest.FunSuite
 
 class DrawableTest extends FunSuite {
@@ -8,7 +8,7 @@ class DrawableTest extends FunSuite {
   def assertSameImage(img1: Image, img2: Image): Unit = {
     assert(img1.width === img2.width)
     assert(img1.height === img2.height)
-    for (x <- 0 until img1.width; y <- 0 until img2.height) {
+    for ( x <- 0 until img1.width; y <- 0 until img2.height ) {
       assert(img1.pixel(x, y) === img2.pixel(x, y))
     }
   }
@@ -32,7 +32,7 @@ class DrawableTest extends FunSuite {
   test("The colors are correctly put") {
     val canvas = new Canvas(blank).draw(
       Line(10, 5, 20, 25),
-      Line(30, 50, 30, 200).withPainter(X11Colorlist.Red),
+      Line(30, 50, 30, 200, Context.painter(X11Colorlist.Red)),
       Line(100, 100, 120, 120)
     )
     val img = canvas.image
