@@ -1,6 +1,7 @@
 ## Scrimage
 
 [![Join the chat at https://gitter.im/sksamuel/scrimage](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/sksamuel/scrimage?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build Status](https://travis-ci.org/sksamuel/scrimage.png)](https://travis-ci.org/sksamuel/scrimage) 
 
 This readme is for the 2.0.x versions. For 1.4.x please see the old [README1.4.md](readme).
 
@@ -14,9 +15,7 @@ set of images to have a consistent size, or optimizing PNG uploads by users to a
 
 Scrimage mostly builds on the functionality provided by java.awt.* along with selected other third party libraries.
 
-Latest Release: 2.0.1
-
-[![Build Status](https://travis-ci.org/sksamuel/scrimage.png)](https://travis-ci.org/sksamuel/scrimage) 
+Latest Release: 2.0.2
 
 ### Image Operations
 
