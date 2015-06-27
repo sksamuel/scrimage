@@ -7,19 +7,17 @@ class WatermarkerTest extends WordSpec with Matchers {
 
   val image = Image.fromResource("/gibson.jpg")
 
-  import Watermarker._
-
   "watermarker" should {
     "add repeated watermark" in {
-      val marked = image.watermarker.repeated("watermark", TextStyle(size = 36))
+      val marked = image.filter(new WatermarkCoverFilter("watermark", size = 36))
       marked shouldBe Image.fromResource("/com/sksamuel/scrimage/canvas/watermarked_repeated.png")
     }
-    "add centered watermark" in {
-      val marked = image.watermarker.centered("watermark", TextStyle(size = 48, alpha = 0.2))
+    "add stamped watermark" in {
+      val marked = image.filter(new WatermarkStampFilter("watermark", size = 48, alpha = 0.2))
       marked shouldBe Image.fromResource("/com/sksamuel/scrimage/canvas/watermarked_centered.png")
     }
     "add located watermark" in {
-      val marked = image.watermarker.at("watermark", 25, image.height - 100, TextStyle(size = 48, alpha = 0.2))
+      val marked = image.filter(new WatermarkFilter("watermark", 25, image.height - 100, size = 48, alpha = 0.2))
       marked shouldBe Image.fromResource("/com/sksamuel/scrimage/canvas/watermark_at.png")
     }
   }

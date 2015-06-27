@@ -7,6 +7,8 @@ import java.io.InputStream
 import java.nio.file.{Files, Path}
 import java.awt.{Font => JFont}
 
+import scala.language.implicitConversions
+
 case class Font(wrapped: JFont, bold: Boolean = false, italic: Boolean = false) {
   def name: String = wrapped.getName
   def bounds(text: String, size: Int, g: FontRenderContext): Rectangle2D = {
@@ -24,6 +26,10 @@ case class Font(wrapped: JFont, bold: Boolean = false, italic: Boolean = false) 
 }
 
 object Font {
+
+  implicit def awtToFont(awt: java.awt.Font): Font = Font(awt)
+
+  lazy val SansSerif = Font(new JFont(JFont.SANS_SERIF, JFont.PLAIN, 12))
 
   def as(name: String): Font = Font(new JFont(name, JFont.PLAIN, 12))
 

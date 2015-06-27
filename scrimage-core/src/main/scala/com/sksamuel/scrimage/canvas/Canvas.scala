@@ -33,11 +33,13 @@ case class Canvas(image: Image) {
   }
 
   @deprecated("use WatermarkFilter", "2.1.0")
-  def watermark(text: String): Canvas = watermark(text, 0.5)
+  def watermark(text: String): Canvas = {
+    image.filter(new WatermarkStampFilter(text, 12, new java.awt.Font(java.awt.Font.SERIF, 0, 24), 0.5))
+  }
 
   @deprecated("use WatermarkFilter", "2.1.0")
   def watermark(text: String, alpha: Double): Canvas = {
-    image.filter(new WatermarkFilter(text, new java.awt.Font(java.awt.Font.SERIF, 0, 24), alpha))
+    image.filter(new WatermarkStampFilter(text, 12, new java.awt.Font(java.awt.Font.SERIF, 0, 24), alpha))
   }
 }
 
