@@ -35,7 +35,11 @@ case class JpegWriter(compression: Int, progressive: Boolean) extends ImageWrite
     // in openjdk, awt cannot write out jpegs that have a transparency bit, even if that is set to 255.
     // see http://stackoverflow.com/questions/464825/converting-transparent-gif-png-to-jpeg-using-java
     // so have to convert to a non alpha type
-    val noAlpha = image.removeTransparency(java.awt.Color.WHITE).toNewBufferedImage(BufferedImage.TYPE_INT_RGB)
+    val noAlpha = if (image.awt.getColorModel.hasAlpha) {
+       image.removeTransparency(java.awt.Color.WHITE).toNewBufferedImage(BufferedImage.TYPE_INT_RGB)
+    } else {
+      image.awt
+    }
 
     val output = new MemoryCacheImageOutputStream(out)
     writer.setOutput(output)
