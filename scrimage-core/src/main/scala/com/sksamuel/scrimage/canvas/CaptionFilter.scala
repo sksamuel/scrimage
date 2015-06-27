@@ -48,7 +48,8 @@ class CaptionFilter(text: String,
       captionHeight,
       Context(
         composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, captionAlpha.toFloat),
-        color = captionBackground
+        color = captionBackground,
+        antiAlias = antiAlias
       )
     )
 
@@ -60,7 +61,8 @@ class CaptionFilter(text: String,
         composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, textAlpha.toFloat),
         font = Some(font),
         color = textColor,
-        textSize = textSize
+        textSize = textSize,
+        antiAlias = antiAlias
       )
     )
 

@@ -12,6 +12,7 @@ import scala.language.implicitConversions
 class WatermarkCoverFilter(text: String,
                            size: Int = 12,
                            font: Font = Font.SansSerif,
+                           antiAlias: Boolean = true,
                            alpha: Double = 0.1,
                            color: Color = Color.White) extends Filter {
   require(size > 0, "Font size must be > 0")
@@ -41,7 +42,8 @@ class WatermarkCoverFilter(text: String,
   }
 
   private def setupGraphics(g2: Graphics2D): Unit = {
-    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
+    if (antiAlias)
+      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
     g2.setColor(color)
     val alphaComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha.toFloat)
     g2.setComposite(alphaComposite)

@@ -2,8 +2,7 @@ package com.sksamuel.scrimage.canvas
 
 import java.awt.Graphics2D
 
-import com.sksamuel.scrimage.{Color, Image}
-import com.sksamuel.scrimage.canvas.Context
+import com.sksamuel.scrimage.Image
 
 import scala.language.implicitConversions
 
@@ -47,12 +46,12 @@ case class Canvas(image: Image) {
 
   @deprecated("use WatermarkFilter", "2.1.0")
   def watermark(text: String): Canvas = {
-    image.filter(new WatermarkStampFilter(text, 12, new java.awt.Font(java.awt.Font.SERIF, 0, 24), 0.5))
+    image.filter(new WatermarkStampFilter(text, 12, new java.awt.Font(java.awt.Font.SERIF, 0, 24), alpha = 0.5))
   }
 
   @deprecated("use WatermarkFilter", "2.1.0")
   def watermark(text: String, alpha: Double): Canvas = {
-    image.filter(new WatermarkStampFilter(text, 12, new java.awt.Font(java.awt.Font.SERIF, 0, 24), alpha))
+    image.filter(new WatermarkStampFilter(text, 12, new java.awt.Font(java.awt.Font.SERIF, 0, 24), alpha = alpha))
   }
 }
 

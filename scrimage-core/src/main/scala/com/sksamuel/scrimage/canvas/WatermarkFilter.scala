@@ -11,6 +11,7 @@ class WatermarkFilter(text: String,
                       x: Int,
                       y: Int,
                       color: Color = Color.White,
+                      antiAlias: Boolean = true,
                       size: Int = 18,
                       font: Font = Font.SansSerif,
                       alpha: Double = 0.1)
@@ -18,7 +19,8 @@ class WatermarkFilter(text: String,
   require(size > 0, "Font size must be > 0")
 
   private def setupGraphics(g2: Graphics2D): Unit = {
-    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
+    if (antiAlias)
+      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
     g2.setColor(color)
     val alphaComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha.toFloat)
     g2.setComposite(alphaComposite)
