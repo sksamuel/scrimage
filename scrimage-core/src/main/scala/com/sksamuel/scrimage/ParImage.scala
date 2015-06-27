@@ -97,7 +97,7 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
    * @return A new image that is the result of the binding.
    */
   def max(maxW: Int, maxH: Int)(implicit executor: ExecutionContext): Future[ParImage] = {
-    val dimensions = ImageTools.dimensionsToFit((maxW, maxH), (width, height))
+    val dimensions = DimensionTools.dimensionsToFit((maxW, maxH), (width, height))
     scaleTo(dimensions._1, dimensions._2)
   }
 
@@ -222,7 +222,7 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
             scaleMethod: ScaleMethod = Bicubic,
             position: Position = Center)
            (implicit executor: ExecutionContext): Future[ParImage] = {
-    val coveredDimensions = ImageTools.dimensionsToCover((targetWidth, targetHeight), (width, height))
+    val coveredDimensions = DimensionTools.dimensionsToCover((targetWidth, targetHeight), (width, height))
     scaleTo(coveredDimensions._1, coveredDimensions._2, scaleMethod) map { scaled =>
       val x = ((targetWidth - coveredDimensions._1) / 2.0).toInt
       val y = ((targetHeight - coveredDimensions._2) / 2.0).toInt
@@ -422,7 +422,7 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
           scaleMethod: ScaleMethod = Bicubic,
           position: Position = Center)
          (implicit executor: ExecutionContext): Future[ParImage] = {
-    val (w, h) = ImageTools.dimensionsToFit((canvasWidth, canvasHeight), (width, height))
+    val (w, h) = DimensionTools.dimensionsToFit((canvasWidth, canvasHeight), (width, height))
     val (x, y) = position.calculateXY(canvasWidth, canvasHeight, w, h)
     scaleTo(w, h, scaleMethod) map { scaled =>
       blank(canvasWidth, canvasHeight).fill(color).overlay(scaled, x, y)

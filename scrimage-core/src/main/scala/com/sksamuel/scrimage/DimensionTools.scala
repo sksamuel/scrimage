@@ -16,23 +16,11 @@
 
 package com.sksamuel.scrimage
 
-import java.awt.image.BufferedImage
-import java.io.ByteArrayOutputStream
-import javax.imageio.ImageIO
-
 /** @author Stephen Samuel */
-object ImageTools {
+object DimensionTools {
 
   val BG_COLOR = java.awt.Color.WHITE
   val SCALING_METHOD = java.awt.Image.SCALE_AREA_AVERAGING
-
-  // write out the image to bytes
-  def toBytes(image: BufferedImage, format: String): Array[Byte] = {
-    require(format != null)
-    val output = new ByteArrayOutputStream
-    ImageIO.write(image, format, output)
-    output.toByteArray
-  }
 
   def dimensionsToCover(target: (Int, Int), source: (Int, Int)): (Int, Int) = {
 

@@ -1,13 +1,13 @@
 package com.sksamuel.scrimage
 
-import java.awt.image.{DataBufferByte, BufferedImage, RescaleOp}
+import java.awt.image.{BufferedImage, RescaleOp}
 import java.awt.{Graphics2D, RenderingHints}
 
 /**
  * Contains methods that operate on an AWT BufferedImage by mutating the buffer in place.
  * All methods in this class should return Unit
  */
-class MutableAwtImage(awt: BufferedImage) extends AwtImage(awt) {
+protected[scrimage] class MutableAwtImage(awt: BufferedImage) extends AwtImage(awt) {
 
   /**
    * Maps the pixels of this image into another image by applying the given function to each pixel.

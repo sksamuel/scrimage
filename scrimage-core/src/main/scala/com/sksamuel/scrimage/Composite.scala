@@ -16,10 +16,11 @@
 package com.sksamuel.scrimage
 
 /** @author Stephen Samuel */
+
 trait Composite {
   /**
    * Apply the overlay image onto the given source image using
    * this composite.
    */
-  def apply(src: AwtImage, overlay: AwtImage)
+  def apply(src: AwtImage, overlay: AwtImage): Unit
 }

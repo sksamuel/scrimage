@@ -144,7 +144,7 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
             targetHeight: Int,
             scaleMethod: ScaleMethod = Bicubic,
             position: Position = Center): Image = {
-    val coveredDimensions = ImageTools.dimensionsToCover((targetWidth, targetHeight), (width, height))
+    val coveredDimensions = DimensionTools.dimensionsToCover((targetWidth, targetHeight), (width, height))
     val scaled = scaleTo(coveredDimensions._1, coveredDimensions._2, scaleMethod)
     val x = ((targetWidth - coveredDimensions._1) / 2.0).toInt
     val y = ((targetHeight - coveredDimensions._2) / 2.0).toInt
@@ -206,7 +206,7 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
           color: Color = White,
           scaleMethod: ScaleMethod = Bicubic,
           position: Position = Center): Image = {
-    val (w, h) = ImageTools.dimensionsToFit((canvasWidth, canvasHeight), (width, height))
+    val (w, h) = DimensionTools.dimensionsToFit((canvasWidth, canvasHeight), (width, height))
     val (x, y) = position.calculateXY(canvasWidth, canvasHeight, w, h)
     val scaled = scaleTo(w, h, scaleMethod)
     blank(canvasWidth, canvasHeight).fill(color).overlay(scaled, x, y)
@@ -298,7 +298,7 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
    * @return A new image that is the result of the binding.
    */
   def max(maxW: Int, maxH: Int): Image = {
-    val dimensions = ImageTools.dimensionsToFit((maxW, maxH), (width, height))
+    val dimensions = DimensionTools.dimensionsToFit((maxW, maxH), (width, height))
     scaleTo(dimensions._1, dimensions._2)
   }
 
