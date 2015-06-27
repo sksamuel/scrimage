@@ -20,42 +20,47 @@ package com.sksamuel.scrimage
 sealed trait Position {
 
   /**
-   * Returns the x coordinate for where an image should be placed inside the canvas.
+   * Returns the x coordinate for where a target should be placed inside the source.
    */
-  def calculateX(canvasWidth: Int, canvasHeight: Int, imageWidth: Int, imageHeight: Int): Int
+  def calculateX(sourceWidth: Int, sourceHeight: Int, targetW: Int, targetH: Int): Int
 
   /**
    * Returns the y coordinate for where an image should be placed inside the canvas.
    */
-  def calculateY(canvasWidth: Int, canvasHeight: Int, imageWidth: Int, imageHeight: Int): Int
+  def calculateY(sourceWidth: Int, sourceHeight: Int, targetW: Int, targetH: Int): Int
 
-  def calculateXY(canvasWidth: Int, canvasHeight: Int, imageWidth: Int, imageHeight: Int): (Int, Int) =
-    (calculateX(canvasWidth, canvasHeight, imageWidth, imageHeight),
-      calculateY(canvasWidth, canvasHeight, imageWidth, imageHeight))
+  def calculateXY(sourceWidth: Int, sourceHeight: Int, targetW: Int, targetH: Int): (Int, Int) =
+    (calculateX(sourceWidth, sourceHeight, targetW, targetH),
+      calculateY(sourceWidth, sourceHeight, targetW, targetH))
 }
 
 trait Left extends Position {
-  def calculateX(canvasWidth: Int, canvasHeight: Int, imageWidth: Int, imageHeight: Int): Int = 0
+  def calculateX(sourceWidth: Int, sourceHeight: Int, targetW: Int, targetH: Int): Int = 0
 }
+
 trait Right extends Position {
-  def calculateX(canvasWidth: Int, canvasHeight: Int, imageWidth: Int, imageHeight: Int): Int = canvasWidth - imageWidth
+  def calculateX(sourceWidth: Int, sourceHeight: Int, targetW: Int, targetH: Int): Int = sourceWidth - targetW
 }
+
 trait Top extends Position {
-  def calculateY(canvasWidth: Int, canvasHeight: Int, imageWidth: Int, imageHeight: Int): Int = 0
+  def calculateY(sourceWidth: Int, sourceHeight: Int, targetW: Int, targetH: Int): Int = 0
 }
+
 trait Bottom extends Position {
-  def calculateY(canvasWidth: Int,
-                 canvasHeight: Int,
-                 imageWidth: Int,
-                 imageHeight: Int): Int = canvasHeight - imageHeight
+  def calculateY(sourceWidth: Int,
+                 sourceHeight: Int,
+                 targetW: Int,
+                 targetH: Int): Int = sourceHeight - targetH
 }
+
 trait CenterX extends Position {
-  def calculateX(canvasWidth: Int, canvasHeight: Int, imageWidth: Int, imageHeight: Int): Int =
-    ((canvasWidth - imageWidth) / 2.0).toInt
+  def calculateX(sourceWidth: Int, sourceHeight: Int, targetW: Int, targetH: Int): Int =
+    ((sourceWidth - targetW) / 2.0).toInt
 }
+
 trait CenterY extends Position {
-  def calculateY(canvasWidth: Int, canvasHeight: Int, imageWidth: Int, imageHeight: Int): Int =
-    ((canvasHeight - imageHeight) / 2.0).toInt
+  def calculateY(sourceWidth: Int, sourceHeight: Int, targetW: Int, targetH: Int): Int =
+    ((sourceHeight - targetH) / 2.0).toInt
 }
 
 object Position {

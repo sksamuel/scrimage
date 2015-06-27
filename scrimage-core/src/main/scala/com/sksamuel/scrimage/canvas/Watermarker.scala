@@ -43,7 +43,7 @@ class Watermarker(image: Image) {
     g2.setColor(style.color)
     val alphaComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, style.alpha.toFloat)
     g2.setComposite(alphaComposite)
-    g2.setFont(new java.awt.Font(style.font.name, style.font.style, style.size))
+    g2.setFont(new java.awt.Font(style.font.name, 0, style.size))
   }
 
   def at(text: String, x: Int, y: Int, style: TextStyle): Image = {
@@ -96,17 +96,5 @@ object Watermarker {
   }
 }
 
-case class Font(name: String = java.awt.Font.SANS_SERIF, bold: Boolean = true, italic: Boolean = false) {
-  def style: Int = {
-    var k = java.awt.Font.PLAIN
-    if (bold) k = k | java.awt.Font.BOLD
-    if (italic) k = k | java.awt.Font.ITALIC
-    k
-  }
-}
 
-case class TextStyle(size: Int = 18,
-                     font: Font = Font(java.awt.Font.SANS_SERIF),
-                     alpha: Double = 0.1d,
-                     antiAlias: Boolean = true,
-                     color: Color = X11Colorlist.White)
+
