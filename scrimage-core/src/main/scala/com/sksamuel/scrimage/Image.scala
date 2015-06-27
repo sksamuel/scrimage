@@ -16,7 +16,6 @@
 
 package com.sksamuel.scrimage
 
-import java.awt.Graphics2D
 import java.awt.geom.AffineTransform
 import java.awt.image.{AffineTransformOp, BufferedImage, BufferedImageOp}
 import java.io.{ByteArrayInputStream, File, InputStream}
