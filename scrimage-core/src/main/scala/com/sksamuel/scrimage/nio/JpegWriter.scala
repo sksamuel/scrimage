@@ -52,5 +52,6 @@ case class JpegWriter(compression: Int, progressive: Boolean) extends ImageWrite
 
 object JpegWriter {
   val NoCompression = JpegWriter(100, false)
-  def apply(): JpegWriter = JpegWriter(80, false)
+  val Default = JpegWriter(80, false)
+  def apply(): JpegWriter = Default
 }
