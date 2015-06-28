@@ -20,6 +20,7 @@ import java.awt.image.{BufferedImage, DataBufferInt, SinglePixelPackedSampleMode
 import java.io.OutputStream
 import javax.imageio.ImageIO
 
+import ar.com.hjg.pngj.chunks.{PngChunkTEXT, PngChunkTextVar}
 import ar.com.hjg.pngj.{FilterType, ImageInfo, ImageLineInt}
 import com.sksamuel.scrimage.Image
 
@@ -38,6 +39,16 @@ case class PngWriter(compressionLevel: Int) extends ImageWriter {
       val imi = new ImageInfo(image.width, image.height, 8, true)
 
       val writer = new ar.com.hjg.pngj.PngWriter(out, imi)
+
+      // set metadata from scrimage meta object but not overwriting what's set by pngj
+      for ( tag <- image.metadata.tags ) {
+        if (writer.getMetadata.getTxtForKey(tag.name) == "") {
+          val chunk = new PngChunkTEXT(imi)
+          chunk.setKeyVal(tag.name, tag.rawValue)
+          writer.getMetadata.queueChunk(chunk)
+        }
+      }
+
       writer.setCompLevel(compressionLevel)
       writer.setFilterType(FilterType.FILTER_DEFAULT)
 

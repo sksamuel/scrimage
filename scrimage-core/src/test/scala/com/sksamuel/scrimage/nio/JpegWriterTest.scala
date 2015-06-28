@@ -1,10 +1,12 @@
 package com.sksamuel.scrimage.nio
 
+import java.io.File
+
 import com.sksamuel.scrimage.Image
-import org.scalatest.{BeforeAndAfter, FunSuite, OneInstancePerTest}
+import org.scalatest.{BeforeAndAfter, FunSuite, Matchers}
 
 /** @author Stephen Samuel */
-class JpegWriterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
+class JpegWriterTest extends FunSuite with BeforeAndAfter with Matchers {
 
   val original = Image.fromResource("/com/sksamuel/scrimage/bird.jpg").scaleTo(600, 400)
 
@@ -18,5 +20,16 @@ class JpegWriterTest extends FunSuite with BeforeAndAfter with OneInstancePerTes
     val img = Image.fromResource("/com/sksamuel/scrimage/nio/issue84.jpg")
     val w = JpegWriter()
     img.bytes(w) // was throwing with bug
+  }
+
+  test("preserve metadata") {
+    val image = Image.fromResource("/com/sksamuel/scrimage/metadata/gibson.jpg")
+    println(image.metadata.tags)
+    val file = image.output(File.createTempFile("metadata", "jpg"))(JpegWriter.Default)
+    val image2 = Image.fromFile(file)
+    println(image2.metadata.tags)
+    for ( tag <- image.metadata.tags ) {
+      image2.metadata.tags.find(_.name == tag.name) shouldBe Some(tag)
+    }
   }
 }
