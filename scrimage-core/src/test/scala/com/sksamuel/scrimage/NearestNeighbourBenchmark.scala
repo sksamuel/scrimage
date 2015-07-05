@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage
 
-import com.sksamuel.scrimage.scaling.NearestNeighbour
+import com.sksamuel.scrimage.scaling.{AwtNearestNeighbourScale, ScrimageNearestNeighbourScale}
 
 object NearestNeighbourBenchmark extends App {
 
@@ -11,17 +11,17 @@ object NearestNeighbourBenchmark extends App {
   bench(1000, 600)
   bench(2000, 1200)
   bench(3200, 1600)
-  bench(6000, 3000)
+  bench(4800, 2400)
 
   def bench(w: Int, h: Int): Unit = {
     println(s"Testing scale from ${image.width},${image.height} to $w,$h")
     val sw = new Stopwatch
     sw.start()
     for ( _ <- 0 until Iterations ) {
-      val scaled = image.awt.getScaledInstance(w, h, java.awt.Image.SCALE_FAST)
+      val scaled = AwtNearestNeighbourScale.scale(image.awt, w, h)
       sw.lap
-      require(scaled.getWidth(null) == w)
-      require(scaled.getHeight(null) == h)
+      require(scaled.getWidth == w)
+      require(scaled.getHeight == h)
     }
     sw.stop()
     println("AWT:")
@@ -29,16 +29,16 @@ object NearestNeighbourBenchmark extends App {
     println("Average time: " + sw.averageLap.toMillis)
     println()
 
-    Image.fromAwt(image.awt.getScaledInstance(w, h, java.awt.Image.SCALE_FAST)).output("awt.jpg")
+    Image.fromAwt(AwtNearestNeighbourScale.scale(image.awt, w, h)).output("awt.jpg")
 
     sw.reset()
     sw.start()
 
     for ( _ <- 0 until Iterations ) {
-      val scaled = NearestNeighbour.scale(image.awt, w, h)
+      val scaled = ScrimageNearestNeighbourScale.scale(image.awt, w, h)
       sw.lap
-      require(scaled.getWidth(null) == w)
-      require(scaled.getHeight(null) == h)
+      require(scaled.getWidth == w)
+      require(scaled.getHeight == h)
     }
     sw.stop()
     println("Scrimage:")
@@ -46,7 +46,7 @@ object NearestNeighbourBenchmark extends App {
     println("Average time: " + sw.averageLap.toMillis)
     println("-----")
 
-    Image.fromAwt(NearestNeighbour.scale(image.awt, w, h)).output("scrimage.jpg")
+    Image.fromAwt(ScrimageNearestNeighbourScale.scale(image.awt, w, h)).output("scrimage.jpg")
 
   }
 }

@@ -312,8 +312,6 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
   def output(file: File)(implicit writer: ImageWriter): File = forWriter(writer).write(file)
   def output(path: Path)(implicit writer: ImageWriter): Path = forWriter(writer).write(path)
 
-
-
   /**
    * Returns a new Image that is the result of overlaying this image over the supplied image.
    * That is, the existing image ends up being "on top" of the image parameter.
@@ -563,8 +561,10 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
               targetHeight: Int,
               scaleMethod: ScaleMethod = Bicubic): Image = {
     scaleMethod match {
-      case FastScale => wrapAwt(fastscale(targetWidth, targetHeight), metadata)
-      // todo put this back
+      case FastScale if targetWidth < width && targetHeight < height && awt.getType == BufferedImage.TYPE_INT_ARGB =>
+        wrapAwt(fastScaleScrimage(targetWidth, targetHeight), metadata)
+      case FastScale =>
+        wrapAwt(fastScaleAwt(targetWidth, targetHeight), metadata)
       // case Bicubic =>
       // ResampleOpScala.scaleTo(ResampleOpScala.bicubicFilter)(this)(targetWidth, targetHeight, Image.SCALE_THREADS)
       case _ =>
@@ -661,7 +661,7 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
     target
   }
 
-  def contrast(factor: Double) :Image = {
+  def contrast(factor: Double): Image = {
     val target = copy
     target.contrastInPlace(factor)
     target

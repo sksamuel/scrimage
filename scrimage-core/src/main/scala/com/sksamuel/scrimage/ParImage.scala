@@ -540,7 +540,7 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
     // todo switch this to be concurrent, placeholder for now, no speed increase to this
     Future {
       scaleMethod match {
-        case FastScale => wrapAwt(fastscale(targetWidth, targetHeight), metadata)
+        case FastScale => wrapAwt(fastScaleAwt(targetWidth, targetHeight), metadata)
         // todo put this back
         // case Bicubic =>
         // ResampleOpScala.scaleTo(ResampleOpScala.bicubicFilter)(this)(targetWidth, targetHeight, Image.SCALE_THREADS)

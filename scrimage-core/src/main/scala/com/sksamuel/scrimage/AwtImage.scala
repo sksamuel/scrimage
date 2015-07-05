@@ -3,6 +3,8 @@ package com.sksamuel.scrimage
 import java.awt.{RenderingHints, Graphics2D}
 import java.awt.image.BufferedImage
 
+import com.sksamuel.scrimage.scaling.{AwtNearestNeighbourScale, Scale, ScrimageNearestNeighbourScale}
+
 /**
  * Read only operations on a BufferedImage.
  * You can think of this as a pimped-immutable-BufferedImage.
@@ -322,17 +324,19 @@ class AwtImage(val awt: BufferedImage) {
       case _ => false
     }
   }
+  protected[scrimage] def scale(targetWidth: Int, targetHeight: Int, scale: Scale): BufferedImage = {
+    scale.scale(awt, targetWidth, targetHeight)
+  }
+
+  protected[scrimage] def fastScaleScrimage(targetWidth: Int, targetHeight: Int): BufferedImage = {
+    scale(targetWidth, targetHeight, ScrimageNearestNeighbourScale)
+  }
 
   /**
    * Returns a new AWT Image scaled using nearest-neighbour.
    */
-  protected[scrimage] def fastscale(targetWidth: Int, targetHeight: Int): BufferedImage = {
-    val target = new BufferedImage(targetWidth, targetHeight, awt.getType)
-    val g2 = target.getGraphics.asInstanceOf[Graphics2D]
-    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR)
-    g2.drawImage(awt, 0, 0, targetWidth, targetHeight, null)
-    g2.dispose()
-    target
+  protected[scrimage] def fastScaleAwt(targetWidth: Int, targetHeight: Int): BufferedImage = {
+    scale(targetWidth, targetHeight, AwtNearestNeighbourScale)
   }
 
   /**
