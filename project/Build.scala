@@ -82,12 +82,11 @@ object Build extends Build {
       )
     )
 
-  lazy val io = Project("scrimage-io", file("scrimage-io"))
+  lazy val io = Project("scrimage-io-extra", file("scrimage-io-extra"))
     .settings(scrimageSettings: _*)
-    .settings(name := "scrimage-io")
+    .settings(name := "scrimage-io-extra")
     .settings(
       libraryDependencies ++= Seq(
-        "com.twelvemonkeys.imageio" % "imageio-batik"     % TwelveMonkeysVersion,
         "com.twelvemonkeys.imageio" % "imageio-bmp"       % TwelveMonkeysVersion,
         "com.twelvemonkeys.imageio" % "imageio-jpeg"      % TwelveMonkeysVersion,
         "com.twelvemonkeys.imageio" % "imageio-icns"      % TwelveMonkeysVersion,
