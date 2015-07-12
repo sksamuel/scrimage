@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage
 
-import java.awt.{RenderingHints, Graphics2D}
+import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 
 import com.sksamuel.scrimage.scaling.{AwtNearestNeighbourScale, Scale, ScrimageNearestNeighbourScale}

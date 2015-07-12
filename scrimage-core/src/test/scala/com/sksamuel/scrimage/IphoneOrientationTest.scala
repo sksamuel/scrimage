@@ -7,6 +7,7 @@ class IphoneOrientationTest extends WordSpec with Matchers {
 
   "iphone image" should {
     "be re-orientated" in {
+
       Image.fromResource("/com/sksamuel/scrimage/iphone/left.JPG").scale(0.25).bytes shouldBe
         IOUtils.toByteArray(getClass.getResourceAsStream("/com/sksamuel/scrimage/iphone/left_reorientated.png"))
       Image.fromResource("/com/sksamuel/scrimage/iphone/left.JPG").width shouldBe 960

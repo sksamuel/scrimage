@@ -416,14 +416,14 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
    *
    * @return
    */
-  def rotateLeft: Image = wrapAwt(rotate(Math.PI / 2), metadata)
+  def rotateLeft: Image = wrapAwt(rotate(-Math.PI / 2), metadata)
 
   /**
    * Returns a copy of this image rotated 90 degrees clockwise.
    *
    * @return
    */
-  def rotateRight: Image = wrapAwt(rotate(-Math.PI / 2), metadata)
+  def rotateRight: Image = wrapAwt(rotate(Math.PI / 2), metadata)
 
   /**
    * Creates a new image which is the result of this image
