@@ -25,6 +25,7 @@ import com.sksamuel.scrimage.Image
 
 /** @author Stephen Samuel */
 case class PngWriter(compressionLevel: Int) extends ImageWriter {
+  require(compressionLevel >= 0 && compressionLevel < 10, "Compression level must be between 0 (none) and 9 (max)")
 
   import PngWriter._
 
