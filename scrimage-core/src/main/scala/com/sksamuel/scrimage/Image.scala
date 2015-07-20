@@ -19,7 +19,7 @@ package com.sksamuel.scrimage
 import java.awt.geom.AffineTransform
 import java.awt.image.{AffineTransformOp, BufferedImage, BufferedImageOp}
 import java.io.{ByteArrayInputStream, File, InputStream}
-import java.nio.file.{Path, Paths}
+import java.nio.file.{Files, Path, Paths}
 import javax.imageio.ImageIO
 
 import com.sksamuel.scrimage.nio.{ImageReader, ImageWriter}
@@ -752,8 +752,14 @@ object Image {
    * @param bytes the bytes from the format stream
    * @return a new Image
    */
-  def apply(bytes: Array[Byte]): Image = ImageReader.fromBytes(bytes, CANONICAL_DATA_TYPE)
-  def apply(bytes: Array[Byte], `type`: Int): Image = ImageReader.fromBytes(bytes, `type`)
+  def apply(bytes: Array[Byte]): Image = apply(bytes, CANONICAL_DATA_TYPE)
+  def apply(bytes: Array[Byte], `type`: Int): Image = {
+    require(`type` > 0)
+    val image = ImageReader.fromBytes(bytes, `type`)
+    val metadata = ImageMetadata.fromBytes(bytes)
+    // detect iphone mode, and rotate
+    IphoneOrientation.reorient(image, metadata).withMetadata(metadata)
+  }
 
   @deprecated("use fromStream", "2.0")
   def apply(in: InputStream): Image = fromStream(in)
@@ -770,10 +776,7 @@ object Image {
     require(in != null)
     require(in.available > 0)
     val bytes = IOUtils.toByteArray(in)
-    val image = ImageReader.fromStream(new ByteArrayInputStream(bytes), `type`)
-    val metadata = ImageMetadata.fromStream(new ByteArrayInputStream(bytes))
-    // detect iphone mode, and rotate
-    IphoneOrientation.reorient(image, metadata).withMetadata(metadata)
+    apply(bytes, `type`)
   }
 
   /**
@@ -791,8 +794,7 @@ object Image {
    */
   def fromFile(file: File): Image = {
     require(file != null)
-    val metadata = ImageMetadata.fromFile(file)
-    ImageReader.fromFile(file).withMetadata(metadata)
+    fromStream(Files.newInputStream(file.toPath))
   }
 
   /**

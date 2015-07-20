@@ -11,20 +11,22 @@ import scala.collection.JavaConverters._
 
 object ImageMetadata {
 
+  import ImageMetadataReader._
+
   def fromImage(image: Image): ImageMetadata = {
     val metadata = ImageMetadataReader.readMetadata(new ByteArrayInputStream(image.bytes(PngWriter.NoCompression)))
     fromMetadata(metadata)
   }
 
+  def fromFile(file: File): ImageMetadata = fromStream(Files.newInputStream(file.toPath))
+
   def fromResource(resource: String): ImageMetadata = fromStream(getClass.getResourceAsStream(resource))
 
-  def fromStream(is: InputStream): ImageMetadata = {
-    val metadata = ImageMetadataReader.readMetadata(is)
-    fromMetadata(metadata)
-  }
+  def fromStream(is: InputStream): ImageMetadata = fromMetadata(readMetadata(is))
+
+  def fromBytes(bytes: Array[Byte]): ImageMetadata = fromMetadata(readMetadata(new ByteArrayInputStream(bytes)))
 
   def fromMetadata(metadata: Metadata): ImageMetadata = {
-
     val directories = metadata.getDirectories.asScala.map { directory =>
       val tags = directory.getTags.asScala.map { tag =>
         Tag(tag.getTagName, tag.getTagType, directory.getString(tag.getTagType), tag.getDescription)
@@ -33,8 +35,6 @@ object ImageMetadata {
     }
     ImageMetadata(directories.toList)
   }
-
-  def fromFile(file: File): ImageMetadata = fromStream(Files.newInputStream(file.toPath))
 
   lazy val empty = ImageMetadata(Nil)
 }
