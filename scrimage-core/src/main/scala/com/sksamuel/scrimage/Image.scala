@@ -788,13 +788,15 @@ object Image {
 
   @deprecated("use fromFile", "2.0")
   def apply(file: File): Image = fromFile(file)
+
   /**
    * Create a new Image from a file.
    * This method will also attach metadata.
    */
-  def fromFile(file: File): Image = {
-    require(file != null)
-    fromStream(Files.newInputStream(file.toPath))
+  def fromFile(file: File): Image = fromPath(file.toPath)
+  def fromPath(path: Path): Image = {
+    require(path != null)
+    fromStream(Files.newInputStream(path))
   }
 
   /**

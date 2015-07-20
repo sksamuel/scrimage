@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage
 
-import java.io.{File, ByteArrayInputStream, InputStream}
+import java.io.{ByteArrayInputStream, File, InputStream}
 import java.nio.file.Files
 
 import com.drew.imaging.ImageMetadataReader
