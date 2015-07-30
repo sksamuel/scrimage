@@ -223,11 +223,11 @@ Scrimage is cross compiled for scala 2.11 and 2.10.
 
 If using SBT then you want:
 ```scala
-libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-core" % "2.0.1"
+libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-core" % "2.0.2"
 
-libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-io" % "2.0.1"
+libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-io" % "2.0.2"
 
-libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-filters" % "2.0.1"
+libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-filters" % "2.0.2"
 ```
 
 Maven:
@@ -235,17 +235,17 @@ Maven:
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage-core_2.11</artifactId>
-    <version>2.0.0</version>
+    <version>2.0.2</version>
 </dependency>
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage-io_2.11</artifactId>
-    <version>2.0.0</version>
+    <version>2.0.2</version>
 </dependency>
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage-filters_2.11</artifactId>
-    <version>2.0.0</version>
+    <version>2.0.2</version>
 </dependency>
 ```
 
