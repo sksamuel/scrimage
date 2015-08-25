@@ -40,7 +40,7 @@ object ImageMetadata {
 }
 
 case class ImageMetadata(directories: List[Directory]) {
-  def tag(`type`: Int): Option[Tag] = tags.find(_.`type` == `type`)
+  def tagsBy(f: Tag => Boolean): Seq[Tag] = tags.filter(f)
   def tags: List[Tag] = directories.flatMap(_.tags)
 }
 
