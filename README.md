@@ -15,7 +15,7 @@ set of images to have a consistent size, or optimizing PNG uploads by users to a
 
 Scrimage mostly builds on the functionality provided by java.awt.* along with selected other third party libraries.
 
-Latest Release: 2.0.2
+Latest Release: 2.1.0
 
 ### Image Operations
 
@@ -223,11 +223,11 @@ Scrimage is cross compiled for scala 2.11 and 2.10.
 
 If using SBT then you want:
 ```scala
-libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-core" % "2.0.2"
+libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-core" % "2.1.0"
 
-libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-io" % "2.0.2"
+libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-io" % "2.1.0"
 
-libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-filters" % "2.0.2"
+libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-filters" % "2.1.0"
 ```
 
 Maven:
@@ -235,17 +235,17 @@ Maven:
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage-core_2.11</artifactId>
-    <version>2.0.2</version>
+    <version>2.1.0</version>
 </dependency>
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage-io_2.11</artifactId>
-    <version>2.0.2</version>
+    <version>2.1.0</version>
 </dependency>
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
     <artifactId>scrimage-filters_2.11</artifactId>
-    <version>2.0.2</version>
+    <version>2.1.0</version>
 </dependency>
 ```
 
