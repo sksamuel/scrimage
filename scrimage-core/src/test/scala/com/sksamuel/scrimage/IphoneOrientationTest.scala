@@ -22,5 +22,8 @@ class IphoneOrientationTest extends WordSpec with Matchers {
 
       Image.fromResource("/com/sksamuel/scrimage/iphone/up.JPG").width shouldBe 1280
     }
+    "orientate for multiple same-value tags #93" in {
+      Image.fromResource("/issue93.jpg").width shouldBe 2160
+    }
   }
 }
