@@ -776,6 +776,7 @@ object Image {
     require(in != null)
     require(in.available > 0)
     val bytes = IOUtils.toByteArray(in)
+    in.close()
     apply(bytes, `type`)
   }
 
