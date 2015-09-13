@@ -11,7 +11,7 @@ object Build extends Build {
   val scrimageSettings = Seq(
     organization := "com.sksamuel.scrimage",
     name := "scrimage",
-    version := "2.1.0",
+    version := "2.1.1",
     scalaVersion := "2.11.7",
     crossScalaVersions := Seq("2.10.5", "2.11.7"),
     publishMavenStyle := true,
