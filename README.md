@@ -213,9 +213,9 @@ As you can see, ImgScalr is the fastest for a simple rescale, but Scrimage is mu
 ### Including Scrimage in your project
 
 Scrimage is available on maven central. There are several dependencies. 
-One is the `scrimage-core` library which is required. The others are `scrimage-filters` and `scrimage-io`.
+One is the `scrimage-core` library which is required. The others are `scrimage-filters` and `scrimage-io-extra`.
 They are split because the image filters is a large jar, and most people just want the basic resize/scale/load/save functionality.
-The`scrimage-io` package brings in readers/writers for less common formats such as BMP Tiff or PCX.
+The`scrimage-io-extra` package brings in readers/writers for less common formats such as BMP Tiff or PCX.
 
 Note: The canvas operations are now part of the core library since 2.0.1
 
@@ -225,7 +225,7 @@ If using SBT then you want:
 ```scala
 libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-core" % "2.1.0"
 
-libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-io" % "2.1.0"
+libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-io-extra" % "2.1.0"
 
 libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-filters" % "2.1.0"
 ```
@@ -239,7 +239,7 @@ Maven:
 </dependency>
 <dependency>
     <groupId>com.sksamuel.scrimage</groupId>
-    <artifactId>scrimage-io_2.11</artifactId>
+    <artifactId>scrimage-io-extra_2.11</artifactId>
     <version>2.1.0</version>
 </dependency>
 <dependency>
