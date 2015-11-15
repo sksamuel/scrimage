@@ -78,7 +78,7 @@ Scaling an image to a specific size using a fast non-smoothed scale
 ```scala
 val in = ... // input stream
 val out = ... // output stream
-Image.fromStream(in).scale(300, 200, FastScale)
+Image.fromStream(in).scaleTo(300, 200, FastScale)
 ```
 
 Writing out a heavily compressed Jpeg thumbnail
