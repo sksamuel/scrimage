@@ -18,8 +18,9 @@ class PngWriterTest extends WordSpec with Matchers {
       assert(expected == Image(bytes))
     }
     "png compression happy path" in {
-      for (i <- 0 to 9) {
-        val bytes = original.bytes(PngWriter().withCompression(i))
+      for ( i <- 0 to 9 ) {
+        implicit val writer = PngWriter.NoCompression
+        val bytes = original.bytes
         val expected = Image.fromResource(s"/com/sksamuel/scrimage/io/bird_compressed_$i.png")
         assert(expected.pixels.length === Image(bytes).pixels.length)
         assert(expected.pixels.deep == Image(bytes).pixels.deep)
@@ -32,10 +33,14 @@ class PngWriterTest extends WordSpec with Matchers {
     }
     "png reader reads an image correctly" in {
       val expected = Image.fromResource("/com/sksamuel/scrimage/io/bird_300_200.png")
-      val actual = PngReader.fromBytes(IOUtils.toByteArray(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png"))).get
+      val actual = PngReader
+        .fromBytes(IOUtils.toByteArray(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png"))).get
       assert(actual.width === expected.width)
       assert(actual.height === expected.height)
       assert(actual === expected)
+    }
+    "png writer in scope by default" in {
+      val bytes = original.bytes
     }
   }
 }

@@ -83,9 +83,10 @@ Image.fromStream(in).scaleTo(300, 200, FastScale)
 
 Writing out a heavily compressed Jpeg thumbnail
 ```scala
+implicit val writer = JpegWriter().withCompression(50)
 val in = ... // input stream
 val out = ... // output stream
-Image.fromStream(in).fit(180,120).writer(Format.JPEG).withCompression(50).write(out)
+Image.fromStream(in).fit(180,120).output(new File("image.jpeg"))
 ```
 
 Printing the sizes and ratio of the image
@@ -105,9 +106,9 @@ val out2 = Image(in).bytes) // an implicit PNG writer is in scope by default wit
 
 Coverting an input stream to a PNG with no compression
 ```
+implicit val writer = PngWriter.NoCompression
 val in : InputStream = ... // some input stream
-val out : OutputStream = ... // some output stream
-val compressed = Image.fromStream(in).output(PngWriter.NoCompression)
+val out = Image.fromStream(in).stream
 ```
 
 ### Input / Output
@@ -119,7 +120,7 @@ To load an image simply use the Image companion methods on an input stream, file
 The format does not matter as the underlying reader will determine that. Eg, 
 ```scala
 val in = ... // a handle to an input stream
-val image = Image(in)
+val image = Image.fromInputStream(in)
 ```
 
 To save a method, Scrimage requires an ImageWriter. You can use this implicitly or explicitly. A PngWriter is in scope
