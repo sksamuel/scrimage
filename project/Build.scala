@@ -11,7 +11,6 @@ object Build extends Build {
   val scrimageSettings = Seq(
     organization := "com.sksamuel.scrimage",
     name := "scrimage",
-    version := "2.1.1",
     scalaVersion := "2.11.7",
     crossScalaVersions := Seq("2.10.5", "2.11.7"),
     publishMavenStyle := true,
@@ -34,6 +33,8 @@ object Build extends Build {
         Some("releases" at nexus + "service/local/staging/deploy/maven2")
     },
     useGpg := true,
+    sbtrelease.ReleasePlugin.autoImport.releasePublishArtifactsAction := PgpKeys.publishSigned.value,
+    sbtrelease.ReleasePlugin.autoImport.releaseCrossBuild := true,
     pomIncludeRepository := { _ => false },
     pomExtra := {
       <url>https://github.com/sksamuel/scrimage</url>
@@ -57,7 +58,6 @@ object Build extends Build {
           </developer>
         </developers>
     }
-
   )
 
   lazy val root = Project("scrimage", file("."))
