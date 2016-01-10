@@ -257,8 +257,6 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
   //    }
   //  }
 
-
-
   /**
     * Applies an affine transform in place.
     */
@@ -469,6 +467,46 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
     val h = height + top + bottom
     blank(w, h, Some(color)).overlay(this, left, top)
   }
+
+  /**
+    * Creates a new Image by adding k amount of rows of pixels to the top.
+    * This is a convenience method for calling padWith(0,k,0,0,color).
+    *
+    * @param k     the number of rows to pad by
+    * @param color the color that should be used for the new rows
+    * @return the new Image
+    */
+  def padTop(k: Int, color: Color = Color.Transparent): Image = padWith(0, k, 0, 0, color)
+
+  /**
+    * Creates a new Image by adding k amount of rows of pixels to the bottom.
+    * This is a convenience method for calling padWith(0,0,0,k,color).
+    *
+    * @param k     the number of rows to pad by
+    * @param color the color that should be used for the new rows
+    * @return the new Image
+    */
+  def padBottom(k: Int, color: Color = Color.Transparent): Image = padWith(0, 0, 0, k, color)
+
+  /**
+    * Creates a new Image by adding k columns of pixels to the left.
+    * This is a convenience method for calling padWith(k,0,0,0,color).
+    *
+    * @param k     the number of columns to pad by
+    * @param color the color that should be used for the new pixels
+    * @return the new Image
+    */
+  def padLeft(k: Int, color: Color = Color.Transparent): Image = padWith(k, 0, 0, 0, color)
+
+  /**
+    * Creates a new Image by adding k columns of pixels to the right.
+    * This is a convenience method for calling padWith(0,0,k,0,color).
+    *
+    * @param k     the number of columns to pad by
+    * @param color the color that should be used for the new pixels
+    * @return the new Image
+    */
+  def padRight(k: Int, color: Color = Color.Transparent): Image = padWith(0, 0, k, 0, color)
 
   /**
     * Returns a new image with transparency replaced with the given color.
