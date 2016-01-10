@@ -4,7 +4,7 @@ import sbt._
 
 object Build extends Build {
 
-  private val TwelveMonkeysVersion = "3.1.2"
+  private val TwelveMonkeysVersion = "3.2.1"
   private val PngjVersion = "2.1.0"
   private val MetadataExtractorVersion = "2.8.1"
 
