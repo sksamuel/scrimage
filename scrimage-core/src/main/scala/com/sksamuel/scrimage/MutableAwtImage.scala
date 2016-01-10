@@ -4,19 +4,22 @@ import java.awt.image.{BufferedImage, RescaleOp}
 import java.awt.{Graphics2D, RenderingHints}
 
 /**
- * Contains methods that operate on an AWT BufferedImage by mutating the buffer in place.
- * All methods in this class should return Unit
- */
+  * Contains methods that operate on an AWT BufferedImage by mutating the buffer in place.
+  * All methods in this class should return Unit as they operate on the underlying image.
+  *
+  * This class cannot contain methods that result in a change canvas size, as there is no way
+  * to resize a java image once it has been created (and rightly so).
+  */
 protected[scrimage] class MutableAwtImage(awt: BufferedImage) extends AwtImage(awt) {
 
   /**
-   * Maps the pixels of this image into another image by applying the given function to each pixel.
-   *
-   * The function accepts three parameters: x,y,p where x and y are the coordinates of the pixel
-   * being transformed and p is the pixel at that location.
-   *
-   * @param f the function to transform pixel x,y with existing value p into new pixel value p' (p prime)
-   */
+    * Maps the pixels of this image into another image by applying the given function to each pixel.
+    *
+    * The function accepts three parameters: x,y,p where x and y are the coordinates of the pixel
+    * being transformed and p is the pixel at that location.
+    *
+    * @param f the function to transform pixel x,y with existing value p into new pixel value p' (p prime)
+    */
   protected[scrimage] def mapInPlace(f: (Int, Int, Pixel) => Pixel): Unit = {
     points.foreach {
       case (x, y) =>
@@ -38,8 +41,8 @@ protected[scrimage] class MutableAwtImage(awt: BufferedImage) extends AwtImage(a
   }
 
   /**
-   * Fills all pixels the given color on the existing image.
-   */
+    * Fills all pixels the given color on the existing image.
+    */
   protected[scrimage] def fillInPlace(color: Color): Unit = {
     for (
       x <- 0 until width;
@@ -48,8 +51,8 @@ protected[scrimage] class MutableAwtImage(awt: BufferedImage) extends AwtImage(a
   }
 
   /**
-   * Applies the given image over the current buffer.
-   */
+    * Applies the given image over the current buffer.
+    */
   protected[scrimage] def overlayInPlace(overlay: BufferedImage, x: Int = 0, y: Int = 0): Unit = {
     val g2 = awt.getGraphics.asInstanceOf[Graphics2D]
     g2.drawImage(overlay, x, y, null)
@@ -59,9 +62,9 @@ protected[scrimage] class MutableAwtImage(awt: BufferedImage) extends AwtImage(a
   def setPixel(x: Int, y: Int, pixel: Pixel): Unit = awt.setRGB(x, y, pixel.argb)
 
   /**
-   * Mutates this image by scaling all pixel values by the given factor (brightness in other words).
-   */
-  protected def rescale(factor: Double): Unit = {
+    * Mutates this image by scaling all pixel values by the given factor (brightness in other words).
+    */
+  protected def rescaleInPlace(factor: Double): Unit = {
     val rescale = new RescaleOp(factor.toFloat, 0f,
       new RenderingHints(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY))
     rescale.filter(awt, awt)

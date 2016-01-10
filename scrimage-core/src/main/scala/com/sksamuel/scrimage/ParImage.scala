@@ -63,7 +63,7 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
    */
   def brightness(factor: Double): ParImage = {
     val target = copy
-    target.rescale(factor)
+    target.rescaleInPlace(factor)
     target
   }
 
