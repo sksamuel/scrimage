@@ -220,6 +220,11 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
     * where the original image has been scaled to fit completely
     * inside the new dimensions whilst retaining the original aspect ratio.
     *
+    * Ie, you'll get back an image which has your specified dimensions, and the original image will
+    * be scaled to fit inside that new image, whilst keeping the same aspect ratio as before.
+    *
+    * This operation is like max, except extra padding is added to ensure the canvas is the exact size requested.
+    *
     * @param canvasWidth  the target width
     * @param canvasHeight the target height
     * @param scaleMethod  the algorithm to use for the scaling operation. See ScaleMethod.
