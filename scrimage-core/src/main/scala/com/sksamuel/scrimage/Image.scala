@@ -42,7 +42,6 @@ class ImageParseException extends RuntimeException("Unparsable image")
   * @author Stephen Samuel
   */
 class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtImage(awt) {
-
   require(awt != null, "Wrapping image cannot be null")
 
   import Position._
@@ -102,7 +101,7 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
     * inside the constraints will be returned.
     *
     * This operation differs from max, in that max will scale an image up to be as large as it can be
-    * inside the constrains. Bound will keep the image the same if its already within the constraints.
+    * inside the constraints. Bound will keep the image the same if its already within the constraints.
     *
     * @param width  the maximum width
     * @param height the maximum height
@@ -114,6 +113,15 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
   }
 
   /**
+    * Returns a new Image with the brightness adjusted.
+    */
+  def brightness(factor: Double): Image = {
+    val target = copy
+    target.rescaleInPlace(factor)
+    target
+  }
+
+  /**
     * Creates a new image with the same data as this image.
     * Any operations to the copied image will not write back to the original.
     *
@@ -122,6 +130,26 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
   def copy: Image = {
     val target = blank(width, height)
     target.overlayInPlace(awt, 0, 0)
+    target
+  }
+
+  /**
+    * Apply the given image with this image using the given composite.
+    * The original image is unchanged.
+    *
+    * @param composite   the composite to use. See com.sksamuel.scrimage.Composite.
+    * @param applicative the image to apply with the composite.
+    * @return A new image with the given image applied using the given composite.
+    */
+  def composite(composite: Composite, applicative: Image): Image = {
+    val target = copy
+    composite.apply(target, applicative)
+    target
+  }
+
+  def contrast(factor: Double): Image = {
+    val target = copy
+    target.contrastInPlace(factor)
     target
   }
 
@@ -229,19 +257,7 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
   //    }
   //  }
 
-  /**
-    * Apply the given image with this image using the given composite.
-    * The original image is unchanged.
-    *
-    * @param composite   the composite to use. See com.sksamuel.scrimage.Composite.
-    * @param applicative the image to apply with the composite.
-    * @return A new image with the given image applied using the given composite.
-    */
-  def composite(composite: Composite, applicative: Image): Image = {
-    val target = copy
-    composite.apply(target, applicative)
-    target
-  }
+
 
   /**
     * Applies an affine transform in place.
@@ -306,23 +322,6 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
   def output(path: String)(implicit writer: ImageWriter): Path = forWriter(writer).write(Paths.get(path))
   def output(file: File)(implicit writer: ImageWriter): File = forWriter(writer).write(file)
   def output(path: Path)(implicit writer: ImageWriter): Path = forWriter(writer).write(path)
-
-  /**
-    * Returns a new Image that is the result of overlaying this image over the supplied image.
-    * That is, the existing image ends up being "on top" of the image parameter.
-    * The x / y parameters determine where the (0,0) coordinate of the overlay should be placed.
-    *
-    * If the image to render exceeds the boundaries of the source image, then the excess
-    * pixels will be ignored.
-    *
-    * @return a new Image with the given image overlaid.
-    */
-  def underlay(underlayImage: Image, x: Int = 0, y: Int = 0): Image = {
-    val target = this.blank
-    target.overlayInPlace(underlayImage.awt, x, y)
-    target.overlayInPlace(awt, x, y)
-    target
-  }
 
   /**
     * Returns a new image that is the result of overlaying the given image over this image.
@@ -563,6 +562,48 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
     }
   }
 
+  /**
+    * Extracts a subimage, but using subpixel interpolation.
+    */
+  def subpixelSubimage(x: Double,
+                       y: Double,
+                       subWidth: Int,
+                       subHeight: Int): Image = {
+    require(x >= 0)
+    require(x + subWidth < width)
+    require(y >= 0)
+    require(y + subHeight < height)
+
+    val matrix = Array.ofDim[Pixel](subWidth * subHeight)
+    // Simply copy the pixels over, one by one.
+    for ( yIndex <- 0 until subHeight;
+          xIndex <- 0 until subWidth ) {
+      matrix(PixelTools.coordinateToOffset(xIndex, yIndex, subWidth)) = Pixel(subpixel(xIndex + x, yIndex + y))
+    }
+    wrapPixels(subWidth, subHeight, matrix, metadata)
+  }
+
+  /**
+    * Extract a patch, centered at a subpixel point.
+    */
+  def subpixelSubimageCenteredAtPoint(x: Double,
+                                      y: Double,
+                                      xRadius: Double,
+                                      yRadius: Double): Image = {
+    val xWidth = 2 * xRadius
+    val yWidth = 2 * yRadius
+
+    // The dimensions of the extracted patch must be integral.
+    require(xWidth == xWidth.round)
+    require(yWidth == yWidth.round)
+
+    subpixelSubimage(
+      x - xRadius,
+      y - yRadius,
+      xWidth.round.toInt,
+      yWidth.round.toInt)
+  }
+
   def toPar: ParImage = new ParImage(awt, metadata)
 
   /**
@@ -646,6 +687,23 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
   def trimTop(k: Int): Image = trim(0, k, 0, 0)
 
   /**
+    * Returns a new Image that is the result of overlaying this image over the supplied image.
+    * That is, the existing image ends up being "on top" of the image parameter.
+    * The x / y parameters determine where the (0,0) coordinate of the overlay should be placed.
+    *
+    * If the image to render exceeds the boundaries of the source image, then the excess
+    * pixels will be ignored.
+    *
+    * @return a new Image with the given image overlaid.
+    */
+  def underlay(underlayImage: Image, x: Int = 0, y: Int = 0): Image = {
+    val target = this.blank
+    target.overlayInPlace(underlayImage.awt, x, y)
+    target.overlayInPlace(awt, x, y)
+    target
+  }
+
+  /**
     * Returns this image, with metadata attached.
     *
     * @interal both the original and the new image will share a buffer
@@ -671,63 +729,6 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
   def forWriter(writer: ImageWriter): WriteContext = new WriteContext(writer, this)
 
   def stream(implicit writer: ImageWriter): ByteArrayInputStream = forWriter(writer).stream
-
-  /**
-    * Returns a new Image with the brightness adjusted.
-    */
-  def brightness(factor: Double): Image = {
-    val target = copy
-    target.rescaleInPlace(factor)
-    target
-  }
-
-  def contrast(factor: Double): Image = {
-    val target = copy
-    target.contrastInPlace(factor)
-    target
-  }
-
-  /**
-    * Extracts a subimage, but using subpixel interpolation.
-    */
-  def subpixelSubimage(x: Double,
-                       y: Double,
-                       subWidth: Int,
-                       subHeight: Int): Image = {
-    require(x >= 0)
-    require(x + subWidth < width)
-    require(y >= 0)
-    require(y + subHeight < height)
-
-    val matrix = Array.ofDim[Pixel](subWidth * subHeight)
-    // Simply copy the pixels over, one by one.
-    for ( yIndex <- 0 until subHeight;
-          xIndex <- 0 until subWidth ) {
-      matrix(PixelTools.coordinateToOffset(xIndex, yIndex, subWidth)) = Pixel(subpixel(xIndex + x, yIndex + y))
-    }
-    wrapPixels(subWidth, subHeight, matrix, metadata)
-  }
-
-  /**
-    * Extract a patch, centered at a subpixel point.
-    */
-  def subpixelSubimageCenteredAtPoint(x: Double,
-                                      y: Double,
-                                      xRadius: Double,
-                                      yRadius: Double): Image = {
-    val xWidth = 2 * xRadius
-    val yWidth = 2 * yRadius
-
-    // The dimensions of the extracted patch must be integral.
-    require(xWidth == xWidth.round)
-    require(yWidth == yWidth.round)
-
-    subpixelSubimage(
-      x - xRadius,
-      y - yRadius,
-      xWidth.round.toInt,
-      yWidth.round.toInt)
-  }
 
   /**
     * Maps the pixels of this image into another image by applying the given function to each pixel.
@@ -881,8 +882,6 @@ object Image {
     val target = new BufferedImage(width, height, `type`)
     new Image(target, ImageMetadata.empty)
   }
-}
 
-object Implicits {
   implicit def awtToScrimage(awt: java.awt.Image): Image = Image.fromAwt(awt)
 }
