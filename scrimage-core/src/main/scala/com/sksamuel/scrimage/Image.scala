@@ -42,6 +42,7 @@ class ImageParseException extends RuntimeException("Unparsable image")
   * @author Stephen Samuel
   */
 class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtImage(awt) {
+
   require(awt != null, "Wrapping image cannot be null")
 
   import Position._
@@ -654,6 +655,26 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
     * @return a new Image that is the subimage
     */
   def subimage(x: Int, y: Int, w: Int, h: Int): Image = wrapPixels(w, h, pixels(x, y, w, h), metadata)
+
+  /**
+    * Returns a new Image which is the source image, but only keeping a max of k columns from the left.
+    */
+  def takeLeft(k: Int): Image = subimage(0, 0, Math.min(k, width), height)
+
+  /**
+    * Returns a new Image which is the source image, but only keeping a max of k columns from the right.
+    */
+  def takeRight(k: Int): Image = subimage(Math.min(0, width - k), width, 0, height)
+
+  /**
+    * Returns a new Image which is the source image, but only keeping a max of k rows from the top.
+    */
+  def takeTop(k: Int): Image = subimage(0, 0, width, Math.min(k, height))
+
+  /**
+    * Returns a new Image which is the source image, but only keeping a max of k rows from the bottom.
+    */
+  def takeBottom(k: Int): Image = subimage(0, Math.min(0, height -k), width, height)
 
   /**
     * Returns an image that is the result of translating the image while keeping the same
