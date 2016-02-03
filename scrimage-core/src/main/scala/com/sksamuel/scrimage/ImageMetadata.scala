@@ -9,22 +9,26 @@ import com.sksamuel.scrimage.nio.PngWriter
 
 import scala.collection.JavaConverters._
 
-object ImageMetadata {
+object ImageMetadata extends Using {
 
   import ImageMetadataReader._
 
   def fromImage(image: Image): ImageMetadata = {
-    val metadata = ImageMetadataReader.readMetadata(new ByteArrayInputStream(image.bytes(PngWriter.NoCompression)))
+    val metadata = using(new ByteArrayInputStream(image.bytes(PngWriter.NoCompression))){ stream =>
+    ImageMetadataReader.readMetadata(stream)
+    }
     fromMetadata(metadata)
   }
 
-  def fromFile(file: File): ImageMetadata = fromStream(Files.newInputStream(file.toPath))
+  def fromFile(file: File): ImageMetadata = using(Files.newInputStream(file.toPath))(fromStream)
 
-  def fromResource(resource: String): ImageMetadata = fromStream(getClass.getResourceAsStream(resource))
+  def fromResource(resource: String): ImageMetadata = using(getClass.getResourceAsStream(resource))(fromStream)
 
   def fromStream(is: InputStream): ImageMetadata = fromMetadata(readMetadata(is))
 
-  def fromBytes(bytes: Array[Byte]): ImageMetadata = fromMetadata(readMetadata(new ByteArrayInputStream(bytes)))
+  def fromBytes(bytes: Array[Byte]): ImageMetadata = using(new ByteArrayInputStream(bytes)) { stream =>
+    fromMetadata(readMetadata(stream))
+  }
 
   def fromMetadata(metadata: Metadata): ImageMetadata = {
     val directories = metadata.getDirectories.asScala.map { directory =>

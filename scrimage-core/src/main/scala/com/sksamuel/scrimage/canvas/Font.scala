@@ -7,6 +7,8 @@ import java.io.InputStream
 import java.nio.file.{Files, Path}
 import java.awt.{Font => JFont}
 
+import com.sksamuel.scrimage.Using
+
 import scala.language.implicitConversions
 
 case class Font(wrapped: JFont, bold: Boolean = false, italic: Boolean = false) {
@@ -25,7 +27,7 @@ case class Font(wrapped: JFont, bold: Boolean = false, italic: Boolean = false) 
   }
 }
 
-object Font {
+object Font extends Using {
 
   implicit def awtToFont(awt: java.awt.Font): Font = Font(awt)
 
@@ -45,7 +47,7 @@ object Font {
     Font(new JFont(font.getName, JFont.PLAIN, 12))
   }
 
-  def createTrueType(path: Path): Font = createTrueType(Files.newInputStream(path))
+  def createTrueType(path: Path): Font = using(Files.newInputStream(path))(createTrueType)
 }
 
 case class Padding(left: Int, right: Int, top: Int, bottom: Int)

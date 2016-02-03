@@ -805,7 +805,7 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
   }
 }
 
-object Image {
+object Image extends Using {
 
   ImageIO.scanForPlugins()
 
@@ -856,7 +856,6 @@ object Image {
     require(in != null)
     require(in.available > 0)
     val bytes = IOUtils.toByteArray(in)
-    in.close()
     apply(bytes, `type`)
   }
 
@@ -877,7 +876,7 @@ object Image {
   def fromFile(file: File): Image = fromPath(file.toPath)
   def fromPath(path: Path): Image = {
     require(path != null)
-    fromStream(Files.newInputStream(path))
+    using(Files.newInputStream(path))(stream => fromStream(stream))
   }
 
   /**
