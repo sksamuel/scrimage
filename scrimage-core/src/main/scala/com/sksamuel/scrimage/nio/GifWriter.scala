@@ -20,11 +20,11 @@ import java.io.OutputStream
 import javax.imageio.stream.MemoryCacheImageOutputStream
 import javax.imageio.{IIOImage, ImageIO, ImageWriteParam}
 
-import com.sksamuel.scrimage.Image
+import com.sksamuel.scrimage.{Using, Image}
 import org.apache.commons.io.IOUtils
 
 /** @author Stephen Samuel */
-case class GifWriter(progressive: Boolean) extends ImageWriter {
+case class GifWriter(progressive: Boolean) extends ImageWriter with Using {
 
   def withProgressive(progressive: Boolean): GifWriter = GifWriter.Progressive
 
@@ -39,11 +39,11 @@ case class GifWriter(progressive: Boolean) extends ImageWriter {
       params.setProgressiveMode(ImageWriteParam.MODE_DISABLED)
     }
 
-    val output = new MemoryCacheImageOutputStream(out)
-    writer.setOutput(output)
-    writer.write(null, new IIOImage(image.awt, null, null), params)
-    writer.dispose()
-    output.close()
+    using(new MemoryCacheImageOutputStream(out)) { output =>
+      writer.setOutput(output)
+      writer.write(null, new IIOImage(image.awt, null, null), params)
+      writer.dispose()
+    }
     IOUtils.closeQuietly(out)
   }
 }

@@ -6,7 +6,7 @@ import javax.imageio.metadata.IIOMetadataNode
 import javax.imageio.stream.MemoryCacheImageOutputStream
 import javax.imageio.{IIOImage, ImageIO, ImageTypeSpecifier}
 
-import com.sksamuel.scrimage.Image
+import com.sksamuel.scrimage.{Using, Image}
 
 import scala.concurrent.duration._
 
@@ -18,7 +18,7 @@ import scala.concurrent.duration._
  * http://creativecommons.org/licenses/by/3.0/ or send a letter to Creative
  Commons, 171 Second Street, Suite 300, San Francisco, California, 94105, USA.
  */
-case class GifSequenceWriter(frameDelay: Duration = 1.second, infiniteLoop: Boolean = true) {
+case class GifSequenceWriter(frameDelay: Duration = 1.second, infiniteLoop: Boolean = true) extends Using {
 
   def withFrameDelay(delay: Duration): GifSequenceWriter = copy(frameDelay = delay)
   def withInfiniteLoop(infiniteLoop: Boolean): GifSequenceWriter = copy(infiniteLoop = infiniteLoop)
@@ -48,9 +48,6 @@ case class GifSequenceWriter(frameDelay: Duration = 1.second, infiniteLoop: Bool
   def bytes(images: Seq[Image]): Array[Byte] = {
 
     import scala.collection.JavaConverters._
-
-    val baos = new ByteArrayOutputStream()
-    val output = new MemoryCacheImageOutputStream(baos)
 
     val writer = ImageIO.getImageWritersBySuffix("gif").asScala.next
     val imageWriteParam = writer.getDefaultWriteParam()
@@ -84,13 +81,16 @@ case class GifSequenceWriter(frameDelay: Duration = 1.second, infiniteLoop: Bool
     appEntensionsNode.appendChild(child)
 
     imageMetaData.setFromTree(metaFormatName, root)
-    writer.setOutput(output)
-    writer.prepareWriteSequence(null)
 
-    for ( image <- images ) writer.writeToSequence(new IIOImage(image.awt, null, imageMetaData), imageWriteParam)
-    writer.endWriteSequence()
-    output.close()
+    using(new ByteArrayOutputStream()) { baos =>
+      using(new MemoryCacheImageOutputStream(baos)) { output =>
+        writer.setOutput(output)
+        writer.prepareWriteSequence(null)
 
-    baos.toByteArray
+        for (image <- images) writer.writeToSequence(new IIOImage(image.awt, null, imageMetaData), imageWriteParam)
+        writer.endWriteSequence()
+      }
+      baos.toByteArray
+    }
   }
 }

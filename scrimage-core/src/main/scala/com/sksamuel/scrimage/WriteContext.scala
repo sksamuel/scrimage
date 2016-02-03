@@ -5,7 +5,7 @@ import java.nio.file.{Files, Paths, Path}
 
 import com.sksamuel.scrimage.nio.ImageWriter
 
-class WriteContext(writer: ImageWriter, image: Image) {
+class WriteContext(writer: ImageWriter, image: Image) extends Using {
 
   def bytes: Array[Byte] = {
     val bos = new ByteArrayOutputStream
@@ -23,9 +23,9 @@ class WriteContext(writer: ImageWriter, image: Image) {
   }
 
   def write(path: Path): Path = {
-    val out = Files.newOutputStream(path)
-    writer.write(image, out)
-    out.close()
+    using(Files.newOutputStream(path)) { out =>
+      writer.write(image, out)
+    }
     path
   }
 

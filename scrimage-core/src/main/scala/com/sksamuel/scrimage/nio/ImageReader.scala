@@ -3,7 +3,7 @@ package com.sksamuel.scrimage.nio
 import java.io.{File, InputStream}
 import java.nio.file.{Files, Path}
 
-import com.sksamuel.scrimage.{Image, ImageParseException}
+import com.sksamuel.scrimage.{Using, Image, ImageParseException}
 import org.apache.commons.io.IOUtils
 
 import scala.util.Try
@@ -11,7 +11,7 @@ import scala.util.Try
 /**
  * Utilites for reading of an Image to an array of bytes in a specified format.
  */
-object ImageReader {
+object ImageReader extends Using {
 
   private val readers = List(JavaImageIOReader, PngReader, JavaImageIO2Reader)
 
@@ -20,7 +20,9 @@ object ImageReader {
   }
 
   def fromPath(path: Path, `type`: Int = Image.CANONICAL_DATA_TYPE): Image = {
-    fromStream(Files.newInputStream(path), `type`)
+    using(Files.newInputStream(path)) { stream =>
+      fromStream(stream, `type`)
+    }
   }
 
   def fromStream(in: InputStream, `type`: Int = Image.CANONICAL_DATA_TYPE): Image = {
