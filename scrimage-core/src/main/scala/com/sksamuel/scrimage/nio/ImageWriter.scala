@@ -12,5 +12,5 @@ trait ImageWriter {
 }
 
 object ImageWriter {
-  implicit def default: PngWriter = PngWriter.NoCompression
+  implicit def default: PngWriter = PngWriter.MaxCompression
 }
