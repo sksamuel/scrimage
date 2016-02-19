@@ -4,15 +4,16 @@ import sbt._
 
 object Build extends Build {
 
-  private val TwelveMonkeysVersion = "3.2.1"
-  private val PngjVersion = "2.1.0"
-  private val MetadataExtractorVersion = "2.8.1"
+  val TwelveMonkeysVersion = "3.2.1"
+  val PngjVersion = "2.1.0"
+  val MetadataExtractorVersion = "2.8.1"
+  val ScalatestVersion = "3.0.0-M12"
 
   val scrimageSettings = Seq(
     organization := "com.sksamuel.scrimage",
     name := "scrimage",
     scalaVersion := "2.11.7",
-    crossScalaVersions := Seq("2.10.5", "2.11.7"),
+    crossScalaVersions := Seq("2.10.6", "2.11.7", "2.12.0-M3"),
     publishMavenStyle := true,
     publishArtifact in Test := false,
     parallelExecution in Test := false,
@@ -20,10 +21,9 @@ object Build extends Build {
     javacOptions ++= Seq("-source", "1.7", "-target", "1.7"),
     libraryDependencies ++= Seq(
       "org.slf4j"             %     "slf4j-api"         % "1.7.7",
-      "org.imgscalr"          %     "imgscalr-lib"      % "4.2"       % "test",
-      "org.scalatest"         %%    "scalatest"         % "2.2.4"     % "test",
-      "org.mockito"           %     "mockito-all"       % "1.9.5"     % "test",
-      "com.sksamuel.scam"     %%    "scam"              % "0.5.2"     % "test"
+      "org.imgscalr"          %     "imgscalr-lib"      % "4.2"                % "test",
+      "org.scalatest"         %%    "scalatest"         % ScalatestVersion     % "test",
+      "org.mockito"           %     "mockito-all"       % "1.9.5"              % "test"
     ),
     publishTo := {
       val nexus = "https://oss.sonatype.org/"

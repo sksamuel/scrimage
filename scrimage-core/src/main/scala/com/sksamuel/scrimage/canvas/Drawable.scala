@@ -12,9 +12,9 @@ trait Drawable {
 }
 
 object Drawable {
-  def apply(draw: Graphics2D => Unit, context: Context = Context.Default): Drawable = new Drawable {
+  def apply(draw: Graphics2D => Unit, _context: Context = Context.Default): Drawable = new Drawable {
     def draw(g: Graphics2D): Unit = draw(g)
-    def context: Context = context
+    def context: Context = _context
   }
   def apply(img: Image, x: Int, y: Int): DrawableImage = DrawableImage(img, x, y)
   def apply(str: String, x: Int, y: Int): DrawableString = DrawableString(str, x, y)
