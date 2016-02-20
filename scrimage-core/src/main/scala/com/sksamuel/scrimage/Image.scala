@@ -175,8 +175,7 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
             position: Position = Center): Image = {
     val coveredDimensions = DimensionTools.dimensionsToCover((targetWidth, targetHeight), (width, height))
     val scaled = scaleTo(coveredDimensions._1, coveredDimensions._2, scaleMethod)
-    val x = ((targetWidth - coveredDimensions._1) / 2.0).toInt
-    val y = ((targetHeight - coveredDimensions._2) / 2.0).toInt
+    val (x, y) = position.calculateXY(targetWidth, targetHeight, coveredDimensions._1, coveredDimensions._2)
     blank(targetWidth, targetHeight).overlay(scaled, x, y)
   }
 
