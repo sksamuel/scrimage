@@ -1,7 +1,9 @@
 ## Scrimage
 
-[![Join the chat at https://gitter.im/sksamuel/scrimage](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/sksamuel/scrimage?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/sksamuel/scrimage.png)](https://travis-ci.org/sksamuel/scrimage) 
+[<img src="https://img.shields.io/maven-central/v/com.sksamuel.scrimage/scrimage-core_2.11*.svg?label=latest%20release%20for%202.11"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22scrimage-core_2.11%22)
+[<img src="https://img.shields.io/maven-central/v/com.sksamuel.scrimage/scrimage-core_2.12*.svg?label=latest%20release%20for%202.12"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22scrimage-core_2.12.0-M3%22)
+
 
 This readme is for the 2.0.x versions. For 1.4.x please see the old [README1.4.md](readme).
 
