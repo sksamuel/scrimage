@@ -32,6 +32,7 @@ case class Canvas(image: Image) {
     g.dispose()
     new Canvas(target)
   }
+
   def draw(drawables: Drawable*): Canvas = draw(drawables)
   def draw(drawables: Iterable[Drawable]): Canvas = {
     val target = image.copy

@@ -6,10 +6,12 @@ import com.sksamuel.scrimage.Color
 
 case class Context(composite: Composite = AlphaComposite.getInstance(AlphaComposite.SRC),
                    color: Color = Color.Black,
-                   antiAlias: Boolean = false,
+                   antiAlias: Boolean = true,
                    font: Option[Font] = None,
                    textSize: Int = 12,
                    painter: Option[Painter] = None) {
+
+  def withFont(font: Font): Context = copy(font = Some(font))
 
   def configure(g: Graphics2D): Unit = {
     g.setComposite(composite)

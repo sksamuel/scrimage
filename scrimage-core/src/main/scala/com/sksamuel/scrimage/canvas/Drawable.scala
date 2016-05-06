@@ -5,6 +5,7 @@ import java.awt.Graphics2D
 import com.sksamuel.scrimage.Image
 
 import scala.language.implicitConversions
+import java.awt.{Font => JFont}
 
 trait Drawable {
   def draw(g: Graphics2D): Unit
@@ -125,8 +126,12 @@ object Polygon {
   }
 }
 
-case class DrawableString(text: String, x: Int, y: Int, context: Context = Context.Default) extends Drawable {
-  def draw(g: Graphics2D): Unit = g.drawString(text, x, y)
+case class DrawableString(text: String, x: Int, y: Int, context: Context = Context.Default, font: JFont = null) extends Drawable {
+  def draw(g: Graphics2D): Unit = {
+    if (font != null)
+      g.setFont(font)
+    g.drawString(text, x, y)
+  }
 }
 
 case class DrawableImage(imageToDraw: Image, x: Int, y: Int, context: Context = Context.Default) extends Drawable {
