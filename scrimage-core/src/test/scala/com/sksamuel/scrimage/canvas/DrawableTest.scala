@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.canvas
 
-import com.sksamuel.scrimage.{Color, Image, Pixel, X11Colorlist}
+import com.sksamuel.scrimage.{Image, Pixel, X11Colorlist}
 import org.scalatest.FunSuite
 
 class DrawableTest extends FunSuite {

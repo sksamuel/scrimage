@@ -6,10 +6,12 @@ import com.sksamuel.scrimage.Color
 
 case class Context(composite: Composite = AlphaComposite.getInstance(AlphaComposite.SRC),
                    color: Color = Color.Black,
-                   antiAlias: Boolean = true,
+                   antiAlias: Boolean = false,
                    font: Option[Font] = None,
                    textSize: Int = 12,
                    painter: Option[Painter] = None) {
+
+  def withAntiAlias(b: Boolean): Context = copy(antiAlias = b)
 
   def withFont(font: Font): Context = copy(font = Some(font))
 
@@ -33,4 +35,5 @@ object Context {
   def painter(painter: Painter): Context = Context(painter = Option(painter))
   def painter(painter: Color): Context = Context(painter = Option(painter))
   def composite(composite: Composite): Context = Context(composite = composite)
+  val Aliased = Default.withAntiAlias(true)
 }
