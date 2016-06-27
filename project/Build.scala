@@ -6,7 +6,7 @@ object Build extends Build {
 
   val TwelveMonkeysVersion = "3.2.1"
   val PngjVersion = "2.1.0"
-  val MetadataExtractorVersion = "2.8.1"
+  val MetadataExtractorVersion = "2.9.1"
   val ScalatestVersion = "3.0.0-M12"
 
   val scrimageSettings = Seq(
