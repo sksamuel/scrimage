@@ -17,7 +17,7 @@ package com.sksamuel.scrimage.composite
 
 import java.awt.Graphics2D
 
-import com.sksamuel.scrimage.{AwtImage, Composite, Image}
+import com.sksamuel.scrimage.{AwtImage, Composite}
 import thirdparty.romainguy.BlendComposite
 import thirdparty.romainguy.BlendComposite.BlendingMode
 

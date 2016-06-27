@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.canvas
 
-import java.awt.{RenderingHints, AlphaComposite, Graphics2D, Composite}
+import java.awt._
 
 import com.sksamuel.scrimage.Color
 
@@ -28,6 +28,8 @@ case class Context(composite: Composite = AlphaComposite.getInstance(AlphaCompos
       g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF)
     }
   }
+
+  implicit def toConfigure: Graphics2D => Unit = { g2 => configure(g2) }
 }
 
 object Context {
