@@ -63,7 +63,7 @@ object Build extends Build {
   lazy val root = Project("scrimage", file("."))
     .settings(scrimageSettings: _*)
     .settings(publishArtifact := false)
-    .aggregate(core, filters, io)
+    .aggregate(core)
 
   lazy val core = Project("scrimage-core", file("scrimage-core"))
     .settings(scrimageSettings: _*)

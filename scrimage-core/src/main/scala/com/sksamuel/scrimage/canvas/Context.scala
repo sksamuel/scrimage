@@ -4,6 +4,7 @@ import java.awt._
 
 import com.sksamuel.scrimage.Color
 
+@deprecated("use function to configure g2", "3.0.0")
 case class Context(composite: Composite = AlphaComposite.getInstance(AlphaComposite.SRC),
                    color: Color = Color.Black,
                    antiAlias: Boolean = false,
@@ -11,10 +12,13 @@ case class Context(composite: Composite = AlphaComposite.getInstance(AlphaCompos
                    textSize: Int = 12,
                    painter: Option[Painter] = None) {
 
+  @deprecated("use function to configure g2", "3.0.0")
   def withAntiAlias(b: Boolean): Context = copy(antiAlias = b)
 
+  @deprecated("use function to configure g2", "3.0.0")
   def withFont(font: Font): Context = copy(font = Some(font))
 
+  @deprecated("use function to configure g2", "3.0.0")
   def configure(g: Graphics2D): Unit = {
     g.setComposite(composite)
     g.setColor(color)
@@ -29,13 +33,20 @@ case class Context(composite: Composite = AlphaComposite.getInstance(AlphaCompos
     }
   }
 
+  @deprecated("use function to configure g2", "3.0.0")
   implicit def toConfigure: Graphics2D => Unit = { g2 => configure(g2) }
 }
 
+@deprecated("use function to configure g2", "3.0.0")
 object Context {
+  @deprecated("use function to configure g2", "3.0.0")
   val Default = Context()
+  @deprecated("use function to configure g2", "3.0.0")
   def painter(painter: Painter): Context = Context(painter = Option(painter))
+  @deprecated("use function to configure g2", "3.0.0")
   def painter(painter: Color): Context = Context(painter = Option(painter))
+  @deprecated("use function to configure g2", "3.0.0")
   def composite(composite: Composite): Context = Context(composite = composite)
+  @deprecated("use function to configure g2", "3.0.0")
   val Aliased = Default.withAntiAlias(true)
 }
