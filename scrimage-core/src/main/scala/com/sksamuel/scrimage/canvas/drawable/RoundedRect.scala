@@ -11,8 +11,12 @@ case class RoundedRect(x: Int,
                        arcWidth: Int,
                        arcHeight: Int,
                        configure: Graphics2D => Unit = g => ()) extends Drawable {
+
   def draw(g: Graphics2D): Unit = g.drawRoundRect(x, y, width, height, arcWidth, arcHeight)
+
   def fill: FilledRoundedRect = FilledRoundedRect(x, y, width, height, arcWidth, arcHeight, configure)
+
+  def squared = Rect(x, y, width, height, configure)
 }
 
 object RoundedRect {

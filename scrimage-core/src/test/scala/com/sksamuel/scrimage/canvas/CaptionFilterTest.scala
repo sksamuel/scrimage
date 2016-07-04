@@ -10,17 +10,18 @@ class CaptionFilterTest extends WordSpec with Matchers {
 
   "CaptionFilter" should {
     "place caption on image" in {
-      image.filter(new CaptionFilter(
+      val q = image.filter(new CaptionFilter(
         "This is an example of a big scary mudsucking fish",
         padding = Padding(40, 40, 20, 20),
         textSize = 22,
         textAlpha = 1,
         antiAlias = false, // anti alias implementation is different on openjdk vs oraclejdk, so tests can't use it reliably
         font = font
-      )) shouldBe Image.fromResource("/com/sksamuel/scrimage/canvas/fish_caption_bottom_left.png")
+      ))
+      q shouldBe Image.fromResource("/com/sksamuel/scrimage/canvas/fish_caption_bottom_left.png")
     }
     "place caption using full width" in {
-      image.filter(new CaptionFilter(
+      val q = image.filter(new CaptionFilter(
         "This is an example of a big scary mudsucking fish",
         padding = Padding(40, 40, 20, 20),
         textSize = 22,
@@ -28,10 +29,11 @@ class CaptionFilterTest extends WordSpec with Matchers {
         fullWidth = true,
         antiAlias = false,
         font = font
-      )) shouldBe Image.fromResource("/com/sksamuel/scrimage/canvas/fish_caption_full_width.png")
+      ))
+      q shouldBe Image.fromResource("/com/sksamuel/scrimage/canvas/fish_caption_full_width.png")
     }
     "place caption using caption alpha and color" in {
-      image.filter(new CaptionFilter(
+      val q = image.filter(new CaptionFilter(
         "This is an example of a big scary mudsucking fish",
         padding = Padding(40, 40, 20, 20),
         textSize = 22,
@@ -40,10 +42,11 @@ class CaptionFilterTest extends WordSpec with Matchers {
         antiAlias = false,
         textAlpha = 1,
         font = font
-      )) shouldBe Image.fromResource("/com/sksamuel/scrimage/canvas/fish_caption_color_alpha.png")
+      ))
+      q shouldBe Image.fromResource("/com/sksamuel/scrimage/canvas/fish_caption_color_alpha.png")
     }
     "place caption using text alpha and color" in {
-      image.filter(new CaptionFilter(
+      val q = image.filter(new CaptionFilter(
         "This is an example of a big scary mudsucking fish",
         padding = Padding(40, 40, 20, 20),
         textSize = 22,
@@ -51,7 +54,8 @@ class CaptionFilterTest extends WordSpec with Matchers {
         antiAlias = false,
         textColor = X11Colorlist.CadetBlue4,
         font = font
-      )) shouldBe Image.fromResource("/com/sksamuel/scrimage/canvas/fish_caption_text_color_alpha.png")
+      ))
+      q shouldBe Image.fromResource("/com/sksamuel/scrimage/canvas/fish_caption_text_color_alpha.png")
     }
   }
 }

@@ -415,7 +415,6 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   test("enlarging a canvas with TopLeft should position the image to the left and top") {
     val scaled = image.scaleTo(100, 100)
     val resized = scaled.resizeTo(200, 200, TopLeft)
-    resized.output("resized.png")
     assert(200 === resized.width)
     assert(200 === resized.height)
     for ( x <- 0 until 100; y <- 0 until 100 ) assert(scaled.pixel(x, y) === resized.pixel(x, y))

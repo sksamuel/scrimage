@@ -47,11 +47,12 @@ class CaptionFilter(text: String,
       image.height - captionHeight,
       captionWidth,
       captionHeight,
-      Context(
-        composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, captionAlpha.toFloat),
-        color = captionBackground,
-        antiAlias = antiAlias
-      )
+      g2 => {
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, captionAlpha.toFloat))
+        g2.setFont(new java.awt.Font(font.wrapped.getName, 0, textSize))
+        g2.setColor(captionBackground)
+        g2.setAntiAlias(antiAlias)
+      }
     )
 
     val string = Text(
@@ -60,7 +61,6 @@ class CaptionFilter(text: String,
       captionY + padding.top + g2.getFontMetrics.getHeight - descent,
       g2 => {
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, textAlpha.toFloat))
-        g2.setFont(new java.awt.Font(font.wrapped.getName, 0, textSize))
         g2.setColor(textColor)
         g2.setAntiAlias(antiAlias)
       }
