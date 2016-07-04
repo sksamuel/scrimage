@@ -1,5 +1,6 @@
 package com.sksamuel.scrimage.canvas
 
+import com.sksamuel.scrimage.canvas.drawable.{Line, Polygon, Rect}
 import com.sksamuel.scrimage.{Image, Pixel, X11Colorlist}
 import org.scalatest.FunSuite
 

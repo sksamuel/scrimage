@@ -34,7 +34,7 @@ case class Context(composite: Composite = AlphaComposite.getInstance(AlphaCompos
   }
 
   @deprecated("use function to configure g2", "3.0.0")
-  implicit def toConfigure: Graphics2D => Unit = { g2 => configure(g2) }
+  implicit def toFn: Graphics2D => Unit = { g2 => configure(g2) }
 }
 
 @deprecated("use function to configure g2", "3.0.0")

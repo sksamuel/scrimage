@@ -3,6 +3,7 @@ package com.sksamuel.scrimage.canvas
 import java.awt.{AlphaComposite, Graphics2D}
 
 import com.sksamuel.scrimage.Position.BottomLeft
+import com.sksamuel.scrimage.canvas.drawable.{FilledRect, Text}
 import com.sksamuel.scrimage.{Color, Filter, Image, Position}
 
 import scala.language.implicitConversions
@@ -53,17 +54,16 @@ class CaptionFilter(text: String,
       )
     )
 
-    val string = DrawableString(
+    val string = Text(
       text,
       captionX + padding.left,
       captionY + padding.top + g2.getFontMetrics.getHeight - descent,
-      Context(
-        composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, textAlpha.toFloat),
-        font = Some(font),
-        color = textColor,
-        textSize = textSize,
-        antiAlias = antiAlias
-      )
+      g2 => {
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, textAlpha.toFloat))
+        g2.setFont(new java.awt.Font(font.wrapped.getName, 0, textSize))
+        g2.setColor(textColor)
+        g2.setAntiAlias(antiAlias)
+      }
     )
 
     image.drawInPlace(bg, string)

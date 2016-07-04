@@ -3,6 +3,7 @@ package com.sksamuel.scrimage.canvas
 import org.scalatest.FlatSpec
 import com.sksamuel.scrimage.Image
 import com.sksamuel.scrimage.canvas.Canvas._
+import com.sksamuel.scrimage.canvas.drawable.Rect
 
 /** @author Stephen Samuel */
 class ImplicitTest extends FlatSpec {
