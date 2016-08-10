@@ -1,15 +1,14 @@
 package com.sksamuel.scrimage
 
-import java.io.FileOutputStream
-
 import com.sksamuel.scrimage.nio.JpegWriter
-import org.apache.commons.io.{FileUtils, IOUtils}
+import org.apache.commons.io.IOUtils
 import org.scalatest.{Matchers, WordSpec}
 
 class IphoneOrientationTest extends WordSpec with Matchers {
 
   "iphone image" should {
     "be re-orientated" in {
+      // Images from: https://github.com/recurser/exif-orientation-examples
       Image.fromResource("/com/sksamuel/scrimage/iphone/portrait_1.jpg").bytes(new JpegWriter(100, true)) shouldBe
         IOUtils.toByteArray(getClass.getResourceAsStream("/com/sksamuel/scrimage/iphone/portrait_1_expected.jpg"))
 
