@@ -1,9 +1,6 @@
 package com.sksamuel.scrimage.canvas
 
-import java.io.File
-
 import com.sksamuel.scrimage.Image
-import org.apache.commons.io.FileUtils
 import org.scalatest.{Matchers, WordSpec}
 
 class WatermarkTest extends WordSpec with Matchers {
