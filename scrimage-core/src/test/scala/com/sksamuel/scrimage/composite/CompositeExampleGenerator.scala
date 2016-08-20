@@ -37,8 +37,8 @@ object CompositeExampleGenerator extends App {
     ("subtract", new SubtractComposite(_))
   )
 
-  val l1 = Image(getClass.getResourceAsStream("/mailbox.jpg")).scaleTo(1200, 800)
-  val l2 = Image(getClass.getResourceAsStream("/palm.jpg")).scaleTo(1200, 800)
+  val l1 = Image.fromStream(getClass.getResourceAsStream("/mailbox.jpg")).scaleTo(1200, 800)
+  val l2 = Image.fromStream(getClass.getResourceAsStream("/palm.jpg")).scaleTo(1200, 800)
   val s1 = l1.scaleToWidth(200)
   val s2 = l2.scaleToWidth(200)
 
