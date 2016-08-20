@@ -840,9 +840,6 @@ object Image extends Using {
     IphoneOrientation.reorient(image, metadata).withMetadata(metadata)
   }
 
-  @deprecated("use fromStream", "2.0")
-  def apply(in: InputStream): Image = fromStream(in)
-
   /**
     * Create a new Image from an input stream. This is intended to create
     * an image from an image format eg PNG, not from a stream of pixels.
@@ -853,7 +850,6 @@ object Image extends Using {
     */
   def fromStream(in: InputStream, `type`: Int = CANONICAL_DATA_TYPE): Image = {
     require(in != null)
-    require(in.available > 0)
     val bytes = IOUtils.toByteArray(in)
     apply(bytes, `type`)
   }
@@ -864,9 +860,6 @@ object Image extends Using {
   def fromResource(path: String, `type`: Int = CANONICAL_DATA_TYPE): Image = {
     fromStream(getClass.getResourceAsStream(path), `type`)
   }
-
-  @deprecated("use fromFile", "2.0")
-  def apply(file: File): Image = fromFile(file)
 
   /**
     * Create a new Image from a file.
@@ -886,8 +879,6 @@ object Image extends Using {
     * @param awt the source AWT Image
     * @return a new Scrimage Image
     */
-  @deprecated("use fromAwt", "2.0")
-  def apply(awt: java.awt.Image): Image = fromAwt(awt)
   def fromAwt(awt: java.awt.Image, `type`: Int = CANONICAL_DATA_TYPE): Image = {
     val target = new BufferedImage(awt.getWidth(null), awt.getHeight(null), `type`)
     val g2 = target.getGraphics
