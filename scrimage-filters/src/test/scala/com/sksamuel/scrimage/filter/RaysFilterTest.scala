@@ -10,6 +10,6 @@ class RaysFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTes
   val expected = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_rays.png")
 
   test("filter output matches expected") {
-    assert(Image(original).filter(RaysFilter(threshold = 0.1f, strength = 0.6f)) === Image(expected))
+    assert(Image.fromStream(original).filter(RaysFilter(threshold = 0.1f, strength = 0.6f)) === Image.fromStream(expected))
   }
 }

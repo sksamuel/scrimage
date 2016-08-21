@@ -10,6 +10,6 @@ class MaximumFilterTest extends FunSuite with BeforeAndAfter with OneInstancePer
   val expected = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_maximum.png")
 
   test("max filter output matches expected") {
-    assert(Image(original).filter(MaximumFilter) === Image(expected))
+    assert(Image.fromStream(original).filter(MaximumFilter) === Image.fromStream(expected))
   }
 }

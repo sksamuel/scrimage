@@ -11,8 +11,8 @@ class QuanitzeFilterTest extends FunSuite with BeforeAndAfter with OneInstancePe
   val expected_256 = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_quantize_256.png")
 
   test("filter output matches expected") {
-    val image = Image(original)
-    assert(image.filter(QuantizeFilter(64)) == Image(expected_64))
-    assert(image.filter(QuantizeFilter(256)) == Image(expected_256))
+    val image = Image.fromStream(original)
+    assert(image.filter(QuantizeFilter(64)) == Image.fromStream(expected_64))
+    assert(image.filter(QuantizeFilter(256)) == Image.fromStream(expected_256))
   }
 }

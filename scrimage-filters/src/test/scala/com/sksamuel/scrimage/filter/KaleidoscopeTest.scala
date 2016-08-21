@@ -6,10 +6,10 @@ import com.sksamuel.scrimage.Image
 /** @author Stephen Samuel */
 class KaleidoscopeTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
 
-  val original = Image(getClass.getResourceAsStream("/bird_small.png"))
+  val original = Image.fromStream(getClass.getResourceAsStream("/bird_small.png"))
 
   test("kaleidoscope filter output matches expected") {
-    val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_kaleidoscope.png"))
+    val expected = Image.fromStream(getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_kaleidoscope.png"))
     assert(original.filter(KaleidoscopeFilter) === expected)
   }
 }

@@ -10,6 +10,6 @@ class OilFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest
   val expected = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_oil.png")
 
   test("filter output matches expected") {
-    assert(Image(original).filter(OilFilter()) === Image(expected))
+    assert(Image.fromStream(original).filter(OilFilter()) === Image.fromStream(expected))
   }
 }

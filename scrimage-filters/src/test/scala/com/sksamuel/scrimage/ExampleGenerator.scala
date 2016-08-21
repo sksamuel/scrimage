@@ -11,9 +11,9 @@ object ExampleGenerator extends App {
 
   import scala.concurrent.ExecutionContext.Implicits.global
 
-  val image1 = Image(getClass.getResourceAsStream("/bird.jpg"))
-  val image2 = Image(getClass.getResourceAsStream("/colosseum.jpg"))
-  val image3 = Image(getClass.getResourceAsStream("/lanzarote.jpg"))
+  val image1 = Image.fromStream(getClass.getResourceAsStream("/bird.jpg"))
+  val image2 = Image.fromStream(getClass.getResourceAsStream("/colosseum.jpg"))
+  val image3 = Image.fromStream(getClass.getResourceAsStream("/lanzarote.jpg"))
 
   val filters: List[(String, Filter)] = List(
     ("blur", BlurFilter),

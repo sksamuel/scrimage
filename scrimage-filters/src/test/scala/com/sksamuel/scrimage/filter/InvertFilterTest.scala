@@ -10,6 +10,6 @@ class InvertFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerT
   val expected = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_invert.png")
 
   test("filter output matches expected") {
-    assert(Image(original).filter(InvertFilter) === Image(expected))
+    assert(Image.fromStream(original).filter(InvertFilter) === Image.fromStream(expected))
   }
 }

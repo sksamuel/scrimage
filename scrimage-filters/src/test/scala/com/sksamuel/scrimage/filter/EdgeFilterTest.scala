@@ -10,6 +10,6 @@ class EdgeFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTes
   val expected = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_edge.png")
 
   test("filter output matches expected") {
-    assert(Image(original).filter(EdgeFilter) === Image(expected))
+    assert(Image.fromStream(original).filter(EdgeFilter) === Image.fromStream(expected))
   }
 }

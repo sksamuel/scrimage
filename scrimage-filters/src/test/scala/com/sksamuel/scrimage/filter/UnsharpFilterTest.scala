@@ -10,6 +10,6 @@ class UnsharpFilterTest extends FunSuite with BeforeAndAfter with OneInstancePer
   val expected = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_unsharp.png")
 
   test("filter output matches expected") {
-    assert(Image(original).filter(UnsharpFilter()) === Image(expected))
+    assert(Image.fromStream(original).filter(UnsharpFilter()) === Image.fromStream(expected))
   }
 }

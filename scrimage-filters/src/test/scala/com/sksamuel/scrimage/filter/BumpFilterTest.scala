@@ -10,6 +10,6 @@ class BumpFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTes
   val expected = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_bump.png")
 
   test("filter output matches expected") {
-    assert(Image(original).filter(BumpFilter) === Image(expected))
+    assert(Image.fromStream(original).filter(BumpFilter) === Image.fromStream(expected))
   }
 }

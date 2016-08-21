@@ -10,6 +10,6 @@ class SolarizeFilterTest extends FunSuite with BeforeAndAfter with OneInstancePe
   val expected = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_solarize.png")
 
   test("solarize filter output matches expected") {
-    assert(Image(original).filter(SolarizeFilter) === Image(expected))
+    assert(Image.fromStream(original).filter(SolarizeFilter) === Image.fromStream(expected))
   }
 }

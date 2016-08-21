@@ -10,6 +10,6 @@ class BlurFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTes
   val expected = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_blur.png")
 
   test("filter output matches expected") {
-    assert(Image(original).filter(BlurFilter) == Image(expected))
+    assert(Image.fromStream(original).filter(BlurFilter) == Image.fromStream(expected))
   }
 }

@@ -10,6 +10,6 @@ class GlowFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTes
   val expected = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_glow.png")
 
   test("filter output matches expected") {
-    assert(Image(original).filter(GlowFilter()) === Image(expected))
+    assert(Image.fromStream(original).filter(GlowFilter()) === Image.fromStream(expected))
   }
 }

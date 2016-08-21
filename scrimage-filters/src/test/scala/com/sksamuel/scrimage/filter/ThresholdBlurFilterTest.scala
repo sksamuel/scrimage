@@ -10,6 +10,6 @@ class ThresholdBlurFilterTest extends FunSuite with BeforeAndAfter with OneInsta
   val expected = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_threshold.png")
 
   test("filter output matches expected") {
-    assert(Image(original).filter(ThresholdFilter()) === Image(expected))
+    assert(Image.fromStream(original).filter(ThresholdFilter()) === Image.fromStream(expected))
   }
 }
