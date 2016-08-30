@@ -2,7 +2,7 @@ package com.sksamuel.scrimage
 
 import org.scalatest.{Matchers, WordSpec}
 
-class Image47Test extends WordSpec with Matchers {
+class Issue47Test extends WordSpec with Matchers {
 
   "loading iphone image" should {
     "detect rotation flag" in {
