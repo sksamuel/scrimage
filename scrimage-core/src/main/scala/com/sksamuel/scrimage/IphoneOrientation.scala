@@ -1,11 +1,14 @@
 package com.sksamuel.scrimage
 
+import com.drew.metadata.exif.ExifIFD0Directory
+
 object IphoneOrientation {
 
   def reorient(image: Image, metadata: ImageMetadata): Image = {
-    val orientationTags = metadata.tagsBy(_.`type` == 274)
-    if (orientationTags.map(_.rawValue).toSet.size == 1) {
-      orientationTags.head.rawValue match {
+    val imageOrientations = imageOrientationsOf(metadata)
+
+    if (imageOrientations.size == 1) {
+      imageOrientations.head match {
         // Normal
         case "1" => image
 
@@ -36,5 +39,14 @@ object IphoneOrientation {
     } else {
       image
     }
+  }
+
+  private def imageOrientationsOf(metadata: ImageMetadata): Set[String] = {
+    val exifIFD0DirName = new ExifIFD0Directory().getName
+
+    metadata.directories
+      .find(_.name == exifIFD0DirName)
+      .map(_.tags.filter(_.`type` == 274).map(_.rawValue).toSet)
+      .getOrElse(Set.empty)
   }
 }
