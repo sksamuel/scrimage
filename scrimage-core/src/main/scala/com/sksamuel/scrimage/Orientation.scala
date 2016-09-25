@@ -2,7 +2,19 @@ package com.sksamuel.scrimage
 
 import com.drew.metadata.exif.ExifIFD0Directory
 
-object IphoneOrientation {
+object Orientation {
+
+  def requiresReorientation(metadata: ImageMetadata): Boolean = {
+    val imageOrientations = imageOrientationsOf(metadata)
+    if (imageOrientations.size == 1) {
+      imageOrientations.head match {
+        case "2" | "3" | "4" | "5" | "6" | "7" | "8" => true
+        case _ => false
+      }
+    } else {
+      false
+    }
+  }
 
   def reorient(image: Image, metadata: ImageMetadata): Image = {
     val imageOrientations = imageOrientationsOf(metadata)

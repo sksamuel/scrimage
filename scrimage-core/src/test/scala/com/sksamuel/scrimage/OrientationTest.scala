@@ -4,7 +4,7 @@ import com.sksamuel.scrimage.nio.{ImageWriter, JpegWriter}
 import org.apache.commons.io.IOUtils
 import org.scalatest.{Matchers, WordSpec}
 
-class IphoneOrientationTest extends WordSpec with Matchers {
+class OrientationTest extends WordSpec with Matchers {
 
   "iphone image" should {
     "be re-orientated" in {

@@ -837,7 +837,7 @@ object Image extends Using {
     val image = ImageReader.fromBytes(bytes, `type`)
     val metadata = ImageMetadata.fromBytes(bytes)
     // detect iphone mode, and rotate
-    IphoneOrientation.reorient(image, metadata).withMetadata(metadata)
+    Orientation.reorient(image, metadata).withMetadata(metadata)
   }
 
   @deprecated("use fromStream", "2.0")
