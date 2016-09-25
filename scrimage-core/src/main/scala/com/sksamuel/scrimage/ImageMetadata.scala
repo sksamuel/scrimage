@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage
 
 import java.io.{ByteArrayInputStream, File, InputStream}
-import java.nio.file.Files
+import java.nio.file.{Files, Path}
 
 import com.drew.imaging.ImageMetadataReader
 import com.drew.metadata.Metadata
@@ -19,6 +19,8 @@ object ImageMetadata extends Using {
     }
     fromMetadata(metadata)
   }
+
+  def fromPath(path: Path) : ImageMetadata = fromFile(path.toFile)
 
   def fromFile(file: File): ImageMetadata = using(Files.newInputStream(file.toPath))(fromStream)
 
