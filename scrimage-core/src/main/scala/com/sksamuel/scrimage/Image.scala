@@ -108,9 +108,9 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
     * @param height the maximum height
     * @return the constrained image.
     */
-  def bound(width: Int, height: Int): Image = {
+  def bound(width: Int, height: Int, scaleMethod: ScaleMethod = ScaleMethod.Bicubic): Image = {
     if (this.width <= width && this.height <= height) this
-    else max(width, height)
+    else max(width, height, scaleMethod)
   }
 
   /**
@@ -307,9 +307,9 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
     * @param maxH the maximum height
     * @return A new image that is the result of the binding.
     */
-  def max(maxW: Int, maxH: Int): Image = {
+  def max(maxW: Int, maxH: Int, scaleMethod: ScaleMethod = ScaleMethod.Bicubic): Image = {
     val dimensions = DimensionTools.dimensionsToFit((maxW, maxH), (width, height))
-    scaleTo(dimensions._1, dimensions._2)
+    scaleTo(dimensions._1, dimensions._2, scaleMethod)
   }
 
   protected[scrimage] def op(op: BufferedImageOp): Image = {
