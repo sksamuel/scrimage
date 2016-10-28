@@ -157,7 +157,7 @@ case class RGBColor(red: Int, green: Int, blue: Int, alpha: Int = 255) extends C
 
     val (h: Float, s: Float) = if (max == min) {
       // achromatic
-      (0, 0)
+      (0f, 0f)
     } else {
       val d = max - min
       val s = if (l > 0.5) d / (2 - max - min) else d / (max + min)

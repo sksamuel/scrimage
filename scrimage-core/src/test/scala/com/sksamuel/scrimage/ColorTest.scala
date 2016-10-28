@@ -18,6 +18,12 @@ class ColorTest extends WordSpec with Matchers {
       hsl.saturation shouldBe 0.75f +- 0.01f
       hsl.lightness shouldBe 0.765f +- 0.01f
     }
+    "convert achromatic rgb to hsl correctly" in {
+      val hsl = RGBColor(50, 50, 50).toHSL
+      hsl.hue shouldBe 0f +- 0.01f
+      hsl.saturation shouldBe 0f +- 0.01f
+      hsl.lightness shouldBe 0.196f +- 0.01f
+    }
     "convert rgb to hsv correctly" in {
       val hsl = RGBColor(255, 150, 200).toHSV
       hsl.hue shouldBe 331.42f +- 0.01f
