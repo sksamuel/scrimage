@@ -219,7 +219,7 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
   def resizeToHeight(targetHeight: Int,
                      position: Position = Center,
                      background: Color = Color.Transparent): ParImage = {
-    resizeTo((targetHeight / height.toDouble * height).toInt, targetHeight, position, background)
+    resizeTo((targetHeight / height.toDouble * width).toInt, targetHeight, position, background)
   }
 
   /**

@@ -385,7 +385,7 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
     * @return a new Image that is the result of resizing the canvas.
     */
   def resizeToHeight(targetHeight: Int, position: Position = Center, background: Color = Color.Transparent): Image = {
-    resizeTo((targetHeight / height.toDouble * height).toInt, targetHeight, position, background)
+    resizeTo((targetHeight / height.toDouble * width).toInt, targetHeight, position, background)
   }
 
   /**
