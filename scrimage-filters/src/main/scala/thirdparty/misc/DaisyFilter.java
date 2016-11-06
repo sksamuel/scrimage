@@ -5,6 +5,7 @@ package thirdparty.misc;
  */
 
 import thirdparty.romainguy.BlendComposite;
+import thirdparty.romainguy.BlendingMode;
 
 import java.awt.*;
 import java.awt.color.ColorSpace;
@@ -39,7 +40,7 @@ public class DaisyFilter {
         //Blending Mode: Soft Light, 50%
         Graphics2D gdst = dstImg.createGraphics();
         gdst.drawImage(bi, 0, 0, null);
-        gdst.setComposite(BlendComposite.getInstance(BlendComposite.BlendingMode.SCREEN, 0.6f));
+        gdst.setComposite(BlendComposite.getInstance(BlendingMode.SCREEN, 0.6f));
         gdst.drawImage(changedColor, 0, 0, bi.getWidth(), bi.getHeight(), null);
 
         return dstImg;

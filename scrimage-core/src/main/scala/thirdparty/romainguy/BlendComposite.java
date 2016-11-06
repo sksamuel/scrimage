@@ -34,38 +34,6 @@ import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 
 public final class BlendComposite implements Composite {
-    public enum BlendingMode {
-        AVERAGE,
-        MULTIPLY,
-        SCREEN,
-        DARKEN,
-        LIGHTEN,
-        OVERLAY,
-        HARD_LIGHT,
-        DIFFERENCE,
-        NEGATION,
-        EXCLUSION,
-        COLOR_DODGE,
-        INVERSE_COLOR_DODGE,
-        SOFT_DODGE,
-        COLOR_BURN,
-        INVERSE_COLOR_BURN,
-        SOFT_BURN,
-        REFLECT,
-        GLOW,
-        FREEZE,
-        HEAT,
-        ADD,
-        SUBTRACT,
-        STAMP,
-        RED,
-        GREEN,
-        BLUE,
-        HUE,
-        SATURATION,
-        COLOR,
-        LUMINOSITY
-    }
 
     private float alpha;
     private BlendingMode mode;
