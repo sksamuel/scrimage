@@ -70,10 +70,10 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
     * @return
     */
   def autocrop(color: Color): Image = {
-    val x1 = AutocropOps.scanright(color, height, 0, pixels)
-    val x2 = AutocropOps.scanleft(color, height, width - 1, pixels)
-    val y1 = AutocropOps.scandown(color, width, 0, pixels)
-    val y2 = AutocropOps.scanup(color, width, height - 1, pixels)
+    val x1 = AutocropOps.scanright(color, height, width, 0, pixels)
+    val x2 = AutocropOps.scanleft(color, height, width, width - 1, pixels)
+    val y1 = AutocropOps.scandown(color, height, width, 0, pixels)
+    val y2 = AutocropOps.scanup(color, height, width, height - 1, pixels)
     subimage(x1, y1, x2 - x1, y2 - y1)
   }
 
