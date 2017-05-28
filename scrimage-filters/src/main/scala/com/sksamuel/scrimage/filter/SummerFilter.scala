@@ -40,5 +40,5 @@ class SummerFilter(vignette: Boolean)(implicit executor: ExecutionContext) exten
 }
 
 object SummerFilter {
-  def apply(vignette: Boolean = true)(implicit executor: ExecutionContext): SummerFilter = new SummerFilter(true)
+  def apply(vignette: Boolean = true)(implicit executor: ExecutionContext): SummerFilter = new SummerFilter(vignette)
 }
