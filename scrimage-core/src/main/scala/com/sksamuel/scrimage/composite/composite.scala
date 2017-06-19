@@ -18,8 +18,7 @@ package com.sksamuel.scrimage.composite
 import java.awt.Graphics2D
 
 import com.sksamuel.scrimage.{AwtImage, Composite}
-import thirdparty.romainguy.BlendComposite
-import thirdparty.romainguy.BlendComposite.BlendingMode
+import thirdparty.romainguy.{BlendComposite, BlendingMode}
 
 /** @author Stephen Samuel */
 class BlenderComposite(mode: BlendingMode, alpha: Double) extends Composite {
@@ -30,25 +29,25 @@ class BlenderComposite(mode: BlendingMode, alpha: Double) extends Composite {
     g2.dispose()
   }
 }
-class AverageComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.AVERAGE, alpha.toFloat)
-class BlueComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.BLUE, alpha.toFloat)
-class ColorComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.COLOR, alpha.toFloat)
-class ColorBurnComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.COLOR_BURN, alpha.toFloat)
-class ColorDodgeComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.COLOR_DODGE, alpha.toFloat)
-class DifferenceComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.DIFFERENCE, alpha.toFloat)
-class GreenComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.GREEN, alpha.toFloat)
-class GlowComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.GLOW, alpha.toFloat)
-class HueComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.HUE, alpha.toFloat)
-class HardLightComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.HARD_LIGHT, alpha.toFloat)
-class HeatComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.HEAT, alpha.toFloat)
-class LightenComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.LIGHTEN, alpha.toFloat)
-class LuminosityComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.LUMINOSITY, alpha.toFloat)
-class MultiplyComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.MULTIPLY, alpha.toFloat)
-class NegationComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.NEGATION, alpha.toFloat)
-class OverlayComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.OVERLAY, alpha.toFloat)
-class RedComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.RED, alpha.toFloat)
-class ReflectComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.REFLECT, alpha.toFloat)
-class SaturationComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.SATURATION, alpha.toFloat)
-class ScreenComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.SCREEN, alpha.toFloat)
-class SubtractComposite(alpha: Double) extends BlenderComposite(BlendComposite.BlendingMode.SUBTRACT, alpha.toFloat)
+class AverageComposite(alpha: Double) extends BlenderComposite(BlendingMode.AVERAGE, alpha.toFloat)
+class BlueComposite(alpha: Double) extends BlenderComposite(BlendingMode.BLUE, alpha.toFloat)
+class ColorComposite(alpha: Double) extends BlenderComposite(BlendingMode.COLOR, alpha.toFloat)
+class ColorBurnComposite(alpha: Double) extends BlenderComposite(BlendingMode.COLOR_BURN, alpha.toFloat)
+class ColorDodgeComposite(alpha: Double) extends BlenderComposite(BlendingMode.COLOR_DODGE, alpha.toFloat)
+class DifferenceComposite(alpha: Double) extends BlenderComposite(BlendingMode.DIFFERENCE, alpha.toFloat)
+class GreenComposite(alpha: Double) extends BlenderComposite(BlendingMode.GREEN, alpha.toFloat)
+class GlowComposite(alpha: Double) extends BlenderComposite(BlendingMode.GLOW, alpha.toFloat)
+class HueComposite(alpha: Double) extends BlenderComposite(BlendingMode.HUE, alpha.toFloat)
+class HardLightComposite(alpha: Double) extends BlenderComposite(BlendingMode.HARD_LIGHT, alpha.toFloat)
+class HeatComposite(alpha: Double) extends BlenderComposite(BlendingMode.HEAT, alpha.toFloat)
+class LightenComposite(alpha: Double) extends BlenderComposite(BlendingMode.LIGHTEN, alpha.toFloat)
+class LuminosityComposite(alpha: Double) extends BlenderComposite(BlendingMode.LUMINOSITY, alpha.toFloat)
+class MultiplyComposite(alpha: Double) extends BlenderComposite(BlendingMode.MULTIPLY, alpha.toFloat)
+class NegationComposite(alpha: Double) extends BlenderComposite(BlendingMode.NEGATION, alpha.toFloat)
+class OverlayComposite(alpha: Double) extends BlenderComposite(BlendingMode.OVERLAY, alpha.toFloat)
+class RedComposite(alpha: Double) extends BlenderComposite(BlendingMode.RED, alpha.toFloat)
+class ReflectComposite(alpha: Double) extends BlenderComposite(BlendingMode.REFLECT, alpha.toFloat)
+class SaturationComposite(alpha: Double) extends BlenderComposite(BlendingMode.SATURATION, alpha.toFloat)
+class ScreenComposite(alpha: Double) extends BlenderComposite(BlendingMode.SCREEN, alpha.toFloat)
+class SubtractComposite(alpha: Double) extends BlenderComposite(BlendingMode.SUBTRACT, alpha.toFloat)
 
