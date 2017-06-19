@@ -55,6 +55,7 @@ case class StreamingGifWriter(frameDelay: Duration = 1.second, infiniteLoop: Boo
 
   abstract class GifStream {
     def writeFrame(image: Image): GifStream
+    def writeFrame(image: Image, delay: Duration): GifStream
     def finish(): Unit
   }
 
@@ -108,6 +109,18 @@ case class StreamingGifWriter(frameDelay: Duration = 1.second, infiniteLoop: Boo
 
       def writeFrame(image: Image): GifStream = {
         writer.writeToSequence(new IIOImage(image.awt, null, imageMetaData), imageWriteParam)
+        this
+      }
+
+      def writeFrame(image: Image, delay: Duration): GifStream = {
+        val rootOverride = imageMetaData.getAsTree(metaFormatName).asInstanceOf[IIOMetadataNode]
+        val graphicsControlExtensionNodeOverride = getNode(rootOverride, "GraphicControlExtension")
+        graphicsControlExtensionNodeOverride.setAttribute("delayTime", (delay.toMillis / 10).toString)
+        imageMetaData.setFromTree(metaFormatName, rootOverride)
+
+        writer.writeToSequence(new IIOImage(image.awt, null, imageMetaData), imageWriteParam)
+
+        imageMetaData.setFromTree(metaFormatName, root)
         this
       }
 
