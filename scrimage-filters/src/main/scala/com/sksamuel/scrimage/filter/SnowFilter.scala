@@ -18,9 +18,8 @@ package com.sksamuel.scrimage.filter
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 
-import com.sksamuel.scrimage.{MutableAwtImage, AwtImage, Image, Filter}
-import thirdparty.romainguy.BlendComposite
-import thirdparty.romainguy.BlendComposite.BlendingMode
+import com.sksamuel.scrimage.{Filter, Image}
+import thirdparty.romainguy.{BlendComposite, BlendingMode}
 
 import scala.concurrent.ExecutionContext
 

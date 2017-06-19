@@ -2,8 +2,9 @@ package com.sksamuel.scrimage.filter
 
 import java.awt.{Color, Graphics2D}
 
-import com.sksamuel.scrimage.{Image, Filter, MutableAwtImage}
+import com.sksamuel.scrimage.{Filter, Image}
 import thirdparty.romainguy.BlendComposite._
+import thirdparty.romainguy.BlendingMode
 
 object BackgroundBlendFilter extends Filter {
   def apply(image: Image) {

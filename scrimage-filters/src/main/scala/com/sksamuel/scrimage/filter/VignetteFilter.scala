@@ -19,10 +19,8 @@ import java.awt.geom.Point2D
 import java.awt.{Color, Graphics2D, RadialGradientPaint, RenderingHints}
 
 import com.sksamuel.scrimage.{Filter, Image}
-import thirdparty.romainguy.BlendComposite
-import thirdparty.romainguy.BlendComposite.BlendingMode
+import thirdparty.romainguy.{BlendComposite, BlendingMode}
 
-/** @author Stephen Samuel */
 class VignetteFilter(start: Double, end: Double, blur: Double, color: Color = Color.BLACK) extends Filter {
   require(start >= 0)
   require(start <= 1)
