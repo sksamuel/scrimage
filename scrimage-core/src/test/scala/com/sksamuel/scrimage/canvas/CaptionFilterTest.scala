@@ -1,6 +1,7 @@
 package com.sksamuel.scrimage.canvas
 
-import com.sksamuel.scrimage.{X11Colorlist, Image}
+import com.sksamuel.scrimage.nio.ImageWriter
+import com.sksamuel.scrimage.{Image, X11Colorlist}
 import org.scalatest.{Matchers, WordSpec}
 
 class CaptionFilterTest extends WordSpec with Matchers {
@@ -56,6 +57,18 @@ class CaptionFilterTest extends WordSpec with Matchers {
         font = font
       ))
       q shouldBe Image.fromResource("/com/sksamuel/scrimage/canvas/fish_caption_text_color_alpha.png")
+    }
+    "place caption using anti alias" in {
+      val q = image.filter(new CaptionFilter(
+        "This is an example of a big scary mudsucking fish",
+        padding = Padding(40, 40, 20, 20),
+        textSize = 22,
+        textAlpha = 1,
+        fullWidth = false,
+        antiAlias = true,
+        font = font
+      ))
+      q shouldBe Image.fromResource("/com/sksamuel/scrimage/canvas/fish_caption_anti_alias.png")
     }
   }
 }
