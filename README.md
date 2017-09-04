@@ -220,15 +220,15 @@ The`scrimage-io-extra` package brings in readers/writers for less common formats
 
 Note: The canvas operations are now part of the core library since 2.0.1
 
-Scrimage is cross compiled for scala 2.11 and 2.10.
+Scrimage is cross compiled for scala 2.12, 2.11 and 2.10.
 
 If using SBT then you want:
 ```scala
-libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-core" % "2.1.7"
+libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-core" % "2.x.x"
 
-libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-io-extra" % "2.1.7"
+libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-io-extra" % "2.x.x"
 
-libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-filters" % "2.1.7"
+libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-filters" % "2.x.x"
 ```
 
 Maven:
