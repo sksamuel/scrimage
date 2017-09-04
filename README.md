@@ -17,8 +17,6 @@ set of images to have a consistent size, or optimizing PNG uploads by users to a
 
 Scrimage mostly builds on the functionality provided by java.awt.* along with selected other third party libraries.
 
-Latest Release: 2.1.5
-
 ### Image Operations
 
 These operations all operate on an existing image, returning a copy of that image. 
