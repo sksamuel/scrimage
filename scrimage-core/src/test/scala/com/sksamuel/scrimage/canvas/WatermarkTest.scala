@@ -9,15 +9,15 @@ class WatermarkTest extends WordSpec with Matchers {
   val font = Font.createTrueType(getClass.getResourceAsStream("/fonts/Roboto-Regular.ttf"))
 
   "watermarker" should {
-    "add repeated watermark" in {
+    "add repeated watermark" ignore {
       val marked = image.filter(new WatermarkCoverFilter("watermark", size = 36, antiAlias = false, font = font))
       marked shouldBe Image.fromResource("/com/sksamuel/scrimage/canvas/watermarked_repeated.png")
     }
-    "add stamped watermark" in {
+    "add stamped watermark" ignore {
       val marked = image.filter(new WatermarkStampFilter("watermark", size = 48, alpha = 0.2, antiAlias = false, font = font))
       marked shouldBe Image.fromResource("/com/sksamuel/scrimage/canvas/watermarked_centered.png")
     }
-    "add located watermark" in {
+    "add located watermark" ignore {
       val marked = image.filter(new WatermarkFilter("watermark", 25, image.height - 100, size = 48, alpha = 0.2, antiAlias = false, font = font))
       marked shouldBe Image.fromResource("/com/sksamuel/scrimage/canvas/watermarked_at.png")
     }
