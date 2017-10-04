@@ -28,9 +28,9 @@ object DimensionTools {
     val yscale = target._2 / source._2.toDouble
 
     if (xscale > yscale) {
-      ((source._1 * xscale).toInt, (source._2 * xscale).toInt)
+      ((source._1 * xscale).ceil.toInt, (source._2 * xscale).ceil.toInt)
     } else {
-      ((source._1 * yscale).toInt, (source._2 * yscale).toInt)
+      ((source._1 * yscale).ceil.toInt, (source._2 * yscale).ceil.toInt)
     }
   }
 
