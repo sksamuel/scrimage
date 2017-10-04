@@ -38,12 +38,12 @@ class DimensionToolsTest extends FunSuite with BeforeAndAfter with OneInstancePe
 
   test("when covering an area that is wider and taller than the aspect ratio is maintained") {
     val covered = DimensionTools.dimensionsToCover((106, 120), (80, 100))
-    assert((106, 132) === covered)
+    assert((106, 133) === covered)
   }
 
   test("when covering an area that is smaller the dimensions reduce to match") {
     val covered = DimensionTools.dimensionsToCover((145, 300), (657, 526))
-    assert((374, 300) === covered)
+    assert((375, 300) === covered)
   }
 }
 
