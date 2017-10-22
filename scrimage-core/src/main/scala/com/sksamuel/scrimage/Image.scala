@@ -808,7 +808,8 @@ object Image extends Using {
 
   ImageIO.scanForPlugins()
 
-  val CANONICAL_DATA_TYPE = BufferedImage.TYPE_INT_ARGB
+  val AUTODETECT_DATA_TYPE: Int = -1
+  val CANONICAL_DATA_TYPE: Int = BufferedImage.TYPE_INT_ARGB
 
   /**
     * Create a new Image from an array of pixels. The specified
@@ -833,7 +834,6 @@ object Image extends Using {
     */
   def apply(bytes: Array[Byte]): Image = apply(bytes, CANONICAL_DATA_TYPE)
   def apply(bytes: Array[Byte], `type`: Int): Image = {
-    require(`type` > 0)
     val image = ImageReader.fromBytes(bytes, `type`)
     val metadata = ImageMetadata.fromBytes(bytes)
     // detect iphone mode, and rotate
@@ -903,12 +903,14 @@ object Image extends Using {
     *
     * @param awt  the source AWT Image
     * @param type the AWT image type to use. If the image is not in this format already it will be coped.
-    *             specify -1 if you want to use the original
+    *             specify Image.AUTODETECT_DATA_TYPE if you want to use the original
     * @return a new Scrimage Image
     */
-  def wrapAwt(awt: BufferedImage, `type`: Int = -1): Image = {
-    if (`type` == -1 || awt.getType == `type`) new Image(awt, ImageMetadata.empty)
-    else fromAwt(awt)
+  def wrapAwt(awt: BufferedImage, `type`: Int = Image.AUTODETECT_DATA_TYPE): Image = {
+    if (`type` == Image.AUTODETECT_DATA_TYPE || awt.getType == `type`) new Image(awt, ImageMetadata.empty)
+    else {
+      fromAwt(awt, `type`)
+    }
   }
 
   /**

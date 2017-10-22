@@ -24,7 +24,13 @@ import com.sksamuel.scrimage.Image
 /** @author Stephen Samuel */
 object JavaImageIOReader extends Reader {
   def fromBytes(bytes: Array[Byte], `type`: Int = Image.CANONICAL_DATA_TYPE): Option[Image] = {
-    Option(Image.wrapAwt(ImageIO.read(new ByteArrayInputStream(bytes)), `type`))
+    val image = ImageIO.read(new ByteArrayInputStream(bytes))
+    val imageType = if (`type` == Image.AUTODETECT_DATA_TYPE) {
+      image.getType
+    } else {
+      `type`
+    }
+    Option(Image.wrapAwt(image, imageType))
   }
 }
 
