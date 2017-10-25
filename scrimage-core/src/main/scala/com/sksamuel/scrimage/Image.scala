@@ -942,5 +942,12 @@ object Image extends Using {
     new Image(target, ImageMetadata.empty)
   }
 
-  implicit def awtToScrimage(awt: java.awt.Image): Image = Image.fromAwt(awt)
+  implicit def awtToScrimage(awt: java.awt.Image): Image = {
+    awt match {
+      case i:BufferedImage =>
+        Image.fromAwt(awt, i.getType)
+      case _ =>
+        Image.fromAwt(awt, CANONICAL_DATA_TYPE)
+    }
+  }
 }
