@@ -852,8 +852,8 @@ object Image extends Using {
     * @return a new Image
     */
   def fromStream(in: InputStream, `type`: Int = CANONICAL_DATA_TYPE): Image = {
-    require(in != null)
-    require(in.available > 0)
+    require(in != null, "InputStream must not be null")
+    require(in.available > 0, "InputStream must have more than 0 bytes available")
     val bytes = IOUtils.toByteArray(in)
     apply(bytes, `type`)
   }
