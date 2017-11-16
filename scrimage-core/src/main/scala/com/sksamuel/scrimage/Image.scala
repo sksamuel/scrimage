@@ -67,13 +67,14 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
     * This method is useful when images have an abudance of a single colour around them.
     *
     * @param color the color to match
+    * @param colorTolerance the amount of tolerance to use when determining whether the color matches the reference color [0..255]
     * @return
     */
-  def autocrop(color: Color): Image = {
-    val x1 = AutocropOps.scanright(color, height, width, 0, pixels)
-    val x2 = AutocropOps.scanleft(color, height, width, width - 1, pixels)
-    val y1 = AutocropOps.scandown(color, height, width, 0, pixels)
-    val y2 = AutocropOps.scanup(color, height, width, height - 1, pixels)
+  def autocrop(color: Color, colorTolerance: Int = 0): Image = {
+    val x1 = AutocropOps.scanright(color, height, width, 0, pixels, colorTolerance)
+    val x2 = AutocropOps.scanleft(color, height, width, width - 1, pixels, colorTolerance)
+    val y1 = AutocropOps.scandown(color, height, width, 0, pixels, colorTolerance)
+    val y2 = AutocropOps.scanup(color, height, width, height - 1, pixels, colorTolerance)
     subimage(x1, y1, x2 - x1, y2 - y1)
   }
 

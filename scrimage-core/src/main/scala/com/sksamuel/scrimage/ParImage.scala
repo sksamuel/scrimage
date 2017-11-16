@@ -29,13 +29,14 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
    * This method is useful when images have an abudance of a single colour around them.
    *
    * @param color the color to match
+   * @param colorTolerance the amount of tolerance to use when determining whether the color matches the reference color [0..255]
    * @return
    */
-  def autocrop(color: Color)(implicit executor: ExecutionContext): Future[ParImage] = {
-    val x1F = Future(AutocropOps.scanright(color, height, width, 0, pixels))
-    val x2F = Future(AutocropOps.scanleft(color, height, width, width - 1, pixels))
-    val y1F = Future(AutocropOps.scandown(color, height, width, 0, pixels))
-    val y2F = Future(AutocropOps.scanup(color, height, width, height - 1, pixels))
+  def autocrop(color: Color, colorTolerance: Int = 0)(implicit executor: ExecutionContext): Future[ParImage] = {
+    val x1F = Future(AutocropOps.scanright(color, height, width, 0, pixels, colorTolerance))
+    val x2F = Future(AutocropOps.scanleft(color, height, width, width - 1, pixels, colorTolerance))
+    val y1F = Future(AutocropOps.scandown(color, height, width, 0, pixels, colorTolerance))
+    val y2F = Future(AutocropOps.scanup(color, height, width, height - 1, pixels, colorTolerance))
     for ( x1 <- x1F; x2 <- x2F; y1 <- y1F; y2 <- y2F ) yield {
       subimage(x1, y1, x2 - x1, y2 - y1)
     }
