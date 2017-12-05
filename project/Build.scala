@@ -18,7 +18,7 @@ object Build extends Build {
     publishArtifact in Test := false,
     parallelExecution in Test := false,
     scalacOptions := Seq("-unchecked", "-encoding", "utf8"),
-    javacOptions ++= Seq("-source", "1.7", "-target", "1.7"),
+    javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
     libraryDependencies ++= Seq(
       "org.slf4j"             %     "slf4j-api"         % "1.7.7",
       "org.imgscalr"          %     "imgscalr-lib"      % "4.2"                % "test",
@@ -67,7 +67,13 @@ object Build extends Build {
 
   lazy val core = Project("scrimage-core", file("scrimage-core"))
     .settings(scrimageSettings: _*)
-    .settings(name := "scrimage-core")
+    .settings(
+      name := "scrimage-core"
+      // Do not append Scala versions to the generated artifacts
+      // crossPaths := false,
+      // This forbids including Scala related libraries into the dependency
+      //autoScalaLibrary := false
+    )
     .settings(
       libraryDependencies ++= Seq(
         "com.twelvemonkeys.imageio" % "imageio-core"        % TwelveMonkeysVersion,
