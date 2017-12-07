@@ -62,6 +62,42 @@ object PixelTools {
   def uniform(color: Color, pixels: Array[Pixel]): Boolean = pixels.forall(p => p.toInt == color.toInt)
 
   /**
+   * Returns true if the colors of all pixels in the array are within the given tolerance
+   * compared to the referenced color
+   */
+  def approx(color: Color, tolerance: Int, pixels: Array[Pixel]): Boolean = {
+    val refColor = color.toRGB
+
+    val minColor = RGBColor(
+      red = math.max(refColor.red - tolerance, 0),
+      green = math.max(refColor.green - tolerance, 0),
+      blue = math.max(refColor.blue - tolerance, 0),
+      alpha = refColor.alpha
+    )
+
+    val maxColor = RGBColor(
+      red = math.min(refColor.red + tolerance, 255),
+      green = math.min(refColor.green + tolerance, 255),
+      blue = math.min(refColor.blue + tolerance, 255),
+      alpha = refColor.alpha
+    )
+
+    pixels.forall(p => p.toInt >= minColor.toInt && p.toInt <= maxColor.toInt)
+  }
+
+  /**
+   * Returns true if the colors of all pixels in the array are within the given tolerance
+   * compared to the referenced color
+   */
+  def colorMatches(color: Color, tolerance: Int, pixels: Array[Pixel]): Boolean = {
+    require(tolerance >= 0 && tolerance <= 255, "Tolerance value must be between 0 and 255 inclusive")
+    if (tolerance == 0)
+      uniform(color, pixels)
+    else
+      approx(color, tolerance, pixels)
+  }
+
+  /**
    * Scales the brightness of a pixel.
    */
   def scale(factor: Double, pixel: Int): Int = rgb(
