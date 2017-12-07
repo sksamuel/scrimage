@@ -37,19 +37,19 @@ object ImageMetadata extends Using {
       val tags = directory.getTags.asScala.map { tag =>
         Tag(tag.getTagName, tag.getTagType, directory.getString(tag.getTagType), tag.getDescription)
       }
-      Directory(directory.getName, tags.toList)
+      Directory(directory.getName, tags.toArray)
     }
-    ImageMetadata(directories.toList)
+    ImageMetadata(directories.toArray)
   }
 
-  lazy val empty = ImageMetadata(Nil)
+  lazy val empty = ImageMetadata(Array.empty)
 }
 
-case class ImageMetadata(directories: List[Directory]) {
+case class ImageMetadata(directories: Array[Directory]) {
   def tagsBy(f: Tag => Boolean): Seq[Tag] = tags.filter(f)
-  def tags: List[Tag] = directories.flatMap(_.tags)
+  def tags: Array[Tag] = directories.flatMap(_.tags)
 }
 
-case class Directory(name: String, tags: List[Tag])
+case class Directory(name: String, tags: Array[Tag])
 
 case class Tag(name: String, `type`: Int, rawValue: String, value: String)
