@@ -16,7 +16,6 @@
 
 package com.sksamuel.scrimage
 
-/** @author Stephen Samuel */
 sealed trait Position {
 
   /**
