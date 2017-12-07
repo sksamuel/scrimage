@@ -173,9 +173,9 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
             targetHeight: Int,
             scaleMethod: ScaleMethod = Bicubic,
             position: Position = Center): Image = {
-    val coveredDimensions = DimensionTools.dimensionsToCover((targetWidth, targetHeight), (width, height))
-    val scaled = scaleTo(coveredDimensions._1, coveredDimensions._2, scaleMethod)
-    val (x, y) = position.calculateXY(targetWidth, targetHeight, coveredDimensions._1, coveredDimensions._2)
+    val coveredDimensions = DimensionTools.dimensionsToCover(new Dimension(targetWidth, targetHeight), new Dimension(width, height))
+    val scaled = scaleTo(coveredDimensions.getX, coveredDimensions.getY, scaleMethod)
+    val (x, y) = position.calculateXY(targetWidth, targetHeight, coveredDimensions.getX, coveredDimensions.getY)
     blank(targetWidth, targetHeight).overlay(scaled, x, y)
   }
 
@@ -232,9 +232,9 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
           color: Color = Color.Transparent,
           scaleMethod: ScaleMethod = Bicubic,
           position: Position = Center): Image = {
-    val (w, h) = DimensionTools.dimensionsToFit((canvasWidth, canvasHeight), (width, height))
-    val (x, y) = position.calculateXY(canvasWidth, canvasHeight, w, h)
-    val scaled = scaleTo(w, h, scaleMethod)
+    val wh = DimensionTools.dimensionsToFit(new Dimension(canvasWidth, canvasHeight), new Dimension(width, height))
+    val (x, y) = position.calculateXY(canvasWidth, canvasHeight, wh.getX, wh.getY)
+    val scaled = scaleTo(wh.getX, wh.getY, scaleMethod)
     blank(canvasWidth, canvasHeight).fill(color).overlay(scaled, x, y)
   }
 
@@ -308,8 +308,8 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
     * @return A new image that is the result of the binding.
     */
   def max(maxW: Int, maxH: Int, scaleMethod: ScaleMethod = ScaleMethod.Bicubic): Image = {
-    val dimensions = DimensionTools.dimensionsToFit((maxW, maxH), (width, height))
-    scaleTo(dimensions._1, dimensions._2, scaleMethod)
+    val dimensions = DimensionTools.dimensionsToFit(new Dimension(maxW, maxH), new Dimension(width, height))
+    scaleTo(dimensions.getX, dimensions.getY, scaleMethod)
   }
 
   protected[scrimage] def op(op: BufferedImageOp): Image = {
@@ -808,7 +808,7 @@ object Image extends Using {
 
   ImageIO.scanForPlugins()
 
-  val CANONICAL_DATA_TYPE = BufferedImage.TYPE_INT_ARGB
+  val CANONICAL_DATA_TYPE: Int = BufferedImage.TYPE_INT_ARGB
 
   /**
     * Create a new Image from an array of pixels. The specified

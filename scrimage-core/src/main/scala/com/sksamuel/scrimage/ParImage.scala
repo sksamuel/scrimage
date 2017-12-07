@@ -100,10 +100,10 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
             scaleMethod: ScaleMethod = Bicubic,
             position: Position = Center)
            (implicit executor: ExecutionContext): Future[ParImage] = {
-    val coveredDimensions = DimensionTools.dimensionsToCover((targetWidth, targetHeight), (width, height))
-    scaleTo(coveredDimensions._1, coveredDimensions._2, scaleMethod) map { scaled =>
-      val x = ((targetWidth - coveredDimensions._1) / 2.0).toInt
-      val y = ((targetHeight - coveredDimensions._2) / 2.0).toInt
+    val coveredDimensions = DimensionTools.dimensionsToCover(new Dimension(targetWidth, targetHeight), new Dimension(width, height))
+    scaleTo(coveredDimensions.getX, coveredDimensions.getY, scaleMethod) map { scaled =>
+      val x = ((targetWidth - coveredDimensions.getX) / 2.0).toInt
+      val y = ((targetHeight - coveredDimensions.getY) / 2.0).toInt
       blank(targetWidth, targetHeight).overlay(scaled, x, y)
     }
   }
@@ -146,8 +146,8 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
    * @return A new image that is the result of the binding.
    */
   def max(maxW: Int, maxH: Int)(implicit executor: ExecutionContext): Future[ParImage] = {
-    val dimensions = DimensionTools.dimensionsToFit((maxW, maxH), (width, height))
-    scaleTo(dimensions._1, dimensions._2)
+    val dimensions = DimensionTools.dimensionsToFit(new Dimension(maxW, maxH), new Dimension(width, height))
+    scaleTo(dimensions.getX, dimensions.getY)
   }
 
   /**
@@ -406,9 +406,9 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
           scaleMethod: ScaleMethod = Bicubic,
           position: Position = Center)
          (implicit executor: ExecutionContext): Future[ParImage] = {
-    val (w, h) = DimensionTools.dimensionsToFit((canvasWidth, canvasHeight), (width, height))
-    val (x, y) = position.calculateXY(canvasWidth, canvasHeight, w, h)
-    scaleTo(w, h, scaleMethod) map { scaled =>
+    val wh = DimensionTools.dimensionsToFit(new Dimension(canvasWidth, canvasHeight), new Dimension(width, height))
+    val (x, y) = position.calculateXY(canvasWidth, canvasHeight, wh.getX, wh.getY)
+    scaleTo(wh.getX, wh.getY, scaleMethod) map { scaled =>
       blank(canvasWidth, canvasHeight).fill(color).overlay(scaled, x, y)
     }
   }
