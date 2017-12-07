@@ -13,6 +13,7 @@ class AlphaComposite(alpha: Double) extends Composite {
     g2.dispose()
   }
 }
+
 object AlphaComposite {
   def apply(alpha: Double): AlphaComposite = new AlphaComposite(alpha)
 }

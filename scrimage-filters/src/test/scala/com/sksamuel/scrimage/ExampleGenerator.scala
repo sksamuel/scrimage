@@ -87,7 +87,7 @@ object ExampleGenerator extends App {
       println("Generating example " + filename + " " + filterName)
       large.filter(filter._2).output(new File("examples/filters/" + filename + "_" + filterName + "_large.jpeg"))(JpegWriter.NoCompression)
       small.filter(filter._2).forWriter(PngWriter.MaxCompression)
-        .write(new File("examples/filters/" + filename + "_" + filterName + "_small.png"))
+              .write(new File("examples/filters/" + filename + "_" + filterName + "_small.png"))
 
       sb
         .append(s"<a href='https://raw.github.com/sksamuel/scrimage/master/examples/filters/${filename}_${filterName}_large.jpeg'><img src='https://raw.github.com/sksamuel/scrimage/master/examples/filters/${filename}_${filterName}_small.png'><a/> | ")
