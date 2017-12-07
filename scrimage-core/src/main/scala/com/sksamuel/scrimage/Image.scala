@@ -56,6 +56,10 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
     Image(w, h, pixels).withMetadata(metadata)
   }
 
+  private def pixelExtractor = new PixelsExtractor {
+    override def apply(area: Area): Array[Pixel] = pixels(area.x, area.y, area.w, area.h)
+  }
+
   /**
     * Crops an image by removing cols and rows that are composed only of a single
     * given color.
@@ -71,10 +75,10 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
     * @return
     */
   def autocrop(color: Color, colorTolerance: Int = 0): Image = {
-    val x1 = AutocropOps.scanright(color, height, width, 0, pixels, colorTolerance)
-    val x2 = AutocropOps.scanleft(color, height, width, width - 1, pixels, colorTolerance)
-    val y1 = AutocropOps.scandown(color, height, width, 0, pixels, colorTolerance)
-    val y2 = AutocropOps.scanup(color, height, width, height - 1, pixels, colorTolerance)
+    val x1 = AutocropOps.scanright(color, height, width, 0, pixelExtractor, colorTolerance)
+    val x2 = AutocropOps.scanleft(color, height, width, width - 1, pixelExtractor, colorTolerance)
+    val y1 = AutocropOps.scandown(color, height, width, 0, pixelExtractor, colorTolerance)
+    val y2 = AutocropOps.scanup(color, height, width, height - 1, pixelExtractor, colorTolerance)
     subimage(x1, y1, x2 - x1, y2 - y1)
   }
 

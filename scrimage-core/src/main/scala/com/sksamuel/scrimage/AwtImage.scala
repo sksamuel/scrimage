@@ -53,8 +53,8 @@ class AwtImage(val awt: BufferedImage) {
     private var k = 0
     def hasNext: Boolean = k < AwtImage.this.count
     def next(): Pixel = {
-      val (x, y) = PixelTools.offsetToCoordinate(k, width)
-      val rgb = awt.getRGB(x, y)
+      val coord = PixelTools.offsetToCoordinate(k, width)
+      val rgb = awt.getRGB(coord.getX, coord.getY)
       k = k + 1
       Pixel(rgb)
     }

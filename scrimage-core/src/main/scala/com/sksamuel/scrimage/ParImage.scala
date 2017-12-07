@@ -33,14 +33,20 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
    * @return
    */
   def autocrop(color: Color, colorTolerance: Int = 0)(implicit executor: ExecutionContext): Future[ParImage] = {
-    val x1F = Future(AutocropOps.scanright(color, height, width, 0, pixels, colorTolerance))
-    val x2F = Future(AutocropOps.scanleft(color, height, width, width - 1, pixels, colorTolerance))
-    val y1F = Future(AutocropOps.scandown(color, height, width, 0, pixels, colorTolerance))
-    val y2F = Future(AutocropOps.scanup(color, height, width, height - 1, pixels, colorTolerance))
+
+    def pixelExtractor = new PixelsExtractor {
+      override def apply(area: Area): Array[Pixel] = pixels(area.x, area.y, area.w, area.h)
+    }
+
+    val x1F = Future(AutocropOps.scanright(color, height, width, 0, pixelExtractor, colorTolerance))
+    val x2F = Future(AutocropOps.scanleft(color, height, width, width - 1, pixelExtractor, colorTolerance))
+    val y1F = Future(AutocropOps.scandown(color, height, width, 0, pixelExtractor, colorTolerance))
+    val y2F = Future(AutocropOps.scanup(color, height, width, height - 1, pixelExtractor, colorTolerance))
     for ( x1 <- x1F; x2 <- x2F; y1 <- y1F; y2 <- y2F ) yield {
       subimage(x1, y1, x2 - x1, y2 - y1)
     }
   }
+
 
   /**
    * Creates an empty Image with the same dimensions of this image.

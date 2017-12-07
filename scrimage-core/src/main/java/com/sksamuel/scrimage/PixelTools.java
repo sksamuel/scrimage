@@ -86,6 +86,44 @@ public class PixelTools {
         );
     }
 
+    /**
+     * Returns true if the colors of all pixels in the array are within the given tolerance
+     * compared to the referenced color
+     */
+    public static boolean approx(Color color, int tolerance, Pixel[] pixels) {
+
+        RGBColor refColor = color.toRGB();
+
+        RGBColor minColor = new RGBColor(
+                Math.max(refColor.red() - tolerance, 0),
+                Math.max(refColor.green() - tolerance, 0),
+                Math.max(refColor.blue() - tolerance, 0),
+                refColor.alpha()
+        );
+
+        RGBColor maxColor = new RGBColor(
+                Math.min(refColor.red() + tolerance, 255),
+                Math.min(refColor.green() + tolerance, 255),
+                Math.min(refColor.blue() + tolerance, 255),
+                refColor.alpha()
+        );
+
+        return Arrays.stream(pixels).allMatch(p -> p.toInt() >= minColor.toInt() && p.toInt() <= maxColor.toInt());
+    }
+
+    /**
+     * Returns true if the colors of all pixels in the array are within the given tolerance
+     * compared to the referenced color
+     */
+    public static boolean colorMatches(Color color, int tolerance, Pixel[] pixels) {
+        if (tolerance < 0 || tolerance > 255)
+            throw new RuntimeException("Tolerance value must be between 0 and 255 inclusive");
+        if (tolerance == 0)
+            return uniform(color, pixels);
+        else
+            return approx(color, tolerance, pixels);
+    }
+
     public static int coordinateToOffset(int x, int y, int w) {
         return y * w + x;
     }
