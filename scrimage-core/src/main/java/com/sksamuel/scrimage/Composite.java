@@ -13,14 +13,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage
+package com.sksamuel.scrimage;
 
-/** @author Stephen Samuel */
+public interface Composite {
 
-trait Composite {
   /**
    * Apply the overlay image onto the given source image using
    * this composite.
    */
-  def apply(src: AwtImage, overlay: AwtImage): Unit
+  void apply(AwtImage src, AwtImage overlay);
 }

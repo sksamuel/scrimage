@@ -20,7 +20,6 @@ import java.awt.Graphics2D
 import com.sksamuel.scrimage.{AwtImage, Composite}
 import thirdparty.romainguy.{BlendComposite, BlendingMode}
 
-/** @author Stephen Samuel */
 class BlenderComposite(mode: BlendingMode, alpha: Double) extends Composite {
   def apply(src: AwtImage, applicative: AwtImage) {
     val g2 = src.awt.getGraphics.asInstanceOf[Graphics2D]
