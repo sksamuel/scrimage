@@ -12,7 +12,7 @@ object Build extends Build {
   val scrimageSettings = Seq(
     organization := "com.sksamuel.scrimage",
     name := "scrimage",
-    scalaVersion := "2.12.3",
+    scalaVersion := "2.11.11",
     crossScalaVersions := Seq("2.10.6", "2.11.11", "2.12.3"),
     publishMavenStyle := true,
     publishArtifact in Test := false,
@@ -63,7 +63,7 @@ object Build extends Build {
   lazy val root = Project("scrimage", file("."))
     .settings(scrimageSettings: _*)
     .settings(publishArtifact := false)
-    .aggregate(core, io, filters)
+    .aggregate(core, scala, io, filters)
 
   lazy val core = Project("scrimage-core", file("scrimage-core"))
     .settings(scrimageSettings: _*)
@@ -87,6 +87,11 @@ object Build extends Build {
         "org.apache.commons"        % "commons-lang3"       % "3.3.2" % "test"
       )
     )
+
+  lazy val scala = Project("scrimage-scala", file("scrimage-scala"))
+    .settings(scrimageSettings: _*)
+    .settings(name := "scrimage-scala")
+    .dependsOn(core)
 
   lazy val io = Project("scrimage-io-extra", file("scrimage-io-extra"))
     .settings(scrimageSettings: _*)
