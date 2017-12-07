@@ -37,19 +37,19 @@ public class Orientation {
       // Flip horizontally
       case "2":
         // Rotate 180 degrees
-        image.flipX();
+        return image.flipX();
       case "3":
         // Rotate 180 degrees and flip horizontally
-        image.rotateLeft().rotateLeft();
+        return image.rotateLeft().rotateLeft();
       case "4":
         // Rotate 90 degrees clockwise and flip horizontally
-        image.rotateLeft().rotateLeft().flipX();
+        return image.rotateLeft().rotateLeft().flipX();
       case "5":
         // Rotate 90 degrees clockwise
-        image.rotateRight().flipX();
+        return image.rotateRight().flipX();
       case "6":
         // Rotate 90 degrees anti-clockwise and flip horizontally
-        image.rotateRight();
+        return image.rotateRight();
       case "7":
         // Rotate 90 degrees anti-clockwise
         return image.rotateLeft().flipX();
