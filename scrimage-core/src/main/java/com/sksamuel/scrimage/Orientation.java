@@ -66,15 +66,15 @@ public class Orientation {
 
     String exifIFD0DirName = new ExifIFD0Directory().getName();
 
-    Tag[] tags = Arrays.stream(metadata.directories())
-            .filter(dir -> dir.name().equals(exifIFD0DirName))
+    Tag[] tags = Arrays.stream(metadata.getDirectories())
+            .filter(dir -> dir.getName().equals(exifIFD0DirName))
             .findFirst()
-            .map(Directory::tags)
+            .map(Directory::getTags)
             .orElseGet(() -> new Tag[0]);
 
     return Arrays.stream(tags)
-            .filter(tag -> tag.type() == 274)
-            .map(Tag::rawValue)
+            .filter(tag -> tag.getType() == 274)
+            .map(Tag::getRawValue)
             .collect(Collectors.toSet());
   }
 }
