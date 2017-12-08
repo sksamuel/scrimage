@@ -4,7 +4,6 @@ import java.awt.Color
 
 import com.sksamuel.scrimage.PipelineFilter
 
-/** @author Stephen Samuel */
 object NashvilleFilter extends PipelineFilter(
   BackgroundBlendFilter,
   HSBFilter(0, -0.2, 0.5),

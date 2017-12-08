@@ -15,7 +15,7 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.{MutableAwtImage, AwtImage, Image, Filter}
+import com.sksamuel.scrimage.{Filter, Image}
 import thirdparty.marvin.image.{MarvinAbstractImagePlugin, MarvinAttributes, MarvinImage, MarvinImageMask}
 
 /**

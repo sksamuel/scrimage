@@ -15,9 +15,8 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.{MutableAwtImage, AwtImage, Image, Filter, Pixel}
+import com.sksamuel.scrimage.{Filter, Image, Pixel}
 
-/** @author Stephen Samuel */
 class OpacityFilter(amount: Double) extends Filter {
 
   def filter(x: Int, y: Int, pixel: Pixel): Pixel = {

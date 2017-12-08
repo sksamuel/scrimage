@@ -17,7 +17,6 @@ package com.sksamuel.scrimage.filter
 
 import com.sksamuel.scrimage.BufferedOpFilter
 
-/** @author Stephen Samuel */
 class LensBlurFilter(radius: Float, bloom: Float, bloomThreshold: Float, sides: Int, angle: Float)
     extends BufferedOpFilter {
   val op = new thirdparty.jhlabs.image.LensBlurFilter()
@@ -26,6 +25,7 @@ class LensBlurFilter(radius: Float, bloom: Float, bloomThreshold: Float, sides: 
   op.setBloom(bloom)
   op.setRadius(radius)
 }
+
 object LensBlurFilter {
   def apply() = new LensBlurFilter(5, 2, 255, 5, 0)
 }

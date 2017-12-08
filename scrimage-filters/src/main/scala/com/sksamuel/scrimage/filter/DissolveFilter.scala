@@ -17,7 +17,6 @@ package com.sksamuel.scrimage.filter
 
 import com.sksamuel.scrimage.BufferedOpFilter
 
-/** @author Stephen Samuel */
 class DissolveFilter(density: Double) extends BufferedOpFilter {
   val op = new thirdparty.jhlabs.image.DissolveFilter()
   op.setDensity(density.toFloat)

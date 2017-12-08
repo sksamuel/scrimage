@@ -17,9 +17,8 @@ package com.sksamuel.scrimage.filter
 
 import java.awt.{Color, Graphics2D}
 
-import com.sksamuel.scrimage.{MutableAwtImage, AwtImage, Image, Filter}
+import com.sksamuel.scrimage.{Filter, Image}
 
-/** @author Stephen Samuel */
 class ColorizeFilter(color: Color) extends Filter {
   def apply(image: Image) {
     val g2 = image.awt.getGraphics.asInstanceOf[Graphics2D]

@@ -16,10 +16,8 @@
 package com.sksamuel.scrimage.filter
 
 import com.sksamuel.scrimage.BufferedOpFilter
-import scala.Double
 import thirdparty.jhlabs.image.GainFilter
 
-/** @author Stephen Samuel */
 class GainBiasFilter(gain: Double, bias: Double) extends BufferedOpFilter {
   val op = new GainFilter
   op.setGain(gain.toFloat)

@@ -17,11 +17,11 @@ package com.sksamuel.scrimage.filter
 
 import com.sksamuel.scrimage.BufferedOpFilter
 
-/** @author Stephen Samuel */
 class GammaFilter(gamma: Double) extends BufferedOpFilter {
   val op = new thirdparty.jhlabs.image.GammaFilter()
   op.setGamma(gamma.toFloat)
 }
+
 object GammaFilter {
   def apply(gamma: Double = 1.0f): GammaFilter = new GammaFilter(gamma)
 }

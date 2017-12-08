@@ -17,7 +17,7 @@ package com.sksamuel.scrimage.filter
 
 import java.awt.{Color, Graphics2D}
 
-import com.sksamuel.scrimage.{MutableAwtImage, AwtImage, Image, Filter}
+import com.sksamuel.scrimage.{Filter, Image}
 
 /** @author Stephen Samuel */
 class BorderFilter(width: Int, color: Color = Color.BLACK) extends Filter {

@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.{MutableAwtImage, AwtImage, Image, Color, Filter, RGBColor}
+import com.sksamuel.scrimage.{Color, Filter, Image, RGBColor}
 
 /**
  * Created by guw on 23/09/14.

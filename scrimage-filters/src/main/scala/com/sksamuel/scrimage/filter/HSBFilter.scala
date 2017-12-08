@@ -17,7 +17,6 @@ package com.sksamuel.scrimage.filter
 
 import com.sksamuel.scrimage.BufferedOpFilter
 
-/** @author Stephen Double */
 class HSBFilter(hue: Double, saturation: Double, brightness: Double) extends BufferedOpFilter {
   require(hue <= 1)
   require(brightness <= 1)

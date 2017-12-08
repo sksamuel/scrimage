@@ -25,7 +25,7 @@ import scala.concurrent.ExecutionContext
 
 class SummerFilter(vignette: Boolean)(implicit executor: ExecutionContext) extends Filter {
 
-  val summer = Image.fromResource("/com/sksamuel/scrimage/filter/summer1.jpg")
+  val summer: Image = Image.fromResource("/com/sksamuel/scrimage/filter/summer1.jpg")
 
   def apply(image: Image) {
     val scaled = Image.wrapAwt(summer.scaleTo(image.width, image.height).awt, BufferedImage.TYPE_INT_ARGB)

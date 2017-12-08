@@ -16,16 +16,7 @@
 package com.sksamuel.scrimage.filter
 
 import com.sksamuel.scrimage.BufferedOpFilter
-import com.sksamuel.scrimage.filter.RippleType.{ Noise, Triangle, Sawtooth, Sine }
-
-/** @author Stephen Samuel */
-sealed trait RippleType
-object RippleType {
-  case object Sine extends RippleType
-  case object Sawtooth extends RippleType
-  case object Triangle extends RippleType
-  case object Noise extends RippleType
-}
+import com.sksamuel.scrimage.filter.RippleType.Noise
 
 class RippleFilter(rippleType: RippleType, xAmplitude: Float, yAmplitude: Float, xWavelength: Float, yWavelength: Float)
     extends BufferedOpFilter {
@@ -35,9 +26,9 @@ class RippleFilter(rippleType: RippleType, xAmplitude: Float, yAmplitude: Float,
   op.setXWavelength(xWavelength)
   op.setYWavelength(yWavelength)
   rippleType match {
-    case Sine => op.setWaveType(thirdparty.jhlabs.image.RippleFilter.SINE)
-    case Sawtooth => op.setWaveType(thirdparty.jhlabs.image.RippleFilter.SAWTOOTH)
-    case Triangle => op.setWaveType(thirdparty.jhlabs.image.RippleFilter.TRIANGLE)
+    case RippleType.Sine => op.setWaveType(thirdparty.jhlabs.image.RippleFilter.SINE)
+    case RippleType.Sawtooth => op.setWaveType(thirdparty.jhlabs.image.RippleFilter.SAWTOOTH)
+    case RippleType.Triangle => op.setWaveType(thirdparty.jhlabs.image.RippleFilter.TRIANGLE)
     case Noise => op.setWaveType(thirdparty.jhlabs.image.RippleFilter.NOISE)
   }
 }

@@ -23,10 +23,9 @@ import thirdparty.romainguy.{BlendComposite, BlendingMode}
 
 import scala.concurrent.ExecutionContext
 
-/** @author Stephen Samuel */
 class SnowFilter(implicit executor: ExecutionContext) extends Filter {
 
-  val snow = Image.fromResource("/com/sksamuel/scrimage/filter/snow1.jpg")
+  val snow: Image = Image.fromResource("/com/sksamuel/scrimage/filter/snow1.jpg")
 
   def apply(image: Image) {
     val scaled = Image.wrapAwt(snow.scaleTo(image.width, image.height).awt, BufferedImage.TYPE_INT_ARGB)
