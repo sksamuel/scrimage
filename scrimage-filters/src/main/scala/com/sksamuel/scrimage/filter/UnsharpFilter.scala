@@ -16,9 +16,8 @@
 package com.sksamuel.scrimage.filter
 
 import com.sksamuel.scrimage.BufferedOpFilter
-import com.sksamuel.scrimage.filter.EdgeAction.{ WrapEdges, ClampEdges, ZeroEdges }
+import com.sksamuel.scrimage.filter.EdgeAction.{ClampEdges, WrapEdges, ZeroEdges}
 
-/** @author Stephen Samuel */
 class UnsharpFilter(amount: Float, threshold: Int, edgeAction: EdgeAction) extends BufferedOpFilter {
   val op = new thirdparty.jhlabs.image.UnsharpFilter()
   op.setAmount(amount)
@@ -34,14 +33,3 @@ object UnsharpFilter {
   def apply(amount: Float, threshold: Int, edgeAction: EdgeAction = ZeroEdges): UnsharpFilter =
     new UnsharpFilter(amount, threshold, edgeAction)
 }
-
-sealed trait EdgeAction
-object EdgeAction {
-  // Treat pixels off the edge as zero
-  case object ZeroEdges extends EdgeAction
-  // Clamp pixels off the edge to the nearest edge
-  case object ClampEdges extends EdgeAction
-  // Wrap pixels off the edge to the opposite edge
-  case object WrapEdges extends EdgeAction
-}
-
