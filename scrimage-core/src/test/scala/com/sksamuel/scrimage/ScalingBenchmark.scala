@@ -1,21 +1,17 @@
 package com.sksamuel.scrimage
 
-import com.sksamuel.scrimage.scaling.ResampleOpScala
-import org.apache.commons.io.IOUtils
-import javax.imageio.ImageIO
-import java.io.ByteArrayInputStream
 import java.awt.image.BufferedImage
+import java.io.ByteArrayInputStream
+import javax.imageio.ImageIO
 
-import scala.concurrent.ExecutionContext
+import org.apache.commons.io.IOUtils
 
 // import org.imgscalr.Scalr
 // import org.imgscalr.Scalr.{ Mode, Method }
-import com.sksamuel.scrimage.ScaleMethod.{ FastScale, Bicubic }
-import thirdparty.mortennobel.{ ResampleFilters, ResampleOp }
 import java.io.File
-import org.scalatest.FunSuite
 
-/** @author Stephen Samuel */
+import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
+
 class ScalingBenchmark { // extends FunSuite {
 
   val COUNT = 100
@@ -94,18 +90,6 @@ class ScalingBenchmark { // extends FunSuite {
   // }
   // time = System.currentTimeMillis() - start
   // println(s"Time: $time ms")
-
-  println("Testing Mortennobel Bicubic in scala")
-  start = System.currentTimeMillis()
-  counter = 0
-  while (counter < COUNT) {
-    val scaled = ResampleOpScala.scaleTo(ResampleOpScala.bicubicFilter)(scrimage)(width / 3, height / 3)
-    assert(scaled.width == width / 3)
-    assert(scaled.height == height / 3)
-    counter += 1
-  }
-  time = System.currentTimeMillis() - start
-  println(s"Time: $time ms")
 
   val size = 10000
   val redInt = 0xffff0000
