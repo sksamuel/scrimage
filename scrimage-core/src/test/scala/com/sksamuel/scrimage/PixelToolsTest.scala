@@ -2,7 +2,6 @@ package com.sksamuel.scrimage
 
 import org.scalatest.{FunSuite, Matchers}
 
-/** @author Stephen Samuel */
 class PixelToolsTest extends FunSuite with Matchers {
 
   val white = 0xFFFFFFFF
@@ -48,10 +47,10 @@ class PixelToolsTest extends FunSuite with Matchers {
   }
 
   test("offset to coordinate") {
-    PixelTools.offsetToCoordinate(0, 100) shouldBe 0 -> 0
-    PixelTools.offsetToCoordinate(100, 100) shouldBe 0 -> 1
-    PixelTools.offsetToCoordinate(99, 100) shouldBe 99 -> 0
-    PixelTools.offsetToCoordinate(199, 100) shouldBe 99 -> 1
-    PixelTools.offsetToCoordinate(101, 100) shouldBe 1 -> 1
+    PixelTools.offsetToCoordinate(0, 100) shouldBe new Coordinate(0, 0)
+    PixelTools.offsetToCoordinate(100, 100) shouldBe new Coordinate(0, 1)
+    PixelTools.offsetToCoordinate(99, 100) shouldBe new Coordinate(99, 0)
+    PixelTools.offsetToCoordinate(199, 100) shouldBe new Coordinate(99, 1)
+    PixelTools.offsetToCoordinate(101, 100) shouldBe new Coordinate(1, 1)
   }
 }
