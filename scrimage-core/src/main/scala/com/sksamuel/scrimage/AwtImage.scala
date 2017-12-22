@@ -332,14 +332,14 @@ class AwtImage(val awt: BufferedImage) {
   }
 
   protected[scrimage] def fastScaleScrimage(targetWidth: Int, targetHeight: Int): BufferedImage = {
-    scale(targetWidth, targetHeight, ScrimageNearestNeighbourScale)
+    scale(targetWidth, targetHeight, new ScrimageNearestNeighbourScale)
   }
 
   /**
     * Returns a new AWT Image scaled using nearest-neighbour.
     */
   protected[scrimage] def fastScaleAwt(targetWidth: Int, targetHeight: Int): BufferedImage = {
-    scale(targetWidth, targetHeight, AwtNearestNeighbourScale)
+    scale(targetWidth, targetHeight, new AwtNearestNeighbourScale)
   }
 
   /**

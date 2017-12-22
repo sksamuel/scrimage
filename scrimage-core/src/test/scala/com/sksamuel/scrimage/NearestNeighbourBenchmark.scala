@@ -18,7 +18,7 @@ object NearestNeighbourBenchmark extends App {
     val sw = new Stopwatch
     sw.start()
     for ( _ <- 0 until Iterations ) {
-      val scaled = AwtNearestNeighbourScale.scale(image.awt, w, h)
+      val scaled = new AwtNearestNeighbourScale().scale(image.awt, w, h)
       sw.lap
       require(scaled.getWidth == w)
       require(scaled.getHeight == h)
@@ -29,13 +29,13 @@ object NearestNeighbourBenchmark extends App {
     println("Average time: " + sw.averageLap.toMillis)
     println()
 
-    Image.fromAwt(AwtNearestNeighbourScale.scale(image.awt, w, h)).output("awt.jpg")
+    Image.fromAwt(new AwtNearestNeighbourScale().scale(image.awt, w, h)).output("awt.jpg")
 
     sw.reset()
     sw.start()
 
     for ( _ <- 0 until Iterations ) {
-      val scaled = ScrimageNearestNeighbourScale.scale(image.awt, w, h)
+      val scaled = new ScrimageNearestNeighbourScale().scale(image.awt, w, h)
       sw.lap
       require(scaled.getWidth == w)
       require(scaled.getHeight == h)
@@ -46,7 +46,7 @@ object NearestNeighbourBenchmark extends App {
     println("Average time: " + sw.averageLap.toMillis)
     println("-----")
 
-    Image.fromAwt(ScrimageNearestNeighbourScale.scale(image.awt, w, h)).output("scrimage.jpg")
+    Image.fromAwt(new ScrimageNearestNeighbourScale().scale(image.awt, w, h)).output("scrimage.jpg")
 
   }
 }
