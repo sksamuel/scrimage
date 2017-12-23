@@ -45,7 +45,6 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
 
   require(awt != null, "Wrapping image cannot be null")
 
-  import Position._
   import ScaleMethod._
 
   protected[scrimage] def wrapAwt(awt: BufferedImage, metadata: ImageMetadata): Image = {
@@ -177,11 +176,11 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
   def cover(targetWidth: Int,
             targetHeight: Int,
             scaleMethod: ScaleMethod = Bicubic,
-            position: Position = Center): Image = {
+            position: Position = Position.Center): Image = {
     val coveredDimensions = DimensionTools.dimensionsToCover(new Dimension(targetWidth, targetHeight), new Dimension(width, height))
     val scaled = scaleTo(coveredDimensions.getX, coveredDimensions.getY, scaleMethod)
-    val (x, y) = position.calculateXY(targetWidth, targetHeight, coveredDimensions.getX, coveredDimensions.getY)
-    blank(targetWidth, targetHeight).overlay(scaled, x, y)
+    val dim = position.calculateXY(targetWidth, targetHeight, coveredDimensions.getX, coveredDimensions.getY)
+    blank(targetWidth, targetHeight).overlay(scaled, dim.getX, dim.getY)
   }
 
   /**
@@ -236,11 +235,11 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
           canvasHeight: Int,
           color: Color = Color.Transparent,
           scaleMethod: ScaleMethod = Bicubic,
-          position: Position = Center): Image = {
+          position: Position = Position.Center): Image = {
     val wh = DimensionTools.dimensionsToFit(new Dimension(canvasWidth, canvasHeight), new Dimension(width, height))
-    val (x, y) = position.calculateXY(canvasWidth, canvasHeight, wh.getX, wh.getY)
+    val dim = position.calculateXY(canvasWidth, canvasHeight, wh.getX, wh.getY)
     val scaled = scaleTo(wh.getX, wh.getY, scaleMethod)
-    blank(canvasWidth, canvasHeight).fill(color).overlay(scaled, x, y)
+    blank(canvasWidth, canvasHeight).fill(color).overlay(scaled, dim.getX, dim.getY)
   }
 
   //  /**
@@ -351,7 +350,7 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
     * @param background  the color to use for expande background areas.
     * @return a new Image that is the result of resizing the canvas.
     */
-  def resize(scaleFactor: Double, position: Position = Center, background: Color = Color.Transparent): Image = {
+  def resize(scaleFactor: Double, position: Position = Position.Center, background: Color = Color.Transparent): Image = {
     resizeTo((width * scaleFactor).toInt, (height * scaleFactor).toInt, position, background)
   }
 
@@ -373,12 +372,12 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
     */
   def resizeTo(targetWidth: Int,
                targetHeight: Int,
-               position: Position = Center,
+               position: Position = Position.Center,
                background: Color = Color.Transparent): Image = {
     if (targetWidth == width && targetHeight == height) this
     else {
-      val (x, y) = position.calculateXY(targetWidth, targetHeight, width, height)
-      blank(targetWidth, targetHeight, Some(background)).overlay(this, x, y)
+      val dim = position.calculateXY(targetWidth, targetHeight, width, height)
+      blank(targetWidth, targetHeight, Some(background)).overlay(this, dim.getX, dim.getY)
     }
   }
 
@@ -389,7 +388,7 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
     * @param position where to position the original image after the canvas size change
     * @return a new Image that is the result of resizing the canvas.
     */
-  def resizeToHeight(targetHeight: Int, position: Position = Center, background: Color = Color.Transparent): Image = {
+  def resizeToHeight(targetHeight: Int, position: Position = Position.Center, background: Color = Color.Transparent): Image = {
     resizeTo((targetHeight / height.toDouble * width).toInt, targetHeight, position, background)
   }
 
@@ -400,7 +399,7 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
     * @param position where to position the original image after the canvas size change
     * @return a new Image that is the result of resizing the canvas.
     */
-  def resizeToWidth(targetWidth: Int, position: Position = Center, background: Color = Color.Transparent): Image = {
+  def resizeToWidth(targetWidth: Int, position: Position = Position.Center, background: Color = Color.Transparent): Image = {
     resizeTo(targetWidth, (targetWidth / width.toDouble * height).toInt, position, background)
   }
 
@@ -769,7 +768,7 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
   /**
     * Returns this image, with metadata attached.
     *
-    * @interal both the original and the new image will share a buffer
+    * both the original and the new image will share a buffer
     */
   private[scrimage] def withMetadata(metadata: ImageMetadata): Image = new Image(awt, metadata)
 

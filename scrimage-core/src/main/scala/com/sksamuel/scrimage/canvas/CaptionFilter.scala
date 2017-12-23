@@ -35,7 +35,8 @@ class CaptionFilter(text: String,
 
     // captionx/y are the top/left coordinates for the caption box
     val (captionX, captionY) = if (x == -1 || y == -1) {
-      position.calculateXY(image.width, image.height, captionWidth, captionHeight)
+      val dim = position.calculateXY(image.width, image.height, captionWidth, captionHeight)
+      (dim.getX, dim.getY)
     } else {
       (x, y)
     }

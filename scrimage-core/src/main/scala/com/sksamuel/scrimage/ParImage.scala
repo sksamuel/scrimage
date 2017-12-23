@@ -3,8 +3,7 @@ package com.sksamuel.scrimage
 import java.awt.geom.AffineTransform
 import java.awt.image.{AffineTransformOp, BufferedImage, BufferedImageOp}
 
-import com.sksamuel.scrimage.Position.Center
-import com.sksamuel.scrimage.ScaleMethod.{BSpline, Bicubic, Bilinear, FastScale, Lanczos3}
+import com.sksamuel.scrimage.ScaleMethod._
 import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -105,7 +104,7 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
   def cover(targetWidth: Int,
             targetHeight: Int,
             scaleMethod: ScaleMethod = Bicubic,
-            position: Position = Center)
+            position: Position = Position.Center)
            (implicit executor: ExecutionContext): Future[ParImage] = {
     val coveredDimensions = DimensionTools.dimensionsToCover(new Dimension(targetWidth, targetHeight), new Dimension(width, height))
     scaleTo(coveredDimensions.getX, coveredDimensions.getY, scaleMethod) map { scaled =>
@@ -192,12 +191,12 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
    */
   def resizeTo(targetWidth: Int,
                targetHeight: Int,
-               position: Position = Center,
+               position: Position = Position.Center,
                background: Color = Color.Transparent): ParImage = {
     if (targetWidth == width && targetHeight == height) this
     else {
-      val (x, y) = position.calculateXY(targetWidth, targetHeight, width, height)
-      blank(targetWidth, targetHeight, Some(background)).overlay(this, x, y)
+      val dim = position.calculateXY(targetWidth, targetHeight, width, height)
+      blank(targetWidth, targetHeight, Some(background)).overlay(this, dim.getX, dim.getY)
     }
   }
 
@@ -211,7 +210,7 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
    *
    * @return a new Image that is the result of resizing the canvas.
    */
-  def resize(scaleFactor: Double, position: Position = Center, background: Color = Color.Transparent): ParImage = {
+  def resize(scaleFactor: Double, position: Position = Position.Center, background: Color = Color.Transparent): ParImage = {
     resizeTo((width * scaleFactor).toInt, (height * scaleFactor).toInt, position, background)
   }
 
@@ -224,7 +223,7 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
    * @return a new Image that is the result of resizing the canvas.
    */
   def resizeToHeight(targetHeight: Int,
-                     position: Position = Center,
+                     position: Position = Position.Center,
                      background: Color = Color.Transparent): ParImage = {
     resizeTo((targetHeight / height.toDouble * width).toInt, targetHeight, position, background)
   }
@@ -250,7 +249,7 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
    *
    * @return a new Image that is the result of resizing the canvas.
    */
-  def resizeToWidth(targetWidth: Int, position: Position = Center, background: Color = Color.Transparent): ParImage = {
+  def resizeToWidth(targetWidth: Int, position: Position = Position.Center, background: Color = Color.Transparent): ParImage = {
     resizeTo(targetWidth, (targetWidth / width.toDouble * height).toInt, position, background)
   }
 
@@ -411,12 +410,12 @@ class ParImage(awt: BufferedImage, val metadata: ImageMetadata) extends MutableA
           canvasHeight: Int,
           color: Color = Color.Transparent,
           scaleMethod: ScaleMethod = Bicubic,
-          position: Position = Center)
+          position: Position = Position.Center)
          (implicit executor: ExecutionContext): Future[ParImage] = {
     val wh = DimensionTools.dimensionsToFit(new Dimension(canvasWidth, canvasHeight), new Dimension(width, height))
-    val (x, y) = position.calculateXY(canvasWidth, canvasHeight, wh.getX, wh.getY)
+    val dim = position.calculateXY(canvasWidth, canvasHeight, wh.getX, wh.getY)
     scaleTo(wh.getX, wh.getY, scaleMethod) map { scaled =>
-      blank(canvasWidth, canvasHeight).fill(color).overlay(scaled, x, y)
+      blank(canvasWidth, canvasHeight).fill(color).overlay(scaled, dim.getX, dim.getY)
     }
   }
 
