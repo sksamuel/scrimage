@@ -1,10 +1,9 @@
 package com.sksamuel.scrimage.filter
 
 import com.sksamuel.scrimage.Image
-import com.sksamuel.scrimage.filter.PointillizeGridType.{Hexagonal, Octangal, Square, Triangular}
-import org.scalatest.{BeforeAndAfter, FunSuite, OneInstancePerTest}
+import org.scalatest.FunSuite
 
-class PointillizeFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
+class PointillizeFilterTest extends FunSuite {
 
   private val original = Image(getClass.getResourceAsStream("/bird_small.png"))
   private val square = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_pointillize_square.png")
@@ -13,9 +12,9 @@ class PointillizeFilterTest extends FunSuite with BeforeAndAfter with OneInstanc
   private val triangular = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_pointillize_triangular.png")
 
   test("filter output matches expected") {
-    assert(original.filter(new PointillizeFilter(Square)) === Image(square))
-    assert(original.filter(new PointillizeFilter(Hexagonal)) === Image(hexagonal))
-    assert(original.filter(new PointillizeFilter(Octangal)) === Image(octagonal))
-    assert(original.filter(new PointillizeFilter(Triangular)) === Image(triangular))
+    assert(original.filter(new PointillizeFilter(PointillizeGridType.Square)) === Image(square))
+    assert(original.filter(new PointillizeFilter(PointillizeGridType.Hexagonal)) === Image(hexagonal))
+    assert(original.filter(new PointillizeFilter(PointillizeGridType.Octangal)) === Image(octagonal))
+    assert(original.filter(new PointillizeFilter(PointillizeGridType.Triangular)) === Image(triangular))
   }
 }

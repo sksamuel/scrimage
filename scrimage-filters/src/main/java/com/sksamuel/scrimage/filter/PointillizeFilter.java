@@ -40,7 +40,7 @@ public class PointillizeFilter extends BufferedOpFilter {
     }
 
     public PointillizeFilter(PointillizeGridType gridType) {
-        this(0f, 6, 0.4f, 0xff000000, false, 01.f, gridType);
+        this(0.0f, 6, 0.4f, 0xff000000, false, 0.1f, gridType);
     }
 
     @Override
