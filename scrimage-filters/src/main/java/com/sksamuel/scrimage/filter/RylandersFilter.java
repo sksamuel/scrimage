@@ -13,10 +13,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter;
 
-import thirdparty.marvin.image.color.Sepia
+import thirdparty.marvin.image.MarvinAbstractImagePlugin;
+import thirdparty.marvin.image.halftone.Rylanders;
 
-object SepiaFilter extends MarvinFilter {
-  val plugin = new Sepia(20)
+public class RylandersFilter extends MarvinFilter {
+
+    @Override
+    public MarvinAbstractImagePlugin plugin() {
+        return new Rylanders();
+    }
 }

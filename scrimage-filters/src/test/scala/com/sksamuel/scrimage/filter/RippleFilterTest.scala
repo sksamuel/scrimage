@@ -11,7 +11,7 @@ class RippleFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerT
   val expected2 = getClass.getResourceAsStream("/bird_ripple_sawtooth.png")
 
   test("filter output matches expected") {
-    assert(original.filter(RippleFilter(RippleType.Triangle)) === Image(expected1))
-    assert(original.filter(RippleFilter(RippleType.Sawtooth)) === Image(expected2))
+    assert(original.filter(new RippleFilter(RippleType.Triangle)) === Image(expected1))
+    assert(original.filter(new RippleFilter(RippleType.Sawtooth)) === Image(expected2))
   }
 }

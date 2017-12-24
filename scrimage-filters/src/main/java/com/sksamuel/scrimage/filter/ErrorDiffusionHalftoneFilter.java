@@ -13,10 +13,25 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter;
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import thirdparty.marvin.image.MarvinAbstractImagePlugin;
+import thirdparty.marvin.image.halftone.ErrorDiffusion;
 
-object SharpenFilter extends BufferedOpFilter {
-  val op = new thirdparty.jhlabs.image.SharpenFilter()
+public class ErrorDiffusionHalftoneFilter extends MarvinFilter {
+
+    private final int threshold;
+
+    public ErrorDiffusionHalftoneFilter(int threshold) {
+        this.threshold = threshold;
+    }
+
+    public ErrorDiffusionHalftoneFilter() {
+        this(127);
+    }
+
+    @Override
+    public MarvinAbstractImagePlugin plugin() {
+        return new ErrorDiffusion(threshold);
+    }
 }

@@ -1,17 +1,16 @@
 package com.sksamuel.scrimage.filter
 
-import org.scalatest.{ OneInstancePerTest, BeforeAndAfter, FunSuite }
 import com.sksamuel.scrimage.Image
-import com.sksamuel.scrimage.filter.PointillizeGridType.{ Triangular, Octangal, Hexagonal, Square }
+import com.sksamuel.scrimage.filter.PointillizeGridType.{Hexagonal, Octangal, Square, Triangular}
+import org.scalatest.{BeforeAndAfter, FunSuite, OneInstancePerTest}
 
-/** @author Stephen Samuel */
 class PointillizeFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
 
-  val original = Image(getClass.getResourceAsStream("/bird_small.png"))
-  val square = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_pointillize_square.png")
-  val hexagonal = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_pointillize_hexagon.png")
-  val octagonal = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_pointillize_octagonal.png")
-  val triangular = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_pointillize_triangular.png")
+  private val original = Image(getClass.getResourceAsStream("/bird_small.png"))
+  private val square = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_pointillize_square.png")
+  private val hexagonal = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_pointillize_hexagon.png")
+  private val octagonal = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_pointillize_octagonal.png")
+  private val triangular = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_pointillize_triangular.png")
 
   test("filter output matches expected") {
     assert(original.filter(PointillizeFilter(Square)) === Image(square))

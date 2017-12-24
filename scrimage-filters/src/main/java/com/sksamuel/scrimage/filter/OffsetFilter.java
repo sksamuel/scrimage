@@ -13,15 +13,28 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter;
 
-import thirdparty.marvin.image.halftone.ErrorDiffusion
+import com.sksamuel.scrimage.BufferedOpFilter;
 
-class ErrorDiffusionHalftoneFilter(threshold: Int) extends MarvinFilter {
-  val plugin = new ErrorDiffusion(threshold: Int)
-}
+import java.awt.image.BufferedImageOp;
 
-object ErrorDiffusionHalftoneFilter {
-  def apply(): ErrorDiffusionHalftoneFilter = apply(127)
-  def apply(threshold: Int = 0): ErrorDiffusionHalftoneFilter = new ErrorDiffusionHalftoneFilter(threshold)
+public class OffsetFilter extends BufferedOpFilter {
+
+    private final int x;
+    private final int y;
+
+    public OffsetFilter(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    @Override
+    public BufferedImageOp op() {
+        thirdparty.jhlabs.image.OffsetFilter op = new thirdparty.jhlabs.image.OffsetFilter();
+        op.setWrap(true);
+        op.setXOffset(x);
+        op.setYOffset(y);
+        return op;
+    }
 }

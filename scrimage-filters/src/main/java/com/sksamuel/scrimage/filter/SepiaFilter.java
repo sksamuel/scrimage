@@ -13,16 +13,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter;
 
-import com.sksamuel.scrimage.BufferedOpFilter
-import thirdparty.jhlabs.image.GainFilter
+import thirdparty.marvin.image.MarvinAbstractImagePlugin;
+import thirdparty.marvin.image.color.Sepia;
 
-class GainBiasFilter(gain: Double, bias: Double) extends BufferedOpFilter {
-  val op = new GainFilter
-  op.setGain(gain.toFloat)
-  op.setBias(bias.toFloat)
-}
-object GainBiasFilter {
-  def apply(gain: Double = 0.5, bias: Double = 0.5): GainBiasFilter = new GainBiasFilter(gain, bias)
+public class SepiaFilter extends MarvinFilter {
+
+    @Override
+    public MarvinAbstractImagePlugin plugin() {
+        return new Sepia(20);
+    }
 }

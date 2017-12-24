@@ -13,11 +13,17 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter;
 
-import thirdparty.marvin.image.halftone.Rylanders
+import com.sksamuel.scrimage.BufferedOpFilter;
 
-/** @author Stephen Samuel */
-object RylandersFilter extends MarvinFilter {
-  val plugin = new Rylanders()
+import java.awt.image.BufferedImageOp;
+
+public class SolarizeFilter extends BufferedOpFilter {
+
+    @Override
+    public BufferedImageOp op() {
+        return new thirdparty.jhlabs.image.SolarizeFilter();
+    }
 }
+
