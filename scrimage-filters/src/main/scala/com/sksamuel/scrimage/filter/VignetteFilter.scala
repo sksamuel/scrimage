@@ -51,7 +51,7 @@ class VignetteFilter(start: Double, end: Double, blur: Double, color: Color = Co
   }
 
   def apply(image: Image) {
-    val bg = background(image).filter(GaussianBlurFilter((image.radius * blur).toInt))
+    val bg = background(image).filter(new GaussianBlurFilter((image.radius * blur).toInt))
     val g3 = image.awt.getGraphics.asInstanceOf[Graphics2D]
     g3.setComposite(new BlendComposite(BlendingMode.MULTIPLY, 1.0f))
     g3.drawImage(bg.awt, 0, 0, null)

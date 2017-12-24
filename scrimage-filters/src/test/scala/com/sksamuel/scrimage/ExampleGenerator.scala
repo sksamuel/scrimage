@@ -6,32 +6,30 @@ import com.sksamuel.scrimage.filter._
 import com.sksamuel.scrimage.nio.{ PngWriter, JpegWriter }
 import org.apache.commons.io.FileUtils
 
-/** @author Stephen Samuel */
 object ExampleGenerator extends App {
 
-  import scala.concurrent.ExecutionContext.Implicits.global
 
-  val image1 = Image(getClass.getResourceAsStream("/bird.jpg"))
-  val image2 = Image(getClass.getResourceAsStream("/colosseum.jpg"))
-  val image3 = Image(getClass.getResourceAsStream("/lanzarote.jpg"))
+  val image1 = Image.fromResource("/bird.jpg")
+  val image2 = Image.fromResource("/colosseum.jpg")
+  val image3 = Image.fromResource("/lanzarote.jpg")
 
   val filters: List[(String, Filter)] = List(
-    ("blur", BlurFilter),
+    ("blur", new BlurFilter),
     ("border", BorderFilter(8)),
     ("brightness", BrightnessFilter(1.3f)),
-    ("bump", BumpFilter),
+    ("bump", new BumpFilter),
     ("chrome", ChromeFilter()),
     ("color_halftone", ColorHalftoneFilter()),
     ("contour", ContourFilter()),
     ("contrast", ContrastFilter(1.3f)),
     ("despeckle", DespeckleFilter),
     ("diffuse", DiffuseFilter(4)),
-    ("dither", DitherFilter),
+    ("dither", new DitherFilter),
     ("edge", EdgeFilter),
     ("emboss", EmbossFilter),
     ("errordiffusion", ErrorDiffusionHalftoneFilter()),
     ("gamma", GammaFilter(2)),
-    ("gaussian", GaussianBlurFilter()),
+    ("gaussian", new GaussianBlurFilter()),
     ("glow", GlowFilter()),
     ("grayscale", GrayscaleFilter),
     ("hsb", HSBFilter(0.5)),
@@ -47,16 +45,16 @@ object ExampleGenerator extends App {
     ("pixelate", PixelateFilter(4)),
     ("pointillize_square", PointillizeFilter(PointillizeGridType.Square)),
     ("posterize", PosterizeFilter()),
-    ("prewitt", PrewittFilter),
-    ("quantize", QuantizeFilter(256)),
+    ("prewitt", new PrewittFilter),
+    ("quantize", new QuantizeFilter(256)),
     ("rays", RaysFilter(threshold = 0.1f, strength = 0.6f)),
     ("ripple", RippleFilter(RippleType.Sine)),
-    ("roberts", RobertsFilter),
+    ("roberts", new RobertsFilter),
     ("rylanders", RylandersFilter),
     ("sepia", SepiaFilter),
-    ("smear_circles", SmearFilter(SmearType.Circles)),
+    ("smear_circles", new SmearFilter(SmearType.Circles)),
     ("snow", new SnowFilter()),
-    ("sobels", SobelsFilter),
+    ("sobels", new SobelsFilter),
     ("solarize", SolarizeFilter),
     ("sparkle", SparkleFilter()),
     ("summer", SummerFilter()),

@@ -13,18 +13,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter;
 
-import thirdparty.marvin.image.edge.{ Sobel, Roberts, Prewitt }
+import thirdparty.marvin.image.MarvinAbstractImagePlugin;
+import thirdparty.marvin.image.halftone.Dithering;
 
-object SobelsFilter extends MarvinFilter {
-  val plugin = new Sobel()
-}
+public class DitherFilter extends MarvinFilter {
 
-object PrewittFilter extends MarvinFilter {
-  val plugin = new Prewitt()
-}
-
-object RobertsFilter extends MarvinFilter {
-  val plugin = new Roberts()
+    @Override
+    public MarvinAbstractImagePlugin plugin() {
+        return new Dithering();
+    }
 }

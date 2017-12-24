@@ -21,9 +21,7 @@ import java.awt.image.BufferedImage
 import com.sksamuel.scrimage.{Filter, Image}
 import thirdparty.romainguy.{BlendComposite, BlendingMode}
 
-import scala.concurrent.ExecutionContext
-
-class SummerFilter(vignette: Boolean)(implicit executor: ExecutionContext) extends Filter {
+class SummerFilter(vignette: Boolean) extends Filter {
 
   val summer: Image = Image.fromResource("/com/sksamuel/scrimage/filter/summer1.jpg")
 
@@ -39,5 +37,5 @@ class SummerFilter(vignette: Boolean)(implicit executor: ExecutionContext) exten
 }
 
 object SummerFilter {
-  def apply(vignette: Boolean = true)(implicit executor: ExecutionContext): SummerFilter = new SummerFilter(vignette)
+  def apply(vignette: Boolean = true): SummerFilter = new SummerFilter(vignette)
 }

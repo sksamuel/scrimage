@@ -13,10 +13,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter;
 
-import thirdparty.marvin.image.halftone.Dithering
+import com.sksamuel.scrimage.BufferedOpFilter;
 
-object DitherFilter extends MarvinFilter {
-  val plugin = new Dithering()
+import java.awt.image.BufferedImageOp;
+
+public class BlurFilter extends BufferedOpFilter {
+
+    @Override
+    public BufferedImageOp op() {
+        return new thirdparty.jhlabs.image.BlurFilter();
+    }
 }

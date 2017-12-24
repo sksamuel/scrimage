@@ -13,10 +13,27 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter;
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.BufferedOpFilter;
 
-object BlurFilter extends BufferedOpFilter {
-  val op = new thirdparty.jhlabs.image.BlurFilter()
+import java.awt.image.BufferedImageOp;
+
+public class GaussianBlurFilter extends BufferedOpFilter {
+
+    private final int radius;
+
+    public GaussianBlurFilter(int radius) {
+        this.radius = radius;
+    }
+
+    public GaussianBlurFilter() {
+        this(2);
+    }
+
+    @Override
+    public BufferedImageOp op() {
+        return new thirdparty.jhlabs.image.GaussianFilter(radius);
+    }
 }
+
