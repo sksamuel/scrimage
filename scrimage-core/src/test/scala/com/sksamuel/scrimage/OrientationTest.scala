@@ -25,11 +25,11 @@ class OrientationTest extends WordSpec with Matchers {
     }
 
     "rotate image when the image and its thumbnail have the same rotation (issue #93)" in {
-      readImageAndWriteToBytes("/issue93.jpg", JpegWriter.NoCompression) shouldBe readBytes("/issue93_expected.jpg")
+      readImageAndWriteToBytes("/issue93.jpg", new JpegWriter(100, false)) shouldBe readBytes("/issue93_expected.jpg")
     }
 
     "rotate image when the image and its thumbnail different rotations (issue #114)" in {
-      readImageAndWriteToBytes("/issue114.jpg", JpegWriter.NoCompression) shouldBe readBytes("/issue114_expected.jpg")
+      readImageAndWriteToBytes("/issue114.jpg", new JpegWriter(100, false)) shouldBe readBytes("/issue114_expected.jpg")
     }
   }
 
