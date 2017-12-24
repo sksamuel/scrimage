@@ -644,8 +644,6 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
       yWidth.round.toInt)
   }
 
-  def toPar: ParImage = new ParImage(awt, metadata)
-
   /**
     * Returns a new Image that is a subimage or region of the original image.
     *

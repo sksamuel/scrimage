@@ -6,7 +6,6 @@ import com.sksamuel.scrimage.nio.JpegWriter
 import com.sksamuel.scrimage.{ Composite, Image }
 import org.apache.commons.io.FileUtils
 
-/** @author Stephen Samuel */
 object CompositeExampleGenerator extends App {
 
   import scala.concurrent.ExecutionContext.Implicits.global
