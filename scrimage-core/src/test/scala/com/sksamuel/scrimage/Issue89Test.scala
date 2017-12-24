@@ -11,7 +11,7 @@ class Issue89Test extends WordSpec with Matchers {
         val image = Image.fromResource("/issue89.jpg")
         image.width shouldBe 319
         image.height shouldBe 397
-        val bytes = image.bytes(JpegWriter.Default)
+        val bytes = image.bytes(new JpegWriter())
         val reread = Image(bytes)
         reread.width shouldBe 319
         reread.height shouldBe 397

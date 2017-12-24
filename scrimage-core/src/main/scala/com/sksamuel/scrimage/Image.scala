@@ -26,8 +26,6 @@ import com.sksamuel.scrimage.nio.{ImageReader, ImageWriter}
 import org.apache.commons.io.IOUtils
 import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 
-import scala.language.implicitConversions
-
 class ImageParseException extends RuntimeException("Unparsable image")
 
 /**

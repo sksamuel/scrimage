@@ -13,12 +13,19 @@ import java.io.OutputStream;
 
 public class JpegWriter implements ImageWriter {
 
+    public static JpegWriter NoCompression = new JpegWriter(100, false);
+    public static JpegWriter Default = new JpegWriter(80, false);
+
     private final int compression;
     private final boolean progressive;
 
     public JpegWriter(int compression, boolean progressive) {
         this.compression = compression;
         this.progressive = progressive;
+    }
+
+    public JpegWriter() {
+        this(80, false);
     }
 
     public JpegWriter withCompression(int compression) {

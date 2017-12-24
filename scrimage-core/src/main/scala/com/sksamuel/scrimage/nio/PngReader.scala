@@ -1,14 +1,14 @@
 package com.sksamuel.scrimage.nio
 
 import java.awt.image.{BufferedImage, ColorModel, DataBufferInt, Raster}
-import java.io.ByteArrayInputStream
+import java.io.{ByteArrayInputStream, IOException}
 
 import ar.com.hjg.pngj.{ImageLineHelper, ImageLineInt}
-import com.sksamuel.scrimage.{ImageMetadata, Image, Pixel}
+import com.sksamuel.scrimage.{Image, ImageMetadata, Pixel}
 
 object PngReader extends Reader {
 
-  override def fromBytes(bytes: Array[Byte], `type`: Int = Image.CANONICAL_DATA_TYPE): Option[Image] = {
+  override def fromBytes(bytes: Array[Byte], `type`: Int): Image = {
 
     if (supports(bytes)) {
 
@@ -56,10 +56,10 @@ object PngReader extends Reader {
       val cm = ColorModel.getRGBdefault
       val image = new BufferedImage(cm, raster, cm.isAlphaPremultiplied, null)
 
-      Option(new Image(image, ImageMetadata.empty))
+      new Image(image, ImageMetadata.empty)
 
     } else {
-      None
+      throw new IOException
     }
   }
 

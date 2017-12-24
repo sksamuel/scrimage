@@ -4,7 +4,6 @@ import com.sksamuel.scrimage.Image
 import org.apache.commons.io.IOUtils
 import org.scalatest.{Matchers, WordSpec}
 
-/** @author Stephen Samuel */
 class PngWriterTest extends WordSpec with Matchers {
 
   val original = Image.fromResource("/com/sksamuel/scrimage/bird.jpg").scaleTo(300, 200)
@@ -34,7 +33,7 @@ class PngWriterTest extends WordSpec with Matchers {
     "png reader reads an image correctly" in {
       val expected = Image.fromResource("/com/sksamuel/scrimage/io/bird_300_200.png")
       val actual = PngReader
-        .fromBytes(IOUtils.toByteArray(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png"))).get
+        .fromBytes(IOUtils.toByteArray(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png")))
       assert(actual.width === expected.width)
       assert(actual.height === expected.height)
       assert(actual === expected)

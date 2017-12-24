@@ -1,6 +1,6 @@
-package com.sksamuel.scrimage
+package com.sksamuel.scrimage.nio
 
-import com.sksamuel.scrimage.nio.GifSequenceWriter
+import com.sksamuel.scrimage.Image
 import org.apache.commons.io.IOUtils
 import org.scalatest.{Matchers, WordSpec}
 
