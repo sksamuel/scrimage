@@ -13,17 +13,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter;
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.BufferedOpFilter;
 
-class BrightnessFilter(brightness: Double) extends BufferedOpFilter {
-  val op = new thirdparty.jhlabs.image.ContrastFilter
-  op.setBrightness(brightness.toFloat)
-  op.setContrast(1.0f)
+import java.awt.image.BufferedImageOp;
+
+public class LaplaceFilter extends BufferedOpFilter {
+
+    @Override
+    public BufferedImageOp op() {
+        return new thirdparty.jhlabs.image.LaplaceFilter();
+    }
 }
-
-object BrightnessFilter {
-  def apply(amount: Double) = new BrightnessFilter(amount)
-}
-

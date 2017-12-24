@@ -13,18 +13,28 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter;
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.BufferedOpFilter;
 
-/** @author Stephen Samuel */
-class NoiseFilter(amount: Int, density: Double) extends BufferedOpFilter {
-  val op = new thirdparty.jhlabs.image.NoiseFilter()
-  op.setDensity(density.toFloat)
-  op.setAmount(amount)
+import java.awt.image.BufferedImageOp;
+
+public class GammaFilter extends BufferedOpFilter {
+
+    private final double gamma;
+
+    public GammaFilter(double gamma) {
+        this.gamma = gamma;
+    }
+
+    public GammaFilter() {
+        this(1.0f);
+    }
+
+    @Override
+    public BufferedImageOp op() {
+        thirdparty.jhlabs.image.GammaFilter op = new thirdparty.jhlabs.image.GammaFilter();
+        op.setGamma((float) gamma);
+        return op;
+    }
 }
-object NoiseFilter {
-  def apply(): NoiseFilter = apply(25, 1)
-  def apply(amount: Int, density: Double): NoiseFilter = new NoiseFilter(amount, density)
-}
-

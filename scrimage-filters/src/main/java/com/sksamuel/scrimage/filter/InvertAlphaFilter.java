@@ -13,16 +13,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter;
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.BufferedOpFilter;
 
-/** @author Stephen Samuel */
-class ContourFilter(levels: Int) extends BufferedOpFilter {
-  val op = new thirdparty.jhlabs.image.ContourFilter
-  op.setLevels(levels)
-}
-object ContourFilter {
-  def apply(): ContourFilter = apply(3)
-  def apply(levels: Int): ContourFilter = new ContourFilter(levels)
+import java.awt.image.BufferedImageOp;
+
+public class InvertAlphaFilter extends BufferedOpFilter {
+
+    @Override
+    public BufferedImageOp op() {
+        return new thirdparty.jhlabs.image.InvertAlphaFilter();
+    }
 }

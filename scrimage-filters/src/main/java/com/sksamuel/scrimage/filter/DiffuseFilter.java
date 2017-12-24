@@ -13,23 +13,28 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter;
 
-import java.awt.{Color, Graphics2D}
+import com.sksamuel.scrimage.BufferedOpFilter;
 
-import com.sksamuel.scrimage.{Filter, Image}
+import java.awt.image.BufferedImageOp;
 
-class ColorizeFilter(color: Color) extends Filter {
-  def apply(image: Image) {
-    val g2 = image.awt.getGraphics.asInstanceOf[Graphics2D]
-    g2.setColor(color)
-    g2.fillRect(0, 0, image.width, image.height)
-    g2.dispose()
-    //image.updateFromAWT()
-  }
-}
+public class DiffuseFilter extends BufferedOpFilter {
 
-object ColorizeFilter {
-  def apply(color: Color): ColorizeFilter = new ColorizeFilter(color)
-  def apply(r: Int, g: Int, b: Int, a: Int = 255): ColorizeFilter = new ColorizeFilter(new Color(r, g, b, a))
+    private final float scale;
+
+    public DiffuseFilter(float scale) {
+        this.scale = scale;
+    }
+
+    public DiffuseFilter() {
+        this(4);
+    }
+
+    @Override
+    public BufferedImageOp op() {
+        thirdparty.jhlabs.image.DiffuseFilter op = new thirdparty.jhlabs.image.DiffuseFilter();
+        op.setScale(scale);
+        return op;
+    }
 }

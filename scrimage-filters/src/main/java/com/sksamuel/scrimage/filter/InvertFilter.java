@@ -13,10 +13,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter;
 
-import thirdparty.marvin.image.restoration.NoiseReduction
+import com.sksamuel.scrimage.BufferedOpFilter;
 
-object NoiseReductionFilter extends MarvinFilter {
-  val plugin = new NoiseReduction()
+import java.awt.image.BufferedImageOp;
+
+public class InvertFilter extends BufferedOpFilter {
+
+    @Override
+    public BufferedImageOp op() {
+        return new thirdparty.jhlabs.image.InvertFilter();
+    }
 }

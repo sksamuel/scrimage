@@ -13,19 +13,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter;
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.BufferedOpFilter;
 
-class LensBlurFilter(radius: Float, bloom: Float, bloomThreshold: Float, sides: Int, angle: Float)
-    extends BufferedOpFilter {
-  val op = new thirdparty.jhlabs.image.LensBlurFilter()
-  op.setSides(sides)
-  op.setBloomThreshold(bloomThreshold)
-  op.setBloom(bloom)
-  op.setRadius(radius)
-}
+import java.awt.image.BufferedImageOp;
 
-object LensBlurFilter {
-  def apply() = new LensBlurFilter(5, 2, 255, 5, 0)
+public class EdgeFilter extends BufferedOpFilter {
+
+    @Override
+    public BufferedImageOp op() {
+        return new thirdparty.jhlabs.image.EdgeFilter();
+    }
 }

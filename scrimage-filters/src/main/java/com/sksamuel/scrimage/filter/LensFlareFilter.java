@@ -13,10 +13,24 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter;
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.BufferedOpFilter;
+import thirdparty.jhlabs.image.FlareFilter;
 
-object InvertAlphaFilter extends BufferedOpFilter {
-  val op = new thirdparty.jhlabs.image.InvertAlphaFilter()
+import java.awt.image.BufferedImageOp;
+
+public class LensFlareFilter extends BufferedOpFilter {
+
+    @Override
+    public BufferedImageOp op() {
+        FlareFilter op = new FlareFilter();
+        op.setRadius(70f);
+        op.setRayAmount(2.2f);
+        op.setRingWidth(3f);
+        op.setRingAmount(0.2f);
+        op.setBaseAmount(1.1f);
+        return op;
+    }
 }
+

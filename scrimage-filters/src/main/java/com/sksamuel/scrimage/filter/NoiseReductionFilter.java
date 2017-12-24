@@ -13,15 +13,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter;
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import thirdparty.marvin.image.MarvinAbstractImagePlugin;
+import thirdparty.marvin.image.restoration.NoiseReduction;
 
-class GammaFilter(gamma: Double) extends BufferedOpFilter {
-  val op = new thirdparty.jhlabs.image.GammaFilter()
-  op.setGamma(gamma.toFloat)
-}
+public class NoiseReductionFilter extends MarvinFilter {
 
-object GammaFilter {
-  def apply(gamma: Double = 1.0f): GammaFilter = new GammaFilter(gamma)
+    @Override
+    public MarvinAbstractImagePlugin plugin() {
+        return new NoiseReduction();
+    }
 }

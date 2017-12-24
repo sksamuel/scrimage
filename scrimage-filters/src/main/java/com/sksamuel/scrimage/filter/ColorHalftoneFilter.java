@@ -13,17 +13,29 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter;
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.BufferedOpFilter;
 
-class ChromeFilter(amount: Float, exposure: Float) extends BufferedOpFilter {
-  val op = new thirdparty.jhlabs.image.ChromeFilter()
-  op.setAmount(amount)
-  op.setExposure(exposure)
+import java.awt.image.BufferedImageOp;
+
+public class ColorHalftoneFilter extends BufferedOpFilter {
+
+    private final float radius;
+
+    public ColorHalftoneFilter(float radius) {
+        this.radius = radius;
+    }
+
+    public ColorHalftoneFilter() {
+        this(1.2f);
+    }
+
+    @Override
+    public BufferedImageOp op() {
+        thirdparty.jhlabs.image.ColorHalftoneFilter op = new thirdparty.jhlabs.image.ColorHalftoneFilter();
+        op.setdotRadius(radius);
+        return op;
+    }
 }
 
-object ChromeFilter {
-  def apply(): ChromeFilter = apply(0.5f, 1.0f)
-  def apply(amount: Float, exposure: Float): ChromeFilter = new ChromeFilter(amount, exposure)
-}

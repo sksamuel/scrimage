@@ -13,16 +13,28 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter;
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.BufferedOpFilter;
 
-object LensFlareFilter extends BufferedOpFilter {
-  val op = new thirdparty.jhlabs.image.FlareFilter()
-  op.setRadius(70f)
-  op.setRayAmount(2.2f)
-  op.setRingWidth(3f)
-  op.setRingAmount(0.2f)
-  op.setBaseAmount(1.1f)
+import java.awt.image.BufferedImageOp;
+
+public class GlowFilter extends BufferedOpFilter {
+
+    private final float amount;
+
+    public GlowFilter(float amount) {
+        this.amount = amount;
+    }
+
+    public GlowFilter() {
+        this(0.5f);
+    }
+
+    @Override
+    public BufferedImageOp op() {
+        thirdparty.jhlabs.image.GlowFilter op = new thirdparty.jhlabs.image.GlowFilter();
+        op.setAmount(amount);
+        return op;
+    }
 }
-

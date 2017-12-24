@@ -13,16 +13,25 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter;
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.BufferedOpFilter;
 
-/** @author Stephen Samuel */
-class ContrastFilter(contrast: Double) extends BufferedOpFilter {
-  val op = new thirdparty.jhlabs.image.ContrastFilter
-  op.setBrightness(1.0f)
-  op.setContrast(contrast.toFloat)
-}
-object ContrastFilter {
-  def apply(contrast: Double): ContrastFilter = new ContrastFilter(contrast)
+import java.awt.image.BufferedImageOp;
+
+public class DissolveFilter extends BufferedOpFilter {
+
+    private final float density;
+
+    public DissolveFilter(float density) {
+        this.density = density;
+    }
+
+    @Override
+    public BufferedImageOp op() {
+        thirdparty.jhlabs.image.DissolveFilter op = new thirdparty.jhlabs.image.DissolveFilter();
+        op.setDensity(density);
+        return null;
+    }
+
 }

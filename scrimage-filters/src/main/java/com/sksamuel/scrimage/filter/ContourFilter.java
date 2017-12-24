@@ -13,19 +13,28 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter;
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.BufferedOpFilter;
 
-class MotionBlurFilter(angle: Double, distance: Double, rotation: Double, zoom: Double) extends BufferedOpFilter {
-  val op = new thirdparty.jhlabs.image.MotionBlurFilter()
-  op.setAngle(angle.toFloat)
-  op.setDistance(distance.toFloat)
-  op.setRotation(rotation.toFloat)
-  op.setZoom(zoom.toFloat)
-}
+import java.awt.image.BufferedImageOp;
 
-object MotionBlurFilter {
-  def apply(angle: Double, distance: Double, rotation: Double = 0, zoom: Double = 0) =
-    new MotionBlurFilter(angle, distance, rotation, zoom)
+public class ContourFilter extends BufferedOpFilter {
+
+    private final int levels;
+
+    public ContourFilter(int levels) {
+        this.levels = levels;
+    }
+
+    public ContourFilter() {
+        this(3);
+    }
+
+    @Override
+    public BufferedImageOp op() {
+        thirdparty.jhlabs.image.ContourFilter op = new thirdparty.jhlabs.image.ContourFilter();
+        op.setLevels(levels);
+        return op;
+    }
 }

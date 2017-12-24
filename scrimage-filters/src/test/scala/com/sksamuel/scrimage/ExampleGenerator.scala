@@ -3,7 +3,7 @@ package com.sksamuel.scrimage
 import java.io.File
 
 import com.sksamuel.scrimage.filter._
-import com.sksamuel.scrimage.nio.{ PngWriter, JpegWriter }
+import com.sksamuel.scrimage.nio.{JpegWriter, PngWriter}
 import org.apache.commons.io.FileUtils
 
 object ExampleGenerator extends App {
@@ -16,32 +16,32 @@ object ExampleGenerator extends App {
   val filters: List[(String, Filter)] = List(
     ("blur", new BlurFilter),
     ("border", BorderFilter(8)),
-    ("brightness", BrightnessFilter(1.3f)),
+    ("brightness", new BrightnessFilter(1.3f)),
     ("bump", new BumpFilter),
-    ("chrome", ChromeFilter()),
-    ("color_halftone", ColorHalftoneFilter()),
-    ("contour", ContourFilter()),
-    ("contrast", ContrastFilter(1.3f)),
-    ("despeckle", DespeckleFilter),
-    ("diffuse", DiffuseFilter(4)),
+    ("chrome", new ChromeFilter()),
+    ("color_halftone", new ColorHalftoneFilter()),
+    ("contour", new ContourFilter()),
+    ("contrast", new ContrastFilter(1.3f)),
+    ("despeckle", new DespeckleFilter),
+    ("diffuse", new DiffuseFilter(4)),
     ("dither", new DitherFilter),
-    ("edge", EdgeFilter),
-    ("emboss", EmbossFilter),
+    ("edge", new EdgeFilter),
+    ("emboss", new EmbossFilter),
     ("errordiffusion", ErrorDiffusionHalftoneFilter()),
-    ("gamma", GammaFilter(2)),
+    ("gamma", new GammaFilter(2)),
     ("gaussian", new GaussianBlurFilter()),
-    ("glow", GlowFilter()),
+    ("glow", new GlowFilter()),
     ("grayscale", GrayscaleFilter),
     ("hsb", HSBFilter(0.5)),
-    ("invert", InvertFilter),
-    ("lensblur", LensBlurFilter()),
-    ("lensflare", LensFlareFilter),
+    ("invert", new InvertFilter),
+    ("lensblur", new LensBlurFilter()),
+    ("lensflare", new LensFlareFilter),
     ("minimum", MinimumFilter),
     ("maximum", MaximumFilter),
-    ("motionblur", MotionBlurFilter(Math.PI / 3.0, 20)),
-    ("noise", NoiseFilter()),
+    ("motionblur", new MotionBlurFilter(Math.PI / 3.0, 20)),
+    ("noise", new NoiseFilter()),
     ("offset", OffsetFilter(60, 40)),
-    ("oil", OilFilter()),
+    ("oil", new OilFilter()),
     ("pixelate", PixelateFilter(4)),
     ("pointillize_square", PointillizeFilter(PointillizeGridType.Square)),
     ("posterize", PosterizeFilter()),
@@ -62,7 +62,7 @@ object ExampleGenerator extends App {
     ("television", TelevisionFilter),
     ("threshold", ThresholdFilter(127)),
     ("tritone", TritoneFilter(new java.awt.Color(0xFF000044), new java.awt.Color(0xFF0066FF), java.awt.Color.WHITE)),
-    ("twirl", TwirlFilter(75)),
+    ("twirl", new TwirlFilter(75)),
     ("unsharp", UnsharpFilter()),
     ("vignette", VignetteFilter()),
     ("vintage", VintageFilter))

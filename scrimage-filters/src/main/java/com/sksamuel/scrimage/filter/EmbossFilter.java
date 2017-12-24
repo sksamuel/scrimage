@@ -13,10 +13,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter;
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import thirdparty.marvin.image.MarvinAbstractImagePlugin;
+import thirdparty.marvin.image.color.Emboss;
 
-object InvertFilter extends BufferedOpFilter {
-  val op = new thirdparty.jhlabs.image.InvertFilter()
+public class EmbossFilter extends MarvinFilter {
+
+    @Override
+    public MarvinAbstractImagePlugin plugin() {
+        return new Emboss();
+    }
 }

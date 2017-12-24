@@ -13,15 +13,27 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter;
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.BufferedOpFilter;
+import thirdparty.jhlabs.image.ContrastFilter;
 
-class ColorHalftoneFilter(radius: Double) extends BufferedOpFilter {
-  val op = new thirdparty.jhlabs.image.ColorHalftoneFilter()
-  op.setdotRadius(radius.toFloat)
-}
-object ColorHalftoneFilter {
-  def apply(radius: Double = 1.2): ColorHalftoneFilter = new ColorHalftoneFilter(radius)
+import java.awt.image.BufferedImageOp;
+
+public class BrightnessFilter extends BufferedOpFilter {
+
+    private final float brightness;
+
+    public BrightnessFilter(float brightness) {
+        this.brightness = brightness;
+    }
+
+    @Override
+    public BufferedImageOp op() {
+        ContrastFilter op = new ContrastFilter();
+        op.setBrightness(brightness);
+        op.setContrast(1.0f);
+        return op;
+    }
 }
 

@@ -1,14 +1,13 @@
 package com.sksamuel.scrimage.filter
 
-import org.scalatest.{OneInstancePerTest, BeforeAndAfter, FunSuite}
 import com.sksamuel.scrimage.Image
+import org.scalatest.{BeforeAndAfter, FunSuite, OneInstancePerTest}
 
-/** @author Stephen Samuel */
 class LensBlurFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
 
-  val original = Image.fromResource("/bird_small.png")
+  private val original = Image.fromResource("/bird_small.png")
 
   test("filter output matches expected") {
-    assert(original.copy.filter(LensBlurFilter()) === Image.fromResource("/bird_lens_blur.png"))
+    assert(original.copy.filter(new LensBlurFilter()) === Image.fromResource("/bird_lens_blur.png"))
   }
 }

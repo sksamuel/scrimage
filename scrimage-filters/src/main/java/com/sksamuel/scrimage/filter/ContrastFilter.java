@@ -13,16 +13,25 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter;
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.BufferedOpFilter;
 
-/** @author Stephen Samuel */
-class OilFilter(range: Int, levels: Int) extends BufferedOpFilter {
-  val op = new thirdparty.jhlabs.image.OilFilter()
-  op.setRange(range)
-  op.setLevels(levels)
-}
-object OilFilter {
-  def apply(range: Int = 3, levels: Int = 256): OilFilter = new OilFilter(range, levels)
+import java.awt.image.BufferedImageOp;
+
+public class ContrastFilter extends BufferedOpFilter {
+
+    private final double contrast;
+
+    public ContrastFilter(double contrast) {
+        this.contrast = contrast;
+    }
+
+    @Override
+    public BufferedImageOp op() {
+        thirdparty.jhlabs.image.ContrastFilter op = new thirdparty.jhlabs.image.ContrastFilter();
+        op.setBrightness(1.0f);
+        op.setContrast((float) contrast);
+        return op;
+    }
 }
