@@ -133,6 +133,7 @@ public class GifSequenceWriter {
                 }
 
                 writer.endWriteSequence();
+                output.flush();
                 return baos.toByteArray();
             }
         }
