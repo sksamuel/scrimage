@@ -43,6 +43,6 @@ public class SummerFilter implements Filter {
         g2.drawImage(scaled.awt(), 0, 0, null);
         g2.dispose();
         if (vignette)
-            new VignetteFilter(0.92f, 0.98f, 0.3, Color.BLACK).apply(image);
+            new VignetteFilter(0.92f, 0.98f, 0.3f, Color.BLACK).apply(image);
     }
 }

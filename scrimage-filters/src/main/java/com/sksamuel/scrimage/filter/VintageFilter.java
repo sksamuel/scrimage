@@ -13,10 +13,23 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter;
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.Filter;
+import com.sksamuel.scrimage.Image;
+import thirdparty.misc.ThistleFilter;
 
-object MaximumFilter extends BufferedOpFilter {
-  val op = new thirdparty.jhlabs.image.MaximumFilter()
+import java.awt.*;
+import java.awt.image.BufferedImage;
+
+public class VintageFilter implements Filter {
+
+    @Override
+    public void apply(Image image) {
+        ThistleFilter thistle = new ThistleFilter();
+        BufferedImage filtered = thistle.filter(image.awt());
+        Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
+        g2.drawImage(filtered, 0, 0, null);
+        g2.dispose();
+    }
 }

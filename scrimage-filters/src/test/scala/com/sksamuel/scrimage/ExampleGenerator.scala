@@ -14,7 +14,7 @@ object ExampleGenerator extends App {
 
   val filters: List[(String, Filter)] = List(
     ("blur", new BlurFilter),
-    ("border", BorderFilter(8)),
+    ("border", new BorderFilter(8)),
     ("brightness", new BrightnessFilter(1.3f)),
     ("bump", new BumpFilter),
     ("chrome", new ChromeFilter()),
@@ -31,17 +31,18 @@ object ExampleGenerator extends App {
     ("gaussian", new GaussianBlurFilter()),
     ("glow", new GlowFilter()),
     ("grayscale", GrayscaleFilter),
-    ("hsb", HSBFilter(0.5)),
+    ("hsb", new HSBFilter(0.5f, 0, 0)),
     ("invert", new InvertFilter),
+    ("kaleidoscope", new KaleidoscopeFilter),
     ("lensblur", new LensBlurFilter()),
     ("lensflare", new LensFlareFilter),
-    ("minimum", MinimumFilter),
-    ("maximum", MaximumFilter),
+    ("minimum", new MinimumFilter),
+    ("maximum", new MaximumFilter),
     ("motionblur", new MotionBlurFilter(Math.PI / 3.0, 20)),
     ("noise", new NoiseFilter()),
     ("offset", new OffsetFilter(60, 40)),
     ("oil", new OilFilter()),
-    ("pixelate", PixelateFilter(4)),
+    ("pixelate", new PixelateFilter(4)),
     ("pointillize_square", new PointillizeFilter(PointillizeGridType.Square)),
     ("posterize", new PosterizeFilter()),
     ("prewitt", new PrewittFilter),
@@ -62,9 +63,9 @@ object ExampleGenerator extends App {
     ("threshold", new ThresholdFilter(127)),
     ("tritone", new TritoneFilter(new java.awt.Color(0xFF000044), new java.awt.Color(0xFF0066FF), java.awt.Color.WHITE)),
     ("twirl", new TwirlFilter(75)),
-    ("unsharp", UnsharpFilter()),
-    ("vignette", VignetteFilter()),
-    ("vintage", VintageFilter))
+    ("unsharp", new UnsharpFilter()),
+    ("vignette", new VignetteFilter()),
+    ("vintage", new VintageFilter))
 
   val sb = new StringBuffer()
 

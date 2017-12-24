@@ -1,15 +1,14 @@
 package com.sksamuel.scrimage.filter
 
-import org.scalatest.{ OneInstancePerTest, BeforeAndAfter, FunSuite }
 import com.sksamuel.scrimage.Image
+import org.scalatest.FunSuite
 
-/** @author Stephen Samuel */
-class UnsharpFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
+class UnsharpFilterTest extends FunSuite {
 
-  val original = getClass.getResourceAsStream("/bird_small.png")
-  val expected = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_unsharp.png")
+  private val original = getClass.getResourceAsStream("/bird_small.png")
+  private val expected = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_unsharp.png")
 
   test("filter output matches expected") {
-    assert(Image(original).filter(UnsharpFilter()) === Image(expected))
+    assert(Image(original).filter(new UnsharpFilter()) === Image(expected))
   }
 }

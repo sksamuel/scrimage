@@ -13,20 +13,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter;
 
-import java.awt.Graphics2D
+import com.sksamuel.scrimage.BufferedOpFilter;
 
-import com.sksamuel.scrimage.{MutableAwtImage, AwtImage, Image, Filter}
-import thirdparty.misc.ThistleFilter
+import java.awt.image.BufferedImageOp;
 
-/** @author Stephen Samuel */
-object VintageFilter extends Filter {
-  def apply(image: Image) {
-    val thistle = new ThistleFilter()
-    val filtered = thistle.filter(image.awt)
-    val g2 = image.awt.getGraphics.asInstanceOf[Graphics2D]
-    g2.drawImage(filtered, 0, 0, null)
-    g2.dispose()
-  }
+public class MinimumFilter extends BufferedOpFilter {
+    @Override
+    public BufferedImageOp op() {
+        return new thirdparty.jhlabs.image.MinimumFilter();
+    }
 }

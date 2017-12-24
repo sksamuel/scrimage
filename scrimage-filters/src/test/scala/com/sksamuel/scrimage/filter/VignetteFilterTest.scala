@@ -10,7 +10,7 @@ class VignetteFilterTest extends FunSuite {
 
   test("filter output matches expected") {
     val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_vignette.png"))
-    val actual = original.filter(VignetteFilter())
+    val actual = original.filter(new VignetteFilter())
     assert(actual === expected)
   }
 }

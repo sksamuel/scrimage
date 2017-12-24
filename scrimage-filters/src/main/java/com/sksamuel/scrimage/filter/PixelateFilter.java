@@ -1,5 +1,5 @@
 /*
-   Copyright 2014 Stephen K Samuel
+   Copyright 2013 Stephen K Samuel
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -13,10 +13,26 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter;
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.BufferedOpFilter;
 
-object KaleidoscopeFilter extends BufferedOpFilter {
-  val op = new thirdparty.jhlabs.image.KaleidoscopeFilter()
+import java.awt.image.BufferedImageOp;
+
+public class PixelateFilter extends BufferedOpFilter {
+
+    private final int blockSize;
+
+    public PixelateFilter(int blockSize) {
+        this.blockSize = blockSize;
+    }
+
+    public PixelateFilter() {
+        this(2);
+    }
+
+    @Override
+    public BufferedImageOp op() {
+        return new thirdparty.jhlabs.image.BlockFilter(blockSize);
+    }
 }

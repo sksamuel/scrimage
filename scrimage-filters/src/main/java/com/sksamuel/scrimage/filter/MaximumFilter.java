@@ -13,10 +13,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter;
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.BufferedOpFilter;
 
-object MinimumFilter extends BufferedOpFilter {
-  val op = new thirdparty.jhlabs.image.MinimumFilter()
+import java.awt.image.BufferedImageOp;
+
+public class MaximumFilter extends BufferedOpFilter {
+
+    @Override
+    public BufferedImageOp op() {
+        return new thirdparty.jhlabs.image.MaximumFilter();
+    }
 }

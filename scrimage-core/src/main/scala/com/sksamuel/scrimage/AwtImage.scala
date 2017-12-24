@@ -20,6 +20,9 @@ class AwtImage(val awt: BufferedImage) {
     */
   lazy val center: (Int, Int) = (width / 2, height / 2)
 
+  lazy val centreX: Int = center._1
+  lazy val centreY: Int = center._2
+
   /**
     * The radius of the image defined as the centre to the corners.
     */

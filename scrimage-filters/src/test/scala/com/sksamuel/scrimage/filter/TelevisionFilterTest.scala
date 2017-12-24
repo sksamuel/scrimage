@@ -1,14 +1,14 @@
 package com.sksamuel.scrimage.filter
 
-import org.scalatest.{ OneInstancePerTest, BeforeAndAfter, FunSuite }
 import com.sksamuel.scrimage.Image
+import org.scalatest.FunSuite
 
-class TelevisionFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
+class TelevisionFilterTest extends FunSuite {
 
-  val original = Image(getClass.getResourceAsStream("/bird_small.png"))
+  private val original = Image.fromResource("/bird_small.png")
+  private val expected = Image.fromResource("/com/sksamuel/scrimage/filters/bird_small_television.png")
 
   test("television filter output matches expected") {
-    val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_television.png"))
     assert(original.filter(new TelevisionFilter) === expected)
   }
 }
