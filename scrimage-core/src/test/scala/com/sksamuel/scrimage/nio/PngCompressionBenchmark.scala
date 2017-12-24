@@ -6,14 +6,13 @@ import com.sksamuel.scrimage.Image
 
 import scala.concurrent.duration._
 
-/** @author Stephen Samuel */
 object PngCompressionBenchmark extends App {
 
-  val image = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/jazz.jpg"))
+  val image = Image.fromResource("/com/sksamuel/scrimage/jazz.jpg")
 
   for (c <- 0 to 9) {
     benchmarkN(1, string => println(s"Compression level $c took " + string)) {
-      image.output(File.createTempFile(s"compressiontest$c", ".png"))(PngWriter(c))
+      image.output(File.createTempFile(s"compressiontest$c", ".png"))(new PngWriter(c))
     }
   }
 

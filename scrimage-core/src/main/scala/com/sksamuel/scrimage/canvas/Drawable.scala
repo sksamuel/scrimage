@@ -14,7 +14,7 @@ trait Drawable {
 
 trait ContextDrawable extends Drawable {
   def context: Context
-  def configure = context.toFn
+  def configure: Graphics2D => Unit = context.toFn
 }
 
 object Drawable {
