@@ -13,19 +13,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter;
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import thirdparty.marvin.image.MarvinAbstractImagePlugin;
+import thirdparty.marvin.image.television.Television;
 
-/** @author Stephen Samuel */
-class ThresholdFilter(threshold: Int, white: Int, black: Int) extends BufferedOpFilter {
-  val op = new thirdparty.jhlabs.image.ThresholdFilter(threshold)
-  op.setBlack(black)
-  op.setWhite(white)
+public class TelevisionFilter extends MarvinFilter {
+
+    @Override
+    public MarvinAbstractImagePlugin plugin() {
+        return new Television();
+    }
 }
 
-object ThresholdFilter {
-  def apply(): ThresholdFilter = apply(127)
-  def apply(threshold: Int, white: Int = 0xffffff, black: Int = 0x000000): ThresholdFilter =
-    new ThresholdFilter(threshold, white, black)
-}

@@ -8,7 +8,6 @@ import org.apache.commons.io.FileUtils
 
 object ExampleGenerator extends App {
 
-
   val image1 = Image.fromResource("/bird.jpg")
   val image2 = Image.fromResource("/colosseum.jpg")
   val image3 = Image.fromResource("/lanzarote.jpg")
@@ -43,11 +42,11 @@ object ExampleGenerator extends App {
     ("offset", new OffsetFilter(60, 40)),
     ("oil", new OilFilter()),
     ("pixelate", PixelateFilter(4)),
-    ("pointillize_square", PointillizeFilter(PointillizeGridType.Square)),
-    ("posterize", PosterizeFilter()),
+    ("pointillize_square", new PointillizeFilter(PointillizeGridType.Square)),
+    ("posterize", new PosterizeFilter()),
     ("prewitt", new PrewittFilter),
     ("quantize", new QuantizeFilter(256)),
-    ("rays", RaysFilter(threshold = 0.1f, strength = 0.6f)),
+    ("rays", new RaysFilter(0.1f, 0.6f, 0.5f)),
     ("ripple", new RippleFilter(RippleType.Sine)),
     ("roberts", new RobertsFilter),
     ("rylanders", new RylandersFilter),
@@ -57,11 +56,11 @@ object ExampleGenerator extends App {
     ("sobels", new SobelsFilter),
     ("solarize", new SolarizeFilter),
     ("sparkle", new SparkleFilter()),
-    ("summer", SummerFilter()),
-    ("swim", SwimFilter()),
-    ("television", TelevisionFilter),
-    ("threshold", ThresholdFilter(127)),
-    ("tritone", TritoneFilter(new java.awt.Color(0xFF000044), new java.awt.Color(0xFF0066FF), java.awt.Color.WHITE)),
+    ("summer", new SummerFilter(true)),
+    ("swim", new SwimFilter()),
+    ("television", new TelevisionFilter),
+    ("threshold", new ThresholdFilter(127)),
+    ("tritone", new TritoneFilter(new java.awt.Color(0xFF000044), new java.awt.Color(0xFF0066FF), java.awt.Color.WHITE)),
     ("twirl", new TwirlFilter(75)),
     ("unsharp", UnsharpFilter()),
     ("vignette", VignetteFilter()),

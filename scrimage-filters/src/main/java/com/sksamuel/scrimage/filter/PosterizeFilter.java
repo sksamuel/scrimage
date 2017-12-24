@@ -13,16 +13,28 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter;
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.BufferedOpFilter;
 
-/** @author Stephen Samuel */
-class PosterizeFilter(radius: Float, bloom: Float, bloomThreshold: Float, sides: Int, angle: Float)
-    extends BufferedOpFilter {
-  val op = new thirdparty.jhlabs.image.PosterizeFilter()
-  op.setNumLevels(8)
-}
-object PosterizeFilter {
-  def apply(): PosterizeFilter = new PosterizeFilter(5, 2, 255, 5, 0)
+import java.awt.image.BufferedImageOp;
+
+public class PosterizeFilter extends BufferedOpFilter {
+
+    private final int numLevels;
+
+    public PosterizeFilter(int numLevels) {
+        this.numLevels = numLevels;
+    }
+
+    public PosterizeFilter() {
+        this(8);
+    }
+
+    @Override
+    public BufferedImageOp op() {
+        thirdparty.jhlabs.image.PosterizeFilter op = new thirdparty.jhlabs.image.PosterizeFilter();
+        op.setNumLevels(numLevels);
+        return op;
+    }
 }

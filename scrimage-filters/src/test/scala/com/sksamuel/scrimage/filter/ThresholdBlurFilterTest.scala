@@ -1,15 +1,14 @@
 package com.sksamuel.scrimage.filter
 
-import org.scalatest.{ OneInstancePerTest, BeforeAndAfter, FunSuite }
 import com.sksamuel.scrimage.Image
+import org.scalatest.{BeforeAndAfter, FunSuite, OneInstancePerTest}
 
-/** @author Stephen Samuel */
 class ThresholdBlurFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
 
-  val original = getClass.getResourceAsStream("/bird_small.png")
-  val expected = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_threshold.png")
+  private val original = getClass.getResourceAsStream("/bird_small.png")
+  private val expected = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_threshold.png")
 
   test("filter output matches expected") {
-    assert(Image(original).filter(ThresholdFilter()) === Image(expected))
+    assert(Image(original).filter(new ThresholdFilter()) === Image(expected))
   }
 }

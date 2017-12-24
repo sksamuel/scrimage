@@ -2,8 +2,6 @@ package com.sksamuel.scrimage
 
 import java.awt.Paint
 
-import scala.language.implicitConversions
-
 /**
  * @author Stephen Samuel
  */

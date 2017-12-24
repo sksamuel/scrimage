@@ -13,9 +13,9 @@ class PointillizeFilterTest extends FunSuite with BeforeAndAfter with OneInstanc
   private val triangular = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_pointillize_triangular.png")
 
   test("filter output matches expected") {
-    assert(original.filter(PointillizeFilter(Square)) === Image(square))
-    assert(original.filter(PointillizeFilter(Hexagonal)) === Image(hexagonal))
-    assert(original.filter(PointillizeFilter(Octangal)) === Image(octagonal))
-    assert(original.filter(PointillizeFilter(Triangular)) === Image(triangular))
+    assert(original.filter(new PointillizeFilter(Square)) === Image(square))
+    assert(original.filter(new PointillizeFilter(Hexagonal)) === Image(hexagonal))
+    assert(original.filter(new PointillizeFilter(Octangal)) === Image(octagonal))
+    assert(original.filter(new PointillizeFilter(Triangular)) === Image(triangular))
   }
 }
