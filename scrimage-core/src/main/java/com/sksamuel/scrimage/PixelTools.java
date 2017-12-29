@@ -128,7 +128,12 @@ public class PixelTools {
         return y * w + x;
     }
 
-    public static Coordinate offsetToCoordinate(int k, int w) {
-        return new Coordinate(k % w, k / w);
+    /**
+     * Given a width, and an offset returns the coordinate for that offset.
+     * In other words, starting at 0,0 and moving along each row before starting the next row,
+     * it gives the coordinate that is kth from the start.
+     */
+    public static Coordinate offsetToCoordinate(int offset, int width) {
+        return new Coordinate(offset % width, offset / width);
     }
 }

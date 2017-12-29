@@ -799,7 +799,9 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
     */
   def map(f: (Int, Int, Pixel) => Pixel): Image = {
     val target = copy
-    target.mapInPlace(f)
+    target.mapInPlace(new PixelMapper {
+      override def map(x: Int, y: Int, p: Pixel): Pixel = f(x, y, p)
+    })
     target
   }
 }
@@ -820,7 +822,9 @@ object Image extends Using {
   def apply(w: Int, h: Int, pixels: Array[Pixel], `type`: Int): Image = {
     require(w * h == pixels.length)
     val image = Image(w, h, `type`)
-    image.mapInPlace((x, y, p) => pixels(PixelTools.coordinateToOffset(x, y, w)))
+    image.mapInPlace(new PixelMapper {
+      override def map(x: Int, y: Int, p: Pixel) = pixels(PixelTools.coordinateToOffset(x, y, w))
+    })
     image
   }
 

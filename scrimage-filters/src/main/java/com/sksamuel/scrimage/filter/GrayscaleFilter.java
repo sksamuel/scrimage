@@ -13,18 +13,21 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter;
 
-import com.sksamuel.scrimage.{Image, Filter, Pixel}
+import com.sksamuel.scrimage.Filter;
+import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.Pixel$;
 
-object GrayscaleFilter extends Filter {
-  def apply(image: Image) {
-    image.mapInPlace((_, _, p) => {
-      val red = 0.21 * p.red
-      val green = 0.71 * p.green
-      val blue = 0.07 * p.blue
-      val gray = (red + green + blue).toInt
-      Pixel(gray, gray, gray, p.alpha)
-    })
+public class GrayscaleFilter implements Filter {
+
+    public void apply(Image image) {
+        image.mapInPlace((x, y, p) -> {
+            double red = 0.21 * p.red();
+            double green = 0.71 * p.green();
+            double blue = 0.07 * p.blue();
+            int gray = (int) (red + green + blue);
+            return Pixel$.MODULE$.apply(gray, gray, gray, p.alpha());
+        });
   }
 }

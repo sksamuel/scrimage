@@ -6,7 +6,6 @@ import com.sksamuel.scrimage.{Color, Image}
 
 import scala.language.implicitConversions
 
-/** @author Stephen Samuel */
 case class Canvas(image: Image) {
 
   private def g2(image: Image): Graphics2D = image.awt.getGraphics.asInstanceOf[Graphics2D]
