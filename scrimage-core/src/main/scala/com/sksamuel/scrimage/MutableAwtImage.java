@@ -1,5 +1,7 @@
 package com.sksamuel.scrimage;
 
+import sun.awt.resources.awt;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
@@ -29,7 +31,7 @@ public class MutableAwtImage extends AwtImage {
     public void mapInPlace(PixelMapper mapper) {
         Arrays.stream(points()).forEach(point -> {
             Pixel newpixel = mapper.map(point.x, point.y, pixel(point.x, point.y));
-            awt.setRGB(point.x, point.y, newpixel.toInt());
+            awt().setRGB(point.x, point.y, newpixel.toInt());
         });
     }
 
@@ -42,7 +44,7 @@ public class MutableAwtImage extends AwtImage {
 
     protected void removetrans(java.awt.Color color) {
         Arrays.stream(points()).forEach(point -> {
-            awt.setRGB(point.x, point.y, rmTransparency(color, new Pixel(awt.getRGB(point.x, point.y))).toInt());
+            awt().setRGB(point.x, point.y, rmTransparency(color, new Pixel(awt().getRGB(point.x, point.y))).toInt());
         });
     }
 
@@ -51,7 +53,7 @@ public class MutableAwtImage extends AwtImage {
      */
     protected void fillInPlace(Color color) {
         Arrays.stream(points()).forEach(point -> {
-            awt.setRGB(point.x, point.y, color.toPixel().toInt());
+            awt().setRGB(point.x, point.y, color.toPixel().toInt());
         });
     }
 
@@ -59,13 +61,13 @@ public class MutableAwtImage extends AwtImage {
      * Applies the given image over the current buffer.
      */
     protected void overlayInPlace(BufferedImage overlay, int x, int y) {
-        Graphics2D g2 = (Graphics2D) awt.getGraphics();
+        Graphics2D g2 = (Graphics2D) awt().getGraphics();
         g2.drawImage(overlay, x, y, null);
         g2.dispose();
     }
 
     public void setPixel(int x, int y, Pixel pixel) {
-        awt.setRGB(x, y, pixel.argb());
+        awt().setRGB(x, y, pixel.argb());
     }
 
     /**
@@ -74,7 +76,7 @@ public class MutableAwtImage extends AwtImage {
     protected void rescaleInPlace(double factor) {
         RescaleOp rescale = new RescaleOp((float) factor, 0f,
                 new RenderingHints(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY));
-        rescale.filter(awt, awt);
+        rescale.filter(awt(), awt());
     }
 
     protected void contrastInPlace(double factor) {

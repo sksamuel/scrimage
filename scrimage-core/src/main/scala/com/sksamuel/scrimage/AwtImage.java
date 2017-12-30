@@ -22,7 +22,7 @@ import java.util.stream.StreamSupport;
  */
 public class AwtImage {
 
-    public final BufferedImage awt;
+    private final BufferedImage awt;
     public final int width;
     public final int height;
 

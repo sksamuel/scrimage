@@ -64,12 +64,12 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
 
   test("dimensions happy path") {
     val awt = new BufferedImage(200, 400, BufferedImage.TYPE_INT_ARGB)
-    assert((200, 400) === Image.fromAwt(awt).dimensions)
+    assert(new Dimension(200, 400) === Image.fromAwt(awt).dimensions)
   }
 
   test("pixel returns correct ARGB integer") {
     val image = Image.filled(50, 30, Color(0, 0, 0, 0))
-    val g = image.awt.getGraphics
+    val g = image.awt().getGraphics
     g.setColor(java.awt.Color.RED)
     g.fillRect(10, 10, 10, 10)
     g.dispose()
