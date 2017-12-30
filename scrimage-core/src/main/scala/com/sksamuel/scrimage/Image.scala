@@ -926,7 +926,7 @@ object Image extends Using {
   def filled(width: Int, height: Int, color: Color = Color.White, `type`: Int = CANONICAL_DATA_TYPE): Image = {
     val target = apply(width, height, `type`)
     for ( w <- 0 until width; h <- 0 until height )
-      target.awt.setRGB(w, h, color.toRGB.toInt)
+      target.awt().setRGB(w, h, color.toRGB.toInt)
     target
   }
 
