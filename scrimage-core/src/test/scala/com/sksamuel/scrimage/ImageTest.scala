@@ -94,8 +94,10 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     g.fillRect(10, 10, 10, 10)
     g.dispose()
     // image.updateFromAWT()
-    assert(0 === image.pixels()(0).toInt)
-    assert(0xFFFF0000 === image.pixels()(765).toInt)
+    image.pixels()
+      .apply(0).toInt shouldBe 0
+    image.pixels()
+      .apply(765).toInt shouldBe 0xFFFF0000
   }
 
   test("when created a filled copy then the dimensions are the same as the original") {

@@ -76,9 +76,11 @@ public class AwtImage {
      * @return an array of pixels for this image
      */
     public Pixel[] pixels() {
-        int k = 0;
         Pixel[] pixels = new Pixel[count()];
-        iterator().forEachRemaining(pixel -> pixels[k] = pixel);
+        Point[] points = points();
+        for (int k = 0; k < points.length; k++) {
+            pixels[k] = pixel(points[k]);
+        }
         return pixels;
     }
 
@@ -267,11 +269,11 @@ public class AwtImage {
      * @return an Array of pixels for the region
      */
     public Pixel[] pixels(int x, int y, int w, int h) {
-        Pixel[] pixels = new Pixel[(x + w) * (y + h)];
+        Pixel[] pixels = new Pixel[w * h];
         int k = 0;
-        for (int x1 = x; x1 < x + w; x++) {
-            for (int y1 = y; y1 < y + h; y++) {
-                pixels[k] = pixel(x1, y1);
+        for (int y1 = y; y1 < y + h; y1++) {
+            for (int x1 = x; x1 < x + w; x1++) {
+                pixels[k++] = pixel(x1, y1);
             }
         }
         return pixels;
