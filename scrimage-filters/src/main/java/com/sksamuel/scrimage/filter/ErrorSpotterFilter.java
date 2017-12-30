@@ -45,8 +45,8 @@ public class ErrorSpotterFilter implements Filter {
         assert (src.height == base.height);
         for (int x = 0; x < src.width; x++) {
             for (int y = 0; y < src.height; y++) {
-                int delta = error(Color$.MODULE$.apply(base.awt.getRGB(x, y)), Color$.MODULE$.apply(src.awt.getRGB(x, y)));
-                src.awt.setRGB(x, y, delta);
+                int delta = error(Color$.MODULE$.apply(base.awt().getRGB(x, y)), Color$.MODULE$.apply(src.awt().getRGB(x, y)));
+                src.awt().setRGB(x, y, delta);
             }
         }
     }

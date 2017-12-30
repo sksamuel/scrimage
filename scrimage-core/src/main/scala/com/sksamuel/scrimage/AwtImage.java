@@ -32,6 +32,10 @@ public class AwtImage {
         height = awt.getHeight();
     }
 
+    public BufferedImage awt() {
+        return awt;
+    }
+
     /**
      * The centre coordinates for the image.
      */
@@ -294,7 +298,7 @@ public class AwtImage {
      * respectively.
      */
     public int subpixel(double x, double y) {
-        return new LinearSubpixelInterpolator(awt).subpixel(x, y);
+        return new LinearSubpixelInterpolator(this).subpixel(x, y);
     }
 
     /**

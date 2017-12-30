@@ -13,6 +13,7 @@ object ExampleGenerator extends App {
   val image3 = Image.fromResource("/lanzarote.jpg")
 
   val filters: List[(String, Filter)] = List(
+    ("black_threshold", new BlackThresholdFilter(50)),
     ("blur", new BlurFilter),
     ("border", new BorderFilter(8)),
     ("brightness", new BrightnessFilter(1.3f)),
@@ -30,7 +31,7 @@ object ExampleGenerator extends App {
     ("gamma", new GammaFilter(2)),
     ("gaussian", new GaussianBlurFilter()),
     ("glow", new GlowFilter()),
-    ("grayscale", GrayscaleFilter),
+    ("grayscale", new GrayscaleFilter),
     ("hsb", new HSBFilter(0.5f, 0, 0)),
     ("invert", new InvertFilter),
     ("kaleidoscope", new KaleidoscopeFilter),

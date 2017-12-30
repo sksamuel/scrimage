@@ -11,7 +11,7 @@ class BlackThresholdFilterTest extends FunSuite {
     val thresholdPercentage = 40.0
 
     // when
-    BlackThresholdFilter(thresholdPercentage).apply(image)
+    new BlackThresholdFilter(thresholdPercentage).apply(image)
 
     // then
     val expected = Image.fromStream(getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_black_threshold.png"))

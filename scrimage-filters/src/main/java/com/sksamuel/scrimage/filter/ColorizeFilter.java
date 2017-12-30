@@ -42,7 +42,7 @@ public class ColorizeFilter implements Filter {
     public void apply(Image image) {
         Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
         g2.setColor(color.toAWT());
-        g2.fillRect(0, 0, image.width(), image.height());
+        g2.fillRect(0, 0, image.width, image.height);
         g2.dispose();
     }
 }

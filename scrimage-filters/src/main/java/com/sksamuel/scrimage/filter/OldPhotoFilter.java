@@ -23,7 +23,7 @@ public class OldPhotoFilter implements Filter {
         // g2.dispose();
 
         final Image film = Image.fromResource("/com/sksamuel/scrimage/filter/film1.jpg", Image.CANONICAL_DATA_TYPE());
-        BufferedImage filmSized = film.scaleTo(image.width(), image.height(), ScaleMethod.Bicubic).awt();
+        BufferedImage filmSized = film.scaleTo(image.width, image.height, ScaleMethod.Bicubic).awt();
         BufferedImage filmSizedSameType = Image.fromAwt(filmSized, image.awt().getType()).awt();
 
         g2.setComposite(BlendComposite.getInstance(BlendingMode.INVERSE_COLOR_DODGE, 0.30f));

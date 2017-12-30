@@ -59,7 +59,7 @@ public class PngWriter implements ImageWriter {
 
         if (image.awt().getType() == BufferedImage.TYPE_INT_ARGB) {
 
-            ImageInfo imi = new ImageInfo(image.width(), image.height(), 8, true);
+            ImageInfo imi = new ImageInfo(image.width, image.height, 8, true);
 
             ar.com.hjg.pngj.PngWriter writer = new ar.com.hjg.pngj.PngWriter(out, imi);
             writer.setCompLevel(compressionLevel);

@@ -38,10 +38,10 @@ public class BorderFilter implements Filter {
     public void apply(Image image) {
         Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
         g2.setColor(color);
-        g2.fillRect(0, 0, borderWidth, image.height()); // left
-        g2.fillRect(image.width() - borderWidth, 0, borderWidth, image.height()); // right
-        g2.fillRect(0, 0, image.width(), borderWidth); // top
-        g2.fillRect(0, image.height() - borderWidth, image.width(), borderWidth); // bottom
+        g2.fillRect(0, 0, borderWidth, image.height); // left
+        g2.fillRect(image.width - borderWidth, 0, borderWidth, image.height); // right
+        g2.fillRect(0, 0, image.width, borderWidth); // top
+        g2.fillRect(0, image.height - borderWidth, image.width, borderWidth); // bottom
 
     }
 }

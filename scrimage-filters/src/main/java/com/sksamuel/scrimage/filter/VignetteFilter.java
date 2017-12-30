@@ -67,7 +67,7 @@ public class VignetteFilter implements Filter {
         g2.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
         g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         g2.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
-        g2.fillRect(0, 0, target.width(), target.height());
+        g2.fillRect(0, 0, target.width, target.height);
         g2.dispose();
 
         return target;

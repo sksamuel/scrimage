@@ -5,5 +5,5 @@ public interface PixelPredicate {
 }
 
 interface PixelFunction {
-    boolean apply(int x, int y, Pixel p);
+    void apply(int x, int y, Pixel p);
 }

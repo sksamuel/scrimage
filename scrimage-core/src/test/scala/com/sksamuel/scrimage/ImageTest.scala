@@ -45,7 +45,9 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
 
   test("when trimming the new image is not empty") {
     val trimmed = image.trim(3, 4, 5, 6)
-    assert(!trimmed.forall((x, y, p) => p.toInt == 0xFF000000 || p.toInt == 0xFFFFFFFF))
+    assert(!trimmed.forall(new PixelPredicate {
+      override def test(x: Int, y: Int, p: Pixel): Boolean = p.toInt == 0xFF000000 || p.toInt == 0xFFFFFFFF
+    }))
   }
 
   test("when resizing by pixels then the output image has the given dimensions") {
@@ -92,8 +94,8 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     g.fillRect(10, 10, 10, 10)
     g.dispose()
     // image.updateFromAWT()
-    assert(0 === image.pixels(0).toInt)
-    assert(0xFFFF0000 === image.pixels(765).toInt)
+    assert(0 === image.pixels()(0).toInt)
+    assert(0xFFFF0000 === image.pixels()(765).toInt)
   }
 
   test("when created a filled copy then the dimensions are the same as the original") {
@@ -399,7 +401,9 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   test("foreach accesses to each pixel") {
     val image = Image.apply(100, 100)
     var count = 0
-    image.foreach((_, _, _) => count = count + 1)
+    image.foreach(new PixelFunction {
+      override def apply(x: Int, y: Int, p: Pixel): Unit = count = count + 1
+    })
     assert(10000 === count)
   }
 
