@@ -8,7 +8,7 @@ import scala.language.implicitConversions
 
 case class Canvas(image: Image) {
 
-  private def g2(image: Image): Graphics2D = image.awt.getGraphics.asInstanceOf[Graphics2D]
+  private def g2(image: Image): Graphics2D = image.awt().getGraphics.asInstanceOf[Graphics2D]
 
   protected[scrimage] def drawInPlace(drawables: Drawable*): Unit = {
     val g = g2(image)
