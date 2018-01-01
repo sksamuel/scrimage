@@ -23,8 +23,8 @@ class WatermarkTest extends WordSpec with Matchers {
       marked shouldBe Image.fromResource("/com/sksamuel/scrimage/filters/watermark_stamp.png")
     }
     "add located watermark" in {
-      val font = FontUtils.createTrueType(getClass.getResourceAsStream("/fonts/Roboto-Regular.ttf"), 25)
-      val marked = image.filter(new WatermarkFilter("watermark", image.height - 100, 48, font, false, 0.2, Color.WHITE))
+      val font = FontUtils.createTrueType(getClass.getResourceAsStream("/fonts/Roboto-Regular.ttf"), 48)
+      val marked = image.filter(new WatermarkFilter("watermark", 25, image.height - 100, font, false, 0.2, Color.WHITE))
       marked shouldBe Image.fromResource("/com/sksamuel/scrimage/filters/watermark.png")
     }
   }
