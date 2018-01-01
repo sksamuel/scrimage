@@ -6,6 +6,8 @@ import org.scalatest.{Matchers, WordSpec}
 
 class PngWriterTest extends WordSpec with Matchers {
 
+  implicit val writer = PngWriter.MaxCompression
+
   val original = Image.fromResource("/com/sksamuel/scrimage/bird.jpg").scaleTo(300, 200)
 
   "png write" should {

@@ -22,7 +22,7 @@ import java.io.{ByteArrayInputStream, File, InputStream}
 import java.nio.file.{Files, Path, Paths}
 import javax.imageio.ImageIO
 
-import com.sksamuel.scrimage.nio.{ImageReader, ImageWriter}
+import com.sksamuel.scrimage.nio.ImageReader
 import org.apache.commons.io.IOUtils
 import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 
@@ -900,6 +900,7 @@ object Image extends Using {
     new Image(target, ImageMetadata.empty)
   }
 
+  def wrapAwt(awt: BufferedImage): Image = fromAwt(awt, -1)
   /**
     * Create a new Scrimage Image from an AWT Image.
     * This method will not copy the underlying image, so care should be taken that the image
@@ -910,7 +911,7 @@ object Image extends Using {
     *             specify -1 if you want to use the original
     * @return a new Scrimage Image
     */
-  def wrapAwt(awt: BufferedImage, `type`: Int = -1): Image = {
+  def wrapAwt(awt: BufferedImage, `type`: Int): Image = {
     if (`type` == -1 || awt.getType == `type`) new Image(awt, ImageMetadata.empty)
     else fromAwt(awt)
   }

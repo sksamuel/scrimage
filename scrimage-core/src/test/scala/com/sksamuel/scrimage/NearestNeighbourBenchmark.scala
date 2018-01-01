@@ -1,8 +1,11 @@
 package com.sksamuel.scrimage
 
+import com.sksamuel.scrimage.nio.PngWriter
 import com.sksamuel.scrimage.scaling.{AwtNearestNeighbourScale, ScrimageNearestNeighbourScale}
 
 object NearestNeighbourBenchmark extends App {
+
+  implicit val writer = PngWriter.MaxCompression
 
   val Iterations = 100
   val image = Image.fromResource("/earth-map-huge.jpg")

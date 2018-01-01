@@ -20,6 +20,7 @@ import ar.com.hjg.pngj.FilterType;
 import ar.com.hjg.pngj.ImageInfo;
 import ar.com.hjg.pngj.ImageLineInt;
 import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.ImageWriter;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

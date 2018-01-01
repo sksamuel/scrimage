@@ -2,11 +2,13 @@ package com.sksamuel.scrimage.composite
 
 import java.io.File
 
-import com.sksamuel.scrimage.nio.JpegWriter
-import com.sksamuel.scrimage.{ Composite, Image }
+import com.sksamuel.scrimage.nio.{JpegWriter, PngWriter}
+import com.sksamuel.scrimage.{Composite, Image}
 import org.apache.commons.io.FileUtils
 
 object CompositeExampleGenerator extends App {
+
+  implicit val writer = PngWriter.MaxCompression
 
   import scala.concurrent.ExecutionContext.Implicits.global
 

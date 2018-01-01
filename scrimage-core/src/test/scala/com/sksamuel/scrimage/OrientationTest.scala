@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage
 
-import com.sksamuel.scrimage.nio.{ImageWriter, JpegWriter}
+import com.sksamuel.scrimage.nio.JpegWriter
 import org.apache.commons.io.IOUtils
 import org.scalatest.{Matchers, WordSpec}
 
