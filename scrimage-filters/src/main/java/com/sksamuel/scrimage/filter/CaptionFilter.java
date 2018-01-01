@@ -45,7 +45,6 @@ public class CaptionFilter implements Filter {
         this.padding = padding;
     }
 
-
     public CaptionFilter(String text, int x, int y, Font font, Color textColor, double textAlpha, boolean antiAlias, boolean fullWidth, Color captionBackground, double captionAlpha, Padding padding) {
         this.text = text;
         this.position = null;
@@ -63,6 +62,7 @@ public class CaptionFilter implements Filter {
 
     @Override
     public void apply(Image image) {
+
         Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
         g2.setFont(font);
 
@@ -96,7 +96,6 @@ public class CaptionFilter implements Filter {
                 captionHeight,
                 g -> {
                     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) captionAlpha));
-                    g.setFont(font);
                     g.setColor(captionBackground);
                     Graphics2DUtils.setAntiAlias(g, antiAlias);
                 }
@@ -109,6 +108,7 @@ public class CaptionFilter implements Filter {
                 g -> {
                     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) textAlpha));
                     g.setColor(textColor);
+                    g.setFont(font);
                     Graphics2DUtils.setAntiAlias(g, antiAlias);
                 });
 

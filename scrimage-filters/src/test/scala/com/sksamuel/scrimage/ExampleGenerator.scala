@@ -1,5 +1,6 @@
 package com.sksamuel.scrimage
 
+import java.awt.Font
 import java.io.File
 
 import com.sksamuel.scrimage.filter._
@@ -11,28 +12,35 @@ object ExampleGenerator extends App {
   val image1 = Image.fromResource("/bird.jpg")
   val image2 = Image.fromResource("/colosseum.jpg")
   val image3 = Image.fromResource("/lanzarote.jpg")
+  val font = FontUtils.createFont(Font.SANS_SERIF, 48)
 
   val filters: List[(String, Filter)] = List(
-    ("black_threshold", new BlackThresholdFilter(50)),
+    ("black_threshold", new BlackThresholdFilter(25)),
     ("blur", new BlurFilter),
     ("border", new BorderFilter(8)),
     ("brightness", new BrightnessFilter(1.3f)),
     ("bump", new BumpFilter),
+    ("caption", new CaptionFilter("Example", Position.BottomLeft, font, Color.White, 1, true, true, Color.White, 0.2, new Padding(10))),
     ("chrome", new ChromeFilter()),
     ("color_halftone", new ColorHalftoneFilter()),
+    ("colorize", new ColorizeFilter(255, 0, 0, 50)),
     ("contour", new ContourFilter()),
     ("contrast", new ContrastFilter(1.3f)),
+    ("crystallize", new CrystallizeFilter()),
     ("despeckle", new DespeckleFilter),
     ("diffuse", new DiffuseFilter(4)),
     ("dither", new DitherFilter),
     ("edge", new EdgeFilter),
     ("emboss", new EmbossFilter),
-    ("errordiffusion", new ErrorDiffusionHalftoneFilter()),
+    ("error_diffusion_halftone", new ErrorDiffusionHalftoneFilter()),
+    ("gain_bias", new GainBiasFilter(0.5f, 0.5f)),
     ("gamma", new GammaFilter(2)),
     ("gaussian", new GaussianBlurFilter()),
     ("glow", new GlowFilter()),
+    ("gotham", new GothamFilter()),
     ("grayscale", new GrayscaleFilter),
     ("hsb", new HSBFilter(0.5f, 0, 0)),
+    ("invert_alpha", new InvertAlphaFilter),
     ("invert", new InvertFilter),
     ("kaleidoscope", new KaleidoscopeFilter),
     ("lensblur", new LensBlurFilter()),
@@ -40,19 +48,24 @@ object ExampleGenerator extends App {
     ("minimum", new MinimumFilter),
     ("maximum", new MaximumFilter),
     ("motionblur", new MotionBlurFilter(Math.PI / 3.0, 20)),
+    ("nashville", new NashvilleFilter()),
     ("noise", new NoiseFilter()),
     ("offset", new OffsetFilter(60, 40)),
     ("oil", new OilFilter()),
+    ("old_photo", new OldPhotoFilter()),
+    ("opacity", new OpacityFilter(0.5f)),
     ("pixelate", new PixelateFilter(4)),
     ("pointillize_square", new PointillizeFilter(PointillizeGridType.Square)),
     ("posterize", new PosterizeFilter()),
     ("prewitt", new PrewittFilter),
     ("quantize", new QuantizeFilter(256)),
     ("rays", new RaysFilter(0.1f, 0.6f, 0.5f)),
+    ("rgb", new RGBFilter(0.4f, 0.6f, 0.5f)),
     ("ripple", new RippleFilter(RippleType.Sine)),
     ("roberts", new RobertsFilter),
     ("rylanders", new RylandersFilter),
     ("sepia", new SepiaFilter),
+    ("sharpen", new SharpenFilter),
     ("smear_circles", new SmearFilter(SmearType.Circles)),
     ("snow", new SnowFilter()),
     ("sobels", new SobelsFilter),
@@ -66,7 +79,10 @@ object ExampleGenerator extends App {
     ("twirl", new TwirlFilter(75)),
     ("unsharp", new UnsharpFilter()),
     ("vignette", new VignetteFilter()),
-    ("vintage", new VintageFilter))
+    ("vintage", new VintageFilter),
+    ("watermark_cover", new WatermarkCoverFilter("watermark", font, true, 0.2, Color.White)),
+    ("watermark_stamp", new WatermarkStampFilter("watermark", font, true, 0.2, Color.White))
+  )
 
   val sb = new StringBuffer()
 
@@ -80,12 +96,12 @@ object ExampleGenerator extends App {
 
       val filename = t._1
       val image = t._2
-      val large = image.scaleToWidth(1200)
-      val small = image.scaleToWidth(200)
+      val resized = image.scaleToWidth(1200)
 
       println("Generating example " + filename + " " + filterName)
-      large.filter(filter._2).output(new File("examples/filters/" + filename + "_" + filterName + "_large.jpeg"))(JpegWriter.NoCompression)
-      small.filter(filter._2).forWriter(PngWriter.MaxCompression)
+
+      resized.filter(filter._2).output(new File("examples/filters/" + filename + "_" + filterName + "_large.jpeg"))(JpegWriter.NoCompression)
+      resized.filter(filter._2).scaleToWidth(300).forWriter(PngWriter.MaxCompression)
               .write(new File("examples/filters/" + filename + "_" + filterName + "_small.png"))
 
       sb

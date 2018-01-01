@@ -31,7 +31,7 @@ public class ColorizeFilter implements Filter {
     }
 
     public ColorizeFilter(int r, int g, int b) {
-        this(r, g, b, 255);
+        this(r, g, b, 127);
     }
 
     public ColorizeFilter(int r, int g, int b, int a) {

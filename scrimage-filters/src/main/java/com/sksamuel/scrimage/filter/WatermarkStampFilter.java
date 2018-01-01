@@ -25,7 +25,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
-class WatermarkStampFilter implements Filter {
+public class WatermarkStampFilter implements Filter {
 
     private final String text;
     private final Font font;

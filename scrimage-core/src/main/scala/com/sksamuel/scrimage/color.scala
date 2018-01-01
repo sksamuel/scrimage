@@ -2,9 +2,6 @@ package com.sksamuel.scrimage
 
 import java.awt.Paint
 
-/**
- * @author Stephen Samuel
- */
 trait Color {
 
   /**

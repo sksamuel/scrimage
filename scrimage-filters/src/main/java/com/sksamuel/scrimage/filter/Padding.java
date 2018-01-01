@@ -13,4 +13,8 @@ public class Padding {
         this.bottom = bottom;
         this.left = left;
     }
+
+    public Padding(int constant) {
+        this(constant, constant, constant, constant);
+    }
 }

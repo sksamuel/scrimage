@@ -7,7 +7,7 @@ import thirdparty.misc.DaisyFilter;
 import thirdparty.romainguy.BlendComposite;
 import thirdparty.romainguy.BlendingMode;
 
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 public class OldPhotoFilter implements Filter {
@@ -20,7 +20,6 @@ public class OldPhotoFilter implements Filter {
 
         Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
         g2.drawImage(filtered, 0, 0, null);
-        // g2.dispose();
 
         final Image film = Image.fromResource("/com/sksamuel/scrimage/filter/film1.jpg", Image.CANONICAL_DATA_TYPE());
         BufferedImage filmSized = film.scaleTo(image.width, image.height, ScaleMethod.Bicubic).awt();

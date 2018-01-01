@@ -598,7 +598,8 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
           case Lanczos3 => ResampleFilters.lanczos3Filter
           case _ => ResampleFilters.biCubicFilter
         }
-        op(new ResampleOp(method, targetWidth, targetHeight))
+        val scaled = op(new ResampleOp(method, targetWidth, targetHeight))
+        Image.wrapAwt(scaled.awt, this.awt().getType)
     }
   }
 
