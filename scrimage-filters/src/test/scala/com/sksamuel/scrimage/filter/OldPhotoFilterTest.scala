@@ -1,6 +1,7 @@
 package com.sksamuel.scrimage.filter
 
 import com.sksamuel.scrimage.Image
+import com.sksamuel.scrimage.nio.PngWriter
 import org.scalatest.{BeforeAndAfter, FunSuite, OneInstancePerTest}
 
 class OldPhotoFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
