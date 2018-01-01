@@ -22,7 +22,7 @@ case class Context(composite: Composite = AlphaComposite.getInstance(AlphaCompos
   def configure(g: Graphics2D): Unit = {
     g.setComposite(composite)
     g.setColor(color)
-    font.map(_.name).map(new java.awt.Font(_, 0, textSize)).foreach(g.setFont)
+    font.map(_.getName).map(new java.awt.Font(_, 0, textSize)).foreach(g.setFont)
     painter.map(_.paint).foreach(g.setPaint)
     if (antiAlias) {
       g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)

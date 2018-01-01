@@ -17,34 +17,32 @@
 package com.sksamuel.scrimage.filter;
 
 import com.sksamuel.scrimage.Filter;
+import com.sksamuel.scrimage.FontUtils;
 import com.sksamuel.scrimage.Image;
-import com.sksamuel.scrimage.canvas.Font;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
 
 class WatermarkStampFilter implements Filter {
 
     private final String text;
-    private final int size;
     private final Font font;
     private final boolean antiAlias;
     private final double alpha;
     private final Color color;
 
-    public WatermarkStampFilter(String text, int size, Font font, boolean antiAlias, double alpha, Color color) {
-        assert (size > 0);
+    public WatermarkStampFilter(String text, Font font, boolean antiAlias, double alpha, Color color) {
         this.text = text;
-        this.size = size;
         this.font = font;
         this.antiAlias = antiAlias;
         this.alpha = alpha;
         this.color = color;
     }
 
-    public WatermarkStampFilter(String text) {
-        this(text, 12, Font.SansSerif(), true, 0.1, Color.WHITE);
+    public WatermarkStampFilter(String text) throws IOException, FontFormatException {
+        this(text, FontUtils.createFont(Font.SANS_SERIF, 12), true, 0.1, Color.WHITE);
     }
 
     private void setupGraphics(Graphics2D g2) {
@@ -53,7 +51,7 @@ class WatermarkStampFilter implements Filter {
         g2.setColor(color);
         AlphaComposite alphaComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) alpha);
         g2.setComposite(alphaComposite);
-        g2.setFont(new java.awt.Font(font.name(), java.awt.Font.PLAIN, size));
+        g2.setFont(font);
     }
 
     @Override

@@ -16,12 +16,14 @@ class DrawableTest extends FunSuite {
     }
   }
 
-  val g2: Graphics2D => Unit = { g2 =>
-    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC))
-    g2.setColor(Color.Black)
+  private val g2 = new GraphicsContext {
+    override def configure(g2: Graphics2D): Unit = {
+      g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC))
+      g2.setColor(Color.Black)
+    }
   }
 
-  val blank = Image.filled(300, 200, X11Colorlist.White)
+  private val blank = Image.filled(300, 200, X11Colorlist.White)
 
   test("The lines are correctly drawn") {
 
@@ -41,7 +43,11 @@ class DrawableTest extends FunSuite {
   test("The colors are correctly put") {
     val canvas = new Canvas(blank).draw(
       Line(10, 5, 20, 25, g2),
-      Line(30, 50, 30, 200, Context.painter(X11Colorlist.Red)),
+      Line(30, 50, 30, 200, new GraphicsContext {
+        override def configure(g2: Graphics2D): Unit = {
+          g2.setPaint(ColorPainter(X11Colorlist.Red).paint)
+        }
+      }),
       Line(100, 100, 120, 120, g2)
     )
     val img = canvas.image
@@ -54,12 +60,12 @@ class DrawableTest extends FunSuite {
 
   test("Rectangles and polygons draw the same thing") {
     val canvas1 = new Canvas(blank).draw(
-      Rect(10, 20, 30, 30),
-      Rect(100, 120, 50, 20).fill
+      Rect(10, 20, 30, 30, g2),
+      Rect(100, 120, 50, 20, g2).fill
     )
     val canvas2 = new Canvas(blank).draw(
-      Polygon.rectangle(10, 20, 30, 30),
-      Polygon.rectangle(100, 120, 50, 20).fill
+      Polygon.rectangle(10, 20, 30, 30, g2),
+      Polygon.rectangle(100, 120, 50, 20, g2).fill
     )
     val img1 = canvas1.image
     val img2 = canvas2.image
