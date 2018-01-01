@@ -5,7 +5,6 @@ import javafx.util.Pair;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 class LinearSubpixelInterpolator implements SubpixelInterpolator {
 
@@ -65,6 +64,10 @@ class LinearSubpixelInterpolator implements SubpixelInterpolator {
         return summands;
     }
 
+    private int sumChannel(int channel, double[][] summands) {
+        return (int) Math.round(Arrays.stream(summands).mapToDouble(ds -> ds[channel]).sum());
+    }
+
     @Override
     public int subpixel(double x, double y) {
         assert (x >= 0 && x < width && y >= 0 && y < height);
@@ -74,15 +77,12 @@ class LinearSubpixelInterpolator implements SubpixelInterpolator {
         double[][] summands = summands(x, y);
 
         // We perform the weighted averaging (a summation).
-        // First though, we need to transpose so that we sum within channels,
-        // not within pixels.
-        List<Double> argb = Arrays.stream(summands).map(ds -> Arrays.stream(ds).sum()).collect(Collectors.toList());
+        // We need to sum within channels not within pixels
+        int a = sumChannel(0, summands);
+        int r = sumChannel(1, summands);
+        int g = sumChannel(2, summands);
+        int b = sumChannel(3, summands);
 
-        return PixelTools.argb(
-                (int) Math.round(argb.get(0)),
-                (int) Math.round(argb.get(1)),
-                (int) Math.round(argb.get(2)),
-                (int) Math.round(argb.get(3))
-        );
+        return PixelTools.argb(a, r, g, b);
     }
 }
