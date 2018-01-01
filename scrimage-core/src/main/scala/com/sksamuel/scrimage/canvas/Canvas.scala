@@ -43,16 +43,6 @@ case class Canvas(image: Image) {
     g.dispose()
     new Canvas(target)
   }
-
-  @deprecated("use WatermarkFilter", "2.1.0")
-  def watermark(text: String): Canvas = {
-    image.filter(new WatermarkStampFilter(text, 12, new java.awt.Font(java.awt.Font.SERIF, 0, 24), alpha = 0.5))
-  }
-
-  @deprecated("use WatermarkFilter", "2.1.0")
-  def watermark(text: String, alpha: Double): Canvas = {
-    image.filter(new WatermarkStampFilter(text, 12, new java.awt.Font(java.awt.Font.SERIF, 0, 24), alpha = alpha))
-  }
 }
 
 object Canvas {
