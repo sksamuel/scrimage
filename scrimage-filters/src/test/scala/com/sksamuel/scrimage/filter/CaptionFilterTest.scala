@@ -7,7 +7,7 @@ import org.scalatest.{Matchers, WordSpec}
 class CaptionFilterTest extends WordSpec with Matchers {
 
   implicit private val writer: PngWriter = PngWriter.MaxCompression
-  private val image = Image.fromResource("/jpeg/fish.jpg")
+  private val image = Image.fromResource("/fish.jpg")
   private val font = FontUtils.createTrueType(getClass.getResourceAsStream("/fonts/Roboto-Light.ttf"), 22)
 
   // anti alias implementation is different on openjdk vs oraclejdk, so tests can't use it reliably
