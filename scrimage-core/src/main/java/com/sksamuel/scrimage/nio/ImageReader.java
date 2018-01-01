@@ -18,7 +18,7 @@ import java.util.Optional;
  */
 public class ImageReader {
 
-    private static Collection<Reader> readers = Arrays.asList(new JavaImageIOReader(), PngReader$.MODULE$, new JavaImageIO2Reader());
+    private static Collection<Reader> readers = Arrays.asList(new JavaImageIOReader(), new PngReader(), new JavaImageIO2Reader());
 
     public static Image fromFile(File file) throws IOException {
         return fromFile(file, Image.CANONICAL_DATA_TYPE());

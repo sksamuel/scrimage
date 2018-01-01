@@ -9,7 +9,6 @@ import sun.awt.image.IntegerComponentRaster
 import scala.language.implicitConversions
 import scala.util.Random
 
-/** @author Stephen Samuel */
 trait Painter {
   private[scrimage] def paint: Paint
 }

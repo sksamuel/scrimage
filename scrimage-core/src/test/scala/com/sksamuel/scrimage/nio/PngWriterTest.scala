@@ -6,9 +6,8 @@ import org.scalatest.{Matchers, WordSpec}
 
 class PngWriterTest extends WordSpec with Matchers {
 
-  implicit val writer = PngWriter.MaxCompression
-
-  val original = Image.fromResource("/com/sksamuel/scrimage/bird.jpg").scaleTo(300, 200)
+  implicit private val writer = PngWriter.MaxCompression
+  private val original = Image.fromResource("/com/sksamuel/scrimage/bird.jpg").scaleTo(300, 200)
 
   "png write" should {
     "png output happy path" in {
@@ -30,12 +29,11 @@ class PngWriterTest extends WordSpec with Matchers {
     }
     "png reader detects the correct mime type" in {
       val bytes = IOUtils toByteArray getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png")
-      PngReader.supports(bytes) shouldBe true
+      new PngReader().supports(bytes) shouldBe true
     }
     "png reader reads an image correctly" in {
       val expected = Image.fromResource("/com/sksamuel/scrimage/io/bird_300_200.png")
-      val actual = PngReader
-        .fromBytes(IOUtils.toByteArray(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png")))
+      val actual = new PngReader().fromBytes(IOUtils.toByteArray(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png")))
       assert(actual.width === expected.width)
       assert(actual.height === expected.height)
       assert(actual === expected)
