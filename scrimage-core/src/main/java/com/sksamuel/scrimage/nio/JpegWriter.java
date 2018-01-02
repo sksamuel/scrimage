@@ -17,6 +17,10 @@ public class JpegWriter implements ImageWriter {
     public static JpegWriter NoCompression = new JpegWriter(100, false);
     public static JpegWriter Default = new JpegWriter(80, false);
 
+    public static JpegWriter compression(int compression) {
+        return new JpegWriter(compression, false);
+    }
+
     private final int compression;
     private final boolean progressive;
 

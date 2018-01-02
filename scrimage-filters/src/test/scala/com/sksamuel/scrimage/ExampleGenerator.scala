@@ -100,8 +100,8 @@ object ExampleGenerator extends App {
 
       println("Generating example " + filename + " " + filterName)
 
-      resized.filter(filter._2).output(new File("examples/filters/" + filename + "_" + filterName + "_large.jpeg"))(JpegWriter.NoCompression)
-      resized.filter(filter._2).scaleToWidth(300).forWriter(PngWriter.MaxCompression)
+      resized.filter(filter._2).output(new File("examples/filters/" + filename + "_" + filterName + "_large.jpeg"))(JpegWriter.compression(95))
+      resized.filter(filter._2).scaleToWidth(250).forWriter(PngWriter.MaxCompression)
               .write(new File("examples/filters/" + filename + "_" + filterName + "_small.png"))
 
       sb
