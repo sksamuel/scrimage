@@ -15,7 +15,7 @@ object ExampleGenerator extends App {
   val font = FontUtils.createFont(Font.SANS_SERIF, 48)
 
   val filters: List[(String, Filter)] = List(
-    ("black_threshold", new BlackThresholdFilter(25)),
+    ("black_threshold", new BlackThresholdFilter(35)),
     ("blur", new BlurFilter),
     ("border", new BorderFilter(8)),
     ("brightness", new BrightnessFilter(1.3f)),
