@@ -18,7 +18,7 @@ package thirdparty.jhlabs.image;
 
 import thirdparty.jhlabs.math.Noise;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 /**
  * A filter which distorts an image by rippling it in the X or Y directions.
@@ -171,7 +171,6 @@ public class RippleFilter extends TransformFilter {
     }
 
     protected void transformInverse(int x, int y, float[] out) {
-        Noise noise = new Noise();
         float nx = (float) y / xWavelength;
         float ny = (float) x / yWavelength;
         float fx, fy;
@@ -190,16 +189,11 @@ public class RippleFilter extends TransformFilter {
                 fy = ImageMath.triangle(ny);
                 break;
             case NOISE:
-                fx = noise.noise1(nx);
-                fy = noise.noise1(ny);
+                fx = Noise.noise1(nx);
+                fy = Noise.noise1(ny);
                 break;
         }
         out[0] = x + xAmplitude * fx;
         out[1] = y + yAmplitude * fy;
     }
-
-    public String toString() {
-        return "Distort/Ripple...";
-    }
-
 }

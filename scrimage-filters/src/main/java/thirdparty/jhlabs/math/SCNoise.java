@@ -23,7 +23,7 @@ import java.util.*;
  */
 public class SCNoise implements Function1D, Function2D, Function3D {
 
-	private static Random randomGenerator = new Random();
+	private static Random random = new Random(0);
 	
 	public float evaluate(float x) {
 		return evaluate(x, .1f);
@@ -164,12 +164,12 @@ public class SCNoise implements Function1D, Function2D, Function3D {
 	static float[] impulseTabInit(int seed) {
 		float[] impulseTab = new float[TABSIZE*4];
 
-		randomGenerator = new Random(seed); /* Set random number generator seed. */
+		random = new Random(seed); /* Set random number generator seed. */
 		for (int i = 0; i < TABSIZE; i++) {
-			impulseTab[i++] = randomGenerator.nextFloat();
-			impulseTab[i++] = randomGenerator.nextFloat();
-			impulseTab[i++] = randomGenerator.nextFloat();
-			impulseTab[i++] = 1.0f - 2.0f*randomGenerator.nextFloat();
+			impulseTab[i++] = random.nextFloat();
+			impulseTab[i++] = random.nextFloat();
+			impulseTab[i++] = random.nextFloat();
+			impulseTab[i++] = 1.0f - 2.0f* random.nextFloat();
 		}
 		
 		return impulseTab;

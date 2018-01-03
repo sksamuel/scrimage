@@ -16,9 +16,10 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.*;
-import java.util.*;
-import thirdparty.jhlabs.math.*;
+import thirdparty.jhlabs.math.NoiseInstance;
+
+import java.awt.Rectangle;
+import java.util.Random;
 
 /**
  * A filter which simulates underwater caustics. This can be animated to get a bottom-of-the-swimming-pool effect.
@@ -34,19 +35,20 @@ public class CausticsFilter extends WholeImageFilter {
 	private float time = 0.0f;
 	private int samples = 2;
 	private int bgColor = 0xff799fff;
-	private Random random;
-	private Noise noise = new Noise();
+
+    private final NoiseInstance noise;
+    private final Random random;
 
 	private float s, c;
 
 	public CausticsFilter() {
-		setRandom(new Random(0));
-	}
+        this(new Random(0));
+    }
 
-	public void setRandom(Random random) {
-		this.random = random;
-		noise.setRandom(random);
-	}
+    public CausticsFilter(Random random) {
+        this.noise = new NoiseInstance(random);
+        this.random = random;
+    }
 
 	/**
 	 * Specifies the scale of the texture.

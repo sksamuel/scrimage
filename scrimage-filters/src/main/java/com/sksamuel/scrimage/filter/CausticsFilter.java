@@ -21,7 +21,6 @@ import com.sksamuel.scrimage.Image;
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.util.Random;
 
 public class CausticsFilter implements Filter {
 
@@ -50,7 +49,6 @@ public class CausticsFilter implements Filter {
         op.setSamples(2);
         op.setTime(0);
         op.setBgColor(backgroundColor);
-        op.setRandom(new Random(1000L));
 
         BufferedImage caustics = op.filter(image.awt(), null);
 
