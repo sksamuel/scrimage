@@ -13,8 +13,14 @@ trait Drawable {
 }
 
 object Drawable {
-  def apply(img: Image, x: Int, y: Int): DrawableImage = DrawableImage(img, x, y, GraphicsContext.identity)
-  def apply(str: String, x: Int, y: Int): Text = Text(str, x, y, GraphicsContext.identity())
+
+  def apply(img: Image, x: Int, y: Int): DrawableImage = DrawableImage(img, x, y, new GraphicsContext() {
+    override def configure(g2: Graphics2D): Unit = {}
+  })
+
+  def apply(str: String, x: Int, y: Int): Text = Text(str, x, y, new GraphicsContext() {
+    override def configure(g2: Graphics2D): Unit = {}
+  })
 }
 
 
