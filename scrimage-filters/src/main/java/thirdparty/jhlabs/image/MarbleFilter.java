@@ -121,7 +121,8 @@ public class MarbleFilter extends TransformFilter {
 	}
 
 	private int displacementMap(int x, int y) {
-		return PixelUtils.clamp((int)(127 * (1+Noise.noise2(x / xScale, y / xScale))));
+		Noise noise = new Noise();
+		return PixelUtils.clamp((int) (127 * (1 + noise.noise2(x / xScale, y / xScale))));
 	}
 	
 	protected void transformInverse(int x, int y, float[] out) {

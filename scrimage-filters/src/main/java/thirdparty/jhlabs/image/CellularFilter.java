@@ -290,6 +290,9 @@ public class CellularFilter extends WholeImageFilter implements Function2D, Clon
 	}
 	
 	private float checkCube(float x, float y, int cubeX, int cubeY, Point[] results) {
+
+		Noise noise = new Noise();
+
 		int numPoints;
 		random.setSeed(571*cubeX + 23*cubeY);
 		switch (gridType) {
@@ -332,8 +335,8 @@ public class CellularFilter extends WholeImageFilter implements Function2D, Clon
 					px = 0.75f; py = 0.5f;
 				}
 				if (randomness != 0) {
-					px += randomness * Noise.noise2(271*(cubeX+px), 271*(cubeY+py));
-					py += randomness * Noise.noise2(271*(cubeX+px)+89, 271*(cubeY+py)+137);
+					px += randomness * noise.noise2(271*(cubeX+px), 271*(cubeY+py));
+					py += randomness * noise.noise2(271*(cubeX+px)+89, 271*(cubeY+py)+137);
 				}
 				break;
 			case OCTAGONAL:
@@ -342,8 +345,8 @@ public class CellularFilter extends WholeImageFilter implements Function2D, Clon
 				case 1: px = 0.707f; py = 0.707f; weight = 1.6f; break;
 				}
 				if (randomness != 0) {
-					px += randomness * Noise.noise2(271*(cubeX+px), 271*(cubeY+py));
-					py += randomness * Noise.noise2(271*(cubeX+px)+89, 271*(cubeY+py)+137);
+					px += randomness * noise.noise2(271*(cubeX+px), 271*(cubeY+py));
+					py += randomness * noise.noise2(271*(cubeX+px)+89, 271*(cubeY+py)+137);
 				}
 				break;
 			case TRIANGULAR:
@@ -361,8 +364,8 @@ public class CellularFilter extends WholeImageFilter implements Function2D, Clon
 					}
 				}
 				if (randomness != 0) {
-					px += randomness * Noise.noise2(271*(cubeX+px), 271*(cubeY+py));
-					py += randomness * Noise.noise2(271*(cubeX+px)+89, 271*(cubeY+py)+137);
+					px += randomness * noise.noise2(271*(cubeX+px), 271*(cubeY+py));
+					py += randomness * noise.noise2(271*(cubeX+px)+89, 271*(cubeY+py)+137);
 				}
 				break;
 			}

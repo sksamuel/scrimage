@@ -167,12 +167,14 @@ public class SwimFilter extends TransformFilter {
 		nx /= scale;
 		ny /= scale * stretch;
 
+		Noise noise = new Noise();
+
 		if ( turbulence == 1.0f ) {
-			out[0] = x + amount * Noise.noise3(nx+0.5f, ny, time);
-			out[1] = y + amount * Noise.noise3(nx, ny+0.5f, time);
+			out[0] = x + amount * noise.noise3(nx+0.5f, ny, time);
+			out[1] = y + amount * noise.noise3(nx, ny+0.5f, time);
 		} else {
-			out[0] = x + amount * Noise.turbulence3(nx+0.5f, ny, turbulence, time);
-			out[1] = y + amount * Noise.turbulence3(nx, ny+0.5f, turbulence, time);
+			out[0] = x + amount * noise.turbulence3(nx+0.5f, ny, turbulence, time);
+			out[1] = y + amount * noise.turbulence3(nx, ny+0.5f, turbulence, time);
 		}
 	}
 

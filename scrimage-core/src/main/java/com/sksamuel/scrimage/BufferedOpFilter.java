@@ -1,6 +1,5 @@
 package com.sksamuel.scrimage;
 
-import java.awt.*;
 import java.awt.image.BufferedImageOp;
 
 /**
@@ -13,8 +12,6 @@ public abstract class BufferedOpFilter implements Filter {
   public abstract BufferedImageOp op();
 
   public void apply(Image image) {
-    Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
-    g2.drawImage(image.awt(), op(), 0, 0);
-    g2.dispose();
+    op().filter(image.awt(), image.awt());
   }
 }

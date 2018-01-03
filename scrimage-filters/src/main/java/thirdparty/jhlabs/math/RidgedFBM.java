@@ -19,7 +19,8 @@ package thirdparty.jhlabs.math;
 public class RidgedFBM implements Function2D {
 
 	public float evaluate(float x, float y) {
-		return 1-Math.abs(Noise.noise2(x, y));
+		Noise noise = new Noise();
+		return 1-Math.abs(noise.noise2(x, y));
 	}
 
 }

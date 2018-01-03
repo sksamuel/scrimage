@@ -17,6 +17,6 @@ limitations under the License.
 package thirdparty.jhlabs.math;
 
 public interface BinaryFunction {
-	public boolean isBlack(int rgb);
+	 boolean isBlack(int rgb);
 }
 

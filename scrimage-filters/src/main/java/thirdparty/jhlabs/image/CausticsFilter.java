@@ -34,15 +34,23 @@ public class CausticsFilter extends WholeImageFilter {
 	private float time = 0.0f;
 	private int samples = 2;
 	private int bgColor = 0xff799fff;
+	private Random random;
+	private Noise noise = new Noise();
 
 	private float s, c;
 
 	public CausticsFilter() {
+		setRandom(new Random(0));
+	}
+
+	public void setRandom(Random random) {
+		this.random = random;
+		noise.setRandom(random);
 	}
 
 	/**
-     * Specifies the scale of the texture.
-     * @param scale the scale of the texture.
+	 * Specifies the scale of the texture.
+	 * @param scale the scale of the texture.
      * @min-value 1
      * @max-value 300+
      * @see #getScale
@@ -195,7 +203,6 @@ public class CausticsFilter extends WholeImageFilter {
 	}
 
 	protected int[] filterPixels( int width, int height, int[] inPixels, Rectangle transformedSpace ) {
-		Random random = new Random(0);
 
 		s = (float)Math.sin(0.1);
 		c = (float)Math.cos(0.1);
@@ -323,8 +330,8 @@ public class CausticsFilter extends WholeImageFilter {
 			b = 255;
 		return 0xff000000 | (r << 16) | (g << 8) | b;
 	}
-	
-	private static float turbulence2(float x, float y, float time, float octaves) {
+
+	private float turbulence2(float x, float y, float time, float octaves) {
 		float value = 0.0f;
 		float remainder;
 		float lacunarity = 2.0f;
@@ -336,7 +343,7 @@ public class CausticsFilter extends WholeImageFilter {
 		y += 529;
 		
 		for (i = 0; i < (int)octaves; i++) {
-			value += Noise.noise3(x, y, time) / f;
+			value += noise.noise3(x, y, time) / f;
 			x *= lacunarity;
 			y *= lacunarity;
 			f *= 2;
@@ -344,7 +351,7 @@ public class CausticsFilter extends WholeImageFilter {
 
 		remainder = octaves - (int)octaves;
 		if (remainder != 0)
-			value += remainder * Noise.noise3(x, y, time) / f;
+			value += remainder * noise.noise3(x, y, time) / f;
 
 		return value;
 	}
@@ -352,7 +359,7 @@ public class CausticsFilter extends WholeImageFilter {
 	private float evaluate(float x, float y) {
 		float xt = s*x + c*time;
 		float tt = c*x - c*time;
-		float f = turbulence == 0.0 ? Noise.noise3(xt, y, tt) : turbulence2(xt, y, tt, turbulence);
+		float f = turbulence == 0.0 ? noise.noise3(xt, y, tt) : turbulence2(xt, y, tt, turbulence);
 		return f;
 	}
 	

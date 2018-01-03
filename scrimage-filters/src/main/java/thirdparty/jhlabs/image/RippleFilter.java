@@ -171,6 +171,7 @@ public class RippleFilter extends TransformFilter {
     }
 
     protected void transformInverse(int x, int y, float[] out) {
+        Noise noise = new Noise();
         float nx = (float) y / xWavelength;
         float ny = (float) x / yWavelength;
         float fx, fy;
@@ -189,8 +190,8 @@ public class RippleFilter extends TransformFilter {
                 fy = ImageMath.triangle(ny);
                 break;
             case NOISE:
-                fx = Noise.noise1(nx);
-                fy = Noise.noise1(ny);
+                fx = noise.noise1(nx);
+                fy = noise.noise1(ny);
                 break;
         }
         out[0] = x + xAmplitude * fx;

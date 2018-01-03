@@ -23,9 +23,13 @@ import java.util.*;
  */
 public class Noise implements Function1D, Function2D, Function3D {
 
-	private static Random randomGenerator = new Random();
-	
-	public float evaluate(float x) {
+    private Random random = new Random();
+
+    public void setRandom(Random random) {
+        this.random = random;
+    }
+
+    public float evaluate(float x) {
 		return noise1(x);
 	}
 	
@@ -44,8 +48,8 @@ public class Noise implements Function1D, Function2D, Function3D {
 	 * @param octaves number of octaves of turbulence
 	 * @return turbulence value at (x,y)
 	 */
-	public static float turbulence2(float x, float y, float octaves) {
-		float t = 0.0f;
+    public float turbulence2(float x, float y, float octaves) {
+        float t = 0.0f;
 
 		for (float f = 1.0f; f <= octaves; f *= 2)
 			t += Math.abs(noise2(f * x, f * y)) / f;
@@ -59,26 +63,26 @@ public class Noise implements Function1D, Function2D, Function3D {
 	 * @param octaves number of octaves of turbulence
 	 * @return turbulence value at (x,y)
 	 */
-	public static float turbulence3(float x, float y, float z, float octaves) {
-		float t = 0.0f;
+    public float turbulence3(float x, float y, float z, float octaves) {
+        float t = 0.0f;
 
 		for (float f = 1.0f; f <= octaves; f *= 2)
 			t += Math.abs(noise3(f * x, f * y, f * z)) / f;
 		return t;
 	}
 
-	private final static int B = 0x100;
-	private final static int BM = 0xff;
-	private final static int N = 0x1000;
+    private final int B = 0x100;
+    private final int BM = 0xff;
+    private final int N = 0x1000;
 
-	static int[] p = new int[B + B + 2];
-	static float[][] g3 = new float[B + B + 2][3];
-	static float[][] g2 = new float[B + B + 2][2];
-	static float[] g1 = new float[B + B + 2];
-	static boolean start = true;
+    int[] p = new int[B + B + 2];
+    float[][] g3 = new float[B + B + 2][3];
+    float[][] g2 = new float[B + B + 2][2];
+    float[] g1 = new float[B + B + 2];
+    boolean start = true;
 
-	private static float sCurve(float t) {
-		return t * t * (3.0f - 2.0f * t);
+    private float sCurve(float t) {
+        return t * t * (3.0f - 2.0f * t);
 	}
 	
 	/**
@@ -86,8 +90,8 @@ public class Noise implements Function1D, Function2D, Function3D {
 	 * @param x the x value
 	 * @return noise value at x in the range -1..1
 	 */
-	public static float noise1(float x) {
-		int bx0, bx1;
+    public float noise1(float x) {
+        int bx0, bx1;
 		float rx0, rx1, sx, t, u, v;
 
 		if (start) {
@@ -114,8 +118,8 @@ public class Noise implements Function1D, Function2D, Function3D {
 	 * @param y the y coordinate
 	 * @return noise value at (x,y)
 	 */
-	public static float noise2(float x, float y) {
-		int bx0, bx1, by0, by1, b00, b10, b01, b11;
+    public float noise2(float x, float y) {
+        int bx0, bx1, by0, by1, b00, b10, b01, b11;
 		float rx0, rx1, ry0, ry1, q[], sx, sy, a, b, t, u, v;
 		int i, j;
 
@@ -165,8 +169,8 @@ public class Noise implements Function1D, Function2D, Function3D {
 	 * @param y the y coordinate
 	 * @return noise value at (x,y,z)
 	 */
-	public static float noise3(float x, float y, float z) {
-		int bx0, bx1, by0, by1, bz0, bz1, b00, b10, b01, b11;
+    public float noise3(float x, float y, float z) {
+        int bx0, bx1, by0, by1, bz0, bz1, b00, b10, b01, b11;
 		float rx0, rx1, ry0, ry1, rz0, rz1, q[], sy, sz, a, b, c, d, t, u, v;
 		int i, j;
 
@@ -228,29 +232,29 @@ public class Noise implements Function1D, Function2D, Function3D {
 		return 1.5f*lerp(sz, c, d);
 	}
 
-	public static float lerp(float t, float a, float b) {
-		return a + t * (b - a);
+    public float lerp(float t, float a, float b) {
+        return a + t * (b - a);
 	}
 
-	private static void normalize2(float v[]) {
-		float s = (float)Math.sqrt(v[0] * v[0] + v[1] * v[1]);
+    private void normalize2(float v[]) {
+        float s = (float)Math.sqrt(v[0] * v[0] + v[1] * v[1]);
 		v[0] = v[0] / s;
 		v[1] = v[1] / s;
 	}
 
-	static void normalize3(float v[]) {
-		float s = (float)Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+    void normalize3(float v[]) {
+        float s = (float)Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
 		v[0] = v[0] / s;
 		v[1] = v[1] / s;
 		v[2] = v[2] / s;
 	}
 
-	private static int random() {
-		return randomGenerator.nextInt() & 0x7fffffff;
-	}
-	
-	private static void init() {
-		int i, j, k;
+    private int random() {
+        return random.nextInt() & 0x7fffffff;
+    }
+
+    private void init() {
+        int i, j, k;
 
 		for (i = 0; i < B; i++) {
 			p[i] = i;
@@ -287,8 +291,8 @@ public class Noise implements Function1D, Function2D, Function3D {
 	 * of the given function. This is useful for making some stab at
 	 * normalising the function.
 	 */
-	public static float[] findRange(Function1D f, float[] minmax) {
-		if (minmax == null)
+    public float[] findRange(Function1D f, float[] minmax) {
+        if (minmax == null)
 			minmax = new float[2];
 		float min = 0, max = 0;
 		// Some random numbers here...
@@ -307,8 +311,8 @@ public class Noise implements Function1D, Function2D, Function3D {
 	 * of the given function. This is useful for making some stab at
 	 * normalising the function.
 	 */
-	public static float[] findRange(Function2D f, float[] minmax) {
-		if (minmax == null)
+    public float[] findRange(Function2D f, float[] minmax) {
+        if (minmax == null)
 			minmax = new float[2];
 		float min = 0, max = 0;
 		// Some random numbers here...
