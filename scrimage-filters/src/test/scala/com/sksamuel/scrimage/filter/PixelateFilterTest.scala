@@ -1,9 +1,12 @@
 package com.sksamuel.scrimage.filter
 
-import org.scalatest.{ OneInstancePerTest, BeforeAndAfter, FunSuite }
+import org.scalatest.{BeforeAndAfter, FunSuite, OneInstancePerTest}
 import com.sksamuel.scrimage.Image
+import com.sksamuel.scrimage.nio.PngWriter
 
 class PixelateFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
+
+  implicit private val writer: PngWriter = PngWriter.MaxCompression
 
   val original = Image(getClass.getResourceAsStream("/bird_small.png"))
   val expected2 = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_block_2.png")
