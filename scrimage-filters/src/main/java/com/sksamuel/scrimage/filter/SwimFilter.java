@@ -18,15 +18,26 @@ package com.sksamuel.scrimage.filter;
 import com.sksamuel.scrimage.BufferedOpFilter;
 
 import java.awt.image.BufferedImageOp;
+import java.util.Random;
 
 public class SwimFilter extends BufferedOpFilter {
 
+    private final Random random;
     private final float amount;
     private final float stretch;
 
-    public SwimFilter(float amount, float stretch) {
+    public SwimFilter(Random random, float amount, float stretch) {
+        this.random = random;
         this.amount = amount;
         this.stretch = stretch;
+    }
+
+    public SwimFilter(Random random) {
+        this(new Random(), 6f, 2f);
+    }
+
+    public SwimFilter(float amount, float stretch) {
+        this(new Random(), amount, stretch);
     }
 
     public SwimFilter() {
@@ -35,7 +46,7 @@ public class SwimFilter extends BufferedOpFilter {
 
     @Override
     public BufferedImageOp op() {
-        thirdparty.jhlabs.image.SwimFilter op = new thirdparty.jhlabs.image.SwimFilter();
+        thirdparty.jhlabs.image.SwimFilter op = new thirdparty.jhlabs.image.SwimFilter(random);
         op.setAmount(amount);
         op.setStretch(stretch);
         return op;
