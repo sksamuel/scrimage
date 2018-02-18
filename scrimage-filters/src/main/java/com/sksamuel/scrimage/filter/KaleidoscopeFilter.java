@@ -21,8 +21,22 @@ import java.awt.image.BufferedImageOp;
 
 public class KaleidoscopeFilter extends BufferedOpFilter {
 
+    private final int sides;
+
+    public KaleidoscopeFilter() {
+        this(3);
+    }
+
+    public KaleidoscopeFilter(int sides) {
+        if (sides < 3)
+            throw new IllegalArgumentException("'sides' must be greater than 2");
+        this.sides = sides;
+    }
+
     @Override
     public BufferedImageOp op() {
-        return new thirdparty.jhlabs.image.KaleidoscopeFilter();
+        thirdparty.jhlabs.image.KaleidoscopeFilter filter = new thirdparty.jhlabs.image.KaleidoscopeFilter();
+        filter.setSides(sides);
+        return filter;
     }
 }

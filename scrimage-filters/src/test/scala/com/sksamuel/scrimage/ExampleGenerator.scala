@@ -42,7 +42,7 @@ object ExampleGenerator extends App {
     ("hsb", new HSBFilter(0.5f, 0, 0)),
     ("invert_alpha", new InvertAlphaFilter),
     ("invert", new InvertFilter),
-    ("kaleidoscope", new KaleidoscopeFilter),
+    ("kaleidoscope", new KaleidoscopeFilter()),
     ("lensblur", new LensBlurFilter()),
     ("lensflare", new LensFlareFilter),
     ("minimum", new MinimumFilter),
