@@ -415,6 +415,8 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
     */
   def rotateRight: Image = wrapAwt(rotate(Math.PI / 2), metadata)
 
+  def rotateRadians(theta: Double): Image = wrapAwt(rotate(theta), metadata)
+
   /**
     * Creates a new image which is the result of this image
     * padded with the given number of pixels on each edge.
