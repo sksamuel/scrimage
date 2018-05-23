@@ -67,7 +67,7 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
     *
     * This method is useful when images have an abudance of a single colour around them.
     *
-    * @param color the color to match
+    * @param color          the color to match
     * @param colorTolerance the amount of tolerance to use when determining whether the color matches the reference color [0..255]
     * @return
     */
@@ -556,6 +556,10 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
     scaleTo((targetHeight / height.toDouble * width).toInt, targetHeight, scaleMethod)
   }
 
+  def scaleHeightToRatio(ratio: Double, scaleMethod: ScaleMethod = Bicubic): Image = {
+    scaleToHeight((width * ratio).toInt, scaleMethod)
+  }
+
   /**
     * Scale will resize the canvas and the image.
     * This is like a "image resize" in Photoshop.
@@ -617,8 +621,8 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
 
     val matrix = Array.ofDim[Pixel](subWidth * subHeight)
     // Simply copy the pixels over, one by one.
-    for ( yIndex <- 0 until subHeight;
-          xIndex <- 0 until subWidth ) {
+    for (yIndex <- 0 until subHeight;
+         xIndex <- 0 until subWidth) {
       matrix(PixelTools.coordinateToOffset(xIndex, yIndex, subWidth)) = Pixel(subpixel(xIndex + x, yIndex + y))
     }
     wrapPixels(subWidth, subHeight, matrix, metadata)
@@ -674,7 +678,7 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
   /**
     * Returns a new Image which is the source image, but only keeping a max of k rows from the bottom.
     */
-  def takeBottom(k: Int): Image = subimage(0, Math.min(0, height -k), width, height)
+  def takeBottom(k: Int): Image = subimage(0, Math.min(0, height - k), width, height)
 
   /**
     * Returns an image that is the result of translating the image while keeping the same
@@ -927,7 +931,7 @@ object Image extends Using {
     */
   def filled(width: Int, height: Int, color: Color = Color.White, `type`: Int = CANONICAL_DATA_TYPE): Image = {
     val target = apply(width, height, `type`)
-    for ( w <- 0 until width; h <- 0 until height )
+    for (w <- 0 until width; h <- 0 until height)
       target.awt().setRGB(w, h, color.toRGB.toInt)
     target
   }
