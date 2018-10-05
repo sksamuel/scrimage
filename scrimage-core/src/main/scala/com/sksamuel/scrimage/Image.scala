@@ -379,6 +379,33 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
     }
   }
 
+
+  /**
+    * Resize will resize the canvas, it will not scale the image.
+    * This is like a "canvas resize" in Photoshop.
+    *
+    * Depending on ratio will increase either width or height.
+    *
+    * The position parameter determines how the original image will be positioned on the new
+    * canvas.
+    *
+    * @param targetRatio  width divided by height
+    * @param position     where to position the original image after the canvas size change
+    * @param background   the background color if the canvas was enlarged
+    * @return a new Image that is the result of resizing the canvas.
+    */
+  def resizeToRatio(targetRatio: Double, position: Position = Position.Center, background: Color = Color.Transparent): Image = {
+    val currRatio = ratio
+    if (currRatio == targetRatio) this
+    else if (currRatio > targetRatio) {
+      val targetHeight = width / targetRatio // cannot be zero because it's larger than currRatio
+      resizeTo(width, targetHeight.toInt, position, background)
+    } else {
+      val targetWidth = height * targetRatio
+      resizeTo(targetWidth.toInt, height, position, background)
+    }
+  }
+
   /**
     * Resize will resize the canvas, it will not scale the image.
     * This is like a "canvas resize" in Photoshop.

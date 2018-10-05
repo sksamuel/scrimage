@@ -328,6 +328,16 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     assert(300 === r.height)
   }
 
+  test("when resizing an image to the ratio the output image should have specified dimensions") {
+    val srcRatio = image.ratio()
+    val actual1 = image.resizeToRatio(srcRatio)
+    val actual2 = image.resizeToRatio(1)
+    val actual3 = image.resizeToRatio(2)
+    assert(actual1 === image)
+    assert(actual2.ratio === 1)
+    assert(actual3.ratio === 2)
+  }
+
   test("when scaling an image the output image should match as expected") {
     val scaled = image.scale(0.25)
     val expected = Image.fromResource("/com/sksamuel/scrimage/bird_scale_025.png")
