@@ -20,13 +20,13 @@ trait Color {
 
   def toHSL: HSLColor = toRGB.toHSL
 
-  def toGreyscale: Grayscale = {
+  def toGrayscale: Grayscale = {
     val rgb = toRGB
-    val red = 0.21 * rgb.red
-    val green = 0.71 * rgb.green
-    val blue = 0.07 * rgb.blue
+    val red = 0.2126 * rgb.red
+    val green = 0.7152 * rgb.green
+    val blue = 0.0722 * rgb.blue
     val gray = red + green + blue
-    Grayscale(Math.round(gray * 255).toInt, rgb.alpha)
+    Grayscale(Math.round(gray).toInt, rgb.alpha)
   }
 
   /**
@@ -276,6 +276,6 @@ case class HSLColor(hue: Float, saturation: Float, lightness: Float, alpha: Floa
   }
 }
 
-case class Grayscale(grey: Int, alpha: Int = 255) extends Color {
-  override def toRGB: RGBColor = RGBColor(grey, grey, grey, alpha)
+case class Grayscale(gray: Int, alpha: Int = 255) extends Color {
+  override def toRGB: RGBColor = RGBColor(gray, gray, gray, alpha)
 }

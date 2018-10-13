@@ -30,6 +30,10 @@ class ColorTest extends WordSpec with Matchers {
       hsl.saturation shouldBe 0.4121f +- 0.01f
       hsl.value shouldBe 1f +- 0.01f
     }
+    "convert rgb to grayscale correctly" in {
+      val rgb = RGBColor(100, 100, 100)
+      rgb.toGrayscale.gray shouldBe 100
+    }
     "convert cmyk to rgb correctly" in {
       val rgb = CMYKColor(0.1f, 0.2f, 0.3f, 0.4f).toRGB
       rgb.red shouldBe 138
@@ -50,6 +54,13 @@ class ColorTest extends WordSpec with Matchers {
       rgb.green shouldBe 77
       rgb.blue shouldBe 69
       rgb.alpha shouldBe 255
+    }
+    "convert grayscale to rgb correctly" in {
+      val rgb = Grayscale(100, 128).toRGB
+      rgb.red shouldBe 100
+      rgb.green shouldBe 100
+      rgb.blue shouldBe 100
+      rgb.alpha shouldBe 128
     }
     "be symmetric in rgb" in {
       val rgb = RGBColor(1, 2, 3)
@@ -116,6 +127,9 @@ class ColorTest extends WordSpec with Matchers {
 
       val cmyk = CMYKColor(0.1f, 0.2f, 0.3f, 0.4f)
       cmyk.toCMYK shouldBe cmyk
+
+      val gray = Grayscale(100)
+      gray.toGrayscale shouldBe gray
     }
   }
 }
