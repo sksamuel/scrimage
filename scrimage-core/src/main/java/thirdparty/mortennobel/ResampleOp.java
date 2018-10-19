@@ -79,6 +79,11 @@ public class ResampleOp extends AdvancedResizeOp {
     horizontalSubsamplingData = createSubSampling(filter, srcWidth, dstWidth);
     verticalSubsamplingData = createSubSampling(filter, srcHeight, dstHeight);
 
+    if (srcWidth < horizontalSubsamplingData.numContributors || srcHeight < verticalSubsamplingData.numContributors) {
+      throw new RuntimeException("Error doing rescale. Source size was " + srcWidth + "x" + srcHeight + " but must be" +
+        " at least " + horizontalSubsamplingData.numContributors + "x" + verticalSubsamplingData.numContributors);
+    }
+
     final BufferedImage scrImgCopy = srcImg;
     final byte[][] workPixelsCopy = workPixels;
 
