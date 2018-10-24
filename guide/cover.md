@@ -4,7 +4,7 @@ The cover operation creates an image with the specified dimensions, with the ori
 
 Compare this operation with [fit](https://github.com/sksamuel/scrimage/blob/master/guide/fit.md).
 
-To use, invoke with the target dimenions and optionally, a scale method (defaults to ScaleMethod.Bicubic), and the position of the source image in the target (defaults to Position.Center). That last parameter has no effect if the aspect ratios are the same, since the image will cover the target without any loss.
+To use, invoke with the target dimensions and optionally, a scale method (defaults to ScaleMethod.Bicubic), and the position of the source image in the target (defaults to Position.Center). That last parameter has no effect if the aspect ratios are the same, since the image will cover the target without any loss.
 
 Eg, to create a new cover of 600 x 400 using defaults:
 ```
