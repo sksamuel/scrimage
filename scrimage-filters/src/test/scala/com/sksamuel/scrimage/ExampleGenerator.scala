@@ -117,4 +117,32 @@ object ExampleGenerator extends App {
   }
 
   FileUtils.write(new File("filters.md"), sb.toString)
+
+  def genBlurAndStretchExample(): Unit = {
+    val filterName = "blur_and_stretch"
+    val path = "examples/images/"
+    val baseFilename = "lanzarote"
+    val resized = {
+      val tmp = image3.scaleToHeight(400)
+      tmp.resizeTo(tmp.width / 2, tmp.height)
+    }
+    resized.output(new File(path + baseFilename + "_small.jpeg"))(JpegWriter.compression(95))
+    val radius = 12
+    val bloom = 2
+    val bloomThreshold = 255
+    val sides = 10
+    val filter = new LensBlurFilter(radius, bloom, bloomThreshold, sides)
+    val fileName = s"${baseFilename}_$filterName.jpeg"
+    println("Generating example " + fileName)
+    val fgImage = resized // image.scaleHeightToRatio(ratio)
+    val targetWidth = fgImage.width * 2
+    val targetHeight = fgImage.height
+    resized
+      .cover(targetWidth, targetHeight, ScaleMethod.FastScale)
+      .filter(filter)
+      .overlay(fgImage, x = (targetWidth - fgImage.width) / 2, y = (targetHeight - fgImage.height) / 2)
+      .output(new File(path + fileName))(JpegWriter.compression(95))
+  }
+
+  genBlurAndStretchExample()
 }
