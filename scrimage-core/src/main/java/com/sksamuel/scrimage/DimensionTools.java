@@ -57,12 +57,9 @@ public class DimensionTools {
             maxHeight = target.getY();
         }
 
-        double wscale = maxWidth / (double) source.getX();
-        double hscale = maxHeight / (double) source.getY();
-
-        if (wscale < hscale)
-            return new Dimension((int) (source.getX() * wscale), (int) (source.getY() * wscale));
+        if (maxWidth * source.getY() < maxHeight * source.getX())
+            return new Dimension(maxWidth, (int) (source.getY() * maxWidth / source.getX()));
         else
-            return new Dimension((int) (source.getX() * hscale), (int) (source.getY() * hscale));
+            return new Dimension((int) (source.getX() * maxHeight / source.getY()), maxHeight);
     }
 }

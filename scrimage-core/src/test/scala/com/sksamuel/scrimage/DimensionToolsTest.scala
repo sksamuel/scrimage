@@ -19,6 +19,16 @@ class DimensionToolsTest extends FunSuite with BeforeAndAfter with OneInstancePe
     assert(fitted === new Dimension(333, 333))
   }
 
+  test("when scaling the constraining dimension should clamp without rounding errors") {
+    val fitted = DimensionTools.dimensionsToFit(new Dimension(100, 100), new Dimension(50, 97))
+    assert(fitted.getY() === 100)
+  }
+
+  test("when scaling a square then both dimensions should scale equally without rounding errors") {
+    val fitted = DimensionTools.dimensionsToFit(new Dimension(100, 100), new Dimension(97, 97))
+    assert(fitted === new Dimension(100, 100))
+  }
+
   test("when covering an area that is the same size as the source then the same dimensions are returned") {
     val covered = DimensionTools.dimensionsToCover(new Dimension(333, 333), new Dimension(333, 333))
     assert(covered === new Dimension(333, 333))
