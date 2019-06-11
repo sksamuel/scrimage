@@ -7,13 +7,13 @@ object Build extends Build {
   val TwelveMonkeysVersion = "3.3.2"
   val PngjVersion = "2.1.0"
   val MetadataExtractorVersion = "2.10.1"
-  val ScalatestVersion = "3.0.3"
+  val ScalatestVersion = "3.0.8"
 
   val scrimageSettings = Seq(
     organization := "com.sksamuel.scrimage",
     name := "scrimage",
     scalaVersion := "2.11.12",
-    crossScalaVersions := Seq("2.11.12", "2.12.7"),
+    crossScalaVersions := Seq("2.11.12", "2.12.8", "2.13.0"),
     publishMavenStyle := true,
     publishArtifact in Test := false,
     parallelExecution in Test := false,
