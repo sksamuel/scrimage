@@ -1,5 +1,7 @@
 package com.sksamuel.scrimage
 
+import scala.language.implicitConversions
+
 /**
  * A pixel is an encoding of a color value used in rasters.
  * The pixel is encoded using an ARGB packed int
