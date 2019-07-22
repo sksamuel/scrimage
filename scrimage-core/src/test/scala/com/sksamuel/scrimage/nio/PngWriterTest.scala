@@ -6,7 +6,7 @@ import org.scalatest.{Matchers, WordSpec}
 
 class PngWriterTest extends WordSpec with Matchers {
 
-  implicit private val writer = PngWriter.MaxCompression
+  implicit private val writer: PngWriter = PngWriter.MaxCompression
   private val original = Image.fromResource("/com/sksamuel/scrimage/bird.jpg").scaleTo(300, 200)
 
   "png write" should {
@@ -14,16 +14,16 @@ class PngWriterTest extends WordSpec with Matchers {
       val bytes = original.bytes
       val expected = Image.fromResource("/com/sksamuel/scrimage/io/bird_300_200.png")
       assert(expected.pixels.length === Image(bytes).pixels.length)
-      assert(expected.pixels.deep == Image(bytes).pixels.deep)
+      assert(expected.pixels.toList == Image(bytes).pixels.toList)
       assert(expected == Image(bytes))
     }
     "png compression happy path" in {
       for ( i <- 0 to 9 ) {
-        implicit val writer = PngWriter.NoCompression
+        implicit val writer: PngWriter = PngWriter.NoCompression
         val bytes = original.bytes
         val expected = Image.fromResource(s"/com/sksamuel/scrimage/io/bird_compressed_$i.png")
         assert(expected.pixels.length === Image(bytes).pixels.length)
-        assert(expected.pixels.deep == Image(bytes).pixels.deep)
+        assert(expected.pixels.toList == Image(bytes).pixels.toList)
         assert(expected == Image(bytes))
       }
     }
