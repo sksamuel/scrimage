@@ -4,6 +4,7 @@
 [<img src="https://img.shields.io/maven-central/v/com.sksamuel.scrimage/scrimage-core_2.10.svg?label=latest%20release%20for%202.10"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22scrimage-core_2.10%22)
 [<img src="https://img.shields.io/maven-central/v/com.sksamuel.scrimage/scrimage-core_2.11.svg?label=latest%20release%20for%202.11"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22scrimage-core_2.11%22)
 [<img src="https://img.shields.io/maven-central/v/com.sksamuel.scrimage/scrimage-core_2.12.svg?label=latest%20release%20for%202.12"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22scrimage-core_2.12.0-M3%22)
+[<img src="https://img.shields.io/nexus/s/https/oss.sonatype.org/com.sksamuel.scrimage/scrimage-core_2.12.svg?label=latest%20snapshot&style=plastic"/>](https://oss.sonatype.org/content/repositories/snapshots/com/sksamuel/sksamuel/)
 
 This readme is for the 2.0.x versions. For 1.4.x please see the old [README1.4.md](readme).
 
