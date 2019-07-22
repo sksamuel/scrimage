@@ -23,8 +23,8 @@ object Build extends AutoPlugin {
   override def projectSettings = publishingSettings ++ Seq(
     organization := org,
     name := "scrimage",
-    scalaVersion := "2.11.12",
-    crossScalaVersions := Seq("2.11.12", "2.12.8", "2.13.0"),
+    scalaVersion := "2.12.8",
+    crossScalaVersions := Seq("2.12.8", "2.13.0"),
     parallelExecution in Test := false,
     scalacOptions := Seq("-unchecked", "-encoding", "utf8"),
     javacOptions := Seq("-source", "1.8", "-target", "1.8"),
