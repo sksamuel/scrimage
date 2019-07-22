@@ -1,41 +1,69 @@
-import com.typesafe.sbt.SbtPgp._
+import com.typesafe.sbt.SbtPgp
 import sbt.Keys._
 import sbt._
 
-object Build extends Build {
+/** Adds common settings automatically to all subprojects */
+object Build extends AutoPlugin {
 
-  val TwelveMonkeysVersion = "3.3.2"
-  val PngjVersion = "2.1.0"
-  val MetadataExtractorVersion = "2.10.1"
-  val ScalatestVersion = "3.0.8"
+  object autoImport {
+    val org = "com.sksamuel.scrimage"
+    val TwelveMonkeysVersion = "3.4.1"
+    val PngjVersion = "2.1.0"
+    val MetadataExtractorVersion = "2.10.1"
+    val ScalatestVersion = "3.0.8"
+    val CommonsIoVersion = "2.6"
+  }
 
-  val scrimageSettings = Seq(
-    organization := "com.sksamuel.scrimage",
+  import autoImport._
+
+  def isTravis = System.getenv("TRAVIS") == "true"
+  def travisBuildNumber = System.getenv("TRAVIS_BUILD_NUMBER")
+
+  override def trigger = allRequirements
+  override def projectSettings = publishingSettings ++ Seq(
+    organization := org,
     name := "scrimage",
     scalaVersion := "2.11.12",
     crossScalaVersions := Seq("2.11.12", "2.12.8", "2.13.0"),
-    publishMavenStyle := true,
-    publishArtifact in Test := false,
     parallelExecution in Test := false,
     scalacOptions := Seq("-unchecked", "-encoding", "utf8"),
-    javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
+    javacOptions := Seq("-source", "1.8", "-target", "1.8"),
     libraryDependencies ++= Seq(
-      "org.slf4j"             %     "slf4j-api"         % "1.7.7",
-      "org.imgscalr"          %     "imgscalr-lib"      % "4.2"                % "test",
-      "org.scalatest"         %%    "scalatest"         % ScalatestVersion     % "test",
-      "org.mockito"           %     "mockito-all"       % "1.9.5"              % "test"
-    ),
+      "org.slf4j" % "slf4j-api" % "1.7.7",
+      "org.imgscalr" % "imgscalr-lib" % "4.2" % "test",
+      "org.scalatest" %% "scalatest" % ScalatestVersion % "test",
+      "org.mockito" % "mockito-all" % "1.9.5" % "test"
+    )
+  )
+
+  val publishingSettings = Seq(
+    publishMavenStyle := true,
+    publishArtifact in Test := false,
+    SbtPgp.autoImport.useGpg := true,
+    SbtPgp.autoImport.useGpgAgent := true,
+    if (isTravis) {
+      credentials += Credentials(
+        "Sonatype Nexus Repository Manager",
+        "oss.sonatype.org",
+        sys.env.getOrElse("OSSRH_USERNAME", ""),
+        sys.env.getOrElse("OSSRH_PASSWORD", "")
+      )
+    } else {
+      credentials += Credentials(Path.userHome / ".sbt" / "credentials.sbt")
+    },
+    if (isTravis) {
+      version := s"3.0.0.$travisBuildNumber-SNAPSHOT"
+    } else {
+      version := "3.0.0-RC5"
+    },
     publishTo := {
       val nexus = "https://oss.sonatype.org/"
-      if (isSnapshot.value)
-        Some("snapshots" at nexus + "content/repositories/snapshots")
-      else
-        Some("releases" at nexus + "service/local/staging/deploy/maven2")
+      if (isTravis) {
+        Some("snapshots" at s"${nexus}content/repositories/snapshots")
+      } else {
+        Some("releases" at s"${nexus}service/local/staging/deploy/maven2")
+      }
     },
-    useGpg := true,
-    sbtrelease.ReleasePlugin.autoImport.releasePublishArtifactsAction := PgpKeys.publishSigned.value,
-    sbtrelease.ReleasePlugin.autoImport.releaseCrossBuild := true,
-    pomIncludeRepository := { _ => false },
     pomExtra := {
       <url>https://github.com/sksamuel/scrimage</url>
         <licenses>
@@ -59,68 +87,4 @@ object Build extends Build {
         </developers>
     }
   )
-
-  lazy val root = Project("scrimage", file("."))
-    .settings(scrimageSettings: _*)
-    .settings(publishArtifact := false)
-    .aggregate(core, scala, io, filters)
-
-  lazy val core = Project("scrimage-core", file("scrimage-core"))
-    .settings(scrimageSettings: _*)
-    .settings(
-      name := "scrimage-core"
-      // Do not append Scala versions to the generated artifacts
-      // crossPaths := false,
-      // This forbids including Scala related libraries into the dependency
-      //autoScalaLibrary := false
-    )
-    .settings(
-      libraryDependencies ++= Seq(
-        "com.twelvemonkeys.imageio" % "imageio-core"        % TwelveMonkeysVersion,
-        "com.twelvemonkeys.imageio" % "imageio-jpeg"        % TwelveMonkeysVersion,
-        "com.twelvemonkeys.common"  % "common-lang"         % TwelveMonkeysVersion,
-        "com.twelvemonkeys.common"  % "common-io"           % TwelveMonkeysVersion,
-        "com.twelvemonkeys.common"  % "common-image"        % TwelveMonkeysVersion,
-        "com.drewnoakes"            % "metadata-extractor"  % MetadataExtractorVersion,
-        "commons-io"                % "commons-io"          % "2.4",
-        "ar.com.hjg"                % "pngj"                % PngjVersion,
-        "org.apache.commons"        % "commons-lang3"       % "3.3.2" % "test"
-      )
-    )
-
-  lazy val scala = Project("scrimage-scala", file("scrimage-scala"))
-    .settings(scrimageSettings: _*)
-    .settings(name := "scrimage-scala")
-    .dependsOn(core)
-
-  lazy val io = Project("scrimage-io-extra", file("scrimage-io-extra"))
-    .settings(scrimageSettings: _*)
-    .settings(name := "scrimage-io-extra")
-    .settings(
-      libraryDependencies ++= Seq(
-        "com.twelvemonkeys.imageio" % "imageio-bmp"       % TwelveMonkeysVersion,
-        "com.twelvemonkeys.imageio" % "imageio-jpeg"      % TwelveMonkeysVersion,
-        "com.twelvemonkeys.imageio" % "imageio-icns"      % TwelveMonkeysVersion,
-        "com.twelvemonkeys.imageio" % "imageio-iff"       % TwelveMonkeysVersion,
-        "com.twelvemonkeys.imageio" % "imageio-pcx"       % TwelveMonkeysVersion,
-        "com.twelvemonkeys.imageio" % "imageio-pict"      % TwelveMonkeysVersion,
-        "com.twelvemonkeys.imageio" % "imageio-pdf"       % TwelveMonkeysVersion,
-        "com.twelvemonkeys.imageio" % "imageio-pnm"       % TwelveMonkeysVersion,
-        "com.twelvemonkeys.imageio" % "imageio-psd"       % TwelveMonkeysVersion,
-        "com.twelvemonkeys.imageio" % "imageio-sgi"       % TwelveMonkeysVersion,
-        "com.twelvemonkeys.imageio" % "imageio-tiff"      % TwelveMonkeysVersion,
-        "com.twelvemonkeys.imageio" % "imageio-tga"       % TwelveMonkeysVersion,
-        "com.twelvemonkeys.imageio" % "imageio-thumbsdb"  % TwelveMonkeysVersion
-      )
-    ).dependsOn(core)
-
-  lazy val filters = Project("scrimage-filters", file("scrimage-filters"))
-    .dependsOn(core)
-    .settings(scrimageSettings: _*)
-    .settings(
-      libraryDependencies ++= Seq(
-        "commons-io" % "commons-io" % "2.4"
-      ),
-      name := "scrimage-filters"
-    )
 }
