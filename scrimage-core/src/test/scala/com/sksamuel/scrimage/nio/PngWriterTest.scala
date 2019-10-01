@@ -14,7 +14,7 @@ class PngWriterTest extends WordSpec with Matchers {
       val bytes = original.bytes
       val expected = Image.fromResource("/com/sksamuel/scrimage/io/bird_300_200.png")
       assert(expected.pixels.length === Image(bytes).pixels.length)
-      assert(expected.pixels.deep == Image(bytes).pixels.deep)
+      assert(expected.pixels sameElements Image(bytes).pixels)
       assert(expected == Image(bytes))
     }
     "png compression happy path" in {
@@ -23,7 +23,7 @@ class PngWriterTest extends WordSpec with Matchers {
         val bytes = original.bytes
         val expected = Image.fromResource(s"/com/sksamuel/scrimage/io/bird_compressed_$i.png")
         assert(expected.pixels.length === Image(bytes).pixels.length)
-        assert(expected.pixels.deep == Image(bytes).pixels.deep)
+        assert(expected.pixels sameElements Image(bytes).pixels)
         assert(expected == Image(bytes))
       }
     }
