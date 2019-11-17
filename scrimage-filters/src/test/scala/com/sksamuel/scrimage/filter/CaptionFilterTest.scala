@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage.filter
 
+import com.sksamuel.scrimage._
 import com.sksamuel.scrimage.nio.PngWriter
-import com.sksamuel.scrimage.{Color, FontUtils, Image, Position, X11Colorlist}
 import org.scalatest.{Matchers, WordSpec}
 
 class CaptionFilterTest extends WordSpec with Matchers {
@@ -19,11 +19,11 @@ class CaptionFilterTest extends WordSpec with Matchers {
         "This is an example of a big scary mudsucking fish",
         Position.BottomLeft,
         font,
-        Color.White,
+        Color.White.toAWT,
         1,
         false,
         false,
-        Color.White,
+        Color.White.toAWT,
         0.1,
         new Padding(40, 40, 20, 20)
       ))
@@ -34,11 +34,11 @@ class CaptionFilterTest extends WordSpec with Matchers {
         "This is an example of a big scary mudsucking fish",
         Position.BottomLeft,
         font,
-        Color.White,
+        Color.White.toAWT,
         1,
         true,
         true,
-        Color.White,
+        Color.White.toAWT,
         0.1,
         new Padding(40, 40, 20, 20)
       ))
@@ -49,11 +49,11 @@ class CaptionFilterTest extends WordSpec with Matchers {
         "This is an example of a big scary mudsucking fish",
         Position.BottomLeft,
         font,
-        Color.White,
+        Color.White.toAWT,
         1,
         true,
         false,
-        X11Colorlist.Brown,
+        X11Colorlist.Brown.toAWT,
         0.4,
         new Padding(40, 40, 20, 20)
       ))
@@ -64,11 +64,11 @@ class CaptionFilterTest extends WordSpec with Matchers {
         "This is an example of a big scary mudsucking fish",
         Position.BottomLeft,
         font,
-        X11Colorlist.CadetBlue4,
+        X11Colorlist.CadetBlue4.toAWT,
         0.8,
         false,
         false,
-        Color.White,
+        Color.White.toAWT,
         0.1,
         new Padding(40, 40, 20, 20)
       ))
@@ -79,11 +79,11 @@ class CaptionFilterTest extends WordSpec with Matchers {
         "This is an example of a big scary mudsucking fish",
         Position.BottomLeft,
         font.deriveFont(50f),
-        X11Colorlist.CadetBlue4,
+        X11Colorlist.CadetBlue4.toAWT,
         0.8,
         false,
         false,
-        Color.White,
+        Color.White.toAWT,
         0.1,
         new Padding(40, 40, 20, 20)
       ))
@@ -94,11 +94,11 @@ class CaptionFilterTest extends WordSpec with Matchers {
         "This is an example of a big scary mudsucking fish",
         Position.BottomLeft,
         font,
-        Color.White,
+        Color.White.toAWT,
         1.0,
         true,
         false,
-        Color.White,
+        Color.White.toAWT,
         0.1,
         new Padding(40, 40, 20, 20)
       ))

@@ -1,9 +1,7 @@
 package com.sksamuel.scrimage.canvas
 
-import java.awt.{BasicStroke, Graphics2D, RenderingHints}
-
 import com.sksamuel.scrimage.{Color, Image}
-
+import java.awt.{BasicStroke, Graphics2D, RenderingHints}
 import scala.language.implicitConversions
 
 case class Canvas(image: Image) {
@@ -43,8 +41,8 @@ object Canvas {
 
     def setBasicStroke(width: Float): Unit = g2.setStroke(new BasicStroke(width))
 
-    def setWhite(): Unit = g2.setColor(Color.White)
-    def setBlack(): Unit = g2.setColor(Color.Black)
+    def setWhite(): Unit = g2.setColor(Color.White.toAWT)
+    def setBlack(): Unit = g2.setColor(Color.Black.toAWT)
 
     def setAntiAlias(aa: Boolean): Unit = {
       if (aa) {

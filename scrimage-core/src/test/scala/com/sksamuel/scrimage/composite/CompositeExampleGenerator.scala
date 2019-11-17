@@ -1,18 +1,16 @@
 package com.sksamuel.scrimage.composite
 
-import java.io.File
-
-import com.sksamuel.scrimage.nio.{JpegWriter, PngWriter}
 import com.sksamuel.scrimage.{Composite, Image}
+import com.sksamuel.scrimage.nio.{JpegWriter, PngWriter}
+import java.io.File
+import java.nio.charset.Charset
 import org.apache.commons.io.FileUtils
 
 object CompositeExampleGenerator extends App {
 
-  implicit val writer = PngWriter.MaxCompression
+  implicit val writer: PngWriter = PngWriter.MaxCompression
 
-  import scala.concurrent.ExecutionContext.Implicits.global
-
-  val composites: List[(String, (Double => Composite))] = List(
+  val composites: List[(String, Double => Composite)] = List(
     ("alpha", new AlphaComposite(_)),
     ("average", new AverageComposite(_)),
     ("blue", new BlueComposite(_)),
@@ -38,8 +36,8 @@ object CompositeExampleGenerator extends App {
     ("subtract", new SubtractComposite(_))
   )
 
-  val l1 = Image(getClass.getResourceAsStream("/mailbox.jpg")).scaleTo(1200, 800)
-  val l2 = Image(getClass.getResourceAsStream("/palm.jpg")).scaleTo(1200, 800)
+  val l1 = Image.fromStream(getClass.getResourceAsStream("/mailbox.jpg")).scaleTo(1200, 800)
+  val l2 = Image.fromStream(getClass.getResourceAsStream("/palm.jpg")).scaleTo(1200, 800)
   val s1 = l1.scaleToWidth(200)
   val s2 = l2.scaleToWidth(200)
 
@@ -64,6 +62,6 @@ object CompositeExampleGenerator extends App {
     }
   }
 
-  FileUtils.write(new File("composite.md"), sb.toString)
+  FileUtils.write(new File("composite.md"), sb.toString, Charset.defaultCharset())
 }
 

@@ -16,14 +16,14 @@
 
 package com.sksamuel.scrimage
 
+import com.sksamuel.scrimage.nio.ImageReader
 import java.awt.geom.AffineTransform
 import java.awt.image.{AffineTransformOp, BufferedImage, BufferedImageOp}
 import java.io.{ByteArrayInputStream, File, InputStream}
 import java.nio.file.{Files, Path, Paths}
 import javax.imageio.ImageIO
-
-import com.sksamuel.scrimage.nio.ImageReader
 import org.apache.commons.io.IOUtils
+import scala.util.Using
 import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 
 class ImageParseException extends RuntimeException("Unparsable image")
@@ -632,7 +632,7 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
           case _ => ResampleFilters.biCubicFilter
         }
         val scaled = op(new ResampleOp(method, targetWidth, targetHeight))
-        Image.wrapAwt(scaled.awt, this.awt().getType)
+        Image.wrapAwt(scaled.awt, this.awt.getType)
     }
   }
 
@@ -833,14 +833,12 @@ class Image(awt: BufferedImage, val metadata: ImageMetadata) extends MutableAwtI
     */
   def map(f: (Int, Int, Pixel) => Pixel): Image = {
     val target = copy
-    target.mapInPlace(new PixelMapper {
-      override def map(x: Int, y: Int, p: Pixel): Pixel = f(x, y, p)
-    })
+    target.mapInPlace((x: Int, y: Int, p: Pixel) => f(x, y, p))
     target
   }
 }
 
-object Image extends Using {
+object Image {
 
   ImageIO.scanForPlugins()
 
@@ -856,9 +854,7 @@ object Image extends Using {
   def apply(w: Int, h: Int, pixels: Array[Pixel], `type`: Int): Image = {
     require(w * h == pixels.length)
     val image = Image(w, h, `type`)
-    image.mapInPlace(new PixelMapper {
-      override def map(x: Int, y: Int, p: Pixel) = pixels(PixelTools.coordinateToOffset(x, y, w))
-    })
+    image.mapInPlace((x: Int, y: Int, _: Pixel) => pixels(PixelTools.coordinateToOffset(x, y, w)))
     image
   }
 
@@ -913,7 +909,7 @@ object Image extends Using {
   def fromFile(file: File): Image = fromPath(file.toPath)
   def fromPath(path: Path): Image = {
     require(path != null)
-    using(Files.newInputStream(path))(stream => fromStream(stream))
+    Using.resource(Files.newInputStream(path))(stream => fromStream(stream))
   }
 
   /**
@@ -979,5 +975,5 @@ object Image extends Using {
     new Image(target, ImageMetadata.empty)
   }
 
-  implicit def awtToScrimage(awt: java.awt.Image): Image = Image.fromAwt(awt)
+//  implicit def awtToScrimage(awt: java.awt.Image): Image = Image.fromAwt(awt)
 }

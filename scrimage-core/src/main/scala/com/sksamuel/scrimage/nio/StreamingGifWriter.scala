@@ -1,14 +1,11 @@
 package com.sksamuel.scrimage.nio
 
+import com.sksamuel.scrimage.Image
 import java.io.File
-import java.nio.file.{ Paths, Path }
-
+import java.nio.file.{Path, Paths}
+import javax.imageio.{IIOImage, ImageIO, ImageTypeSpecifier}
 import javax.imageio.metadata.IIOMetadataNode
 import javax.imageio.stream.FileImageOutputStream
-import javax.imageio.{ IIOImage, ImageIO, ImageTypeSpecifier }
-
-import com.sksamuel.scrimage.Image
-
 import scala.concurrent.duration._
 
 /**
@@ -65,15 +62,15 @@ case class StreamingGifWriter(frameDelay: Duration = 1.second, infiniteLoop: Boo
 
   def prepareStream(file: File, imageType: Int): GifStream = {
 
-    import scala.collection.JavaConverters._
+    import scala.jdk.CollectionConverters._
 
     val writer = ImageIO.getImageWritersBySuffix("gif").asScala.next
-    val imageWriteParam = writer.getDefaultWriteParam()
+    val imageWriteParam = writer.getDefaultWriteParam
 
     val imageTypeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(imageType)
     val imageMetaData = writer.getDefaultImageMetadata(imageTypeSpecifier, imageWriteParam)
 
-    val metaFormatName = imageMetaData.getNativeMetadataFormatName()
+    val metaFormatName = imageMetaData.getNativeMetadataFormatName
 
     val root = imageMetaData.getAsTree(metaFormatName).asInstanceOf[IIOMetadataNode]
 

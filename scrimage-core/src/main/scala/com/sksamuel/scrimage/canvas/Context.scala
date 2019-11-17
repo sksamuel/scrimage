@@ -1,8 +1,7 @@
 package com.sksamuel.scrimage.canvas
 
-import java.awt._
-
 import com.sksamuel.scrimage.Color
+import java.awt._
 
 @deprecated("use function to configure g2", "3.0.0")
 case class Context(composite: Composite = AlphaComposite.getInstance(AlphaComposite.SRC),
@@ -21,7 +20,7 @@ case class Context(composite: Composite = AlphaComposite.getInstance(AlphaCompos
   @deprecated("use function to configure g2", "3.0.0")
   def configure(g: Graphics2D): Unit = {
     g.setComposite(composite)
-    g.setColor(color)
+    g.setColor(color.toAWT)
     font.map(_.getName).map(new java.awt.Font(_, 0, textSize)).foreach(g.setFont)
     painter.map(_.paint).foreach(g.setPaint)
     if (antiAlias) {

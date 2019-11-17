@@ -56,10 +56,15 @@ object Color {
   // by setting other colours to 255, then this will default to white if transparency is not available on the image.
   def Transparent: RGBColor = RGBColor(255, 255, 255, 0)
 
-  implicit def int2color(argb: Int): RGBColor = apply(argb)
-  implicit def color2rgb(color: Color): RGBColor = color.toRGB
-  implicit def color2awt(color: Color): java.awt.Color = new java.awt.Color(color.toRGB.toInt)
-  implicit def awt2color(awt: java.awt.Color): RGBColor = RGBColor(awt.getRed, awt.getGreen, awt.getBlue, awt.getAlpha)
+  implicit class IntConvert(val i: Int) extends AnyVal {
+    def toColor: RGBColor = apply(i)
+  }
+  implicit class ColorConvert(val c: Color) extends AnyVal {
+    def toAWT: java.awt.Color = new java.awt.Color(c.toRGB.toInt)
+  }
+  implicit class AwtColorConvert(val awt: java.awt.Color) extends AnyVal {
+    def toColor: RGBColor = RGBColor(awt.getRed, awt.getGreen, awt.getBlue, awt.getAlpha)
+  }
 
   def apply(red: Int, green: Int, blue: Int, alpha: Int = 255): RGBColor = RGBColor(red, green, blue, alpha)
   def apply(argb: Int): RGBColor = {
@@ -111,6 +116,7 @@ case class RGBColor(red: Int, green: Int, blue: Int, alpha: Int = 255) extends C
 
   // credit to https://github.com/mjackson/mjijackson.github.com/blob/master/2008/02/rgb-to-hsl-and-rgb-to-hsv-color-model-conversion-algorithms-in-javascript.txt
   override def toHSV: HSVColor = {
+    import Ordering.Float.IeeeOrdering
 
     val r = red / 255f
     val g = green / 255f
@@ -140,6 +146,7 @@ case class RGBColor(red: Int, green: Int, blue: Int, alpha: Int = 255) extends C
 
   // credit to https://github.com/mjackson/mjijackson.github.com/blob/master/2008/02/rgb-to-hsl-and-rgb-to-hsv-color-model-conversion-algorithms-in-javascript.txt
   override def toHSL: HSLColor = {
+    import Ordering.Float.IeeeOrdering
 
     val r = red / 255f
     val g = green / 255f

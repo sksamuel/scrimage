@@ -2,7 +2,6 @@ package com.sksamuel.scrimage.nio;
 
 import com.sksamuel.scrimage.Image;
 import com.sksamuel.scrimage.ImageWriter;
-import org.apache.commons.io.IOUtils;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -71,6 +70,6 @@ public class JpegWriter implements ImageWriter {
         writer.write(null, new IIOImage(noAlpha, null, null), params);
         output.close();
         writer.dispose();
-        IOUtils.closeQuietly(out);
+//        IOUtils.closeQuietly(out);
     }
 }

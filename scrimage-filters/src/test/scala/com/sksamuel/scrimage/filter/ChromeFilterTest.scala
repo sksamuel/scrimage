@@ -9,6 +9,6 @@ class ChromeFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerT
   private val expected = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_chrome.png")
 
   test("filter output matches expected") {
-    assert(Image(original).filter(new ChromeFilter()) === Image(expected))
+    assert(Image.fromStream(original).filter(new ChromeFilter()) === Image.fromStream(expected))
   }
 }
