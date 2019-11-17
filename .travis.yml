@@ -3,7 +3,7 @@ sudo: false
 language: scala
 
 scala:
-  - 2.12.8
+  - 2.13.1
 
 script:
   - sbt +test

@@ -20,7 +20,7 @@ lazy val core = Project("scrimage-core", file("scrimage-core"))
       "com.drewnoakes"            % "metadata-extractor"  % MetadataExtractorVersion,
       "commons-io"                % "commons-io"          % CommonsIoVersion,
       "ar.com.hjg"                % "pngj"                % PngjVersion,
-      "org.apache.commons"        % "commons-lang3"       % "3.9" % "test"
+      "org.apache.commons"        % "commons-lang3"       % "3.9"
     )
   )
 
@@ -52,7 +52,7 @@ lazy val filters = Project("scrimage-filters", file("scrimage-filters"))
   .dependsOn(core)
   .settings(
     libraryDependencies ++= Seq(
-      "commons-io" % "commons-io" % "2.4"
+      "commons-io" % "commons-io" % "2.6"
     ),
     name := "scrimage-filters"
   )

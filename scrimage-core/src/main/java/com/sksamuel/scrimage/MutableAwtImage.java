@@ -1,7 +1,5 @@
 package com.sksamuel.scrimage;
 
-import sun.awt.resources.awt;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;

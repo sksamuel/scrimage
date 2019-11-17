@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage;
 
-import javafx.util.Pair;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,9 +22,9 @@ class LinearSubpixelInterpolator implements SubpixelInterpolator {
     // of the pixel's neighbors, as well as the amount of weight each should
     // get in the weighted average.
     // Operates on one dimension at a time.
-    private List<Pair<Integer, Double>> integerPixelCoordinatesAndWeights(double d, int numPixels) {
-        if (d <= 0.5) return Collections.singletonList(new Pair<>(0, 1.0));
-        else if (d >= numPixels - 0.5) return Collections.singletonList(new Pair<>(numPixels - 1, 1.0));
+    private List<ImmutablePair<Integer, Double>> integerPixelCoordinatesAndWeights(double d, int numPixels) {
+        if (d <= 0.5) return Collections.singletonList(new ImmutablePair<>(0, 1.0));
+        else if (d >= numPixels - 0.5) return Collections.singletonList(new ImmutablePair<>(numPixels - 1, 1.0));
         else {
             double shifted = d - 0.5;
             double floor = Math.floor(shifted);
@@ -32,19 +32,19 @@ class LinearSubpixelInterpolator implements SubpixelInterpolator {
             double ceil = Math.ceil(shifted);
             double ceilWeight = 1 - floorWeight;
             assert (floorWeight + ceilWeight == 1);
-            return Arrays.asList(new Pair<>((int) floor, floorWeight), new Pair<>((int) ceil, ceilWeight));
+            return Arrays.asList(new ImmutablePair<>((int) floor, floorWeight), new ImmutablePair<>((int) ceil, ceilWeight));
         }
     }
 
     public double[][] summands(double x, double y) {
 
-        List<Pair<Integer, Double>> xIntsAndWeights = integerPixelCoordinatesAndWeights(x, width);
-        List<Pair<Integer, Double>> yIntsAndWeights = integerPixelCoordinatesAndWeights(y, height);
+        List<ImmutablePair<Integer, Double>> xIntsAndWeights = integerPixelCoordinatesAndWeights(x, width);
+        List<ImmutablePair<Integer, Double>> yIntsAndWeights = integerPixelCoordinatesAndWeights(y, height);
 
         double[][] summands = new double[xIntsAndWeights.size() * yIntsAndWeights.size()][];
         int k = 0;
-        for (Pair<Integer, Double> xintweight : xIntsAndWeights) {
-            for (Pair<Integer, Double> yintweight : yIntsAndWeights) {
+        for (ImmutablePair<Integer, Double> xintweight : xIntsAndWeights) {
+            for (ImmutablePair<Integer, Double> yintweight : yIntsAndWeights) {
                 double weight = xintweight.getValue() * yintweight.getValue();
 
                 if (weight == 0) {
