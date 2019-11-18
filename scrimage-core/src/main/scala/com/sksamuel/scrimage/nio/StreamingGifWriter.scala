@@ -62,7 +62,7 @@ case class StreamingGifWriter(frameDelay: Duration = 1.second, infiniteLoop: Boo
 
   def prepareStream(file: File, imageType: Int): GifStream = {
 
-    import scala.jdk.CollectionConverters._
+    import scala.collection.JavaConverters._
 
     val writer = ImageIO.getImageWritersBySuffix("gif").asScala.next
     val imageWriteParam = writer.getDefaultWriteParam

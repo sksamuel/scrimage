@@ -36,13 +36,20 @@ object Build extends AutoPlugin {
       "-opt:l:method",
       "-Xcheckinit"
       ),
-    javacOptions := Seq("-source", "1.11", "-target", "1.11"),
+    javacOptions := Seq("--release", "11"),
     libraryDependencies ++= Seq(
       "org.slf4j" % "slf4j-api" % "1.7.29",
       "org.imgscalr" % "imgscalr-lib" % "4.2" % "test",
       "org.scalatest" %% "scalatest" % ScalatestVersion % "test",
       "org.mockito" % "mockito-all" % "1.9.5" % "test"
-      )
+      ),
+      unmanagedSourceDirectories in Compile += {
+        val sourceDir = (sourceDirectory in Compile).value
+        CrossVersion.partialVersion(scalaVersion.value) match {
+          case Some((2, n)) if n >= 13 => sourceDir / "scala-2.13+"
+          case _                       => sourceDir / "scala-2.12-"
+        }
+      }
     )
 
   val publishingSettings = Seq(

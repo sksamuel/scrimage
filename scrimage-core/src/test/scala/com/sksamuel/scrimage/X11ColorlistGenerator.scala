@@ -2,7 +2,7 @@ package com.sksamuel.scrimage
 
 import org.apache.commons.lang3.text.WordUtils
 import scala.io.Source
-import scala.util.Using
+
 
 /** @author Stephen Samuel */
 object X11ColorlistGenerator extends App {

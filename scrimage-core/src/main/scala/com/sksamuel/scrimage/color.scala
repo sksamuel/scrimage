@@ -116,7 +116,8 @@ case class RGBColor(red: Int, green: Int, blue: Int, alpha: Int = 255) extends C
 
   // credit to https://github.com/mjackson/mjijackson.github.com/blob/master/2008/02/rgb-to-hsl-and-rgb-to-hsv-color-model-conversion-algorithms-in-javascript.txt
   override def toHSV: HSVColor = {
-    import Ordering.Float.IeeeOrdering
+    // keep for scala 2.12/2.13 compatibility
+    import Ordering._
 
     val r = red / 255f
     val g = green / 255f
@@ -146,7 +147,7 @@ case class RGBColor(red: Int, green: Int, blue: Int, alpha: Int = 255) extends C
 
   // credit to https://github.com/mjackson/mjijackson.github.com/blob/master/2008/02/rgb-to-hsl-and-rgb-to-hsv-color-model-conversion-algorithms-in-javascript.txt
   override def toHSL: HSLColor = {
-    import Ordering.Float.IeeeOrdering
+    import Ordering._
 
     val r = red / 255f
     val g = green / 255f

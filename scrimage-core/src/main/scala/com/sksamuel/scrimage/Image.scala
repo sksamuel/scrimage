@@ -23,7 +23,6 @@ import java.io.{ByteArrayInputStream, File, InputStream}
 import java.nio.file.{Files, Path, Paths}
 import javax.imageio.ImageIO
 import org.apache.commons.io.IOUtils
-import scala.util.Using
 import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 
 class ImageParseException extends RuntimeException("Unparsable image")
