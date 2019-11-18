@@ -1,12 +1,12 @@
-lazy val root = Project("scrimage", file("."))
+lazy val root = (project in file("."))
   .settings(
     publish := {},
     publishArtifact := false,
     name := "scrimage"
   )
-  .aggregate(core, scala, io, filters)
+  .aggregate(scrimageCore, scrimageScala, scrimageIoExtra, scrimageFilters)
 
-lazy val core = Project("scrimage-core", file("scrimage-core"))
+lazy val scrimageCore = (project in file("scrimage-core"))
   .settings(
     name := "scrimage-core"
   )
@@ -24,11 +24,11 @@ lazy val core = Project("scrimage-core", file("scrimage-core"))
     )
   )
 
-lazy val scala = Project("scrimage-scala", file("scrimage-scala"))
+lazy val scrimageScala = (project in file("scrimage-scala"))
   .settings(name := "scrimage-scala")
-  .dependsOn(core)
+  .dependsOn(scrimageCore)
 
-lazy val io = Project("scrimage-io-extra", file("scrimage-io-extra"))
+lazy val scrimageIoExtra = (project in file("scrimage-io-extra"))
   .settings(name := "scrimage-io-extra")
   .settings(
     libraryDependencies ++= Seq(
@@ -46,10 +46,10 @@ lazy val io = Project("scrimage-io-extra", file("scrimage-io-extra"))
       "com.twelvemonkeys.imageio" % "imageio-tga"       % TwelveMonkeysVersion,
       "com.twelvemonkeys.imageio" % "imageio-thumbsdb"  % TwelveMonkeysVersion
     )
-  ).dependsOn(core)
+  ).dependsOn(scrimageCore)
 
-lazy val filters = Project("scrimage-filters", file("scrimage-filters"))
-  .dependsOn(core)
+lazy val scrimageFilters = (project in file("scrimage-filters"))
+  .dependsOn(scrimageCore)
   .settings(
     libraryDependencies ++= Seq(
       "commons-io" % "commons-io" % "2.6"
