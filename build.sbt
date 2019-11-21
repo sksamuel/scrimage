@@ -2,7 +2,8 @@ lazy val root = (project in file("."))
   .settings(
     publish := {},
     publishArtifact := false,
-    name := "scrimage"
+    name := "scrimage",
+    crossScalaVersions := Nil
   )
   .aggregate(scrimageCore, scrimageScala, scrimageIoExtra, scrimageFilters)
 

@@ -1,4 +1,3 @@
-import com.typesafe.sbt.SbtPgp
 import sbt.Keys._
 import sbt._
 
@@ -55,8 +54,6 @@ object Build extends AutoPlugin {
   val publishingSettings = Seq(
     publishMavenStyle := true,
     publishArtifact in Test := false,
-    SbtPgp.autoImport.useGpg := true,
-    SbtPgp.autoImport.useGpgAgent := true,
     if (isTravis) {
       credentials += Credentials(
         "Sonatype Nexus Repository Manager",
