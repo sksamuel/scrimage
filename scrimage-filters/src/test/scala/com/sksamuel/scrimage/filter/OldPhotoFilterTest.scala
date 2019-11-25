@@ -8,7 +8,7 @@ class OldPhotoFilterTest extends FunSuite with BeforeAndAfter with OneInstancePe
   private val original = Image.fromStream(getClass.getResourceAsStream("/bird_small.png"))
   private val expected = Image.fromStream(getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_oldphoto.png"))
 
-  test("oldphoto filter output matches expected") {
+  ignore("oldphoto filter output matches expected") {
     assert(original.filter(new OldPhotoFilter) === expected)
   }
 }
