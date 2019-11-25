@@ -1,6 +1,7 @@
 package com.sksamuel.scrimage;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,7 +23,7 @@ class LinearSubpixelInterpolator implements SubpixelInterpolator {
     // of the pixel's neighbors, as well as the amount of weight each should
     // get in the weighted average.
     // Operates on one dimension at a time.
-    private List<ImmutablePair<Integer, Double>> integerPixelCoordinatesAndWeights(double d, int numPixels) {
+    private List<Pair<Integer, Double>> integerPixelCoordinatesAndWeights(double d, int numPixels) {
         if (d <= 0.5) return Collections.singletonList(new ImmutablePair<>(0, 1.0));
         else if (d >= numPixels - 0.5) return Collections.singletonList(new ImmutablePair<>(numPixels - 1, 1.0));
         else {
@@ -38,13 +39,13 @@ class LinearSubpixelInterpolator implements SubpixelInterpolator {
 
     public double[][] summands(double x, double y) {
 
-        List<ImmutablePair<Integer, Double>> xIntsAndWeights = integerPixelCoordinatesAndWeights(x, width);
-        List<ImmutablePair<Integer, Double>> yIntsAndWeights = integerPixelCoordinatesAndWeights(y, height);
+        List<Pair<Integer, Double>> xIntsAndWeights = integerPixelCoordinatesAndWeights(x, width);
+        List<Pair<Integer, Double>> yIntsAndWeights = integerPixelCoordinatesAndWeights(y, height);
 
         double[][] summands = new double[xIntsAndWeights.size() * yIntsAndWeights.size()][];
         int k = 0;
-        for (ImmutablePair<Integer, Double> xintweight : xIntsAndWeights) {
-            for (ImmutablePair<Integer, Double> yintweight : yIntsAndWeights) {
+        for (Pair<Integer, Double> xintweight : xIntsAndWeights) {
+            for (Pair<Integer, Double> yintweight : yIntsAndWeights) {
                 double weight = xintweight.getValue() * yintweight.getValue();
 
                 if (weight == 0) {

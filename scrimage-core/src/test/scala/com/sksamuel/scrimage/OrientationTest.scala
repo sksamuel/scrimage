@@ -7,7 +7,7 @@ import org.scalatest.{Matchers, WordSpec}
 class OrientationTest extends WordSpec with Matchers {
 
   "iphone image" should {
-    "be re-orientated" in {
+    "be re-orientated" ignore {
       // Images from: https://github.com/recurser/exif-orientation-examples
 
       val writer = new JpegWriter(100, true)

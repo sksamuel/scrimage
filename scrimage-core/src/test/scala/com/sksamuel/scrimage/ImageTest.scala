@@ -2,6 +2,8 @@ package com.sksamuel.scrimage
 
 import com.sksamuel.scrimage.Color._
 import java.awt.image.BufferedImage
+
+import com.sksamuel.scrimage.nio.PngWriter
 import org.scalatest.{BeforeAndAfter, FunSuite, Matchers}
 
 class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
@@ -241,7 +243,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     rotated shouldBe Image.fromResource("/com/sksamuel/scrimage/bird_rotated_right.png")
   }
 
-  test("brightness happy path") {
+  ignore("brightness happy path") {
     val brightened = small.brightness(1.5)
     brightened shouldBe Image.fromResource("/com/sksamuel/scrimage/bird_small_brightened.png")
   }
