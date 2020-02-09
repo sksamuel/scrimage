@@ -1,13 +1,13 @@
 package com.sksamuel.scrimage.canvas
 
+import com.sksamuel.scrimage.Color._
+import com.sksamuel.scrimage.{Color, RGBColor}
 import java.awt._
-import com.sksamuel.scrimage.Color
-import java.awt.image.{ Raster, ColorModel }
-import java.awt.geom.{ AffineTransform, Rectangle2D }
-import com.sksamuel.scrimage.RGBColor
-import sun.awt.image.IntegerComponentRaster
+import java.awt.geom.{AffineTransform, Rectangle2D}
+import java.awt.image.{ColorModel, Raster}
 import scala.language.implicitConversions
 import scala.util.Random
+import sun.awt.image.IntegerComponentRaster
 
 trait Painter {
   private[scrimage] def paint: Paint
@@ -18,7 +18,7 @@ object Painter {
     Color(color.getRed, color.getGreen, color.getBlue, color.getAlpha)
   }
   implicit def color2painter(color: Color): ColorPainter = ColorPainter(color)
-  implicit def int2painter(argb: Int): ColorPainter = ColorPainter(argb)
+  implicit def int2painter(argb: Int): ColorPainter = ColorPainter(argb.toColor)
 }
 
 case class ColorPainter(color: Color) extends Painter {
@@ -51,7 +51,7 @@ object RandomPainter extends Painter {
 }
 
 case class LinearGradient(x1: Int, y1: Int, color1: Color, x2: Int, y2: Int, color2: Color) extends Painter {
-  private[scrimage] def paint = new GradientPaint(x1, y1, color1, x2, y2, color2)
+  private[scrimage] def paint = new GradientPaint(x1, y1, color1.toAWT, x2, y2, color2.toAWT)
 }
 
 case class RadialGradient(cx: Float,

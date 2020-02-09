@@ -1,9 +1,7 @@
 package com.sksamuel.scrimage.nio
 
-import java.io.File
-
 import com.sksamuel.scrimage.Image
-
+import java.io.File
 import scala.concurrent.duration._
 
 object PngCompressionBenchmark extends App {
@@ -19,15 +17,15 @@ object PngCompressionBenchmark extends App {
   def benchmarkN[A](n: Int, pr: String => Unit)(f: => A): Unit = {
     val stopwatch = new Stopwatch
     stopwatch.start()
-    for (k <- 0 until n) f
+    for (_ <- 0 until n) f
     stopwatch.stop()
-    pr(stopwatch.elapsed.toMillis / n + "ms")
+    pr(s"${stopwatch.elapsed.toMillis / n}ms")
   }
 }
 
 class Stopwatch {
-  var _start = 0l
-  var _end = 0l
+  var _start = 0L
+  var _end = 0L
   def start(): Unit = {
     _start = System.nanoTime()
   }

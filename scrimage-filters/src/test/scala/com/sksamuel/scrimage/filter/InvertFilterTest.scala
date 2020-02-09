@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage.filter
 
-import org.scalatest.{ OneInstancePerTest, BeforeAndAfter, FunSuite }
 import com.sksamuel.scrimage.Image
+import org.scalatest.{BeforeAndAfter, FunSuite, OneInstancePerTest}
 
 class InvertFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
 
@@ -9,6 +9,6 @@ class InvertFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerT
   val expected = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_invert.png")
 
   test("filter output matches expected") {
-    assert(Image(original).filter(new InvertFilter) === Image(expected))
+    assert(Image.fromStream(original).filter(new InvertFilter) === Image.fromStream(expected))
   }
 }

@@ -3,29 +3,27 @@ package com.sksamuel.scrimage
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
 import javax.imageio.ImageIO
-
 import org.apache.commons.io.IOUtils
 
 // import org.imgscalr.Scalr
 // import org.imgscalr.Scalr.{ Mode, Method }
 import java.io.File
-
 import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 
 class ScalingBenchmark { // extends FunSuite {
 
-  val COUNT = 100
-  val root = new File(".")
-  val bird = IOUtils.toByteArray(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird.jpg"))
-  val awt = ImageIO.read(new ByteArrayInputStream(bird))
+  val COUNT                   = 100
+  val root                    = new File(".")
+  val bird    : Array[Byte]   = IOUtils.toByteArray(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird.jpg"))
+  val awt     : BufferedImage = ImageIO.read(new ByteArrayInputStream(bird))
   // val in = getResourceAsStream("./bird.jpg")
-  val scrimage = Image(awt)
+  val scrimage: Image         = Image.fromAwt(awt)
   // val awt = scrimage.awt
-  val width = scrimage.width
-  val height = scrimage.height
+  val width   : Int           = scrimage.width
+  val height  : Int           = scrimage.height
 
-  var start = System.currentTimeMillis()
-  var time = System.currentTimeMillis() - start
+  var start: Long = System.currentTimeMillis()
+  var time : Long = System.currentTimeMillis() - start
 
   // println("Testing java.awt.Image.getScaledInstance() High Quality")
   // start = System.currentTimeMillis()
@@ -73,7 +71,7 @@ class ScalingBenchmark { // extends FunSuite {
   counter = 0
   while (counter < COUNT) {
     val op = new ResampleOp(ResampleFilters.biCubicFilter, width / 3, height / 3)
-    val scaled = Image(op.filter(awt, null))
+    val scaled = Image.fromAwt(op.filter(awt, null))
     assert(scaled.width == width / 3)
     assert(scaled.height == height / 3)
     counter += 1

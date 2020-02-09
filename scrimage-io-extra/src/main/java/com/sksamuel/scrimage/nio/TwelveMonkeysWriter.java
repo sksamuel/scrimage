@@ -2,7 +2,6 @@ package com.sksamuel.scrimage.nio;
 
 import com.sksamuel.scrimage.Image;
 import com.sksamuel.scrimage.ImageWriter;
-import org.apache.commons.io.IOUtils;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -24,6 +23,6 @@ abstract class TwelveMonkeysWriter implements ImageWriter {
         writer.write(null, new IIOImage(image.awt(), null, null), params);
         ios.close();
         writer.dispose();
-        IOUtils.closeQuietly(out);
+//        IOUtils.closeQuietly(out);
     }
 }

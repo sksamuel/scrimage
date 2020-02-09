@@ -1,10 +1,10 @@
 package com.sksamuel.scrimage
 
-import java.awt.Font
-import java.io.File
-
 import com.sksamuel.scrimage.filter._
 import com.sksamuel.scrimage.nio.{JpegWriter, PngWriter}
+import java.awt.Font
+import java.io.File
+import java.nio.charset.Charset
 import org.apache.commons.io.FileUtils
 
 object ExampleGenerator extends App {
@@ -20,7 +20,7 @@ object ExampleGenerator extends App {
     ("border", new BorderFilter(8)),
     ("brightness", new BrightnessFilter(1.3f)),
     ("bump", new BumpFilter),
-    ("caption", new CaptionFilter("Example", Position.BottomLeft, font, Color.White, 1, true, true, Color.White, 0.2, new Padding(10))),
+    ("caption", new CaptionFilter("Example", Position.BottomLeft, font, Color.White.toAWT, 1, true, true, Color.White.toAWT, 0.2, new Padding(10))),
     ("chrome", new ChromeFilter()),
     ("color_halftone", new ColorHalftoneFilter()),
     ("colorize", new ColorizeFilter(255, 0, 0, 50)),
@@ -80,8 +80,8 @@ object ExampleGenerator extends App {
     ("unsharp", new UnsharpFilter()),
     ("vignette", new VignetteFilter()),
     ("vintage", new VintageFilter),
-    ("watermark_cover", new WatermarkCoverFilter("watermark", font, true, 0.2, Color.White)),
-    ("watermark_stamp", new WatermarkStampFilter("watermark", font, true, 0.2, Color.White))
+    ("watermark_cover", new WatermarkCoverFilter("watermark", font, true, 0.2, Color.White.toAWT)),
+    ("watermark_stamp", new WatermarkStampFilter("watermark", font, true, 0.2, Color.White.toAWT))
   )
 
   val sb = new StringBuffer()
@@ -116,7 +116,7 @@ object ExampleGenerator extends App {
     //    image.scale(0.5).write(new File("examples/" + filename + "_scale_half.png"))
   }
 
-  FileUtils.write(new File("filters.md"), sb.toString)
+  FileUtils.write(new File("filters.md"), sb.toString, Charset.defaultCharset())
 
   def genBlurAndStretchExample(): Unit = {
     val filterName = "blur_and_stretch"

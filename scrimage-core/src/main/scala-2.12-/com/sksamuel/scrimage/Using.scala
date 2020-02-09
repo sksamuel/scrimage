@@ -1,8 +1,8 @@
 package com.sksamuel.scrimage
 
-trait Using {
+object Using {
 
-  def using[A, B <: {def close() : Unit}](closeable: B)(f: B => A): A =
+  def resource[A, B <: AutoCloseable](closeable: B)(f: B => A): A =
     try {
       f(closeable)
     } finally {

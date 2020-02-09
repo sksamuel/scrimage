@@ -138,7 +138,7 @@ public class TransitionFilter extends AbstractBufferedImageOp {
      */
 	public void prepareFilter( float transition ) {
         try {
-            method.invoke( filter, new Object[] { new Float( transition ) } );
+            method.invoke( filter, transition);
         }
         catch ( Exception e ) {
             throw new IllegalArgumentException("Error setting value for property: "+property);

@@ -12,7 +12,7 @@ class OilFilterTest extends FunSuite with Matchers {
   private val expected = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_oil.png")
 
   test("filter output matches expected") {
-    original.filter(new OilFilter()) shouldBe Image(expected)
+    original.filter(new OilFilter()) shouldBe Image.fromStream(expected)
   }
 
   test("support ranges") {

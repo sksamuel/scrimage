@@ -16,8 +16,8 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.util.*;
-import java.io.*;
+import java.io.PrintStream;
+import java.util.Vector;
 
 /**
  * An image Quantizer based on the Octree algorithm. This is a very basic implementation
@@ -38,7 +38,7 @@ public class OctTreeQuantizer implements Quantizer {
 		int children;
 		int level;
 		OctTreeNode parent;
-		OctTreeNode leaf[] = new OctTreeNode[8];
+		OctTreeNode[] leaf = new OctTreeNode[8];
 		boolean isLeaf;
 		int count;
 		int	totalRed;
@@ -246,8 +246,8 @@ public class OctTreeQuantizer implements Quantizer {
 	public void buildColorTable(int[] inPixels, int[] table) {
 		int count = inPixels.length;
 		maximumColors = table.length;
-		for (int i = 0; i < count; i++) {
-			insertColor(inPixels[i]);
+		for (int inPixel : inPixels) {
+			insertColor(inPixel);
 			if (colors > reduceColors)
 				reduceTree(reduceColors);
 		}

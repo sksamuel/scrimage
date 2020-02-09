@@ -6,8 +6,8 @@ import org.scalatest.{FunSuite, Matchers}
 class Issue54Test extends FunSuite with Matchers {
 
   test("image for issue 54 should load as expected") {
-    Image(getClass.getResourceAsStream("/issue54.jpg")).width shouldBe 2560
-    Image(getClass.getResourceAsStream("/issue54.jpg")).scaleToWidth(400) shouldBe
-      Image(getClass.getResourceAsStream("/issue54.png"))
+    Image.fromStream(getClass.getResourceAsStream("/issue54.jpg")).width shouldBe 2560
+    Image.fromStream(getClass.getResourceAsStream("/issue54.jpg")).scaleToWidth(400) shouldBe
+      Image.fromStream(getClass.getResourceAsStream("/issue54.png"))
   }
 }

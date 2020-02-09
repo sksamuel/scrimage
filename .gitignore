@@ -14,6 +14,8 @@ src_managed/
 project/boot/
 project/plugins/project/
 credentials.sbt
+.bloop/
+/out
 
 # Scala-IDE specific
 .scala_dependencies

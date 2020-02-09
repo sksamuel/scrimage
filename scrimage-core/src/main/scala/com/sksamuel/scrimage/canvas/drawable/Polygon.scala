@@ -1,9 +1,7 @@
 package com.sksamuel.scrimage.canvas.drawable
 
-import java.awt.Graphics2D
-
 import com.sksamuel.scrimage.canvas.{Drawable, GraphicsContext}
-
+import java.awt.Graphics2D
 import scala.language.implicitConversions
 
 case class Polygon(points: Seq[java.awt.Point], context: GraphicsContext) extends Drawable {
@@ -15,7 +13,7 @@ case class Polygon(points: Seq[java.awt.Point], context: GraphicsContext) extend
 object Polygon {
 
   implicit def awt2polygon(awt: java.awt.Polygon, context: GraphicsContext): Polygon = {
-    val points = awt.xpoints.zip(awt.ypoints).map { case (x, y) => new java.awt.Point(x, y) }
+    val points = awt.xpoints.zip(awt.ypoints).map { case (x, y) => new java.awt.Point(x, y) }.toIndexedSeq
     Polygon(points, context)
   }
 

@@ -1,9 +1,8 @@
 package com.sksamuel.scrimage.canvas
 
-import java.awt.{AlphaComposite, Graphics2D}
-
-import com.sksamuel.scrimage.canvas.drawable.{Line, Polygon, Rect}
 import com.sksamuel.scrimage.{Color, Image, Pixel, X11Colorlist}
+import com.sksamuel.scrimage.canvas.drawable.{Line, Polygon, Rect}
+import java.awt.{AlphaComposite, Graphics2D}
 import org.scalatest.FunSuite
 
 class DrawableTest extends FunSuite {
@@ -19,7 +18,7 @@ class DrawableTest extends FunSuite {
   private val g2 = new GraphicsContext {
     override def configure(g2: Graphics2D): Unit = {
       g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC))
-      g2.setColor(Color.Black)
+      g2.setColor(Color.Black.toAWT)
     }
   }
 
@@ -43,13 +42,11 @@ class DrawableTest extends FunSuite {
   test("The colors are correctly put") {
     val canvas = new Canvas(blank).draw(
       Line(10, 5, 20, 25, g2),
-      Line(30, 50, 30, 200, new GraphicsContext {
-        override def configure(g2: Graphics2D): Unit = {
-          g2.setPaint(ColorPainter(X11Colorlist.Red).paint)
-        }
+      Line(30, 50, 30, 200, (g2: Graphics2D) => {
+        g2.setPaint(ColorPainter(X11Colorlist.Red).paint)
       }),
       Line(100, 100, 120, 120, g2)
-    )
+      )
     val img = canvas.image
     val black = X11Colorlist.Black.toInt
     val red = X11Colorlist.Red.toInt
