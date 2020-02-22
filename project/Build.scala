@@ -6,7 +6,7 @@ object Build extends AutoPlugin {
 
   object autoImport {
     val org = "com.sksamuel.scrimage"
-    val TwelveMonkeysVersion = "3.4.2"
+    val TwelveMonkeysVersion = "3.5.0"
     val PngjVersion = "2.1.0"
     val MetadataExtractorVersion = "2.13.0"
     val ScalatestVersion = "3.0.8"
