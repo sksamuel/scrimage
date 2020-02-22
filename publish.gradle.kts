@@ -40,7 +40,6 @@ publishing {
 
    publications.withType<MavenPublication>().forEach {
       it.apply {
-         artifact(dokkaJar)
          pom {
             name.set("Scrimage")
             description.set("JVM Image Library")

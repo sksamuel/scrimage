@@ -890,7 +890,19 @@ public class ImmutableImage extends MutableAwtImage {
      * @return a new Image that is the result of scaling this image
      */
     public ImmutableImage scaleToWidth(int targetWidth, ScaleMethod scaleMethod) {
-        return scaleTo(targetWidth, (int) (targetWidth / (double) width * height), scaleMethod);
+        return scaleToWidth(targetWidth, scaleMethod, true);
+    }
+
+    public ImmutableImage scaleToWidth(int targetWidth, ScaleMethod scaleMethod, boolean keepAspectRatio) {
+        int targetHeight = keepAspectRatio ? (int) (targetWidth / (double) width * height) : height;
+        return scaleTo(targetWidth, targetHeight, scaleMethod);
+    }
+
+    /**
+     * Convenience method for scaleToHeight(targetHeight, scaleMethod, true)
+     */
+    public ImmutableImage scaleToHeight(int targetHeight, ScaleMethod scaleMethod) {
+        return scaleToHeight(targetHeight, scaleMethod, true);
     }
 
     /**
@@ -898,17 +910,23 @@ public class ImmutableImage extends MutableAwtImage {
      * This is like a "image resize" in Photoshop.
      * <p>
      * scaleToHeight will scale the image so that the new image has a height that matches the
-     * given targetHeight and the same aspect ratio as the original.
+     * given targetHeight.
      * <p>
-     * Eg, an image of 200,300 with a scaleToHeight of 450 will result
-     * in a scaled image of 300,450
+     * If keepAspectRatio is true, then the width will also be scaled so that the aspect ratio
+     * of the image does not change.
+     * If keepAspectRatio is false, then the width will stay the same.
+     * <p>
+     * Eg, an image of 200,300 with a scaleToHeight of 450 and keepAspectRatio of true will result
+     * in a scaled image of 300,450 (because 300 -> 450 is 1.5 and so 200 x 1.5 is 300).
      *
-     * @param targetHeight the target height
-     * @param scaleMethod  the type of scaling method to use.
+     * @param targetHeight    the target height
+     * @param scaleMethod     the type of scaling method to use.
+     * @param keepAspectRatio whether the width should also be scaled to keep the aspect ratio the same.
      * @return a new Image that is the result of scaling this image
      */
-    public ImmutableImage scaleToHeight(int targetHeight, ScaleMethod scaleMethod) {
-        return scaleTo((int) (targetHeight / (double) height * width), targetHeight, scaleMethod);
+    public ImmutableImage scaleToHeight(int targetHeight, ScaleMethod scaleMethod, boolean keepAspectRatio) {
+        int targetWidth = keepAspectRatio ? (int) (targetHeight / (double) height * width) : width;
+        return scaleTo(targetWidth, targetHeight, scaleMethod);
     }
 
     public ImmutableImage scaleHeightToRatio(double ratio, ScaleMethod scaleMethod) {
