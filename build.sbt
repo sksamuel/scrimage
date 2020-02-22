@@ -5,7 +5,7 @@ lazy val root = (project in file("."))
     name := "scrimage",
     crossScalaVersions := Nil
   )
-  .aggregate(scrimageCore, scrimageScala, scrimageIoExtra, scrimageFilters)
+  .aggregate(scrimageCore, scrimageScala, scrimageKotlin, scrimageIoExtra, scrimageFilters)
 
 lazy val scrimageCore = (project in file("scrimage-core"))
   .settings(
@@ -24,6 +24,10 @@ lazy val scrimageCore = (project in file("scrimage-core"))
       "org.apache.commons"        % "commons-lang3"       % "3.9"
     )
   )
+
+lazy val scrimageKotlin = (project in file("scrimage-kotlin"))
+  .settings(name := "scrimage-kotlin")
+  .dependsOn(scrimageCore)
 
 lazy val scrimageScala = (project in file("scrimage-scala"))
   .settings(name := "scrimage-scala")
