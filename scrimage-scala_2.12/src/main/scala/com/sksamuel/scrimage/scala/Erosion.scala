@@ -1,12 +1,10 @@
 import java.awt.image.BufferedImage
-import java.io.File
-import javax.imageio.ImageIO
 
 object Erosion{
   
   /**
 	    * Method to Erode an Image it will remove all irrelevant pixel from the image
-	    * @param Image,@param structuring_element @param typeImage @param size_of_median_filter 
+	    * @param param structuring_element @param typeImage @param size_of_median_filter
 	    * @return
       *structuring element tells in which shape you want to shrink the pixel
       *Median filter is used in this algorithm

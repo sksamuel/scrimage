@@ -11,6 +11,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout the repo
         uses: actions/checkout@v2
@@ -44,18 +45,21 @@ jobs:
 
   deploy-linux-and-common:
     needs: build
-    runs-on: macOS-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout the repo
         uses: actions/checkout@v2
+
       - name: Download build number
         uses: actions/download-artifact@v1
         with:
           name: BUILD_NUMBER
+
       - name: Restore build number
         id: buildnumber
         uses: einaregilsson/build-number@v2
+
       - name: deploy to sonatype snapshots
         run: ./gradlew publish
         env:

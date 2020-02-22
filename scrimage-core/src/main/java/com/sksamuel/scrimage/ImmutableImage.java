@@ -32,11 +32,14 @@ import thirdparty.mortennobel.ResampleOp;
 import thirdparty.mortennobel.TriangleFilter;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferInt;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -44,6 +47,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 /**
  * An immutable Image backed by an AWT BufferedImage.
@@ -477,24 +481,45 @@ public class ImmutableImage extends MutableAwtImage {
         return blank(canvasWidth, canvasHeight).fill(color).overlay(scaled, dim.getX(), dim.getY());
     }
 
-    //  /**
-    //   * Returns the pixels of this image represented as an array of Pixels.
-    //   */
-    //  override def pixels: Array[Pixel] = {
-    //    awt.getRaster.getDataBuffer match {
-    //      case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_ARGB => buffer.getData.map(Pixel.apply)
-    //      case buffer: DataBufferInt if awt.getType == BufferedImage.TYPE_INT_RGB =>
-    //        buffer.getData.map(Pixel.apply)
-    //      case buffer: DataBufferByte if awt.getType == BufferedImage.TYPE_4BYTE_ABGR =>
-    //        buffer.getData.grouped(4).map { abgr => Pixel(abgr(3), abgr(1), abgr(2), abgr.head) }.toArray
-    //      case _ =>
-    //        val pixels = Array.ofDim[Pixel](width * height)
-    //        for ( x <- 0 until width; y <- 0 until height ) {
-    //          pixels(y * width + x) = Pixel(awt.getRGB(x, y))
-    //        }
-    //        pixels
-    //    }
-    //  }
+    /**
+     * Returns the pixels of this image represented as an array of Pixels.
+     */
+    public Pixel[] pixels() {
+        DataBuffer buffer = awt().getRaster().getDataBuffer();
+        if (buffer instanceof DataBufferInt) {
+            DataBufferInt intbuffer = (DataBufferInt) buffer;
+            if (awt().getType() == BufferedImage.TYPE_INT_ARGB) {
+                return (Pixel[]) Arrays.stream(intbuffer.getData()).mapToObj(Pixel::new).toArray();
+            } else if (awt().getType() == BufferedImage.TYPE_INT_RGB) {
+                return (Pixel[]) Arrays.stream(intbuffer.getData()).mapToObj(Pixel::new).toArray();
+            } else if (awt().getType() == BufferedImage.TYPE_4BYTE_ABGR) {
+                int pointer = 0;
+                int index = 0;
+                int[] data = intbuffer.getData();
+                Pixel[] pixels = new Pixel[data.length];
+                while (pointer < data.length) {
+                    int alpha = data[pointer++];
+                    int blue = data[pointer++];
+                    int green = data[pointer++];
+                    int red = data[pointer++];
+                    pixels[index++] = new Pixel(red, green, blue, alpha);
+                }
+                return pixels;
+            } else {
+                throw new RuntimeException("Unsupported image type " + awt().getType());
+            }
+        } else {
+            Pixel[] pixels = new Pixel[width * height];
+            int index = 0;
+            for (int y = 0; y < width; y++) {
+                for (int x = 0; x < width; x++) {
+                    pixels[index++] = new Pixel(awt().getRGB(x, y));
+
+                }
+            }
+            return pixels;
+        }
+    }
 
     /**
      * Applies an affine transform in place.
