@@ -44,6 +44,10 @@ interface Color {
         return Integer.toHexString(toRGB().toARGBInt() & 0xffffff).toUpperCase();
     }
 
+    default java.awt.Color awt() {
+        return toAWT();
+    }
+
     /**
      * Returns this instance as a java.awt.Color.
      * AWT Colors use the RGB color model.

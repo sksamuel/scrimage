@@ -24,6 +24,10 @@ signing {
       sign(publications)
 }
 
+val sourcesJar by tasks.registering(Jar::class) {
+   classifier = "sources"
+}
+
 publishing {
    repositories {
       maven {
@@ -38,8 +42,10 @@ publishing {
       }
    }
 
-   publications.withType<MavenPublication>().forEach {
-      it.apply {
+   publications {
+      register("mavenJava", MavenPublication::class) {
+         from(components["java"])
+         artifact(sourcesJar.get())
          pom {
             name.set("Scrimage")
             description.set("JVM Image Library")
@@ -66,6 +72,7 @@ publishing {
                }
             }
          }
+
       }
    }
 }

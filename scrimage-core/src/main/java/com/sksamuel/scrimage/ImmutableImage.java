@@ -134,7 +134,7 @@ public class ImmutableImage extends MutableImage {
     }
 
     public static ImmutableImage wrapPixels(int w, int h, Pixel[] pixels, ImageMetadata metadata) {
-        return ImmutableImage.create(w, h, pixels).withMetadata(metadata);
+        return ImmutableImage.create(w, h, pixels).associateMetadata(metadata);
     }
 
     /**
@@ -236,7 +236,7 @@ public class ImmutableImage extends MutableImage {
         assert in != null;
         byte[] bytes = IOUtils.toByteArray(in);
         assert bytes.length > 0;
-        return create(bytes, type);
+        return parse(bytes, type);
     }
 
     /**
@@ -274,19 +274,26 @@ public class ImmutableImage extends MutableImage {
      * @param bytes the bytes from the format stream
      * @return a new Image
      */
-    public static ImmutableImage create(byte[] bytes) throws IOException {
-        return create(bytes, CANONICAL_DATA_TYPE);
+    public static ImmutableImage parse(byte[] bytes) throws IOException {
+        return parse(bytes, CANONICAL_DATA_TYPE);
     }
 
-    public static ImmutableImage create(byte[] bytes, int type) throws IOException {
+    /**
+     * Create a new Image from an array of bytes. This is intended to create
+     * an image from an image format eg PNG, not from a stream of pixels.
+     *
+     * @param bytes the bytes from the format stream
+     * @return a new Image
+     */
+    public static ImmutableImage parse(byte[] bytes, int type) throws IOException {
         assert type > 0;
         ImmutableImage image = ImageReader.fromBytes(bytes, type);
         ImageMetadata metadata = ImageMetadata.fromBytes(bytes);
         // detect iphone mode, and rotate
-        return Orientation.reorient(image, metadata).withMetadata(metadata);
+        return Orientation.reorient(image, metadata).associateMetadata(metadata);
     }
 
-    public PixelsExtractor pixelExtractor() {
+    private PixelsExtractor pixelExtractor() {
         return area -> pixels(area.x, area.y, area.w, area.h);
     }
 
@@ -295,7 +302,7 @@ public class ImmutableImage extends MutableImage {
      * given color.
      * <p>
      * Eg, if an image had a 20 pixel row of white at the top, and this method was
-     * invoked with Color.White then the image returned would have that 20 pixel row
+     * invoked with Color.WHITE then the image returned would have that 20 pixel row
      * removed.
      * <p>
      * This method is useful when images have an abudance of a single colour around them.
@@ -327,12 +334,19 @@ public class ImmutableImage extends MutableImage {
     }
 
     /**
-     * Creates an empty Image with the same dimensions of this image.
+     * Creates an empty ImmutableImage with the same dimensions as this image.
      *
      * @return a new Image that is a clone of this image but with uninitialized data
      */
     public ImmutableImage blank() {
         return blank(width, height);
+    }
+
+    /**
+     * Convenience method for bound(w, h, ScaleMethod.Bicubic)
+     */
+    public ImmutableImage bound(int w, int h) {
+        return bound(w, h, ScaleMethod.Bicubic);
     }
 
     /**
@@ -598,10 +612,19 @@ public class ImmutableImage extends MutableImage {
     }
 
     /**
+     * Convenience method for max(maxW, maxH, ScaleMethod.Bicubic)
+     */
+    public ImmutableImage max(int maxW, int maxH) {
+        return max(maxW, maxH, ScaleMethod.Bicubic);
+    }
+
+    /**
      * Returns a new image that is scaled to fit the specified bounds while retaining the same aspect ratio
      * as the original image. The dimensions of the returned image will be the same as the result of the
-     * scaling operation. That is, no extra padding will be added to match the bounded width and height. For an
-     * operation that will scale an image as well as add padding to fit the dimensions perfectly, then use fit()
+     * scaling operation. That is, no extra padding will be added to match the bounded width and height.
+     * <p>
+     * For an operation that will scale an image as well as add padding to fit the dimensions perfectly, then use fit.
+     * For an operation that will only resize smaller, and not larger, see bound.
      * <p>
      * Requesting a bound of 200,200 on an image of 300,600 will result in a scale to 100,200.
      * Eg, the original image will be scaled down to fit the bounds.
@@ -913,12 +936,19 @@ public class ImmutableImage extends MutableImage {
     }
 
     /**
-     * Returns a new image with transparency replaced with the given color.
+     * Returns a new ImmutableImage with transparency replaced with the given color.
      */
     public ImmutableImage removeTransparency(Color color) {
         ImmutableImage target = copy();
         target.removetrans(color);
         return target;
+    }
+
+    /**
+     * Convenience method for scaleToWidth(targetWith, scaleMethod)
+     */
+    public ImmutableImage scaleToWidth(int targetWidth) {
+        return scaleToWidth(targetWidth, ScaleMethod.Bicubic);
     }
 
     /**
@@ -1121,6 +1151,8 @@ public class ImmutableImage extends MutableImage {
      * Returns an image that is the result of translating the image while keeping the same
      * view window. Eg, if translating by 10,5 then all pixels will move 10 to the right, and 5 down.
      * This would mean 10 columns and 5 rows of background added to the left and top.
+     * <p>
+     * This method will use transparency for the color of the displaced pixels.
      *
      * @return a new Image with this image translated.
      */
@@ -1128,6 +1160,13 @@ public class ImmutableImage extends MutableImage {
         return translate(x, y, Colors.Transparent.toAWT());
     }
 
+    /**
+     * Returns an image that is the result of translating the image while keeping the same
+     * view window. Eg, if translating by 10,5 then all pixels will move 10 to the right, and 5 down.
+     * This would mean 10 columns and 5 rows of background added to the left and top.
+     *
+     * @return a new Image with this image translated.
+     */
     public ImmutableImage translate(int x, int y, Color bg) {
         return fill(bg).overlay(this, x, y);
     }
@@ -1219,9 +1258,9 @@ public class ImmutableImage extends MutableImage {
     /**
      * Returns this image, with metadata attached.
      * <p>
-     * both the original and the new image will share a buffer
+     * Both the original and the new image will share a buffer
      */
-    private ImmutableImage withMetadata(ImageMetadata metadata) {
+    private ImmutableImage associateMetadata(ImageMetadata metadata) {
         return new ImmutableImage(awt(), metadata);
     }
 
@@ -1248,6 +1287,10 @@ public class ImmutableImage extends MutableImage {
         return new WriteContext(writer, this);
     }
 
+    /**
+     * Returns a byte array stream consisting of the pixels of this image written out using
+     * the supplied writer.
+     */
     public ByteArrayInputStream stream(ImageWriter writer) throws IOException {
         return forWriter(writer).stream();
     }
