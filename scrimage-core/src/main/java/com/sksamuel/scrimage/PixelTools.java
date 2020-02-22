@@ -15,9 +15,9 @@
  */
 package com.sksamuel.scrimage;
 
-import com.sksamuel.scrimage.color.Color;
 import com.sksamuel.scrimage.color.RGBColor;
 
+import java.awt.*;
 import java.util.Arrays;
 
 public class PixelTools {
@@ -75,7 +75,7 @@ public class PixelTools {
      * Returns true if all pixels in the array have the same color
      */
     public static boolean uniform(Color color, Pixel[] pixels) {
-        return Arrays.stream(pixels).allMatch(p -> p.toInt() == color.toRGB().toInt());
+        return Arrays.stream(pixels).allMatch(p -> p.toInt() == RGBColor.fromAwt(color).toInt());
     }
 
     /**
@@ -95,20 +95,20 @@ public class PixelTools {
      */
     public static boolean approx(Color color, int tolerance, Pixel[] pixels) {
 
-        RGBColor refColor = color.toRGB();
+        RGBColor refColor = RGBColor.fromAwt(color);
 
         RGBColor minColor = new RGBColor(
-                Math.max(refColor.red() - tolerance, 0),
-                Math.max(refColor.green() - tolerance, 0),
-                Math.max(refColor.blue() - tolerance, 0),
-                refColor.alpha()
+                Math.max(refColor.red - tolerance, 0),
+                Math.max(refColor.green - tolerance, 0),
+                Math.max(refColor.blue - tolerance, 0),
+                refColor.alpha
         );
 
         RGBColor maxColor = new RGBColor(
-                Math.min(refColor.red() + tolerance, 255),
-                Math.min(refColor.green() + tolerance, 255),
-                Math.min(refColor.blue() + tolerance, 255),
-                refColor.alpha()
+                Math.min(refColor.red + tolerance, 255),
+                Math.min(refColor.green + tolerance, 255),
+                Math.min(refColor.blue + tolerance, 255),
+                refColor.alpha
         );
 
         return Arrays.stream(pixels).allMatch(p -> p.toInt() >= minColor.toInt() && p.toInt() <= maxColor.toInt());

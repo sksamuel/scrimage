@@ -1,5 +1,6 @@
 package com.sksamuel.scrimage;
 
+import java.io.IOException;
 import java.util.Collection;
 
 public class PipelineFilter implements Filter {
@@ -11,7 +12,7 @@ public class PipelineFilter implements Filter {
     }
 
     @Override
-    public void apply(ImmutableImage image) {
+    public void apply(ImmutableImage image) throws IOException {
         for (Filter filter : filters) {
             filter.apply(image);
         }

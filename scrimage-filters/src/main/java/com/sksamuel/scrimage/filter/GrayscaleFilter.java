@@ -17,7 +17,7 @@ package com.sksamuel.scrimage.filter;
 
 import com.sksamuel.scrimage.Filter;
 import com.sksamuel.scrimage.ImmutableImage;
-import com.sksamuel.scrimage.Pixel$;
+import com.sksamuel.scrimage.Pixel;
 
 public class GrayscaleFilter implements Filter {
 
@@ -27,7 +27,7 @@ public class GrayscaleFilter implements Filter {
             double green = 0.71 * p.green();
             double blue = 0.07 * p.blue();
             int gray = (int) (red + green + blue);
-            return Pixel$.MODULE$.apply(gray, gray, gray, p.alpha());
+            return new Pixel(gray, gray, gray, p.alpha());
         });
   }
 }

@@ -207,8 +207,8 @@ public class AwtImage {
      * @param color the pixel colour to look for.
      * @return true if there exists at least one pixel that has the given pixels color
      */
-    public boolean contains(com.sksamuel.scrimage.color.Color color) {
-        return exists(p -> p.toInt() == color.toPixel().toInt());
+    public boolean contains(Color color) {
+        return exists(p -> p.toARGBInt() == RGBColor.fromAwt(color).toPixel().toARGBInt());
     }
 
     /**
@@ -344,8 +344,8 @@ public class AwtImage {
      * @param color the colour to detect.
      * @return the number of pixels that matched the colour of the given pixel
      */
-    public long count(com.sksamuel.scrimage.color.Color color) {
-        return count(p -> p.toColor() == color.toRGB());
+    public long count(Color color) {
+        return count(p -> p.toColor().equals(RGBColor.fromAwt(color)));
     }
 
     /**

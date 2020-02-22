@@ -1,8 +1,10 @@
 package com.sksamuel.scrimage.canvas
 
-import com.sksamuel.scrimage.{Color, ImmutableImage, Pixel, X11Colorlist}
+import com.sksamuel.scrimage.{Color, ImmutableImage, Pixel}
 import com.sksamuel.scrimage.canvas.drawable.{Line, Polygon, Rect}
 import java.awt.{AlphaComposite, Graphics2D}
+
+import com.sksamuel.scrimage.color.X11Colorlist
 import org.scalatest.FunSuite
 
 class DrawableTest extends FunSuite {

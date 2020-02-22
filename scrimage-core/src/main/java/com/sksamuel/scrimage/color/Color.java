@@ -6,9 +6,6 @@ import java.awt.*;
 
 interface Color {
 
-    // by setting other colours to 255, then this will default to white if transparency is not available on the image.
-    RGBColor Transparent = new RGBColor(255, 255, 255, 0);
-
     /**
      * Returns a conversion of this Color into an RGBColor.
      * If this colour is already an instance of RGBColor then the same instance will be returned.

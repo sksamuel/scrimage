@@ -15,10 +15,9 @@
  */
 package com.sksamuel.scrimage.filter;
 
-import com.sksamuel.scrimage.Color;
 import com.sksamuel.scrimage.Filter;
 import com.sksamuel.scrimage.ImmutableImage;
-import com.sksamuel.scrimage.RGBColor;
+import com.sksamuel.scrimage.color.RGBColor;
 
 import java.awt.*;
 
@@ -35,13 +34,13 @@ public class ColorizeFilter implements Filter {
     }
 
     public ColorizeFilter(int r, int g, int b, int a) {
-        this(new RGBColor(r, g, b, a));
+        this(new RGBColor(r, g, b, a).toAWT());
     }
 
     @Override
     public void apply(ImmutableImage image) {
         Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
-        g2.setColor(color.toAWT());
+        g2.setColor(color);
         g2.fillRect(0, 0, image.width, image.height);
         g2.dispose();
     }

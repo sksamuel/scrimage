@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage;
 
-import com.sksamuel.scrimage.color.Color;
+import java.awt.*;
 
 public class AutocropOps {
 

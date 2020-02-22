@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage.filter;
 
 import com.sksamuel.scrimage.PipelineFilter;
-import com.sksamuel.scrimage.RGBColor;
+import com.sksamuel.scrimage.color.RGBColor;
 
 import java.util.Arrays;
 

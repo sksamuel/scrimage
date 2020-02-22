@@ -6,22 +6,10 @@ scrimage.iml
 filters.md
 pom.xml.versionsBackup
 
-# sbt specific
-dist/*
+out/*
 target/
-lib_managed/
-src_managed/
-project/boot/
-project/plugins/project/
-credentials.sbt
-.bloop/
-/out
+build/
 
-# Scala-IDE specific
-.scala_dependencies
-.cache
-.classpath
-.project
-
-# Temporary files
 *~
+*.gpg.enc
+.gradle/

@@ -17,7 +17,7 @@ package com.sksamuel.scrimage.filter;
 
 import com.sksamuel.scrimage.Filter;
 import com.sksamuel.scrimage.ImmutableImage;
-import com.sksamuel.scrimage.Pixel$;
+import com.sksamuel.scrimage.Pixel;
 
 public class OpacityFilter implements Filter {
 
@@ -32,7 +32,7 @@ public class OpacityFilter implements Filter {
             int _r = (int) (p.red() + (255 - p.red()) * amount);
             int _g = (int) (p.green() + (255 - p.green()) * amount);
             int _b = (int) (p.blue() + (255 - p.blue()) * amount);
-            return Pixel$.MODULE$.apply(_r, _g, _b, p.alpha());
+            return new Pixel(_r, _g, _b, p.alpha());
         });
   }
 }

@@ -10,7 +10,7 @@ import java.util.function.Function;
  */
 public class Pixel {
 
-    private final int argb;
+    public final int argb;
 
     public Pixel(int argb) {
         this.argb = argb;
@@ -36,6 +36,8 @@ public class Pixel {
         return argb & 0xFF;
     }
 
+    // use toARGBInt() or .argb
+    @Deprecated
     public int toInt() {
         return toARGBInt();
     }

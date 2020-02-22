@@ -1,5 +1,7 @@
 package com.sksamuel.scrimage;
 
+import com.sksamuel.scrimage.color.RGBColor;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
@@ -37,7 +39,7 @@ public class MutableAwtImage extends AwtImage {
         int r = (p.red() * p.alpha() + color.getRed() * color.getAlpha() * (255 - p.alpha()) / 255) / 255;
         int g = (p.green() * p.alpha() + color.getGreen() * color.getAlpha() * (255 - p.alpha()) / 255) / 255;
         int b = (p.blue() * p.alpha() + color.getBlue() * color.getAlpha() * (255 - p.alpha()) / 255) / 255;
-        return Pixel$.MODULE$.apply(r, g, b, 255);
+        return new Pixel(r, g, b, 255);
     }
 
     protected void removetrans(java.awt.Color color) {
@@ -47,8 +49,8 @@ public class MutableAwtImage extends AwtImage {
     /**
      * Fills all pixels the given color on the existing image.
      */
-    protected void fillInPlace(com.sksamuel.scrimage.color.Color color) {
-        Arrays.stream(points()).forEach(point -> awt().setRGB(point.x, point.y, color.toPixel().toInt()));
+    protected void fillInPlace(Color color) {
+        Arrays.stream(points()).forEach(point -> awt().setRGB(point.x, point.y, RGBColor.fromAwt(color).toPixel().toInt()));
     }
 
     /**
@@ -61,7 +63,7 @@ public class MutableAwtImage extends AwtImage {
     }
 
     public void setPixel(int x, int y, Pixel pixel) {
-        awt().setRGB(x, y, pixel.argb());
+        awt().setRGB(x, y, pixel.toARGBInt());
     }
 
     /**
@@ -79,7 +81,7 @@ public class MutableAwtImage extends AwtImage {
             int r = PixelTools.truncate((factor * (pixel.red() - 128)) + 128);
             int g = PixelTools.truncate((factor * (pixel.green() - 128)) + 128);
             int b = PixelTools.truncate((factor * (pixel.blue() - 128)) + 128);
-            Pixel pixel2 = Pixel$.MODULE$.apply(r, g, b, pixel.alpha());
+            Pixel pixel2 = new Pixel(r, g, b, pixel.alpha());
             setPixel(p.x, p.y, pixel2);
         });
     }

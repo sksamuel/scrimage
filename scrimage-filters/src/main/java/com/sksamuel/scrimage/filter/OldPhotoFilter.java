@@ -1,5 +1,6 @@
 package com.sksamuel.scrimage.filter;
 
+import com.drew.imaging.ImageProcessingException;
 import com.sksamuel.scrimage.Filter;
 import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.ScaleMethod;
@@ -9,11 +10,12 @@ import thirdparty.romainguy.BlendingMode;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 public class OldPhotoFilter implements Filter {
 
     @Override
-    public void apply(ImmutableImage image) {
+    public void apply(ImmutableImage image) throws IOException {
 
         DaisyFilter daisy = new DaisyFilter();
         BufferedImage filtered = daisy.filter(image.awt());
@@ -21,7 +23,12 @@ public class OldPhotoFilter implements Filter {
         Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
         g2.drawImage(filtered, 0, 0, null);
 
-        final ImmutableImage film = ImmutableImage.fromResource("/com/sksamuel/scrimage/filter/film1.jpg", ImmutableImage.CANONICAL_DATA_TYPE());
+        final ImmutableImage film;
+        try {
+            film = ImmutableImage.fromResource("/com/sksamuel/scrimage/filter/film1.jpg", ImmutableImage.CANONICAL_DATA_TYPE);
+        } catch (ImageProcessingException e) {
+            throw new IOException(e);
+        }
         BufferedImage filmSized = film.scaleTo(image.width, image.height, ScaleMethod.Bicubic).awt();
         BufferedImage filmSizedSameType = ImmutableImage.fromAwt(filmSized, image.awt().getType()).awt();
 

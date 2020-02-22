@@ -15,6 +15,8 @@
  */
 package com.sksamuel.scrimage;
 
+import java.io.IOException;
+
 public interface Filter {
-    void apply(ImmutableImage image);
+    void apply(ImmutableImage image) throws IOException;
 }

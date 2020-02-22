@@ -15,23 +15,32 @@
  */
 package com.sksamuel.scrimage.filter;
 
+import com.drew.imaging.ImageProcessingException;
 import com.sksamuel.scrimage.Filter;
 import com.sksamuel.scrimage.ImmutableImage;
-import com.sksamuel.scrimage.ImmutableImage$;
 import com.sksamuel.scrimage.ScaleMethod;
 import thirdparty.romainguy.BlendComposite;
 import thirdparty.romainguy.BlendingMode;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 public class SnowFilter implements Filter {
 
-    private final ImmutableImage snow = ImmutableImage.fromResource("/com/sksamuel/scrimage/filter/snow1.jpg", ImmutableImage.CANONICAL_DATA_TYPE());
+    private static final ImmutableImage snow;
+
+    static {
+        try {
+            snow = ImmutableImage.fromResource("/com/sksamuel/scrimage/filter/snow1.jpg", ImmutableImage.CANONICAL_DATA_TYPE);
+        } catch (IOException | ImageProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public void apply(ImmutableImage image) {
-        ImmutableImage scaled = ImmutableImage$.MODULE$.wrapAwt(snow.scaleTo(image.width, image.height, ScaleMethod.Bicubic).awt(), BufferedImage.TYPE_INT_ARGB);
+        ImmutableImage scaled = ImmutableImage.wrapAwt(snow.scaleTo(image.width, image.height, ScaleMethod.Bicubic).awt(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
         g2.setComposite(new BlendComposite(BlendingMode.SCREEN, 1.0f));
         g2.drawImage(scaled.awt(), 0, 0, null);

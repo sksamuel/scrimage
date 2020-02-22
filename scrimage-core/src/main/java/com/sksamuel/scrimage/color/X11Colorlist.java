@@ -1,4 +1,4 @@
-package com.sksamuel.scrimage;
+package com.sksamuel.scrimage.color;
 
 import com.sksamuel.scrimage.color.RGBColor;
 

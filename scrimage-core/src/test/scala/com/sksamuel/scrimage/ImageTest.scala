@@ -3,6 +3,7 @@ package com.sksamuel.scrimage
 import com.sksamuel.scrimage.color.Color._
 import java.awt.image.BufferedImage
 
+import com.sksamuel.scrimage.color.X11Colorlist
 import com.sksamuel.scrimage.nio.PngWriter
 import org.scalatest.{BeforeAndAfter, FunSuite, Matchers}
 

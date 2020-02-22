@@ -4,7 +4,7 @@ import ar.com.hjg.pngj.ImageLineHelper;
 import ar.com.hjg.pngj.ImageLineInt;
 import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.ImageMetadata;
-import com.sksamuel.scrimage.Pixel$;
+import com.sksamuel.scrimage.Pixel;
 
 import java.awt.image.*;
 import java.io.ByteArrayInputStream;
@@ -35,7 +35,7 @@ public class PngReader implements Reader {
                     int j = 0;
                     int[] mapped = new int[pixels.length / 3];
                     for (int k = 0; k < pixels.length; k = k + 3) {
-                        mapped[j++] = Pixel$.MODULE$.apply(pixels[k], pixels[k + 1], pixels[k + 2], 255).toInt();
+                        mapped[j++] = new Pixel(pixels[k], pixels[k + 1], pixels[k + 2], 255).toInt();
                     }
                     System.arraycopy(mapped, 0, matrix, row * w, w);
                 }
@@ -48,16 +48,16 @@ public class PngReader implements Reader {
 
                         switch (channels) {
                             case 1:
-                                mapped[j++] = Pixel$.MODULE$.apply(scanline[k], scanline[k], scanline[k], 255).toInt(); // greyscale no alpha
+                                mapped[j++] = new Pixel(scanline[k], scanline[k], scanline[k], 255).toInt(); // greyscale no alpha
                                 break;
                             case 2:
-                                mapped[j++] = Pixel$.MODULE$.apply(scanline[k], scanline[k], scanline[k], scanline[k + 1]).toInt();
+                                mapped[j++] = new Pixel(scanline[k], scanline[k], scanline[k], scanline[k + 1]).toInt();
                                 break;
                             case 3:
-                                mapped[j++] = Pixel$.MODULE$.apply(scanline[k], scanline[k + 1], scanline[k + 2], 255).toInt(); // if no alpha then 255 is full opacity
+                                mapped[j++] = new Pixel(scanline[k], scanline[k + 1], scanline[k + 2], 255).toInt(); // if no alpha then 255 is full opacity
                                 break;
                             case 4:
-                                mapped[j++] = Pixel$.MODULE$.apply(scanline[k], scanline[k + 1], scanline[k + 2], scanline[k + 3]).toInt(); // note: the png reader is n RGBA
+                                mapped[j++] = new Pixel(scanline[k], scanline[k + 1], scanline[k + 2], scanline[k + 3]).toInt(); // note: the png reader is n RGBA
                                 break;
                         }
                     }
