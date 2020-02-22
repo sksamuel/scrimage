@@ -3,6 +3,9 @@ package com.sksamuel.scrimage;
 import java.io.IOException;
 import java.util.Collection;
 
+/**
+ * A filter that just applies one or more filters in sequence.
+ */
 public class PipelineFilter implements Filter {
 
     private final Collection<Filter> filters;
