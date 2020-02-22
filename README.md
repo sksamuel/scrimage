@@ -1,4 +1,4 @@
-## Scrimage
+<img src="./logo.png" alt="logo"/>
 
 ![build_test](https://github.com/sksamuel/scrimage/workflows/build_test/badge.svg)
 [<img src="https://img.shields.io/maven-central/v/com.sksamuel.scrimage/scrimage-core_2.10.svg?label=latest%20release%20for%202.10"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22scrimage-core_2.10%22)
@@ -8,7 +8,7 @@
 
 This readme is for the 2.0.x versions. For 1.4.x please see the old [README1.4.md](readme).
 
-Scrimage is a consistent, idiomatic, and immutable scala library for manipulating and processing of images. 
+Scrimage is a consistent, idiomatic, and immutable JVM library for manipulating and processing of images. 
 The aim of the this library is to provide a quick and easy way to do the kinds of image operations that are most common, 
 such as scaling, rotating, converting between formats and applying filters. It is not intended to provide functionality that might be required by a
 more "serious" image processing application - such as face recognition or movement tracking.
