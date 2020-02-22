@@ -10,7 +10,7 @@ This readme is for the 3.0.0 RELEASE. For earlier releases see [README_2.x.md](2
 
 Scrimage is a consistent, idiomatic, and immutable JVM library for manipulating and processing of images. 
 The aim of the this library is to provide a quick and easy way to do the kinds of image operations that are most common, 
-such as scaling, rotating, converting between formats and applying filters. It is not intended to provide functionality that might be required by a
+such as scaling to fit a size or bounds, rotating, converting between formats and applying filters. It is not intended to provide functionality that might be required by a
 more "serious" image processing application - such as face recognition or movement tracking.
 
 A typical use case for this library would be creating thumbnails of images uploaded by users in a web app, or resizing a
