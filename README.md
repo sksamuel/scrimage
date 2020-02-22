@@ -1,4 +1,4 @@
-<img src="./logo.png" alt="logo"/>
+<img src="./SCRIMAGE.png" alt="logo"/>
 
 ![build_test](https://github.com/sksamuel/scrimage/workflows/build_test/badge.svg)
 [<img src="https://img.shields.io/maven-central/v/com.sksamuel.scrimage/scrimage-core_2.10.svg?label=latest%20release%20for%202.10"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22scrimage-core_2.10%22)
