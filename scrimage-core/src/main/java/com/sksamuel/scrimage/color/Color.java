@@ -53,7 +53,7 @@ interface Color {
      */
     default java.awt.Color toAWT() {
         RGBColor rgb = toRGB();
-        return new java.awt.Color(rgb.red, rgb.green, rgb.blue, rgb.alpha)
+        return new java.awt.Color(rgb.red, rgb.green, rgb.blue, rgb.alpha);
     }
 
     default Pixel toPixel() {

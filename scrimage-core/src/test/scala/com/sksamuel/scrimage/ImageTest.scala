@@ -419,7 +419,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
 
   test("map modifies each pixel and returns new image") {
     val image = ImmutableImage.apply(100, 100)
-    val mapped = image.map((_, _, _) => new Pixel(0xFF00FF00))
+    val mapped = image.map((_, _, _) => new Pixel(argb))
     for (component <- mapped.argb)
       assert(component === Array(255, 0, 255, 0))
   }
@@ -536,36 +536,36 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("column") {
-    val striped = ImmutableImage.apply(200, 100).map((x, y, p) => if (y % 2 == 0) new Pixel(255) else new Pixel(0))
+    val striped = ImmutableImage.apply(200, 100).map((x, y, p) => if (y % 2 == 0) new Pixel(argb) else new Pixel(argb))
     val col = striped.col(51)
     assert(striped.height === col.length)
     for (y <- 0 until striped.height) {
-      if (y % 2 == 0) assert(new Pixel(255) === col(y), "col was " + col(y))
-      else assert(new Pixel(0) === col(y), "col was " + col(y))
+      if (y % 2 == 0) assert(new Pixel(argb) === col(y), "col was " + col(y))
+      else assert(new Pixel(argb) === col(y), "col was " + col(y))
     }
   }
 
   test("row") {
-    val striped = ImmutableImage.apply(200, 100).map((x, y, p) => if (y % 2 == 0) new Pixel(255) else new Pixel(0))
+    val striped = ImmutableImage.apply(200, 100).map((x, y, p) => if (y % 2 == 0) new Pixel(argb) else new Pixel(argb))
     val row1 = striped.row(44)
     assert(striped.width === row1.length)
-    assert(row1.forall(_ == new Pixel(255)))
+    assert(row1.forall(_ == new Pixel(argb)))
     val row2 = striped.row(45)
     assert(striped.width === row2.length)
-    assert(row2.forall(_ == new Pixel(0)))
+    assert(row2.forall(_ == new Pixel(argb)))
   }
 
   test("pixels region") {
-    val striped = ImmutableImage.apply(200, 100).map((x, y, p) => if (y % 2 == 0) new Pixel(255) else new Pixel(0))
+    val striped = ImmutableImage.apply(200, 100).map((x, y, p) => if (y % 2 == 0) new Pixel(argb) else new Pixel(argb))
     val pixels = striped.pixels(10, 10, 10, 10)
     for (k <- 0 until 10)
-      assert(new Pixel(255) === pixels(k))
+      assert(new Pixel(argb) === pixels(k))
     for (k <- 10 until 19)
       assert(0 === pixels(k).toInt)
     for (k <- 20 until 29)
-      assert(new Pixel(255) === pixels(k))
+      assert(new Pixel(argb) === pixels(k))
     for (k <- 30 until 39)
-      assert(new Pixel(0) === pixels(k))
+      assert(new Pixel(argb) === pixels(k))
   }
 
   test("autocrop removes background") {
