@@ -1,6 +1,5 @@
 package com.sksamuel.scrimage.filter;
 
-import com.drew.imaging.ImageProcessingException;
 import com.sksamuel.scrimage.Filter;
 import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.ScaleMethod;
@@ -23,12 +22,7 @@ public class OldPhotoFilter implements Filter {
         Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
         g2.drawImage(filtered, 0, 0, null);
 
-        final ImmutableImage film;
-        try {
-            film = ImmutableImage.fromResource("/com/sksamuel/scrimage/filter/film1.jpg", ImmutableImage.CANONICAL_DATA_TYPE);
-        } catch (ImageProcessingException e) {
-            throw new IOException(e);
-        }
+        final ImmutableImage film = ImmutableImage.fromResource("/com/sksamuel/scrimage/filter/film1.jpg", ImmutableImage.CANONICAL_DATA_TYPE);
         BufferedImage filmSized = film.scaleTo(image.width, image.height, ScaleMethod.Bicubic).awt();
         BufferedImage filmSizedSameType = ImmutableImage.fromAwt(filmSized, image.awt().getType()).awt();
 

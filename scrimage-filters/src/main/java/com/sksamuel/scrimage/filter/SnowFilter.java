@@ -15,7 +15,6 @@
  */
 package com.sksamuel.scrimage.filter;
 
-import com.drew.imaging.ImageProcessingException;
 import com.sksamuel.scrimage.Filter;
 import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.ScaleMethod;
@@ -33,7 +32,7 @@ public class SnowFilter implements Filter {
     static {
         try {
             snow = ImmutableImage.fromResource("/com/sksamuel/scrimage/filter/snow1.jpg", ImmutableImage.CANONICAL_DATA_TYPE);
-        } catch (IOException | ImageProcessingException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

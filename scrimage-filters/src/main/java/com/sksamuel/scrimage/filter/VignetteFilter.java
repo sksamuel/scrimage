@@ -22,6 +22,7 @@ import thirdparty.romainguy.BlendingMode;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
+import java.io.IOException;
 
 public class VignetteFilter implements Filter {
 
@@ -75,7 +76,7 @@ public class VignetteFilter implements Filter {
 
 
     @Override
-    public void apply(ImmutableImage image) {
+    public void apply(ImmutableImage image) throws IOException {
         ImmutableImage bg = background(image).filter(new GaussianBlurFilter((int) (image.radius() * blur)));
         Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
         g2.setComposite(new BlendComposite(BlendingMode.MULTIPLY, 1.0f));

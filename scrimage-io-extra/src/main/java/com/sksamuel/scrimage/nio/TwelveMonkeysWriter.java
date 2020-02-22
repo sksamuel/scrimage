@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage.nio;
 
-import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.ImageWriter;
+import com.sksamuel.scrimage.ImmutableImage;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;

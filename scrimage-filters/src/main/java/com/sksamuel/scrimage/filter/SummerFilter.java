@@ -44,7 +44,7 @@ public class SummerFilter implements Filter {
     }
 
     @Override
-    public void apply(ImmutableImage image) {
+    public void apply(ImmutableImage image) throws IOException {
         ImmutableImage scaled = ImmutableImage.wrapAwt(summer.scaleTo(image.width, image.height, ScaleMethod.Bicubic).awt(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
         g2.setComposite(BlendComposite.getInstance(BlendingMode.INVERSE_COLOR_BURN, 0.5f));

@@ -3,6 +3,7 @@ plugins {
 }
 
 dependencies {
+   api(project(":scrimage-core"))
 //   "com.twelvemonkeys.imageio" % "imageio-bmp"       % TwelveMonkeysVersion,
 //   "com.twelvemonkeys.imageio" % "imageio-jpeg"      % TwelveMonkeysVersion,
 //   "com.twelvemonkeys.imageio" % "imageio-icns"      % TwelveMonkeysVersion,

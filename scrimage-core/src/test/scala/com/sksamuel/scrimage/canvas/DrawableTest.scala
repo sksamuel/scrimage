@@ -28,7 +28,7 @@ class DrawableTest extends FunSuite {
 
   test("The lines are correctly drawn") {
 
-    val canvas = new Canvas(blank).draw(
+    val canvas = new Canvas(image).draw(
       Line(10, 5, 20, 25, g2),
       Line(30, 50, 30, 200, g2),
       Line(100, 100, 120, 120, g2)
@@ -42,7 +42,7 @@ class DrawableTest extends FunSuite {
   }
 
   test("The colors are correctly put") {
-    val canvas = new Canvas(blank).draw(
+    val canvas = new Canvas(image).draw(
       Line(10, 5, 20, 25, g2),
       Line(30, 50, 30, 200, (g2: Graphics2D) => {
         g2.setPaint(ColorPainter(X11Colorlist.Red).paint)
@@ -58,11 +58,11 @@ class DrawableTest extends FunSuite {
   }
 
   test("Rectangles and polygons draw the same thing") {
-    val canvas1 = new Canvas(blank).draw(
+    val canvas1 = new Canvas(image).draw(
       Rect(10, 20, 30, 30, g2),
       Rect(100, 120, 50, 20, g2).fill
     )
-    val canvas2 = new Canvas(blank).draw(
+    val canvas2 = new Canvas(image).draw(
       Polygon.rectangle(10, 20, 30, 30, g2),
       Polygon.rectangle(100, 120, 50, 20, g2).fill
     )
