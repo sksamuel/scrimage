@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.color;
 
-import com.sksamuel.scrimage.Pixel;
+import com.sksamuel.scrimage.pixels.Pixel;
 
 /**
  * Red/Green/Blue

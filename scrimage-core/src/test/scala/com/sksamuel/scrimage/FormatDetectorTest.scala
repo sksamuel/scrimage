@@ -1,6 +1,7 @@
 package com.sksamuel.scrimage
 
-import org.scalatest.{ Matchers, WordSpec }
+import com.sksamuel.scrimage.format.{Format, FormatDetector}
+import org.scalatest.{Matchers, WordSpec}
 
 class FormatDetectorTest extends WordSpec with Matchers {
 

@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage
 
 import com.sksamuel.scrimage.color.X11Colorlist
 import com.sksamuel.scrimage.nio.PngWriter
+import com.sksamuel.scrimage.pixels.Pixel
 import org.scalatest.{BeforeAndAfter, FunSuite, Matchers}
 
 class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
@@ -139,7 +140,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("when creating a new empty image then the dimensions are as specified") {
-    val image = ImmutableImage.apply(80, 90)
+    val image = ImmutableImage.create(80, 90)
     assert(80 === image.width)
     assert(90 === image.height)
   }
@@ -157,31 +158,31 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("when padding to a width smaller than the image width then the width is not reduced") {
-    val image = ImmutableImage.apply(85, 56)
+    val image = ImmutableImage.create(85, 56)
     val padded = image.padTo(55, 162)
     assert(85 === padded.width)
   }
 
   test("when padding to a height smaller than the image height then the height is not reduced") {
-    val image = ImmutableImage.apply(85, 56)
+    val image = ImmutableImage.create(85, 56)
     val padded = image.padTo(90, 15)
     assert(56 === padded.height)
   }
 
   test("when padding to a width larger than the image width then the width is increased") {
-    val image = ImmutableImage.apply(85, 56)
+    val image = ImmutableImage.create(85, 56)
     val padded = image.padTo(151, 162)
     assert(151 === padded.width)
   }
 
   test("when padding to a height larger than the image height then the height is increased") {
-    val image = ImmutableImage.apply(85, 56)
+    val image = ImmutableImage.create(85, 56)
     val padded = image.padTo(90, 77)
     assert(77 === padded.height)
   }
 
   test("when padding to a size larger than the image then the image canvas is increased") {
-    val image = ImmutableImage.apply(85, 56)
+    val image = ImmutableImage.create(85, 56)
     val padded = image.padTo(515, 643)
     assert(515 === padded.width)
     assert(643 === padded.height)
@@ -194,7 +195,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("trim should revert padWith") {
-    val image = ImmutableImage.apply(85, 56)
+    val image = ImmutableImage.create(85, 56)
     val same = image.padWith(10, 2, 5, 7).trim(10, 2, 5, 7)
     assert(image.width === same.width)
     assert(image.height === same.height)
@@ -412,14 +413,14 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("foreach accesses to each pixel") {
-    val image = ImmutableImage.apply(100, 100)
+    val image = ImmutableImage.create(100, 100)
     var count = 0
     image.foreach((x: Int, y: Int, p: Pixel) => count = count + 1)
     assert(10000 === count)
   }
 
   test("map modifies each pixel and returns new image") {
-    val image = ImmutableImage.apply(100, 100)
+    val image = ImmutableImage.create(100, 100)
     val mapped = image.map((_, _, _) => new Pixel(argb))
     for (component <- mapped.argb)
       assert(component === Array(255, 0, 255, 0))
@@ -537,7 +538,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("column") {
-    val striped = ImmutableImage.apply(200, 100).map((x, y, p) => if (y % 2 == 0) new Pixel(argb) else new Pixel(argb))
+    val striped = ImmutableImage.create(200, 100).map((x, y, p) => if (y % 2 == 0) new Pixel(argb) else new Pixel(argb))
     val col = striped.col(51)
     assert(striped.height === col.length)
     for (y <- 0 until striped.height) {
@@ -547,7 +548,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("row") {
-    val striped = ImmutableImage.apply(200, 100).map((x, y, p) => if (y % 2 == 0) new Pixel(argb) else new Pixel(argb))
+    val striped = ImmutableImage.create(200, 100).map((x, y, p) => if (y % 2 == 0) new Pixel(argb) else new Pixel(argb))
     val row1 = striped.row(44)
     assert(striped.width === row1.length)
     assert(row1.forall(_ == new Pixel(argb)))
@@ -557,7 +558,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("pixels region") {
-    val striped = ImmutableImage.apply(200, 100).map((x, y, p) => if (y % 2 == 0) new Pixel(argb) else new Pixel(argb))
+    val striped = ImmutableImage.create(200, 100).map((x, y, p) => if (y % 2 == 0) new Pixel(argb) else new Pixel(argb))
     val pixels = striped.pixels(10, 10, 10, 10)
     for (k <- 0 until 10)
       assert(new Pixel(argb) === pixels(k))

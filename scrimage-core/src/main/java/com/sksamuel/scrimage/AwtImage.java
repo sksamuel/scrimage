@@ -1,6 +1,10 @@
 package com.sksamuel.scrimage;
 
 import com.sksamuel.scrimage.color.RGBColor;
+import com.sksamuel.scrimage.pixels.Pixel;
+import com.sksamuel.scrimage.pixels.PixelFunction;
+import com.sksamuel.scrimage.pixels.PixelPredicate;
+import com.sksamuel.scrimage.pixels.PixelTools;
 import com.sksamuel.scrimage.scaling.AwtNearestNeighbourScale;
 import com.sksamuel.scrimage.scaling.Scale;
 import com.sksamuel.scrimage.scaling.ScrimageNearestNeighbourScale;

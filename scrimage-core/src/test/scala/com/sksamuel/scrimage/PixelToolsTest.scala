@@ -1,5 +1,6 @@
 package com.sksamuel.scrimage
 
+import com.sksamuel.scrimage.pixels.PixelTools
 import org.scalatest.{FunSuite, Matchers}
 
 class PixelToolsTest extends FunSuite with Matchers {

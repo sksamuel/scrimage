@@ -1,5 +1,7 @@
 package com.sksamuel.scrimage;
 
+import com.sksamuel.scrimage.pixels.Pixel;
+
 import java.util.Arrays;
 
 public class ImageState {

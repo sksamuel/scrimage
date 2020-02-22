@@ -19,6 +19,10 @@ package com.sksamuel.scrimage;
 import com.sksamuel.scrimage.color.Colors;
 import com.sksamuel.scrimage.color.RGBColor;
 import com.sksamuel.scrimage.nio.ImageReader;
+import com.sksamuel.scrimage.pixels.Pixel;
+import com.sksamuel.scrimage.pixels.PixelMapper;
+import com.sksamuel.scrimage.pixels.PixelTools;
+import com.sksamuel.scrimage.pixels.PixelsExtractor;
 import org.apache.commons.io.IOUtils;
 import thirdparty.mortennobel.BSplineFilter;
 import thirdparty.mortennobel.BiCubicFilter;
@@ -68,12 +72,12 @@ public class ImmutableImage extends MutableAwtImage {
     }
 
     /**
-     * Create a new Scrimage Image from an AWT Image.
-     * This method will copy the given AWT image so that modifications to the original do not
-     * write forward to the scrimage Image
+     * Create a new [ImmutableImage] from a source AWT Image.
+     * This method will copy the source image so that modifications to the original
+     * do not write forward to this image.
      *
      * @param awt the source AWT Image
-     * @return a new Scrimage Image
+     * @return a new ImmutableImage
      */
     public static ImmutableImage fromAwt(java.awt.Image awt, int type) {
         BufferedImage target = new BufferedImage(awt.getWidth(null), awt.getHeight(null), type);
@@ -83,18 +87,35 @@ public class ImmutableImage extends MutableAwtImage {
         return new ImmutableImage(target, ImageMetadata.empty);
     }
 
+    /**
+     * Creates a new [ImmutableImage] from an AWT image by wrapping that source image.
+     * Note: Modifications to the source will write forward to this image. In other words,
+     * this method should not be used if the source is going to be shared. This method is
+     * intended for when an AWT image is created as an intermediate step and never exposed.
+     *
+     * @param awt      the source AWT Image
+     * @param metadata the image metadata
+     * @return a new ImmutableImage
+     */
     public static ImmutableImage wrapAwt(BufferedImage awt, ImageMetadata metadata) {
         return new ImmutableImage(awt, metadata);
     }
 
+    /**
+     * Creates a new [ImmutableImage] from an AWT image by wrapping that source image.
+     * Note: Modifications to the source will write forward to this image. In other words,
+     * this method should not be used if the source is going to be shared. This method is
+     * intended for when an AWT image is created as an intermediate step and never exposed.
+     *
+     * @param awt the source AWT Image
+     * @return a new ImmutableImage
+     */
     public static ImmutableImage wrapAwt(BufferedImage awt) {
-        return fromAwt(awt, -1);
+        return wrapAwt(awt, ImageMetadata.empty);
     }
 
     /**
-     * Create a new Scrimage Image from an AWT Image.
-     * This method will not copy the underlying image, so care should be taken that the image
-     * passed in is not mutated elsewhere.
+     * Creates a new [ImmutableImage] from an AWT image by wrapping that source image.
      *
      * @param awt  the source AWT Image
      * @param type the AWT image type to use. If the image is not in this format already it will be coped.
@@ -107,17 +128,21 @@ public class ImmutableImage extends MutableAwtImage {
     }
 
     public static ImmutableImage wrapPixels(int w, int h, Pixel[] pixels, ImageMetadata metadata) {
-        return ImmutableImage.apply(w, h, pixels).withMetadata(metadata);
+        return ImmutableImage.create(w, h, pixels).withMetadata(metadata);
     }
 
     /**
-     * Create a new Image from a file.
+     * Creates a new [ImmutableImage] from a file.
      * This method will also attach metadata.
      */
     public static ImmutableImage fromFile(File file) throws IOException {
         return fromPath(file.toPath());
     }
 
+    /**
+     * Creates a new [ImmutableImage] from a path.
+     * This method will also attach metadata.
+     */
     public static ImmutableImage fromPath(Path path) throws IOException {
         assert path != null;
         try (InputStream in = Files.newInputStream(path)) {
@@ -126,7 +151,52 @@ public class ImmutableImage extends MutableAwtImage {
     }
 
     /**
-     * Return a new Image with the given width and height, with all pixels set to the supplied colour.
+     * Create a new ImmutableImage that is the given width and height and type with no initialization.
+     * This will usually result in a default black background (all pixel data defaulting to zeroes)
+     * but that is not guaranteed.
+     * <p>
+     * The type of the image will be [ImmutableImage.CANONICAL_DATA_TYPE].
+     *
+     * @param width  the width of the new image
+     * @param height the height of the new image
+     * @return the new Image with the given width and height
+     */
+    public static ImmutableImage create(int width, int height, int type) {
+        BufferedImage target = new BufferedImage(width, height, type);
+        return new ImmutableImage(target, ImageMetadata.empty);
+    }
+
+    /**
+     * Create a new ImmutableImage that is the given width and height with no initialization.
+     * This will usually result in a default black background (all pixel data defaulting to zeroes)
+     * but that is not guaranteed.
+     * <p>
+     * The type of the image will be [ImmutableImage.CANONICAL_DATA_TYPE].
+     *
+     * @param width  the width of the new image
+     * @param height the height of the new image
+     * @return the new Image with the given width and height
+     */
+    public static ImmutableImage create(int width, int height) {
+        return create(width, height, CANONICAL_DATA_TYPE);
+    }
+
+    /**
+     * Return a new ImmutableImage with the given width and height, with all pixels set to the supplied colour.
+     * The type of the image will be [ImmutableImage.CANONICAL_DATA_TYPE].
+     *
+     * @param width  the width of the new Image
+     * @param height the height of the new Image
+     * @param color  the color to set all pixels to
+     * @return the new Image
+     */
+    public static ImmutableImage filled(int width, int height, Color color) {
+        return filled(width, height, color, ImmutableImage.CANONICAL_DATA_TYPE);
+    }
+
+    /**
+     * Return a new ImmutableImage with the given width and height and type, with all pixels
+     * set to the supplied colour.
      *
      * @param width  the width of the new Image
      * @param height the height of the new Image
@@ -134,7 +204,7 @@ public class ImmutableImage extends MutableAwtImage {
      * @return the new Image
      */
     public static ImmutableImage filled(int width, int height, Color color, int type) {
-        ImmutableImage target = apply(width, height, type);
+        ImmutableImage target = create(width, height, type);
         for (int w = 0; w < width; w++) {
             for (int h = 0; h < height; h++) {
                 target.awt().setRGB(w, h, RGBColor.fromAwt(color).toInt());
@@ -143,22 +213,6 @@ public class ImmutableImage extends MutableAwtImage {
         return target;
     }
 
-    /**
-     * Create a new Image that is the given width and height with no initialization. This will usually result in a
-     * default black background (all pixel data defaulting to zeroes) but that is not guaranteed.
-     *
-     * @param width  the width of the new image
-     * @param height the height of the new image
-     * @return the new Image with the given width and height
-     */
-    public static ImmutableImage apply(int width, int height) {
-        return apply(width, height, CANONICAL_DATA_TYPE);
-    }
-
-    public static ImmutableImage apply(int width, int height, int type) {
-        BufferedImage target = new BufferedImage(width, height, type);
-        return new ImmutableImage(target, ImageMetadata.empty);
-    }
 
     /**
      * Create a new Image from an input stream. This is intended to create
@@ -176,7 +230,7 @@ public class ImmutableImage extends MutableAwtImage {
         assert in != null;
         byte[] bytes = IOUtils.toByteArray(in);
         assert bytes.length > 0;
-        return apply(bytes, type);
+        return create(bytes, type);
     }
 
     /**
@@ -196,13 +250,13 @@ public class ImmutableImage extends MutableAwtImage {
      *
      * @return a new Image
      */
-    public static ImmutableImage apply(int w, int h, Pixel[] pixels) {
-        return apply(w, h, pixels, CANONICAL_DATA_TYPE);
+    public static ImmutableImage create(int w, int h, Pixel[] pixels) {
+        return create(w, h, pixels, CANONICAL_DATA_TYPE);
     }
 
-    public static ImmutableImage apply(int w, int h, Pixel[] pixels, int type) {
+    public static ImmutableImage create(int w, int h, Pixel[] pixels, int type) {
         assert w * h == pixels.length;
-        ImmutableImage image = ImmutableImage.apply(w, h, type);
+        ImmutableImage image = ImmutableImage.create(w, h, type);
         image.mapInPlace((x, y, pixel) -> pixels[PixelTools.coordinateToOffset(x, y, w)]);
         return image;
     }
@@ -214,11 +268,11 @@ public class ImmutableImage extends MutableAwtImage {
      * @param bytes the bytes from the format stream
      * @return a new Image
      */
-    public static ImmutableImage apply(byte[] bytes) throws IOException {
-        return apply(bytes, CANONICAL_DATA_TYPE);
+    public static ImmutableImage create(byte[] bytes) throws IOException {
+        return create(bytes, CANONICAL_DATA_TYPE);
     }
 
-    public static ImmutableImage apply(byte[] bytes, int type) throws IOException {
+    public static ImmutableImage create(byte[] bytes, int type) throws IOException {
         assert type > 0;
         ImmutableImage image = ImageReader.fromBytes(bytes, type);
         ImageMetadata metadata = ImageMetadata.fromBytes(bytes);

@@ -4,7 +4,7 @@ import ar.com.hjg.pngj.ImageLineHelper;
 import ar.com.hjg.pngj.ImageLineInt;
 import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.ImageMetadata;
-import com.sksamuel.scrimage.Pixel;
+import com.sksamuel.scrimage.pixels.Pixel;
 
 import java.awt.image.*;
 import java.io.ByteArrayInputStream;

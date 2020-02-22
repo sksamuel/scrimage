@@ -6,8 +6,8 @@ import com.sksamuel.scrimage.Graphics2DUtils;
 import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.Position;
 import com.sksamuel.scrimage.canvas.Canvas;
-import com.sksamuel.scrimage.canvas.drawable.FilledRect;
-import com.sksamuel.scrimage.canvas.drawable.Text;
+import com.sksamuel.scrimage.canvas.drawables.FilledRect;
+import com.sksamuel.scrimage.canvas.drawables.Text;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;

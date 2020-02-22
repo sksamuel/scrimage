@@ -1,6 +1,9 @@
 package com.sksamuel.scrimage;
 
 import com.sksamuel.scrimage.color.RGBColor;
+import com.sksamuel.scrimage.pixels.Pixel;
+import com.sksamuel.scrimage.pixels.PixelMapper;
+import com.sksamuel.scrimage.pixels.PixelTools;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

@@ -1,5 +1,8 @@
 package com.sksamuel.scrimage;
 
+import com.sksamuel.scrimage.pixels.PixelTools;
+import com.sksamuel.scrimage.pixels.PixelsExtractor;
+
 import java.awt.*;
 
 public class AutocropOps {

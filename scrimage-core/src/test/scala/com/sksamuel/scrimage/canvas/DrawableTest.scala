@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.canvas
 
-import com.sksamuel.scrimage.{Color, ImmutableImage, Pixel}
+import com.sksamuel.scrimage.{Color, ImmutableImage}
 import com.sksamuel.scrimage.canvas.drawable.{Line, Polygon, Rect}
 import java.awt.{AlphaComposite, Graphics2D}
 

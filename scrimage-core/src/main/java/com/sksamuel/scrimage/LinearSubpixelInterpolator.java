@@ -1,5 +1,9 @@
 package com.sksamuel.scrimage;
 
+import com.sksamuel.scrimage.pixels.Pixel;
+import com.sksamuel.scrimage.pixels.PixelTools;
+import com.sksamuel.scrimage.pixels.SubpixelInterpolator;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
