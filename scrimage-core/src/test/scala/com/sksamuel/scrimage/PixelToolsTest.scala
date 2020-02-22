@@ -42,9 +42,9 @@ class PixelToolsTest extends FunSuite with Matchers {
   }
 
   test("coordinate to offset") {
-    assert(160 === PixelTools.coordinateToOffset(10, 3, 50))
-    assert(10 === PixelTools.coordinateToOffset(10, 0, 50))
-    assert(99 === PixelTools.coordinateToOffset(49, 1, 50))
+    assert(160 === PixelTools.coordsToOffset(10, 3, 50))
+    assert(10 === PixelTools.coordsToOffset(10, 0, 50))
+    assert(99 === PixelTools.coordsToOffset(49, 1, 50))
   }
 
   test("offset to coordinate") {

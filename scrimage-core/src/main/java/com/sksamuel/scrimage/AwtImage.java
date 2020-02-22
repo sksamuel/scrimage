@@ -3,7 +3,6 @@ package com.sksamuel.scrimage;
 import com.sksamuel.scrimage.color.RGBColor;
 import com.sksamuel.scrimage.pixels.Pixel;
 import com.sksamuel.scrimage.pixels.PixelFunction;
-import com.sksamuel.scrimage.pixels.PixelPredicate;
 import com.sksamuel.scrimage.pixels.PixelTools;
 import com.sksamuel.scrimage.scaling.AwtNearestNeighbourScale;
 import com.sksamuel.scrimage.scaling.Scale;
@@ -113,9 +112,9 @@ public class AwtImage {
 
             @Override
             public Pixel next() {
-                Coordinate coord = PixelTools.offsetToCoordinate(k++, width);
-                int rgb = awt.getRGB(coord.getX(), coord.getY());
-                return new Pixel(rgb);
+                Point point = PixelTools.offsetToPoint(k++, width);
+                int rgb = awt.getRGB(point.x, point.y);
+                return new Pixel(point.x, point.y, rgb);
             }
         };
     }
@@ -133,7 +132,7 @@ public class AwtImage {
      * @return the Pixel at the location
      */
     public Pixel pixel(int x, int y) {
-        return new Pixel(awt.getRGB(x, y));
+        return new Pixel(x, y, awt.getRGB(x, y));
     }
 
     /**
@@ -178,8 +177,9 @@ public class AwtImage {
      * @param predicate a predicate function that accepts 3 parameters - the x,y coordinate and the pixel at that coordinate
      * @return true if f holds for at least one pixel
      */
-    public boolean forall(PixelPredicate predicate) {
-        return Arrays.stream(points()).allMatch(p -> predicate.test(p.x, p.y, pixel(p)));
+    public boolean forall(Predicate<Pixel> predicate) {
+        //return Arrays.stream(points()).allMatch(predicate);
+        return false;
     }
 
     /**
@@ -212,7 +212,7 @@ public class AwtImage {
      * @return true if there exists at least one pixel that has the given pixels color
      */
     public boolean contains(Color color) {
-        return exists(p -> p.toARGBInt() == RGBColor.fromAwt(color).toPixel().toARGBInt());
+        return exists(p -> p.toARGBInt() == RGBColor.fromAwt(color).toARGBInt());
     }
 
     /**
@@ -330,7 +330,7 @@ public class AwtImage {
     }
 
     public int offset(int x, int y) {
-        return PixelTools.coordinateToOffset(x, y, width);
+        return PixelTools.coordsToOffset(x, y, width);
     }
 
     /**
@@ -434,6 +434,7 @@ public class AwtImage {
     /**
      * Returns a new AWT Image rotated with the given angle (in degrees)
      */
+    @SuppressWarnings("SuspiciousNameCombination")
     protected BufferedImage rotate(double angle) {
         BufferedImage target = new BufferedImage(height, width, awt.getType());
         Graphics2D g2 = (Graphics2D) target.getGraphics();

@@ -1,7 +1,5 @@
 package com.sksamuel.scrimage.color;
 
-import com.sksamuel.scrimage.pixels.Pixel;
-
 /**
  * Red/Green/Blue
  * <p>
@@ -28,7 +26,11 @@ public class RGBColor implements Color {
     }
 
     public static RGBColor fromARGBInt(int argb) {
-        return new Pixel(argb).toColor();
+        int alpha = argb >> 24 & 0xFF;
+        int red = argb >> 16 & 0xFF;
+        int green = argb >> 8 & 0xFF;
+        int blue = argb & 0xFF;
+        return new RGBColor(red, green, blue, alpha);
     }
 
     public static RGBColor fromAwt(java.awt.Color color) {
@@ -36,9 +38,11 @@ public class RGBColor implements Color {
     }
 
     /**
-     * Returns as an int the value of this color. The RGB and alpha components are packed
-     * into the int as byes.
+     * Returns as an int the value of this color.
+     * The RGB and alpha components are packed as rgba.
+     * Use toARGBInt() for clarity.
      */
+    @Deprecated
     public int toInt() {
         return toARGBInt();
     }

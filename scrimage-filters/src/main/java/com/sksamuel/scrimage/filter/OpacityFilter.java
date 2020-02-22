@@ -32,7 +32,7 @@ public class OpacityFilter implements Filter {
             int _r = (int) (p.red() + (255 - p.red()) * amount);
             int _g = (int) (p.green() + (255 - p.green()) * amount);
             int _b = (int) (p.blue() + (255 - p.blue()) * amount);
-            return new Pixel(_r, _g, _b, p.alpha());
+            return new Pixel(x, y, _r, _g, _b, p.alpha());
         });
-  }
+    }
 }

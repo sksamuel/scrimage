@@ -41,7 +41,7 @@ interface Color {
      * Returns a HEX String of this colour. Eg for 0,255,0, this method will return 00FF00.
      */
     default String toHex() {
-        return Integer.toHexString(toRGB().toInt() & 0xffffff).toUpperCase();
+        return Integer.toHexString(toRGB().toARGBInt() & 0xffffff).toUpperCase();
     }
 
     /**
@@ -53,16 +53,16 @@ interface Color {
         return new java.awt.Color(rgb.red, rgb.green, rgb.blue, rgb.alpha);
     }
 
-    default Pixel toPixel() {
+    default Pixel toPixel(int x, int y) {
         RGBColor rgb = toRGB();
-        return new Pixel(rgb.red, rgb.green, rgb.blue, rgb.alpha);
+        return new Pixel(x, y, rgb.red, rgb.green, rgb.blue, rgb.alpha);
     }
 
     /**
      * Returns this colour as an AWT Paint.
      */
     default Paint paint() {
-        return new java.awt.Color(toRGB().toInt());
+        return new java.awt.Color(toRGB().toARGBInt());
     }
 }
 

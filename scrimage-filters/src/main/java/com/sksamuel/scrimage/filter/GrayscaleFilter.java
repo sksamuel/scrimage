@@ -27,7 +27,7 @@ public class GrayscaleFilter implements Filter {
             double green = 0.71 * p.green();
             double blue = 0.07 * p.blue();
             int gray = (int) (red + green + blue);
-            return new Pixel(gray, gray, gray, p.alpha());
+            return new Pixel(x, y, gray, gray, gray, p.alpha());
         });
-  }
+    }
 }

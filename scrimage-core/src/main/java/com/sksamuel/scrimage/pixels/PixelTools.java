@@ -15,7 +15,6 @@
  */
 package com.sksamuel.scrimage.pixels;
 
-import com.sksamuel.scrimage.Coordinate;
 import com.sksamuel.scrimage.color.RGBColor;
 
 import java.awt.*;
@@ -23,10 +22,16 @@ import java.util.Arrays;
 
 public class PixelTools {
 
+    /**
+     * Returns an encoded rgb int, with alpha 0, from the given components.
+     */
     public static int rgb(int r, int g, int b) {
         return 0xFF << 24 | (r & 0xFF) << 16 | (g & 0xFF) << 8 | (b & 0xFF);
     }
 
+    /**
+     * Returns an encoded argb int from the given components.
+     */
     public static int argb(int a, int r, int g, int b) {
         return (a & 0xFF) << 24 | (r & 0xFF) << 16 | (g & 0xFF) << 8 | (b & 0xFF);
     }
@@ -76,7 +81,7 @@ public class PixelTools {
      * Returns true if all pixels in the array have the same color
      */
     public static boolean uniform(Color color, Pixel[] pixels) {
-        return Arrays.stream(pixels).allMatch(p -> p.toInt() == RGBColor.fromAwt(color).toInt());
+        return Arrays.stream(pixels).allMatch(p -> p.toARGBInt() == RGBColor.fromAwt(color).toARGBInt());
     }
 
     /**
@@ -112,7 +117,7 @@ public class PixelTools {
                 refColor.alpha
         );
 
-        return Arrays.stream(pixels).allMatch(p -> p.toInt() >= minColor.toInt() && p.toInt() <= maxColor.toInt());
+        return Arrays.stream(pixels).allMatch(p -> p.toARGBInt() >= minColor.toARGBInt() && p.toARGBInt() <= maxColor.toARGBInt());
     }
 
     /**
@@ -128,16 +133,20 @@ public class PixelTools {
             return approx(color, tolerance, pixels);
     }
 
-    public static int coordinateToOffset(int x, int y, int w) {
+    public static int pointToOffset(Point point, int w) {
+        return point.y * w + point.x;
+    }
+
+    public static int coordsToOffset(int x, int y, int w) {
         return y * w + x;
     }
 
     /**
-     * Given a width, and an offset returns the coordinate for that offset.
+     * Given a width and an offset returns the coordinate for that offset.
      * In other words, starting at 0,0 and moving along each row before starting the next row,
      * it gives the coordinate that is kth from the start.
      */
-    public static Coordinate offsetToCoordinate(int offset, int width) {
-        return new Coordinate(offset % width, offset / width);
+    public static Point offsetToPoint(int offset, int width) {
+        return new Point(offset % width, offset / width);
     }
 }

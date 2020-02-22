@@ -34,7 +34,7 @@ public class MutableAwtImage extends AwtImage {
     public void mapInPlace(PixelMapper mapper) {
         Arrays.stream(points()).forEach(point -> {
             Pixel newpixel = mapper.map(point.x, point.y, pixel(point.x, point.y));
-            awt().setRGB(point.x, point.y, newpixel.toInt());
+            awt().setRGB(point.x, point.y, newpixel.toARGBInt());
         });
     }
 
@@ -42,18 +42,18 @@ public class MutableAwtImage extends AwtImage {
         int r = (p.red() * p.alpha() + color.getRed() * color.getAlpha() * (255 - p.alpha()) / 255) / 255;
         int g = (p.green() * p.alpha() + color.getGreen() * color.getAlpha() * (255 - p.alpha()) / 255) / 255;
         int b = (p.blue() * p.alpha() + color.getBlue() * color.getAlpha() * (255 - p.alpha()) / 255) / 255;
-        return new Pixel(r, g, b, 255);
+        return new Pixel(p.x, p.y, r, g, b, 255);
     }
 
     protected void removetrans(java.awt.Color color) {
-        Arrays.stream(points()).forEach(point -> awt().setRGB(point.x, point.y, rmTransparency(color, new Pixel(awt().getRGB(point.x, point.y))).toInt()));
+        Arrays.stream(points()).forEach(point -> awt().setRGB(point.x, point.y, rmTransparency(color, new Pixel(point.x, point.y, awt().getRGB(point.x, point.y))).toARGBInt()));
     }
 
     /**
      * Fills all pixels the given color on the existing image.
      */
     protected void fillInPlace(Color color) {
-        Arrays.stream(points()).forEach(point -> awt().setRGB(point.x, point.y, RGBColor.fromAwt(color).toPixel().toInt()));
+        Arrays.stream(points()).forEach(point -> awt().setRGB(point.x, point.y, RGBColor.fromAwt(color).toARGBInt()));
     }
 
     /**
@@ -84,7 +84,7 @@ public class MutableAwtImage extends AwtImage {
             int r = PixelTools.truncate((factor * (pixel.red() - 128)) + 128);
             int g = PixelTools.truncate((factor * (pixel.green() - 128)) + 128);
             int b = PixelTools.truncate((factor * (pixel.blue() - 128)) + 128);
-            Pixel pixel2 = new Pixel(r, g, b, pixel.alpha());
+            Pixel pixel2 = new Pixel(pixel.x, pixel.y, r, g, b, pixel.alpha());
             setPixel(p.x, p.y, pixel2);
         });
     }

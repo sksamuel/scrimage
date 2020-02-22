@@ -24,7 +24,7 @@ public class BlackThresholdFilter implements Filter {
         image.mapInPlace((x, y, p) -> {
             int brightness = PixelUtils.brightness(p.argb);
             if (brightness < threshold) {
-                return new Pixel(p.argb & 0xff000000);
+                return new Pixel(x, y, p.argb & 0xff000000);
             } else {
                 return p;
             }
