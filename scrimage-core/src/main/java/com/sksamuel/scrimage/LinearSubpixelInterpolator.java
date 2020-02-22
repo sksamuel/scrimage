@@ -1,11 +1,26 @@
 package com.sksamuel.scrimage;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+class Pair<A, B> {
+    private final A a;
+    private final B b;
+
+    Pair(A a, B b) {
+        this.a = a;
+        this.b = b;
+    }
+
+    public A getA() {
+        return a;
+    }
+
+    public B getB() {
+        return b;
+    }
+}
 
 class LinearSubpixelInterpolator implements SubpixelInterpolator {
 
@@ -24,8 +39,8 @@ class LinearSubpixelInterpolator implements SubpixelInterpolator {
     // get in the weighted average.
     // Operates on one dimension at a time.
     private List<Pair<Integer, Double>> integerPixelCoordinatesAndWeights(double d, int numPixels) {
-        if (d <= 0.5) return Collections.singletonList(new ImmutablePair<>(0, 1.0));
-        else if (d >= numPixels - 0.5) return Collections.singletonList(new ImmutablePair<>(numPixels - 1, 1.0));
+        if (d <= 0.5) return Collections.singletonList(new Pair<>(0, 1.0));
+        else if (d >= numPixels - 0.5) return Collections.singletonList(new Pair<>(numPixels - 1, 1.0));
         else {
             double shifted = d - 0.5;
             double floor = Math.floor(shifted);
@@ -33,7 +48,7 @@ class LinearSubpixelInterpolator implements SubpixelInterpolator {
             double ceil = Math.ceil(shifted);
             double ceilWeight = 1 - floorWeight;
             assert (floorWeight + ceilWeight == 1);
-            return Arrays.asList(new ImmutablePair<>((int) floor, floorWeight), new ImmutablePair<>((int) ceil, ceilWeight));
+            return Arrays.asList(new Pair<>((int) floor, floorWeight), new Pair<>((int) ceil, ceilWeight));
         }
     }
 
@@ -46,12 +61,12 @@ class LinearSubpixelInterpolator implements SubpixelInterpolator {
         int k = 0;
         for (Pair<Integer, Double> xintweight : xIntsAndWeights) {
             for (Pair<Integer, Double> yintweight : yIntsAndWeights) {
-                double weight = xintweight.getValue() * yintweight.getValue();
+                double weight = xintweight.getB() * yintweight.getB();
 
                 if (weight == 0) {
                     summands[k++] = new double[]{0.0, 0.0, 0.0, 0.0};
                 } else {
-                    Pixel px = awt.pixel(xintweight.getKey(), yintweight.getKey());
+                    Pixel px = awt.pixel(xintweight.getA(), yintweight.getA());
                     summands[k++] = new double[]{
                             weight * px.alpha(),
                             weight * px.red(),

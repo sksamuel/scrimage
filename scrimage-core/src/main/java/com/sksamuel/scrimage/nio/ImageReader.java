@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage.nio;
 
-import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.ImageParseException;
+import com.sksamuel.scrimage.ImmutableImage;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
@@ -21,7 +21,7 @@ public class ImageReader {
     private static Collection<Reader> readers = Arrays.asList(new JavaImageIOReader(), new PngReader(), new JavaImageIO2Reader());
 
     public static ImmutableImage fromFile(File file) throws IOException {
-        return fromFile(file, ImmutableImage.CANONICAL_DATA_TYPE());
+        return fromFile(file, ImmutableImage.CANONICAL_DATA_TYPE);
     }
 
     public static ImmutableImage fromFile(File file, int type) throws IOException {
@@ -29,7 +29,7 @@ public class ImageReader {
     }
 
     public static ImmutableImage fromPath(Path path) throws IOException {
-        return fromPath(path, ImmutableImage.CANONICAL_DATA_TYPE());
+        return fromPath(path, ImmutableImage.CANONICAL_DATA_TYPE);
     }
 
     public static ImmutableImage fromPath(Path path, int type) throws IOException {
@@ -39,7 +39,7 @@ public class ImageReader {
     }
 
     public static ImmutableImage fromStream(InputStream in) throws IOException {
-        return fromStream(in, ImmutableImage.CANONICAL_DATA_TYPE());
+        return fromStream(in, ImmutableImage.CANONICAL_DATA_TYPE);
     }
 
     public static ImmutableImage fromStream(InputStream in, int type) throws IOException {
@@ -64,7 +64,7 @@ public class ImageReader {
 interface Reader {
 
     default ImmutableImage fromBytes(byte[] bytes) throws IOException {
-        return fromBytes(bytes, ImmutableImage.CANONICAL_DATA_TYPE());
+        return fromBytes(bytes, ImmutableImage.CANONICAL_DATA_TYPE);
     }
 
     ImmutableImage fromBytes(byte[] bytes, int type) throws IOException;

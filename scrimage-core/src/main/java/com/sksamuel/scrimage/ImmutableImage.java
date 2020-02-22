@@ -41,9 +41,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-class ImageParseException extends RuntimeException {
-}
-
 /**
  * An immutable Image backed by an AWT BufferedImage.
  * <p>
@@ -136,7 +133,7 @@ public class ImmutableImage extends MutableAwtImage {
      * @param color  the color to set all pixels to
      * @return the new Image
      */
-    public static ImmutableImage filled(int width, int height, Color color, int type) {
+    public static ImmutableImage filled(int width, int height, com.sksamuel.scrimage.color.Color color, int type) {
         ImmutableImage target = apply(width, height, type);
         for (int w = 0; w < width; w++) {
             for (int h = 0; h < height; h++) {
@@ -246,7 +243,7 @@ public class ImmutableImage extends MutableAwtImage {
      * @param color          the color to match
      * @param colorTolerance the amount of tolerance to use when determining whether the color matches the reference color [0..255]
      */
-    public ImmutableImage autocrop(Color color, int colorTolerance) {
+    public ImmutableImage autocrop(com.sksamuel.scrimage.color.Color color, int colorTolerance) {
         int x1 = AutocropOps.scanright(color, height, width, 0, pixelExtractor(), colorTolerance);
         int x2 = AutocropOps.scanleft(color, height, width, width - 1, pixelExtractor(), colorTolerance);
         int y1 = AutocropOps.scandown(color, height, width, 0, pixelExtractor(), colorTolerance);
@@ -262,7 +259,7 @@ public class ImmutableImage extends MutableAwtImage {
      * Creates an empty image of the same concrete type as this type with the given dimensions.
      * If the optional color is specified then the background pixels will all be set to that color.
      */
-    public ImmutableImage blank(int w, int h, Color color) {
+    public ImmutableImage blank(int w, int h, com.sksamuel.scrimage.color.Color color) {
         ImmutableImage target = wrapAwt(new BufferedImage(w, h, super.awt().getType()), metadata);
         if (color != null)
             target.fillInPlace(color);
@@ -369,7 +366,7 @@ public class ImmutableImage extends MutableAwtImage {
      *
      * @return a new Image with the same dimensions as this
      */
-    public ImmutableImage fill(Color color) {
+    public ImmutableImage fill(com.sksamuel.scrimage.color.Color color) {
         ImmutableImage target = blank();
         target.fillInPlace(color);
         return target;
@@ -413,7 +410,7 @@ public class ImmutableImage extends MutableAwtImage {
      */
     public ImmutableImage fit(int canvasWidth,
                               int canvasHeight,
-                              Color color,
+                              com.sksamuel.scrimage.color.Color color,
                               ScaleMethod scaleMethod,
                               Position position) {
         Dimension wh = DimensionTools.dimensionsToFit(new Dimension(canvasWidth, canvasHeight), new Dimension(width, height));
@@ -542,7 +539,7 @@ public class ImmutableImage extends MutableAwtImage {
      * @param background  the color to use for expande background areas.
      * @return a new Image that is the result of resizing the canvas.
      */
-    public ImmutableImage resize(double scaleFactor, Position position, Color background) {
+    public ImmutableImage resize(double scaleFactor, Position position, com.sksamuel.scrimage.color.Color background) {
         return resizeTo((int) (width * scaleFactor), (int) (height * scaleFactor), position, background);
     }
 
@@ -565,7 +562,7 @@ public class ImmutableImage extends MutableAwtImage {
     public ImmutableImage resizeTo(int targetWidth,
                                    int targetHeight,
                                    Position position,
-                                   Color background) {
+                                   com.sksamuel.scrimage.color.Color background) {
         if (targetWidth == width && targetHeight == height) return this;
         else {
             Dimension dim = position.calculateXY(targetWidth, targetHeight, width, height);
@@ -588,7 +585,7 @@ public class ImmutableImage extends MutableAwtImage {
      * @param background  the background color if the canvas was enlarged
      * @return a new Image that is the result of resizing the canvas.
      */
-    public ImmutableImage resizeToRatio(double targetRatio, Position position, Color background) {
+    public ImmutableImage resizeToRatio(double targetRatio, Position position, com.sksamuel.scrimage.color.Color background) {
         double currRatio = ratio();
         if (currRatio == targetRatio) return this;
         else if (currRatio > targetRatio) {
@@ -607,7 +604,7 @@ public class ImmutableImage extends MutableAwtImage {
      * @return a new Image that is the result of resizing the canvas.
      */
     public ImmutableImage resizeToHeight(int targetHeight) {
-        return resizeToHeight(targetHeight, Position.Center, Color.Transparent());
+        return resizeToHeight(targetHeight, Position.Center, com.sksamuel.scrimage.color.Color.Transparent());
     }
 
     /**
@@ -617,7 +614,7 @@ public class ImmutableImage extends MutableAwtImage {
      * @param position where to position the original image after the canvas size change
      * @return a new Image that is the result of resizing the canvas.
      */
-    public ImmutableImage resizeToHeight(int targetHeight, Position position, Color background) {
+    public ImmutableImage resizeToHeight(int targetHeight, Position position, com.sksamuel.scrimage.color.Color background) {
         return resizeTo((int) (targetHeight / (double) height * width), targetHeight, position, background);
     }
 
@@ -628,7 +625,7 @@ public class ImmutableImage extends MutableAwtImage {
      * @return a new Image that is the result of resizing the canvas.
      */
     public ImmutableImage resizeToWidth(int targetWidth) {
-        return resizeToWidth(targetWidth, Position.Center, Color.Transparent());
+        return resizeToWidth(targetWidth, Position.Center, com.sksamuel.scrimage.color.Color.Transparent());
     }
 
     /**
@@ -638,7 +635,7 @@ public class ImmutableImage extends MutableAwtImage {
      * @param position where to position the original image after the canvas size change
      * @return a new Image that is the result of resizing the canvas.
      */
-    public ImmutableImage resizeToWidth(int targetWidth, Position position, Color background) {
+    public ImmutableImage resizeToWidth(int targetWidth, Position position, com.sksamuel.scrimage.color.Color background) {
         return resizeTo(targetWidth, (int) (targetWidth / (double) width * height), position, background);
     }
 
@@ -672,7 +669,7 @@ public class ImmutableImage extends MutableAwtImage {
      * @param color the background of the padded area.
      * @return A new image that is the result of the padding
      */
-    public ImmutableImage pad(int size, Color color) {
+    public ImmutableImage pad(int size, com.sksamuel.scrimage.color.Color color) {
         return padTo(width + size * 2, height + size * 2, color);
     }
 
@@ -692,7 +689,7 @@ public class ImmutableImage extends MutableAwtImage {
      * @param color        the background of the padded area.
      * @return A new image that is the result of the padding
      */
-    public ImmutableImage padTo(int targetWidth, int targetHeight, Color color) {
+    public ImmutableImage padTo(int targetWidth, int targetHeight, com.sksamuel.scrimage.color.Color color) {
         int w = Math.max(width, targetWidth);
         int h = Math.max(height, targetHeight);
         int x = (int) ((w - width) / 2.0);
@@ -710,7 +707,7 @@ public class ImmutableImage extends MutableAwtImage {
      * @param color  the background of the padded area.
      * @return A new image that is the result of the padding operation.
      */
-    public ImmutableImage padWith(int left, int top, int right, int bottom, Color color) {
+    public ImmutableImage padWith(int left, int top, int right, int bottom, com.sksamuel.scrimage.color.Color color) {
         int w = width + left + right;
         int h = height + top + bottom;
         return blank(w, h, color).overlay(this, left, top);
@@ -724,7 +721,7 @@ public class ImmutableImage extends MutableAwtImage {
      * @param color the color that should be used for the new rows
      * @return the new Image
      */
-    public ImmutableImage padTop(int k, Color color) {
+    public ImmutableImage padTop(int k, com.sksamuel.scrimage.color.Color color) {
         return padWith(0, k, 0, 0, color);
     }
 
@@ -736,7 +733,7 @@ public class ImmutableImage extends MutableAwtImage {
      * @param color the color that should be used for the new rows
      * @return the new Image
      */
-    public ImmutableImage padBottom(int k, Color color) {
+    public ImmutableImage padBottom(int k, com.sksamuel.scrimage.color.Color color) {
         return padWith(0, 0, 0, k, color);
     }
 
@@ -748,7 +745,7 @@ public class ImmutableImage extends MutableAwtImage {
      * @return the new Image
      */
     public ImmutableImage padLeft(int k) {
-        return padLeft(k, Color.Transparent());
+        return padLeft(k, com.sksamuel.scrimage.color.Color.Transparent());
     }
 
     /**
@@ -759,7 +756,7 @@ public class ImmutableImage extends MutableAwtImage {
      * @param color the color that should be used for the new pixels
      * @return the new Image
      */
-    public ImmutableImage padLeft(int k, Color color) {
+    public ImmutableImage padLeft(int k, com.sksamuel.scrimage.color.Color color) {
         return padWith(k, 0, 0, 0, color);
     }
 
@@ -771,7 +768,7 @@ public class ImmutableImage extends MutableAwtImage {
      * @return the new Image
      */
     public ImmutableImage padRight(int k) {
-        return padRight(k, Color.Transparent());
+        return padRight(k, com.sksamuel.scrimage.color.Color.Transparent());
     }
 
     /**
@@ -782,14 +779,14 @@ public class ImmutableImage extends MutableAwtImage {
      * @param color the color that should be used for the new pixels
      * @return the new Image
      */
-    public ImmutableImage padRight(int k, Color color) {
+    public ImmutableImage padRight(int k, com.sksamuel.scrimage.color.Color color) {
         return padWith(0, 0, k, 0, color);
     }
 
     /**
      * Returns a new image with transparency replaced with the given color.
      */
-    public ImmutableImage removeTransparency(Color color) {
+    public ImmutableImage removeTransparency(com.sksamuel.scrimage.color.Color color) {
         return removeTransparency(color.toAWT());
     }
 
@@ -985,10 +982,10 @@ public class ImmutableImage extends MutableAwtImage {
      * @return a new Image with this image translated.
      */
     public ImmutableImage translate(int x, int y) {
-        return translate(x, y, Color.Transparent());
+        return translate(x, y, com.sksamuel.scrimage.color.Color.Transparent());
     }
 
-    public ImmutableImage translate(int x, int y, Color bg) {
+    public ImmutableImage translate(int x, int y, com.sksamuel.scrimage.color.Color bg) {
         return fill(bg).overlay(this, x, y);
     }
 
@@ -1096,7 +1093,7 @@ public class ImmutableImage extends MutableAwtImage {
      * @return the zoomed image
      */
     public ImmutableImage zoom(double factor, ScaleMethod method) {
-        return scale(factor, method).resizeTo(width, height, Position.Center, Color.White());
+        return scale(factor, method).resizeTo(width, height, Position.Center, com.sksamuel.scrimage.color.Color.White());
     }
 
     public byte[] bytes(ImageWriter writer) throws IOException {

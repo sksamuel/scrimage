@@ -25,7 +25,7 @@ class RGBColorTest extends FlatSpec with OneInstancePerTest {
   }
 
   it should "convert from awt.color" in {
-    import Color._
+    import com.sksamuel.scrimage.color.Color._
     assert(new java.awt.Color(255, 0, 255).toColor === Color(255, 0, 255))
     assert(new java.awt.Color(255, 250, 255).toColor === Color(255, 250, 255))
     assert(new java.awt.Color(14, 250, 255).toColor === Color(14, 250, 255))

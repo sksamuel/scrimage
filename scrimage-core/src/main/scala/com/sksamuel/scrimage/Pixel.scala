@@ -1,5 +1,7 @@
 package com.sksamuel.scrimage
 
+import com.sksamuel.scrimage.color.{Color, RGBColor}
+
 import scala.language.implicitConversions
 
 /**

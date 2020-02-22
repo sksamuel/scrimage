@@ -1,9 +1,9 @@
 package com.sksamuel.scrimage;
 
+import com.sksamuel.scrimage.color.RGBColor;
 import com.sksamuel.scrimage.scaling.AwtNearestNeighbourScale;
 import com.sksamuel.scrimage.scaling.Scale;
 import com.sksamuel.scrimage.scaling.ScrimageNearestNeighbourScale;
-import sun.awt.resources.awt;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -207,7 +207,7 @@ public class AwtImage {
      * @param color the pixel colour to look for.
      * @return true if there exists at least one pixel that has the given pixels color
      */
-    public boolean contains(Color color) {
+    public boolean contains(com.sksamuel.scrimage.color.Color color) {
         return exists(p -> p.toInt() == color.toPixel().toInt());
     }
 
@@ -344,7 +344,7 @@ public class AwtImage {
      * @param color the colour to detect.
      * @return the number of pixels that matched the colour of the given pixel
      */
-    public long count(Color color) {
+    public long count(com.sksamuel.scrimage.color.Color color) {
         return count(p -> p.toColor() == color.toRGB());
     }
 

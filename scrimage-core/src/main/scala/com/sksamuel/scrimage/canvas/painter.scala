@@ -1,19 +1,21 @@
 package com.sksamuel.scrimage.canvas
 
-import com.sksamuel.scrimage.Color._
-import com.sksamuel.scrimage.{Color, RGBColor}
 import java.awt._
 import java.awt.geom.{AffineTransform, Rectangle2D}
 import java.awt.image.{ColorModel, Raster}
+
+import com.sksamuel.scrimage.color.RGBColor
+import sun.awt.image.IntegerComponentRaster
+
 import scala.language.implicitConversions
 import scala.util.Random
-import sun.awt.image.IntegerComponentRaster
 
 trait Painter {
   private[scrimage] def paint: Paint
 }
 
 object Painter {
+
   implicit def color2painter(color: java.awt.Color): RGBColor = {
     Color(color.getRed, color.getGreen, color.getBlue, color.getAlpha)
   }

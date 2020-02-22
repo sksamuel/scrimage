@@ -1,5 +1,7 @@
 package com.sksamuel.scrimage;
 
+import com.sksamuel.scrimage.color.RGBColor;
+
 public class X11Colorlist {
     public static RGBColor Snow = new RGBColor(255, 250, 250, 255);
     public static RGBColor GhostWhite = new RGBColor(248, 248, 255, 255);

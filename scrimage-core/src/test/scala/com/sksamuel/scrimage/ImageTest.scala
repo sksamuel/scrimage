@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage
 
-import com.sksamuel.scrimage.Color._
+import com.sksamuel.scrimage.color.Color._
 import java.awt.image.BufferedImage
 
 import com.sksamuel.scrimage.nio.PngWriter
@@ -151,7 +151,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("fit should keep alpha") {
-    chip.fit(200, 300, Color.Transparent) shouldBe
+    chip.fit(200, 300, color.Color.Transparent) shouldBe
       ImmutableImage.fromResource("/com/sksamuel/scrimage/chip_fit.png")
   }
 

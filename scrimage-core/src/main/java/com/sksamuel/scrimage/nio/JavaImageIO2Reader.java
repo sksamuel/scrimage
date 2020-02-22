@@ -1,7 +1,6 @@
 package com.sksamuel.scrimage.nio;
 
 import com.sksamuel.scrimage.ImmutableImage;
-import com.sksamuel.scrimage.ImmutableImage$;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
@@ -28,7 +27,7 @@ public class JavaImageIO2Reader implements Reader {
                 }
             }
             BufferedImage bufferedImage = reader.read(0, params);
-            return Optional.of(ImmutableImage$.MODULE$.wrapAwt(bufferedImage));
+            return Optional.of(ImmutableImage.wrapAwt(bufferedImage));
         } catch (Exception e) {
             return Optional.empty();
         }

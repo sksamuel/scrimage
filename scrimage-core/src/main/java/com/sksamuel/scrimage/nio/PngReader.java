@@ -73,7 +73,7 @@ public class PngReader implements Reader {
             ColorModel cm = ColorModel.getRGBdefault();
             BufferedImage image = new BufferedImage(cm, raster, cm.isAlphaPremultiplied(), null);
 
-            return new ImmutableImage(image, ImageMetadata.empty);
+            return ImmutableImage.wrapAwt(image, ImageMetadata.empty);
 
         } else {
             throw new IOException();

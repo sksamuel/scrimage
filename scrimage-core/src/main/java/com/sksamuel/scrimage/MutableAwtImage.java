@@ -47,7 +47,7 @@ public class MutableAwtImage extends AwtImage {
     /**
      * Fills all pixels the given color on the existing image.
      */
-    protected void fillInPlace(Color color) {
+    protected void fillInPlace(com.sksamuel.scrimage.color.Color color) {
         Arrays.stream(points()).forEach(point -> awt().setRGB(point.x, point.y, color.toPixel().toInt()));
     }
 

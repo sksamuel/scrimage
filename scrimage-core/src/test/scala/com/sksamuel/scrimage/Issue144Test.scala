@@ -1,5 +1,6 @@
 package com.sksamuel.scrimage
 
+import com.sksamuel.scrimage.color.Color
 import org.scalatest.{Matchers, WordSpec}
 
 class Issue144Test extends WordSpec with Matchers {

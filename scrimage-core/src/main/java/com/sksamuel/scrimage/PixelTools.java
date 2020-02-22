@@ -15,6 +15,9 @@
  */
 package com.sksamuel.scrimage;
 
+import com.sksamuel.scrimage.color.Color;
+import com.sksamuel.scrimage.color.RGBColor;
+
 import java.util.Arrays;
 
 public class PixelTools {

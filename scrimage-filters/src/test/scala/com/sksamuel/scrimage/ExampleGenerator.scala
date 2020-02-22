@@ -5,6 +5,8 @@ import com.sksamuel.scrimage.nio.{JpegWriter, PngWriter}
 import java.awt.Font
 import java.io.File
 import java.nio.charset.Charset
+
+import com.sksamuel.scrimage.color.Color
 import org.apache.commons.io.FileUtils
 
 object ExampleGenerator extends App {
