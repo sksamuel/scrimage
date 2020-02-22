@@ -3,6 +3,8 @@ package com.sksamuel.scrimage.canvas
 import com.sksamuel.scrimage.Color
 import java.awt._
 
+import com.sksamuel.scrimage.canvas.painters.Painter
+
 @deprecated("use function to configure g2", "3.0.0")
 case class Context(composite: Composite = AlphaComposite.getInstance(AlphaComposite.SRC),
                    color: Color = Color.Black,
