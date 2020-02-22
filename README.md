@@ -6,7 +6,7 @@
 [<img src="https://img.shields.io/maven-central/v/com.sksamuel.scrimage/scrimage-core_2.12.svg?label=latest%20release%20for%202.12"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22scrimage-core_2.12.0-M3%22)
 [<img src="https://img.shields.io/nexus/s/https/oss.sonatype.org/com.sksamuel.scrimage/scrimage-core_2.12.svg?label=latest%20snapshot&style=plastic"/>](https://oss.sonatype.org/content/repositories/snapshots/com/sksamuel/scrimage/)
 
-This readme is for the 2.0.x versions. For 1.4.x please see the old [README1.4.md](readme).
+This readme is for the 3.0.0 RELEASE. For earlier releases see [README_2.x.md](2.x readme).
 
 Scrimage is a consistent, idiomatic, and immutable JVM library for manipulating and processing of images. 
 The aim of the this library is to provide a quick and easy way to do the kinds of image operations that are most common, 
