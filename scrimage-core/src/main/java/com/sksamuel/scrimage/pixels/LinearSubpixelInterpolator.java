@@ -1,8 +1,6 @@
-package com.sksamuel.scrimage;
+package com.sksamuel.scrimage.pixels;
 
-import com.sksamuel.scrimage.pixels.Pixel;
-import com.sksamuel.scrimage.pixels.PixelTools;
-import com.sksamuel.scrimage.pixels.SubpixelInterpolator;
+import com.sksamuel.scrimage.AwtImage;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,7 +24,7 @@ class Pair<A, B> {
     }
 }
 
-class LinearSubpixelInterpolator implements SubpixelInterpolator {
+public class LinearSubpixelInterpolator implements SubpixelInterpolator {
 
     private final AwtImage awt;
     private final int width;

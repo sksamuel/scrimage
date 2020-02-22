@@ -17,9 +17,9 @@ import java.util.Arrays;
  * This class cannot contain methods that result in a change canvas size, as there is no
  * way to mutate the size of an AWT image once created.
  */
-public class MutableAwtImage extends AwtImage {
+public class MutableImage extends AwtImage {
 
-    public MutableAwtImage(BufferedImage awt) {
+    public MutableImage(BufferedImage awt) {
         super(awt);
     }
 

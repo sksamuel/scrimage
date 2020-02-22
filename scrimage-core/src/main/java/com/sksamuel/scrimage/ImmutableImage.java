@@ -62,7 +62,7 @@ import java.util.function.Predicate;
  *
  * @author Stephen Samuel
  */
-public class ImmutableImage extends MutableAwtImage {
+public class ImmutableImage extends MutableImage {
 
     private ImageMetadata metadata;
 

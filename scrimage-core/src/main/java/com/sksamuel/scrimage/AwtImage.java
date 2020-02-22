@@ -1,6 +1,7 @@
 package com.sksamuel.scrimage;
 
 import com.sksamuel.scrimage.color.RGBColor;
+import com.sksamuel.scrimage.pixels.LinearSubpixelInterpolator;
 import com.sksamuel.scrimage.pixels.Pixel;
 import com.sksamuel.scrimage.pixels.PixelFunction;
 import com.sksamuel.scrimage.pixels.PixelTools;
