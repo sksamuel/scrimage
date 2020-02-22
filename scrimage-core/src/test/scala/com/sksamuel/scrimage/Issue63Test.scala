@@ -6,6 +6,6 @@ import org.scalatest.{FunSuite, Matchers}
 class Issue63Test extends FunSuite with Matchers {
 
   test("image for issue 63 should parse") {
-    Image.fromStream(getClass.getResourceAsStream("/issue63.png")).width shouldBe 1600
+    ImmutableImage.fromStream(getClass.getResourceAsStream("/issue63.png")).width shouldBe 1600
   }
 }

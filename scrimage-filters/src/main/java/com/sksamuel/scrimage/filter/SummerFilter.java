@@ -16,8 +16,8 @@
 package com.sksamuel.scrimage.filter;
 
 import com.sksamuel.scrimage.Filter;
-import com.sksamuel.scrimage.Image;
-import com.sksamuel.scrimage.Image$;
+import com.sksamuel.scrimage.ImmutableImage;
+import com.sksamuel.scrimage.ImmutableImage$;
 import com.sksamuel.scrimage.ScaleMethod;
 import thirdparty.romainguy.BlendComposite;
 import thirdparty.romainguy.BlendingMode;
@@ -27,7 +27,7 @@ import java.awt.image.BufferedImage;
 
 public class SummerFilter implements Filter {
 
-    private static final Image summer = Image.fromResource("/com/sksamuel/scrimage/filter/summer1.jpg", Image.CANONICAL_DATA_TYPE());
+    private static final ImmutableImage summer = ImmutableImage.fromResource("/com/sksamuel/scrimage/filter/summer1.jpg", ImmutableImage.CANONICAL_DATA_TYPE());
 
     private final boolean vignette;
 
@@ -36,8 +36,8 @@ public class SummerFilter implements Filter {
     }
 
     @Override
-    public void apply(Image image) {
-        Image scaled = Image$.MODULE$.wrapAwt(summer.scaleTo(image.width, image.height, ScaleMethod.Bicubic).awt(), BufferedImage.TYPE_INT_ARGB);
+    public void apply(ImmutableImage image) {
+        ImmutableImage scaled = ImmutableImage$.MODULE$.wrapAwt(summer.scaleTo(image.width, image.height, ScaleMethod.Bicubic).awt(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
         g2.setComposite(BlendComposite.getInstance(BlendingMode.INVERSE_COLOR_BURN, 0.5f));
         g2.drawImage(scaled.awt(), 0, 0, null);

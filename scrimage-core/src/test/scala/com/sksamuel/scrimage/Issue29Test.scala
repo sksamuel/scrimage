@@ -6,6 +6,6 @@ import org.scalatest.{FunSuite, OneInstancePerTest}
 class Issue29Test extends FunSuite with OneInstancePerTest {
 
   test("image for issue 29 should load") {
-    assert(Image.fromStream(getClass.getResourceAsStream("/issue29.jpeg")) != null)
+    assert(ImmutableImage.fromStream(getClass.getResourceAsStream("/issue29.jpeg")) != null)
   }
 }

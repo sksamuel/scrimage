@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.nio;
 
-import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.ImmutableImage;
 
 import javax.imageio.*;
 import javax.imageio.ImageWriter;
@@ -70,19 +70,19 @@ public class GifSequenceWriter {
                 });
     }
 
-    public Path output(Image[] images, Path path) throws IOException {
+    public Path output(ImmutableImage[] images, Path path) throws IOException {
         return Files.write(path, bytes(images));
     }
 
-    public Path output(Image[] images, File file) throws IOException {
+    public Path output(ImmutableImage[] images, File file) throws IOException {
         return Files.write(file.toPath(), bytes(images));
     }
 
-    public Path output(Image[] images, String path) throws IOException {
+    public Path output(ImmutableImage[] images, String path) throws IOException {
         return Files.write(Paths.get(path), bytes(images));
     }
 
-    public byte[] bytes(Image[] images) throws IOException {
+    public byte[] bytes(ImmutableImage[] images) throws IOException {
 
         ImageWriter writer = ImageIO.getImageWritersBySuffix("gif").next();
         ImageWriteParam imageWriteParam = writer.getDefaultWriteParam();
@@ -128,7 +128,7 @@ public class GifSequenceWriter {
                 writer.setOutput(output);
                 writer.prepareWriteSequence(null);
 
-                for (Image image : images) {
+                for (ImmutableImage image : images) {
                     writer.writeToSequence(new IIOImage(image.awt(), null, imageMetaData), imageWriteParam);
                 }
 

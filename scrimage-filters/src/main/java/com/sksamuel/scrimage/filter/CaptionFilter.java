@@ -3,7 +3,7 @@ package com.sksamuel.scrimage.filter;
 import com.sksamuel.scrimage.Dimension;
 import com.sksamuel.scrimage.Filter;
 import com.sksamuel.scrimage.Graphics2DUtils;
-import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.Position;
 import com.sksamuel.scrimage.canvas.Canvas;
 import com.sksamuel.scrimage.canvas.drawable.FilledRect;
@@ -61,7 +61,7 @@ public class CaptionFilter implements Filter {
     }
 
     @Override
-    public void apply(Image image) {
+    public void apply(ImmutableImage image) {
 
         Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
         g2.setFont(font);

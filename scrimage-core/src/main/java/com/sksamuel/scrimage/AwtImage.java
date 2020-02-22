@@ -3,6 +3,7 @@ package com.sksamuel.scrimage;
 import com.sksamuel.scrimage.scaling.AwtNearestNeighbourScale;
 import com.sksamuel.scrimage.scaling.Scale;
 import com.sksamuel.scrimage.scaling.ScrimageNearestNeighbourScale;
+import sun.awt.resources.awt;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -27,11 +28,15 @@ public class AwtImage {
     public final int height;
 
     public AwtImage(BufferedImage awt) {
+        assert awt != null;
         this.awt = awt;
         width = awt.getWidth();
         height = awt.getHeight();
     }
 
+    /**
+     * Returns the [BufferedImage] that this Image is wrapping.
+     */
     public BufferedImage awt() {
         return awt;
     }

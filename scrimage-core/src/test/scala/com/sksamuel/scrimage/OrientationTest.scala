@@ -21,7 +21,7 @@ class OrientationTest extends WordSpec with Matchers {
       readImageAndWriteToBytes("/com/sksamuel/scrimage/iphone/portrait_7.jpg", writer) shouldBe readBytes("/com/sksamuel/scrimage/iphone/portrait_7_expected.jpg")
       readImageAndWriteToBytes("/com/sksamuel/scrimage/iphone/portrait_8.jpg", writer) shouldBe readBytes("/com/sksamuel/scrimage/iphone/portrait_8_expected.jpg")
 
-      Image.fromResource("/com/sksamuel/scrimage/iphone/up.JPG").width shouldBe 1280
+      ImmutableImage.fromResource("/com/sksamuel/scrimage/iphone/up.JPG").width shouldBe 1280
     }
 
     "rotate image when the image and its thumbnail have the same rotation (issue #93)" in {
@@ -34,7 +34,7 @@ class OrientationTest extends WordSpec with Matchers {
   }
 
   private def readImageAndWriteToBytes(filePath: String, writer: ImageWriter): Array[Byte] =
-    Image.fromResource(filePath).bytes(writer)
+    ImmutableImage.fromResource(filePath).bytes(writer)
 
   private def readBytes(filePath: String): Array[Byte] =
     IOUtils.toByteArray(getClass.getResourceAsStream(filePath))

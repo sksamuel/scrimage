@@ -16,7 +16,7 @@
 package com.sksamuel.scrimage.filter;
 
 import com.sksamuel.scrimage.Filter;
-import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.ImmutableImage;
 import thirdparty.romainguy.BlendComposite;
 import thirdparty.romainguy.BlendingMode;
 
@@ -45,9 +45,9 @@ public class VignetteFilter implements Filter {
         this(0.85f, 0.95f, 0.3f, Color.BLACK);
     }
 
-    private Image background(Image image) {
+    private ImmutableImage background(ImmutableImage image) {
 
-        Image target = image.blank();
+        ImmutableImage target = image.blank();
         Graphics2D g2 = (Graphics2D) target.awt().getGraphics();
         float radius = image.radius() * end;
 
@@ -75,8 +75,8 @@ public class VignetteFilter implements Filter {
 
 
     @Override
-    public void apply(Image image) {
-        Image bg = background(image).filter(new GaussianBlurFilter((int) (image.radius() * blur)));
+    public void apply(ImmutableImage image) {
+        ImmutableImage bg = background(image).filter(new GaussianBlurFilter((int) (image.radius() * blur)));
         Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
         g2.setComposite(new BlendComposite(BlendingMode.MULTIPLY, 1.0f));
         g2.drawImage(bg.awt(), 0, 0, null);

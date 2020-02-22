@@ -1,12 +1,12 @@
 package com.sksamuel.scrimage.canvas
 
-import com.sksamuel.scrimage.{Color, Image}
+import com.sksamuel.scrimage.{Color, ImmutableImage}
 import java.awt.{BasicStroke, Graphics2D, RenderingHints}
 import scala.language.implicitConversions
 
-case class Canvas(image: Image) {
+case class Canvas(image: ImmutableImage) {
 
-  private def g2(image: Image): Graphics2D = image.awt().getGraphics.asInstanceOf[Graphics2D]
+  private def g2(image: ImmutableImage): Graphics2D = image.awt().getGraphics.asInstanceOf[Graphics2D]
 
   protected[scrimage] def drawInPlace(drawable: Drawable): Unit = drawInPlace(Seq(drawable))
   protected[scrimage] def drawInPlace(drawables: Drawable*): Unit = drawInPlace(drawables)
@@ -34,8 +34,8 @@ case class Canvas(image: Image) {
 
 object Canvas {
 
-  implicit def image2canvas(image: Image): Canvas = new Canvas(image)
-  implicit def canvas2image(canvas: Canvas): Image = canvas.image
+  implicit def image2canvas(image: ImmutableImage): Canvas = new Canvas(image)
+  implicit def canvas2image(canvas: Canvas): ImmutableImage = canvas.image
 
   implicit class RichGraphics2(g2: Graphics2D) {
 

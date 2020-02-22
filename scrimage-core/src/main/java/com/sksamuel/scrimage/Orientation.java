@@ -26,7 +26,7 @@ public class Orientation {
     }
   }
 
-  public static Image reorient(Image image, ImageMetadata metadata) {
+  public static ImmutableImage reorient(ImmutableImage image, ImageMetadata metadata) {
 
     Set<String> imageOrientations = imageOrientationsOf(metadata);
     String first = imageOrientations.stream().findFirst().orElse("-1");

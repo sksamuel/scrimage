@@ -16,7 +16,7 @@
 package com.sksamuel.scrimage.filter;
 
 import com.sksamuel.scrimage.Filter;
-import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.Pixel$;
 
 public class OpacityFilter implements Filter {
@@ -27,7 +27,7 @@ public class OpacityFilter implements Filter {
         this.amount = amount;
     }
 
-    public void apply(Image image) {
+    public void apply(ImmutableImage image) {
         image.mapInPlace((x, y, p) -> {
             int _r = (int) (p.red() + (255 - p.red()) * amount);
             int _g = (int) (p.green() + (255 - p.green()) * amount);

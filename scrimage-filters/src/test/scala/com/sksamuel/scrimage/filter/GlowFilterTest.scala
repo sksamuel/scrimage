@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.Image
+import com.sksamuel.scrimage.ImmutableImage
 import org.scalatest.{BeforeAndAfter, FunSuite, OneInstancePerTest}
 
 class GlowFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
@@ -9,6 +9,6 @@ class GlowFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTes
   val expected = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_glow.png")
 
   test("filter output matches expected") {
-    assert(Image.fromStream(original).filter(new GlowFilter()) === Image.fromStream(expected))
+    assert(ImmutableImage.fromStream(original).filter(new GlowFilter()) === ImmutableImage.fromStream(expected))
   }
 }

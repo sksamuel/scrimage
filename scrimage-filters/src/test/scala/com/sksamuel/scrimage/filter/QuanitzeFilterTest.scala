@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.Image
+import com.sksamuel.scrimage.ImmutableImage
 import org.scalatest.{BeforeAndAfter, FunSuite, OneInstancePerTest}
 
 class QuanitzeFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
@@ -10,8 +10,8 @@ class QuanitzeFilterTest extends FunSuite with BeforeAndAfter with OneInstancePe
   private val expected_256 = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_quantize_256.png")
 
   test("filter output matches expected") {
-    val image = Image.fromStream(original)
-    assert(image.filter(new QuantizeFilter(64)) == Image.fromStream(expected_64))
-    assert(image.filter(new QuantizeFilter(256)) == Image.fromStream(expected_256))
+    val image = ImmutableImage.fromStream(original)
+    assert(image.filter(new QuantizeFilter(64)) == ImmutableImage.fromStream(expected_64))
+    assert(image.filter(new QuantizeFilter(256)) == ImmutableImage.fromStream(expected_256))
   }
 }

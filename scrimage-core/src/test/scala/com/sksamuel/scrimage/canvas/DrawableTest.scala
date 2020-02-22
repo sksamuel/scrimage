@@ -1,13 +1,13 @@
 package com.sksamuel.scrimage.canvas
 
-import com.sksamuel.scrimage.{Color, Image, Pixel, X11Colorlist}
+import com.sksamuel.scrimage.{Color, ImmutableImage, Pixel, X11Colorlist}
 import com.sksamuel.scrimage.canvas.drawable.{Line, Polygon, Rect}
 import java.awt.{AlphaComposite, Graphics2D}
 import org.scalatest.FunSuite
 
 class DrawableTest extends FunSuite {
 
-  def assertSameImage(img1: Image, img2: Image): Unit = {
+  def assertSameImage(img1: ImmutableImage, img2: ImmutableImage): Unit = {
     assert(img1.width === img2.width)
     assert(img1.height === img2.height)
     for ( x <- 0 until img1.width; y <- 0 until img2.height ) {
@@ -22,7 +22,7 @@ class DrawableTest extends FunSuite {
     }
   }
 
-  private val blank = Image.filled(300, 200, X11Colorlist.White)
+  private val blank = ImmutableImage.filled(300, 200, X11Colorlist.White)
 
   test("The lines are correctly drawn") {
 

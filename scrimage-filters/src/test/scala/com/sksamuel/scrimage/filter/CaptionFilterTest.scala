@@ -7,7 +7,7 @@ import org.scalatest.{Matchers, WordSpec}
 class CaptionFilterTest extends WordSpec with Matchers {
 
   implicit private val writer: PngWriter = PngWriter.MaxCompression
-  private val image = Image.fromResource("/fish.jpg")
+  private val image = ImmutableImage.fromResource("/fish.jpg")
   private val font = FontUtils.createTrueType(getClass.getResourceAsStream("/fonts/Roboto-Light.ttf"), 12)
 
   // anti alias implementation is different on openjdk vs oraclejdk, so tests can't use it reliably
@@ -27,7 +27,7 @@ class CaptionFilterTest extends WordSpec with Matchers {
         0.1,
         new Padding(40, 40, 20, 20)
       ))
-      q shouldBe Image.fromResource("/com/sksamuel/scrimage/filters/fish_caption_bottom_left.png")
+      q shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/filters/fish_caption_bottom_left.png")
     }
     "place caption using full width" ignore {
       val q = image.filter(new CaptionFilter(
@@ -42,7 +42,7 @@ class CaptionFilterTest extends WordSpec with Matchers {
         0.1,
         new Padding(40, 40, 20, 20)
       ))
-      q shouldBe Image.fromResource("/com/sksamuel/scrimage/filters/fish_caption_full_width.png")
+      q shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/filters/fish_caption_full_width.png")
     }
     "place caption using caption alpha and color" ignore {
       val q = image.filter(new CaptionFilter(
@@ -57,7 +57,7 @@ class CaptionFilterTest extends WordSpec with Matchers {
         0.4,
         new Padding(40, 40, 20, 20)
       ))
-      q shouldBe Image.fromResource("/com/sksamuel/scrimage/filters/fish_caption_color_alpha.png")
+      q shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/filters/fish_caption_color_alpha.png")
     }
     "place caption using text alpha and color" ignore {
       val q = image.filter(new CaptionFilter(
@@ -72,7 +72,7 @@ class CaptionFilterTest extends WordSpec with Matchers {
         0.1,
         new Padding(40, 40, 20, 20)
       ))
-      q shouldBe Image.fromResource("/com/sksamuel/scrimage/filters/fish_caption_text_color_alpha.png")
+      q shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/filters/fish_caption_text_color_alpha.png")
     }
     "allow setting size" ignore {
       val q = image.filter(new CaptionFilter(
@@ -87,7 +87,7 @@ class CaptionFilterTest extends WordSpec with Matchers {
         0.1,
         new Padding(40, 40, 20, 20)
       ))
-      q shouldBe Image.fromResource("/com/sksamuel/scrimage/filters/fish_caption_font_size.png")
+      q shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/filters/fish_caption_font_size.png")
     }
     "place caption using anti alias" ignore {
       val q = image.filter(new CaptionFilter(
@@ -102,7 +102,7 @@ class CaptionFilterTest extends WordSpec with Matchers {
         0.1,
         new Padding(40, 40, 20, 20)
       ))
-      q shouldBe Image.fromResource("/com/sksamuel/scrimage/filters/fish_caption_anti_alias.png")
+      q shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/filters/fish_caption_anti_alias.png")
     }
   }
 }

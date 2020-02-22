@@ -8,7 +8,7 @@ class ScalingDeadlockTest extends WordSpec with Matchers {
 
   import scala.concurrent.ExecutionContext.Implicits.global
 
-  val in: Image = Image.fromStream(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird.jpg"))
+  val in: ImmutableImage = ImmutableImage.fromStream(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird.jpg"))
 
   "image scale" should {
     "not deadlock on multiple concurrent scales" in {

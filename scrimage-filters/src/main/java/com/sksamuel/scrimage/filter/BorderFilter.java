@@ -16,7 +16,7 @@
 package com.sksamuel.scrimage.filter;
 
 import com.sksamuel.scrimage.Filter;
-import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.ImmutableImage;
 
 import java.awt.*;
 
@@ -35,7 +35,7 @@ public class BorderFilter implements Filter {
     }
 
     @Override
-    public void apply(Image image) {
+    public void apply(ImmutableImage image) {
         Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
         g2.setColor(color);
         g2.fillRect(0, 0, borderWidth, image.height); // left

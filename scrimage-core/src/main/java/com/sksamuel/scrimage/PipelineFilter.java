@@ -11,7 +11,7 @@ public class PipelineFilter implements Filter {
     }
 
     @Override
-    public void apply(Image image) {
+    public void apply(ImmutableImage image) {
         for (Filter filter : filters) {
             filter.apply(image);
         }

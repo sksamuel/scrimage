@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.nio
 
-import com.sksamuel.scrimage.Image
+import com.sksamuel.scrimage.ImmutableImage
 import java.io.File
 import java.nio.file.{Path, Paths}
 import javax.imageio.{IIOImage, ImageIO, ImageTypeSpecifier}
@@ -51,8 +51,8 @@ case class StreamingGifWriter(frameDelay: Duration = 1.second, infiniteLoop: Boo
   }
 
   abstract class GifStream {
-    def writeFrame(image: Image): GifStream
-    def writeFrame(image: Image, delay: Duration): GifStream
+    def writeFrame(image: ImmutableImage): GifStream
+    def writeFrame(image: ImmutableImage, delay: Duration): GifStream
     def finish(): Unit
   }
 
@@ -104,12 +104,12 @@ case class StreamingGifWriter(frameDelay: Duration = 1.second, infiniteLoop: Boo
 
     new GifStream {
 
-      def writeFrame(image: Image): GifStream = {
+      def writeFrame(image: ImmutableImage): GifStream = {
         writer.writeToSequence(new IIOImage(image.awt, null, imageMetaData), imageWriteParam)
         this
       }
 
-      def writeFrame(image: Image, delay: Duration): GifStream = {
+      def writeFrame(image: ImmutableImage, delay: Duration): GifStream = {
         val rootOverride = imageMetaData.getAsTree(metaFormatName).asInstanceOf[IIOMetadataNode]
         val graphicsControlExtensionNodeOverride = getNode(rootOverride, "GraphicControlExtension")
         graphicsControlExtensionNodeOverride.setAttribute("delayTime", (delay.toMillis / 10).toString)

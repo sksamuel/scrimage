@@ -16,7 +16,7 @@
 package com.sksamuel.scrimage.filter;
 
 import com.sksamuel.scrimage.Filter;
-import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.ImmutableImage;
 import thirdparty.marvin.image.MarvinAbstractImagePlugin;
 import thirdparty.marvin.image.MarvinAttributes;
 import thirdparty.marvin.image.MarvinImage;
@@ -32,7 +32,7 @@ abstract class MarvinFilter implements Filter {
 
   public abstract MarvinAbstractImagePlugin plugin();
 
-  public void apply(Image image) {
+  public void apply(ImmutableImage image) {
 
     MarvinImage input = new MarvinImage(image.awt());
     MarvinImage output = input.clone();

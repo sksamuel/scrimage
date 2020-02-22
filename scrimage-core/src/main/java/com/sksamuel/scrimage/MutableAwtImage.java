@@ -10,7 +10,7 @@ import java.util.Arrays;
  * All methods in this class should return void as they operate on the underlying image.
  * <p>
  * This class cannot contain methods that result in a change canvas size, as there is no
- * way to mutate the size of an AWT once created.
+ * way to mutate the size of an AWT image once created.
  */
 public class MutableAwtImage extends AwtImage {
 
@@ -36,23 +36,19 @@ public class MutableAwtImage extends AwtImage {
     protected Pixel rmTransparency(java.awt.Color color, Pixel p) {
         int r = (p.red() * p.alpha() + color.getRed() * color.getAlpha() * (255 - p.alpha()) / 255) / 255;
         int g = (p.green() * p.alpha() + color.getGreen() * color.getAlpha() * (255 - p.alpha()) / 255) / 255;
-        int  b = (p.blue() * p.alpha() + color.getBlue() * color.getAlpha() * (255 - p.alpha()) / 255) / 255;
+        int b = (p.blue() * p.alpha() + color.getBlue() * color.getAlpha() * (255 - p.alpha()) / 255) / 255;
         return Pixel$.MODULE$.apply(r, g, b, 255);
     }
 
     protected void removetrans(java.awt.Color color) {
-        Arrays.stream(points()).forEach(point -> {
-            awt().setRGB(point.x, point.y, rmTransparency(color, new Pixel(awt().getRGB(point.x, point.y))).toInt());
-        });
+        Arrays.stream(points()).forEach(point -> awt().setRGB(point.x, point.y, rmTransparency(color, new Pixel(awt().getRGB(point.x, point.y))).toInt()));
     }
 
     /**
      * Fills all pixels the given color on the existing image.
      */
     protected void fillInPlace(Color color) {
-        Arrays.stream(points()).forEach(point -> {
-            awt().setRGB(point.x, point.y, color.toPixel().toInt());
-        });
+        Arrays.stream(points()).forEach(point -> awt().setRGB(point.x, point.y, color.toPixel().toInt()));
     }
 
     /**

@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage.filter;
 
 import com.sksamuel.scrimage.Filter;
-import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.Pixel;
 import thirdparty.jhlabs.image.PixelUtils;
 
@@ -18,7 +18,7 @@ public class BlackThresholdFilter implements Filter {
     }
 
     @Override
-    public void apply(Image image) {
+    public void apply(ImmutableImage image) {
         int threshold = (int) ((255 * thresholdPercentage) / 100.0);
 
         image.mapInPlace((x, y, p) -> {

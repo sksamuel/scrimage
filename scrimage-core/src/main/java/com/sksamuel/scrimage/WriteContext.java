@@ -8,9 +8,9 @@ import java.nio.file.Paths;
 public class WriteContext {
 
     private final ImageWriter writer;
-    private final Image image;
+    private final ImmutableImage image;
 
-    public WriteContext(ImageWriter writer, Image image) {
+    public WriteContext(ImageWriter writer, ImmutableImage image) {
         this.writer = writer;
         this.image = image;
     }

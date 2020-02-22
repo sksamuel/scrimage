@@ -16,12 +16,12 @@
 package com.sksamuel.scrimage.filter;
 
 import com.sksamuel.scrimage.Filter;
-import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.Pixel$;
 
 public class GrayscaleFilter implements Filter {
 
-    public void apply(Image image) {
+    public void apply(ImmutableImage image) {
         image.mapInPlace((x, y, p) -> {
             double red = 0.21 * p.red();
             double green = 0.71 * p.green();

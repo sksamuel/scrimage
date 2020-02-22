@@ -16,7 +16,7 @@
 package com.sksamuel.scrimage.filter;
 
 import com.sksamuel.scrimage.Filter;
-import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.ImmutableImage;
 import thirdparty.misc.ThistleFilter;
 
 import java.awt.*;
@@ -25,7 +25,7 @@ import java.awt.image.BufferedImage;
 public class VintageFilter implements Filter {
 
     @Override
-    public void apply(Image image) {
+    public void apply(ImmutableImage image) {
         ThistleFilter thistle = new ThistleFilter();
         BufferedImage filtered = thistle.filter(image.awt());
         Graphics2D g2 = (Graphics2D) image.awt().getGraphics();

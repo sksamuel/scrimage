@@ -2,7 +2,7 @@ package com.sksamuel.scrimage.nio;
 
 import ar.com.hjg.pngj.ImageLineHelper;
 import ar.com.hjg.pngj.ImageLineInt;
-import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.ImageMetadata;
 import com.sksamuel.scrimage.Pixel$;
 
@@ -13,7 +13,7 @@ import java.util.Arrays;
 
 public class PngReader implements Reader {
 
-    public Image fromBytes(byte[] bytes, int type) throws IOException {
+    public ImmutableImage fromBytes(byte[] bytes, int type) throws IOException {
 
         if (supports(bytes)) {
 
@@ -73,7 +73,7 @@ public class PngReader implements Reader {
             ColorModel cm = ColorModel.getRGBdefault();
             BufferedImage image = new BufferedImage(cm, raster, cm.isAlphaPremultiplied(), null);
 
-            return new Image(image, ImageMetadata.empty);
+            return new ImmutableImage(image, ImageMetadata.empty);
 
         } else {
             throw new IOException();

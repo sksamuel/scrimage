@@ -18,7 +18,7 @@ package com.sksamuel.scrimage.filter;
 
 import com.sksamuel.scrimage.Filter;
 import com.sksamuel.scrimage.FontUtils;
-import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.ImmutableImage;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -55,7 +55,7 @@ public class WatermarkStampFilter implements Filter {
     }
 
     @Override
-    public void apply(Image image) {
+    public void apply(ImmutableImage image) {
 
         Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
         setupGraphics(g2);

@@ -1,11 +1,11 @@
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.Image
+import com.sksamuel.scrimage.ImmutableImage
 import org.scalatest.{BeforeAndAfter, FunSuite, OneInstancePerTest}
 
 class SparkleFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
 
   test("filter output matches expected") {
-    assert(Image.fromResource("/bird_small.png").filter(new SparkleFilter()) === Image.fromResource("/com/sksamuel/scrimage/filters/bird_small_sparkle.png"))
+    assert(ImmutableImage.fromResource("/bird_small.png").filter(new SparkleFilter()) === ImmutableImage.fromResource("/com/sksamuel/scrimage/filters/bird_small_sparkle.png"))
   }
 }

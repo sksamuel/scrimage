@@ -1,12 +1,12 @@
 package com.sksamuel.scrimage.nio
 
-import com.sksamuel.scrimage.Image
+import com.sksamuel.scrimage.ImmutableImage
 import java.io.File
 import scala.concurrent.duration._
 
 object PngCompressionBenchmark extends App {
 
-  val image = Image.fromResource("/com/sksamuel/scrimage/jazz.jpg")
+  val image = ImmutableImage.fromResource("/com/sksamuel/scrimage/jazz.jpg")
 
   for (c <- 0 to 9) {
     benchmarkN(1, string => println(s"Compression level $c took " + string)) {

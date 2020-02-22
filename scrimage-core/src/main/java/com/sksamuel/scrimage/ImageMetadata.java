@@ -20,7 +20,7 @@ public class ImageMetadata {
 
   public static ImageMetadata empty = new ImageMetadata(new Directory[0]);
 
-  public static ImageMetadata fromImage(Image image) throws IOException, ImageProcessingException {
+  public static ImageMetadata fromImage(ImmutableImage image) throws IOException, ImageProcessingException {
     try (ByteArrayInputStream stream = new ByteArrayInputStream(image.bytes(PngWriter.NoCompression))) {
       Metadata metadata = ImageMetadataReader.readMetadata(stream);
       return fromMetadata(metadata);

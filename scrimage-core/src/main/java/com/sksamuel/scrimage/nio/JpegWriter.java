@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.nio;
 
-import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.ImageWriter;
 
 import javax.imageio.IIOImage;
@@ -41,7 +41,7 @@ public class JpegWriter implements ImageWriter {
     }
 
     @Override
-    public void write(Image image, OutputStream out) throws IOException {
+    public void write(ImmutableImage image, OutputStream out) throws IOException {
 
         javax.imageio.ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
         ImageWriteParam params = writer.getDefaultWriteParam();

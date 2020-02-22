@@ -19,7 +19,7 @@ package com.sksamuel.scrimage.nio;
 import ar.com.hjg.pngj.FilterType;
 import ar.com.hjg.pngj.ImageInfo;
 import ar.com.hjg.pngj.ImageLineInt;
-import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.ImageWriter;
 
 import javax.imageio.ImageIO;
@@ -56,7 +56,7 @@ public class PngWriter implements ImageWriter {
     }
 
     @Override
-    public void write(Image image, OutputStream out) throws IOException {
+    public void write(ImmutableImage image, OutputStream out) throws IOException {
 
         if (image.awt().getType() == BufferedImage.TYPE_INT_ARGB) {
 

@@ -6,7 +6,7 @@
  */
 package thirdparty.mortennobel;
 
-final class Lanczos3Filter implements ResampleFilter {
+public final class Lanczos3Filter implements ResampleFilter {
 
   private final static float PI_FLOAT = (float) Math.PI;
 

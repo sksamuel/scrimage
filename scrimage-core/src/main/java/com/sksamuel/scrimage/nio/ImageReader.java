@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.nio;
 
-import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.ImageParseException;
 import org.apache.commons.io.IOUtils;
 
@@ -20,35 +20,35 @@ public class ImageReader {
 
     private static Collection<Reader> readers = Arrays.asList(new JavaImageIOReader(), new PngReader(), new JavaImageIO2Reader());
 
-    public static Image fromFile(File file) throws IOException {
-        return fromFile(file, Image.CANONICAL_DATA_TYPE());
+    public static ImmutableImage fromFile(File file) throws IOException {
+        return fromFile(file, ImmutableImage.CANONICAL_DATA_TYPE());
     }
 
-    public static Image fromFile(File file, int type) throws IOException {
+    public static ImmutableImage fromFile(File file, int type) throws IOException {
         return fromPath(file.toPath(), type);
     }
 
-    public static Image fromPath(Path path) throws IOException {
-        return fromPath(path, Image.CANONICAL_DATA_TYPE());
+    public static ImmutableImage fromPath(Path path) throws IOException {
+        return fromPath(path, ImmutableImage.CANONICAL_DATA_TYPE());
     }
 
-    public static Image fromPath(Path path, int type) throws IOException {
+    public static ImmutableImage fromPath(Path path, int type) throws IOException {
         try (InputStream stream = Files.newInputStream(path)) {
             return fromStream(stream, type);
         }
     }
 
-    public static Image fromStream(InputStream in) throws IOException {
-        return fromStream(in, Image.CANONICAL_DATA_TYPE());
+    public static ImmutableImage fromStream(InputStream in) throws IOException {
+        return fromStream(in, ImmutableImage.CANONICAL_DATA_TYPE());
     }
 
-    public static Image fromStream(InputStream in, int type) throws IOException {
+    public static ImmutableImage fromStream(InputStream in, int type) throws IOException {
         byte[] bytes = IOUtils.toByteArray(in);
         return fromBytes(bytes, type);
     }
 
-    public static Image fromBytes(byte[] bytes, int type) {
-        Optional<Image> image = Optional.empty();
+    public static ImmutableImage fromBytes(byte[] bytes, int type) {
+        Optional<ImmutableImage> image = Optional.empty();
         for (Reader reader : readers) {
             if (!image.isPresent()) {
                 try {
@@ -63,9 +63,9 @@ public class ImageReader {
 
 interface Reader {
 
-    default Image fromBytes(byte[] bytes) throws IOException {
-        return fromBytes(bytes, Image.CANONICAL_DATA_TYPE());
+    default ImmutableImage fromBytes(byte[] bytes) throws IOException {
+        return fromBytes(bytes, ImmutableImage.CANONICAL_DATA_TYPE());
     }
 
-    Image fromBytes(byte[] bytes, int type) throws IOException;
+    ImmutableImage fromBytes(byte[] bytes, int type) throws IOException;
 }

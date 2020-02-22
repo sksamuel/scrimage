@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage.nio;
 
-import com.sksamuel.scrimage.Image;
-import com.sksamuel.scrimage.Image$;
+import com.sksamuel.scrimage.ImmutableImage;
+import com.sksamuel.scrimage.ImmutableImage$;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
@@ -15,7 +15,7 @@ import java.util.Optional;
 
 public class JavaImageIO2Reader implements Reader {
 
-    private Optional<Image> tryLoad(ImageReader reader, byte[] bytes, int type) {
+    private Optional<ImmutableImage> tryLoad(ImageReader reader, byte[] bytes, int type) {
         try {
             reader.setInput(new ByteArrayInputStream(bytes), true, true);
             ImageReadParam params = reader.getDefaultReadParam();
@@ -28,17 +28,17 @@ public class JavaImageIO2Reader implements Reader {
                 }
             }
             BufferedImage bufferedImage = reader.read(0, params);
-            return Optional.of(Image$.MODULE$.wrapAwt(bufferedImage));
+            return Optional.of(ImmutableImage$.MODULE$.wrapAwt(bufferedImage));
         } catch (Exception e) {
             return Optional.empty();
         }
     }
 
     @Override
-    public Image fromBytes(byte[] bytes, int type) throws IOException {
+    public ImmutableImage fromBytes(byte[] bytes, int type) throws IOException {
         Iterator<ImageReader> readers = ImageIO.getImageReaders(new ByteArrayInputStream(bytes));
         while (readers.hasNext()) {
-            Optional<Image> image = tryLoad(readers.next(), bytes, type);
+            Optional<ImmutableImage> image = tryLoad(readers.next(), bytes, type);
             if (image.isPresent())
                 return image.get();
         }

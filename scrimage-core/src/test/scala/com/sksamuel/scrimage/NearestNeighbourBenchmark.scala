@@ -8,7 +8,7 @@ object NearestNeighbourBenchmark extends App {
   implicit val writer = PngWriter.MaxCompression
 
   val Iterations = 100
-  val image = Image.fromResource("/earth-map-huge.jpg")
+  val image = ImmutableImage.fromResource("/earth-map-huge.jpg")
 
   bench(300, 200)
   bench(1000, 600)
@@ -32,7 +32,7 @@ object NearestNeighbourBenchmark extends App {
     println("Average time: " + sw.averageLap.toMillis)
     println()
 
-    Image.fromAwt(new AwtNearestNeighbourScale().scale(image.awt, w, h)).output("awt.jpg")
+    ImmutableImage.fromAwt(new AwtNearestNeighbourScale().scale(image.awt, w, h)).output("awt.jpg")
 
     sw.reset()
     sw.start()
@@ -49,7 +49,7 @@ object NearestNeighbourBenchmark extends App {
     println("Average time: " + sw.averageLap.toMillis)
     println("-----")
 
-    Image.fromAwt(new ScrimageNearestNeighbourScale().scale(image.awt, w, h)).output("scrimage.jpg")
+    ImmutableImage.fromAwt(new ScrimageNearestNeighbourScale().scale(image.awt, w, h)).output("scrimage.jpg")
 
   }
 }

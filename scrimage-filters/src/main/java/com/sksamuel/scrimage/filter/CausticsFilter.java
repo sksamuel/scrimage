@@ -16,7 +16,7 @@
 package com.sksamuel.scrimage.filter;
 
 import com.sksamuel.scrimage.Filter;
-import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.ImmutableImage;
 
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
@@ -41,7 +41,7 @@ public class CausticsFilter implements Filter {
     }
 
     @Override
-    public void apply(Image image) {
+    public void apply(ImmutableImage image) {
 
         thirdparty.jhlabs.image.CausticsFilter op = new thirdparty.jhlabs.image.CausticsFilter();
         op.setAmount(amount);

@@ -2,7 +2,7 @@ package com.sksamuel.scrimage.filter;
 
 import com.sksamuel.scrimage.Color$;
 import com.sksamuel.scrimage.Filter;
-import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.RGBColor;
 
 /**
@@ -10,14 +10,14 @@ import com.sksamuel.scrimage.RGBColor;
  */
 public class ErrorSpotterFilter implements Filter {
 
-    private final Image base;
+    private final ImmutableImage base;
     private final int ratio;
 
-    public ErrorSpotterFilter(Image base) {
+    public ErrorSpotterFilter(ImmutableImage base) {
         this(base, 50);
     }
 
-    public ErrorSpotterFilter(Image base, int ratio) {
+    public ErrorSpotterFilter(ImmutableImage base, int ratio) {
         this.base = base;
         this.ratio = ratio;
     }
@@ -40,7 +40,7 @@ public class ErrorSpotterFilter implements Filter {
     }
 
     @Override
-    public void apply(Image src) {
+    public void apply(ImmutableImage src) {
         assert (src.width == base.width);
         assert (src.height == base.height);
         for (int x = 0; x < src.width; x++) {

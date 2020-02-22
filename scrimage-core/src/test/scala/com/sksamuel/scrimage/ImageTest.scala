@@ -8,26 +8,26 @@ import org.scalatest.{BeforeAndAfter, FunSuite, Matchers}
 
 class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
 
-  private val image = Image.fromResource("/com/sksamuel/scrimage/bird.jpg")
-  private val small = Image.fromResource("/bird_small.png")
-  private val chip = Image.fromResource("/transparent_chip.png")
-  private val turing = Image.fromResource("/com/sksamuel/scrimage/turing.jpg")
+  private val image = ImmutableImage.fromResource("/com/sksamuel/scrimage/bird.jpg")
+  private val small = ImmutableImage.fromResource("/bird_small.png")
+  private val chip = ImmutableImage.fromResource("/transparent_chip.png")
+  private val turing = ImmutableImage.fromResource("/com/sksamuel/scrimage/turing.jpg")
 
   test("ratio happy path") {
     val awt1 = new BufferedImage(200, 400, BufferedImage.TYPE_INT_ARGB)
-    assert(0.5 === Image.fromAwt(awt1).ratio)
+    assert(0.5 === ImmutableImage.fromAwt(awt1).ratio)
 
     val awt2 = new BufferedImage(400, 200, BufferedImage.TYPE_INT_ARGB)
-    assert(2 === Image.fromAwt(awt2).ratio)
+    assert(2 === ImmutableImage.fromAwt(awt2).ratio)
 
     val awt3 = new BufferedImage(333, 333, BufferedImage.TYPE_INT_ARGB)
-    assert(1 === Image.fromAwt(awt3).ratio)
+    assert(1 === ImmutableImage.fromAwt(awt3).ratio)
 
     val awt4 = new BufferedImage(333, 111, BufferedImage.TYPE_INT_ARGB)
-    assert(3.0 === Image.fromAwt(awt4).ratio)
+    assert(3.0 === ImmutableImage.fromAwt(awt4).ratio)
 
     val awt5 = new BufferedImage(111, 333, BufferedImage.TYPE_INT_ARGB)
-    assert(1 / 3d === Image.fromAwt(awt5).ratio)
+    assert(1 / 3d === ImmutableImage.fromAwt(awt5).ratio)
   }
 
   test("copy returns a new backing image") {
@@ -36,7 +36,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("scaling correct scales the image") {
-    image.scaleTo(486, 324) shouldBe Image.fromResource("/bird_486_324.png")
+    image.scaleTo(486, 324) shouldBe ImmutableImage.fromResource("/bird_486_324.png")
   }
 
   test("when trimming the new image has the trimmed dimensions") {
@@ -64,11 +64,11 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
 
   test("dimensions happy path") {
     val awt = new BufferedImage(200, 400, BufferedImage.TYPE_INT_ARGB)
-    assert(new Dimension(200, 400) === Image.fromAwt(awt).dimensions)
+    assert(new Dimension(200, 400) === ImmutableImage.fromAwt(awt).dimensions)
   }
 
   test("pixel returns correct ARGB integer") {
-    val image = Image.filled(50, 30, Color(0, 0, 0, 0))
+    val image = ImmutableImage.filled(50, 30, Color(0, 0, 0, 0))
     val g = image.awt().getGraphics
     g.setColor(java.awt.Color.RED)
     g.fillRect(10, 10, 10, 10)
@@ -83,12 +83,12 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("pixel array has correct number of pixels") {
-    val image = Image.filled(50, 30, Color(0, 0, 0, 0))
+    val image = ImmutableImage.filled(50, 30, Color(0, 0, 0, 0))
     assert(1500 === image.pixels.length)
   }
 
   test("pixel array has correct ARGB integer") {
-    val image = Image.filled(50, 30, Color(0, 0, 0, 0))
+    val image = ImmutableImage.filled(50, 30, Color(0, 0, 0, 0))
     val g = image.awt.getGraphics
     g.setColor(java.awt.Color.RED)
     g.fillRect(10, 10, 10, 10)
@@ -115,12 +115,12 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("hashCode and equals reflects proper object equality") {
-    val bird = Image.fromResource("/com/sksamuel/scrimage/bird.jpg")
+    val bird = ImmutableImage.fromResource("/com/sksamuel/scrimage/bird.jpg")
 
     assert(image.hashCode === bird.hashCode)
     assert(image === bird)
 
-    val otherImage = Image.fromAwt(new BufferedImage(445, 464, Image.CANONICAL_DATA_TYPE))
+    val otherImage = ImmutableImage.fromAwt(new BufferedImage(445, 464, ImmutableImage.CANONICAL_DATA_TYPE))
     assert(otherImage.hashCode != image.hashCode)
     assert(otherImage != image)
   }
@@ -132,13 +132,13 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("when create a new filled image then the dimensions are as specified") {
-    val image = Image.filled(595, 911, java.awt.Color.BLACK.toColor)
+    val image = ImmutableImage.filled(595, 911, java.awt.Color.BLACK.toColor)
     assert(595 === image.width)
     assert(911 === image.height)
   }
 
   test("when creating a new empty image then the dimensions are as specified") {
-    val image = Image.apply(80, 90)
+    val image = ImmutableImage.apply(80, 90)
     assert(80 === image.width)
     assert(90 === image.height)
   }
@@ -146,41 +146,41 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   test("padding should keep alpha") {
     chip
       .padWith(10, 20, 30, 40, RGBColor(100, 255, 50, 0))
-      .underlay(Image.filled(1000, 1000, X11Colorlist.Firebrick)) shouldBe
-      Image.fromResource("/com/sksamuel/scrimage/chip_pad.png")
+      .underlay(ImmutableImage.filled(1000, 1000, X11Colorlist.Firebrick)) shouldBe
+      ImmutableImage.fromResource("/com/sksamuel/scrimage/chip_pad.png")
   }
 
   test("fit should keep alpha") {
     chip.fit(200, 300, Color.Transparent) shouldBe
-      Image.fromResource("/com/sksamuel/scrimage/chip_fit.png")
+      ImmutableImage.fromResource("/com/sksamuel/scrimage/chip_fit.png")
   }
 
   test("when padding to a width smaller than the image width then the width is not reduced") {
-    val image = Image.apply(85, 56)
+    val image = ImmutableImage.apply(85, 56)
     val padded = image.padTo(55, 162)
     assert(85 === padded.width)
   }
 
   test("when padding to a height smaller than the image height then the height is not reduced") {
-    val image = Image.apply(85, 56)
+    val image = ImmutableImage.apply(85, 56)
     val padded = image.padTo(90, 15)
     assert(56 === padded.height)
   }
 
   test("when padding to a width larger than the image width then the width is increased") {
-    val image = Image.apply(85, 56)
+    val image = ImmutableImage.apply(85, 56)
     val padded = image.padTo(151, 162)
     assert(151 === padded.width)
   }
 
   test("when padding to a height larger than the image height then the height is increased") {
-    val image = Image.apply(85, 56)
+    val image = ImmutableImage.apply(85, 56)
     val padded = image.padTo(90, 77)
     assert(77 === padded.height)
   }
 
   test("when padding to a size larger than the image then the image canvas is increased") {
-    val image = Image.apply(85, 56)
+    val image = ImmutableImage.apply(85, 56)
     val padded = image.padTo(515, 643)
     assert(515 === padded.width)
     assert(643 === padded.height)
@@ -193,7 +193,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("trim should revert padWith") {
-    val image = Image.apply(85, 56)
+    val image = ImmutableImage.apply(85, 56)
     val same = image.padWith(10, 2, 5, 7).trim(10, 2, 5, 7)
     assert(image.width === same.width)
     assert(image.height === same.height)
@@ -206,11 +206,11 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("when flipping on x axis the image is flipped horizontally") {
-    turing.flipX shouldBe Image.fromResource("/com/sksamuel/scrimage/turing_flipx.png")
+    turing.flipX shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/turing_flipx.png")
   }
 
   test("when flipping on y axis the image is flipped vertically") {
-    turing.flipY shouldBe Image.fromResource("/com/sksamuel/scrimage/turing_flipy.png")
+    turing.flipY shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/turing_flipy.png")
   }
 
   test("when flipping on y axis the dimensions are retained") {
@@ -233,24 +233,24 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     val rotated = small.rotateLeft
     assert(259 === rotated.width)
     assert(388 === rotated.height)
-    rotated shouldBe Image.fromResource("/com/sksamuel/scrimage/bird_rotated_left.png")
+    rotated shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/bird_rotated_left.png")
   }
 
   test("when rotating right the width and height are reversed") {
     val rotated = small.rotateRight
     assert(259 === rotated.width)
     assert(388 === rotated.height)
-    rotated shouldBe Image.fromResource("/com/sksamuel/scrimage/bird_rotated_right.png")
+    rotated shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/bird_rotated_right.png")
   }
 
   ignore("brightness happy path") {
     val brightened = small.brightness(1.5)
-    brightened shouldBe Image.fromResource("/com/sksamuel/scrimage/bird_small_brightened.png")
+    brightened shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/bird_small_brightened.png")
   }
 
   test("contrast happy path") {
     val contrasted = small.contrast(3)
-    contrasted shouldBe Image.fromResource("/com/sksamuel/scrimage/bird_small_contrasted.png")
+    contrasted shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/bird_small_contrasted.png")
   }
 
   test("when fitting an image the output image should have the specified dimensions") {
@@ -262,64 +262,64 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   test("a fitted image can be aligned to centre") {
     val actual1 = small.fit(200, 100, color = X11Colorlist.Burlywood2, position = Position.Center)
     val actual2 = turing.fit(200, 400, color = X11Colorlist.Azure, position = Position.Center)
-    actual1 shouldBe Image.fromResource("/com/sksamuel/scrimage/bird_small_aligned_centre.png")
-    actual2 shouldBe Image.fromResource("/com/sksamuel/scrimage/turing_aligned_centre.png")
+    actual1 shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/bird_small_aligned_centre.png")
+    actual2 shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/turing_aligned_centre.png")
   }
 
   test("a fitted image can be aligned to top left") {
     val actual1 = small.fit(200, 100, color = X11Colorlist.Burlywood2, position = Position.TopLeft)
     val actual2 = turing.fit(200, 400, color = X11Colorlist.Azure, position = Position.TopLeft)
-    actual1 shouldBe Image.fromResource("/com/sksamuel/scrimage/bird_small_aligned_top_left.png")
-    actual2 shouldBe Image.fromResource("/com/sksamuel/scrimage/turing_aligned_top_left.png")
+    actual1 shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/bird_small_aligned_top_left.png")
+    actual2 shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/turing_aligned_top_left.png")
   }
 
   test("a fitted image can be aligned to top right") {
     val actual1 = small.fit(200, 100, color = X11Colorlist.Burlywood2, position = Position.TopRight)
     val actual2 = turing.fit(200, 400, color = X11Colorlist.Azure, position = Position.TopRight)
-    actual1 shouldBe Image.fromResource("/com/sksamuel/scrimage/bird_small_aligned_top_right.png")
-    actual2 shouldBe Image.fromResource("/com/sksamuel/scrimage/turing_aligned_top_right.png")
+    actual1 shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/bird_small_aligned_top_right.png")
+    actual2 shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/turing_aligned_top_right.png")
   }
 
   test("a fitted image can be aligned to bottom right") {
     val actual1 = small.fit(200, 100, color = X11Colorlist.Burlywood2, position = Position.BottomRight)
     val actual2 = turing.fit(200, 400, color = X11Colorlist.Azure, position = Position.BottomRight)
-    actual1 shouldBe Image.fromResource("/com/sksamuel/scrimage/bird_small_aligned_bottom_right.png")
-    actual2 shouldBe Image.fromResource("/com/sksamuel/scrimage/turing_aligned_bottom_right.png")
+    actual1 shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/bird_small_aligned_bottom_right.png")
+    actual2 shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/turing_aligned_bottom_right.png")
   }
 
   test("a fitted image can be aligned to bottom left") {
     val actual1 = small.fit(200, 100, color = X11Colorlist.Burlywood2, position = Position.BottomLeft)
     val actual2 = turing.fit(200, 400, color = X11Colorlist.Azure, position = Position.BottomLeft)
-    actual1 shouldBe Image.fromResource("/com/sksamuel/scrimage/bird_small_aligned_bottom_left.png")
-    actual2 shouldBe Image.fromResource("/com/sksamuel/scrimage/turing_aligned_bottom_left.png")
+    actual1 shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/bird_small_aligned_bottom_left.png")
+    actual2 shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/turing_aligned_bottom_left.png")
   }
 
   test("a fitted image can be aligned to centre left") {
     val actual1 = small.fit(200, 100, color = X11Colorlist.Burlywood2, position = Position.CenterLeft)
     val actual2 = turing.fit(200, 400, color = X11Colorlist.Azure, position = Position.CenterLeft)
-    actual1 shouldBe Image.fromResource("/com/sksamuel/scrimage/bird_small_aligned_centre_left.png")
-    actual2 shouldBe Image.fromResource("/com/sksamuel/scrimage/turing_aligned_centre_left.png")
+    actual1 shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/bird_small_aligned_centre_left.png")
+    actual2 shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/turing_aligned_centre_left.png")
   }
 
   test("a fitted image can be aligned to centre right") {
     val actual1 = small.fit(200, 100, color = X11Colorlist.Burlywood2, position = Position.CenterRight)
     val actual2 = turing.fit(200, 400, color = X11Colorlist.Azure, position = Position.CenterRight)
-    actual1 shouldBe Image.fromResource("/com/sksamuel/scrimage/bird_small_aligned_centre_right.png")
-    actual2 shouldBe Image.fromResource("/com/sksamuel/scrimage/turing_aligned_centre_right.png")
+    actual1 shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/bird_small_aligned_centre_right.png")
+    actual2 shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/turing_aligned_centre_right.png")
   }
 
   test("a fitted image can be aligned to top cente") {
     val actual1 = small.fit(200, 100, color = X11Colorlist.Burlywood2, position = Position.TopCenter)
     val actual2 = turing.fit(200, 400, color = X11Colorlist.Azure, position = Position.TopCenter)
-    actual1 shouldBe Image.fromResource("/com/sksamuel/scrimage/bird_small_aligned_top_centre.png")
-    actual2 shouldBe Image.fromResource("/com/sksamuel/scrimage/turing_aligned_top_centre.png")
+    actual1 shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/bird_small_aligned_top_centre.png")
+    actual2 shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/turing_aligned_top_centre.png")
   }
 
   test("a fitted image can be aligned to bottom centre") {
     val actual1 = small.fit(200, 100, color = X11Colorlist.Burlywood2, position = Position.BottomCenter)
     val actual2 = turing.fit(200, 400, color = X11Colorlist.Azure, position = Position.BottomCenter)
-    actual1 shouldBe Image.fromResource("/com/sksamuel/scrimage/bird_small_aligned_bottom_centre.png")
-    actual2 shouldBe Image.fromResource("/com/sksamuel/scrimage/turing_aligned_bottom_centre.png")
+    actual1 shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/bird_small_aligned_bottom_centre.png")
+    actual2 shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/turing_aligned_bottom_centre.png")
   }
 
   test("when resizing an image the output image should have specified dimensions") {
@@ -340,7 +340,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
 
   test("when scaling an image the output image should match as expected") {
     val scaled = image.scale(0.25)
-    val expected = Image.fromResource("/com/sksamuel/scrimage/bird_scale_025.png")
+    val expected = ImmutableImage.fromResource("/com/sksamuel/scrimage/bird_scale_025.png")
     assert(expected.width === scaled.width)
     assert(expected.height === scaled.height)
   }
@@ -353,7 +353,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
 
   test("when fitting an image the output image should match as expected") {
     val fitted = image.fit(900, 300, java.awt.Color.RED.toColor)
-    val expected = Image.fromResource("/com/sksamuel/scrimage/bird_fitted2.png")
+    val expected = ImmutableImage.fromResource("/com/sksamuel/scrimage/bird_fitted2.png")
     assert(fitted.pixels.length === fitted.pixels.length)
     assert(expected == fitted)
   }
@@ -377,7 +377,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("argb returns array of ARGB bytes") {
-    val image = Image.filled(20, 20, java.awt.Color.YELLOW.toColor)
+    val image = ImmutableImage.filled(20, 20, java.awt.Color.YELLOW.toColor)
     val components = image.argb
     assert(400 === components.length)
     for (component <- components)
@@ -385,7 +385,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("rgb returns array of RGB bytes") {
-    val image = Image.filled(20, 20, java.awt.Color.YELLOW.toColor)
+    val image = ImmutableImage.filled(20, 20, java.awt.Color.YELLOW.toColor)
     val components = image.rgb
     assert(400 === components.length)
     for (component <- components)
@@ -393,32 +393,32 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("argb pixel returns an array for the ARGB components") {
-    val image = Image.filled(20, 20, java.awt.Color.YELLOW.toColor)
+    val image = ImmutableImage.filled(20, 20, java.awt.Color.YELLOW.toColor)
     val rgb = image.argb(10, 10)
     assert(rgb === Array(255, 255, 255, 0))
   }
 
   test("rgb pixel returns an array for the RGB components") {
-    val image = Image.filled(20, 20, java.awt.Color.YELLOW.toColor)
+    val image = ImmutableImage.filled(20, 20, java.awt.Color.YELLOW.toColor)
     val argb = image.rgb(10, 10)
     assert(argb === Array(255, 255, 0))
   }
 
   test("pixel coordinate returns an ARGB integer for the pixel at that coordinate") {
-    val image = Image.filled(20, 20, java.awt.Color.YELLOW.toColor)
+    val image = ImmutableImage.filled(20, 20, java.awt.Color.YELLOW.toColor)
     val pixel = image.pixel(10, 10)
     assert(0xFFFFFF00 === pixel.toInt)
   }
 
   test("foreach accesses to each pixel") {
-    val image = Image.apply(100, 100)
+    val image = ImmutableImage.apply(100, 100)
     var count = 0
     image.foreach((x: Int, y: Int, p: Pixel) => count = count + 1)
     assert(10000 === count)
   }
 
   test("map modifies each pixel and returns new image") {
-    val image = Image.apply(100, 100)
+    val image = ImmutableImage.apply(100, 100)
     val mapped = image.map((_, _, _) => new Pixel(0xFF00FF00))
     for (component <- mapped.argb)
       assert(component === Array(255, 0, 255, 0))
@@ -435,8 +435,8 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("overlay should retain source background") {
-    val image1 = Image.filled(100, 100, X11Colorlist.PaleVioletRed1)
-    val image2 = Image.filled(75, 75, X11Colorlist.GreenYellow)
+    val image1 = ImmutableImage.filled(100, 100, X11Colorlist.PaleVioletRed1)
+    val image2 = ImmutableImage.filled(75, 75, X11Colorlist.GreenYellow)
     val result = image1.overlay(image2, 10, 10)
     result.color(0, 0) shouldBe X11Colorlist.PaleVioletRed1
     result.color(10, 10) shouldBe X11Colorlist.GreenYellow
@@ -519,7 +519,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
 
   test("max operation happy path") {
     val maxed = image.max(200, 200)
-    val expected = Image.fromResource("/com/sksamuel/scrimage/bird_bound_200x200.png")
+    val expected = ImmutableImage.fromResource("/com/sksamuel/scrimage/bird_bound_200x200.png")
     assert(maxed === expected)
   }
 
@@ -531,12 +531,12 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
 
   test("cover operation happy path") {
     val covered = image.cover(200, 200)
-    val expected = Image.fromResource("/com/sksamuel/scrimage/bird_cover_200x200.png")
+    val expected = ImmutableImage.fromResource("/com/sksamuel/scrimage/bird_cover_200x200.png")
     assert(covered === expected)
   }
 
   test("column") {
-    val striped = Image.apply(200, 100).map((x, y, p) => if (y % 2 == 0) new Pixel(255) else new Pixel(0))
+    val striped = ImmutableImage.apply(200, 100).map((x, y, p) => if (y % 2 == 0) new Pixel(255) else new Pixel(0))
     val col = striped.col(51)
     assert(striped.height === col.length)
     for (y <- 0 until striped.height) {
@@ -546,7 +546,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("row") {
-    val striped = Image.apply(200, 100).map((x, y, p) => if (y % 2 == 0) new Pixel(255) else new Pixel(0))
+    val striped = ImmutableImage.apply(200, 100).map((x, y, p) => if (y % 2 == 0) new Pixel(255) else new Pixel(0))
     val row1 = striped.row(44)
     assert(striped.width === row1.length)
     assert(row1.forall(_ == new Pixel(255)))
@@ -556,7 +556,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("pixels region") {
-    val striped = Image.apply(200, 100).map((x, y, p) => if (y % 2 == 0) new Pixel(255) else new Pixel(0))
+    val striped = ImmutableImage.apply(200, 100).map((x, y, p) => if (y % 2 == 0) new Pixel(255) else new Pixel(0))
     val pixels = striped.pixels(10, 10, 10, 10)
     for (k <- 0 until 10)
       assert(new Pixel(255) === pixels(k))
@@ -569,16 +569,16 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("autocrop removes background") {
-    val image = Image.fromResource("/com/sksamuel/scrimage/dyson.png")
+    val image = ImmutableImage.fromResource("/com/sksamuel/scrimage/dyson.png")
     val autocropped = image.autocrop(java.awt.Color.WHITE.toColor)
     assert(282 === autocropped.width)
     assert(193 === autocropped.height)
-    val expected = Image.fromResource("/com/sksamuel/scrimage/dyson_autocropped.png")
+    val expected = ImmutableImage.fromResource("/com/sksamuel/scrimage/dyson_autocropped.png")
     assert(expected == autocropped)
   }
 
   test("removeTransparency conserve pixels on non transparent image") {
-    val image = Image.fromResource("/com/sksamuel/scrimage/jazz.jpg")
+    val image = ImmutableImage.fromResource("/com/sksamuel/scrimage/jazz.jpg")
     val withoutTransparency = image.removeTransparency(java.awt.Color.BLACK)
     val pixels = image.pixels
     val pxwt = withoutTransparency.pixels

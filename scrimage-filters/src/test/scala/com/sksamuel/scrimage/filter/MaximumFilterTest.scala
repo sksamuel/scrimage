@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.Image
+import com.sksamuel.scrimage.ImmutableImage
 import org.scalatest.{BeforeAndAfter, FunSuite, OneInstancePerTest}
 
 class MaximumFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
@@ -9,6 +9,6 @@ class MaximumFilterTest extends FunSuite with BeforeAndAfter with OneInstancePer
   val expected = getClass.getResourceAsStream("/com/sksamuel/scrimage/filters/bird_small_maximum.png")
 
   test("max filter output matches expected") {
-    assert(Image.fromStream(original).filter(new MaximumFilter) === Image.fromStream(expected))
+    assert(ImmutableImage.fromStream(original).filter(new MaximumFilter) === ImmutableImage.fromStream(expected))
   }
 }

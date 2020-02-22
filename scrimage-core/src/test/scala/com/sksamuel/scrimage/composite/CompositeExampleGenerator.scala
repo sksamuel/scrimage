@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.composite
 
-import com.sksamuel.scrimage.{Composite, Image}
+import com.sksamuel.scrimage.{Composite, ImmutableImage}
 import com.sksamuel.scrimage.nio.{JpegWriter, PngWriter}
 import java.io.File
 import java.nio.charset.Charset
@@ -36,8 +36,8 @@ object CompositeExampleGenerator extends App {
     ("subtract", new SubtractComposite(_))
   )
 
-  val l1 = Image.fromStream(getClass.getResourceAsStream("/mailbox.jpg")).scaleTo(1200, 800)
-  val l2 = Image.fromStream(getClass.getResourceAsStream("/palm.jpg")).scaleTo(1200, 800)
+  val l1 = ImmutableImage.fromStream(getClass.getResourceAsStream("/mailbox.jpg")).scaleTo(1200, 800)
+  val l2 = ImmutableImage.fromStream(getClass.getResourceAsStream("/palm.jpg")).scaleTo(1200, 800)
   val s1 = l1.scaleToWidth(200)
   val s2 = l2.scaleToWidth(200)
 

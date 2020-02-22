@@ -15,8 +15,8 @@
  */
 package com.sksamuel.scrimage.nio;
 
-import com.sksamuel.scrimage.Image;
-import com.sksamuel.scrimage.Image$;
+import com.sksamuel.scrimage.ImmutableImage;
+import com.sksamuel.scrimage.ImmutableImage$;
 
 import javax.imageio.ImageIO;
 import java.io.ByteArrayInputStream;
@@ -28,8 +28,8 @@ import java.io.IOException;
 public class JavaImageIOReader implements Reader {
 
     @Override
-    public Image fromBytes(byte[] bytes, int type) throws IOException {
-        return Image$.MODULE$.wrapAwt(ImageIO.read(new ByteArrayInputStream(bytes)), type);
+    public ImmutableImage fromBytes(byte[] bytes, int type) throws IOException {
+        return ImmutableImage$.MODULE$.wrapAwt(ImageIO.read(new ByteArrayInputStream(bytes)), type);
     }
 }
 

@@ -4,7 +4,7 @@ import org.scalatest.FunSuite
 
 class LinearSubpixelInterpolatorTest extends FunSuite {
 
-  private val image = Image.fromResource("/com/sksamuel/scrimage/bird.jpg")
+  private val image = ImmutableImage.fromResource("/com/sksamuel/scrimage/bird.jpg")
 
   test("subpixel happy path") {
     assert(-1315602 === image.subpixel(2, 3))

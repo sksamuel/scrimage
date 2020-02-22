@@ -1,12 +1,12 @@
 package com.sksamuel.scrimage.nio
 
-import com.sksamuel.scrimage.Image
+import com.sksamuel.scrimage.ImmutableImage
 import org.apache.commons.io.IOUtils
 import org.scalatest.{Matchers, WordSpec}
 
 class GifSequenceWriterTest extends WordSpec with Matchers {
 
-  private val bird = Image.fromResource("/bird_small.png")
+  private val bird = ImmutableImage.fromResource("/bird_small.png")
 
   "gif sequence writer" should {
     "write all frames" in {

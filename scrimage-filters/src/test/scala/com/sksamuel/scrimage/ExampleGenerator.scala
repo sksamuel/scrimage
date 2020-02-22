@@ -9,9 +9,9 @@ import org.apache.commons.io.FileUtils
 
 object ExampleGenerator extends App {
 
-  val image1 = Image.fromResource("/bird.jpg")
-  val image2 = Image.fromResource("/colosseum.jpg")
-  val image3 = Image.fromResource("/lanzarote.jpg")
+  val image1 = ImmutableImage.fromResource("/bird.jpg")
+  val image2 = ImmutableImage.fromResource("/colosseum.jpg")
+  val image3 = ImmutableImage.fromResource("/lanzarote.jpg")
   val font = FontUtils.createFont(Font.SANS_SERIF, 48)
 
   val filters: List[(String, Filter)] = List(

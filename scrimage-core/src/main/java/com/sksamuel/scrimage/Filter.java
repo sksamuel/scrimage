@@ -16,5 +16,5 @@
 package com.sksamuel.scrimage;
 
 public interface Filter {
-    void apply(Image image);
+    void apply(ImmutableImage image);
 }

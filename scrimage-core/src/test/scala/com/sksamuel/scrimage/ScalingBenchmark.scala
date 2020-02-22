@@ -17,7 +17,7 @@ class ScalingBenchmark { // extends FunSuite {
   val bird    : Array[Byte]   = IOUtils.toByteArray(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird.jpg"))
   val awt     : BufferedImage = ImageIO.read(new ByteArrayInputStream(bird))
   // val in = getResourceAsStream("./bird.jpg")
-  val scrimage: Image         = Image.fromAwt(awt)
+  val scrimage: ImmutableImage         = ImmutableImage.fromAwt(awt)
   // val awt = scrimage.awt
   val width   : Int           = scrimage.width
   val height  : Int           = scrimage.height
@@ -71,7 +71,7 @@ class ScalingBenchmark { // extends FunSuite {
   counter = 0
   while (counter < COUNT) {
     val op = new ResampleOp(ResampleFilters.biCubicFilter, width / 3, height / 3)
-    val scaled = Image.fromAwt(op.filter(awt, null))
+    val scaled = ImmutableImage.fromAwt(op.filter(awt, null))
     assert(scaled.width == width / 3)
     assert(scaled.height == height / 3)
     counter += 1
