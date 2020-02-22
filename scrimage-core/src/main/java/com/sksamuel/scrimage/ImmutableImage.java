@@ -568,6 +568,25 @@ public class ImmutableImage extends MutableAwtImage {
     }
 
     /**
+     * Programatically returns the origin point of top left.
+     */
+    public Pixel topLeftPixel() {
+        return pixel(0, 0);
+    }
+
+    public Pixel bottomLeftPixel() {
+        return pixel(0, height - 1);
+    }
+
+    public Pixel topRightPixel() {
+        return pixel(width - 1, 0);
+    }
+
+    public Pixel bottomRightPixel() {
+        return pixel(width - 1, height - 1);
+    }
+
+    /**
      * Flips this image vertically.
      *
      * @return The result of flipping this image vertically.
