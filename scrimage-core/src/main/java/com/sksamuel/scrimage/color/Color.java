@@ -68,7 +68,9 @@ public interface Color {
 
    /**
     * Returns the average of this Color merged with another Color.
-    * Takes into account alpha
+    * Takes into account alpha and returns the average as an RGB value.
+    *
+    * See https://stackoverflow.com/questions/1944095/how-to-mix-two-argb-pixels
     */
    default RGBColor average(Color other) {
       RGBColor c1 = this.toRGB();
