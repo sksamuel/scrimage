@@ -21,10 +21,10 @@ public class BlackThresholdFilter implements Filter {
     public void apply(ImmutableImage image) {
         int threshold = (int) ((255 * thresholdPercentage) / 100.0);
 
-        image.mapInPlace((x, y, p) -> {
+        image.mapInPlace((p) -> {
             int brightness = PixelUtils.brightness(p.argb);
             if (brightness < threshold) {
-                return new Pixel(x, y, p.argb & 0xff000000);
+                return new Pixel(p.x, p.y, p.argb & 0xff000000);
             } else {
                 return p;
             }

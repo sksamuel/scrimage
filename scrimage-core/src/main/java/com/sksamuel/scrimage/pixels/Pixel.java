@@ -11,80 +11,90 @@ import java.util.function.Function;
  */
 public class Pixel {
 
-    public final int argb;
-    public final int x;
-    public final int y;
+   public final int argb;
+   public final int x;
+   public final int y;
 
-    public Pixel(int x, int y, int argb) {
-        this.x = x;
-        this.y = y;
-        this.argb = argb;
-    }
+   public Pixel(int x, int y, int argb) {
+      this.x = x;
+      this.y = y;
+      this.argb = argb;
+   }
 
-    public Pixel(int x, int y, int r, int g, int b, int alpha) {
-        this.x = x;
-        this.y = y;
-        this.argb = alpha << 24 | (r & 0xFF) << 16 | (g & 0xFF) << 8 | (b & 0xFF);
-    }
+   public Pixel(int x, int y, int r, int g, int b, int alpha) {
+      this.x = x;
+      this.y = y;
+      this.argb = alpha << 24 | (r & 0xFF) << 16 | (g & 0xFF) << 8 | (b & 0xFF);
+   }
 
-    public int alpha() {
-        return argb >> 24 & 0xFF;
-    }
+   public int alpha() {
+      return argb >> 24 & 0xFF;
+   }
 
-    public int red() {
-        return argb >> 16 & 0xFF;
-    }
+   public int red() {
+      return argb >> 16 & 0xFF;
+   }
 
-    public int green() {
-        return argb >> 8 & 0xFF;
-    }
+   public int green() {
+      return argb >> 8 & 0xFF;
+   }
 
-    public int x() {
-        return x;
-    }
+   public int x() {
+      return x;
+   }
 
-    public int y() {
-        return y;
-    }
+   public int y() {
+      return y;
+   }
 
-    public int blue() {
-        return argb & 0xFF;
-    }
+   public int blue() {
+      return argb & 0xFF;
+   }
 
-    public int average() {
-        return (red() + green() + blue()) / 3;
-    }
+   public int average() {
+      return (red() + green() + blue()) / 3;
+   }
 
-    // use toARGBInt() or .argb
-    @Deprecated
-    public int toInt() {
-        return toARGBInt();
-    }
+   // use toARGBInt() or .argb
+   @Deprecated
+   public int toInt() {
+      return toARGBInt();
+   }
 
-    public int toARGBInt() {
-        return argb;
-    }
+   public int toARGBInt() {
+      return argb;
+   }
 
-    public RGBColor toColor() {
-        return new RGBColor(red(), green(), blue(), alpha());
-    }
+   public RGBColor toColor() {
+      return new RGBColor(red(), green(), blue(), alpha());
+   }
 
-    public Pixel mapByComponent(Function<Integer, Integer> f) {
-        return new Pixel(x, y, f.apply(red()), f.apply(blue()), f.apply(green()), f.apply(alpha()));
-    }
+   public Pixel mapByComponent(Function<Integer, Integer> f) {
+      return new Pixel(x, y, f.apply(red()), f.apply(blue()), f.apply(green()), f.apply(alpha()));
+   }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Pixel pixel = (Pixel) o;
-        return argb == pixel.argb &&
-                x == pixel.x &&
-                y == pixel.y;
-    }
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      Pixel pixel = (Pixel) o;
+      return argb == pixel.argb &&
+         x == pixel.x &&
+         y == pixel.y;
+   }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(argb, x, y);
-    }
+   @Override
+   public int hashCode() {
+      return Objects.hash(argb, x, y);
+   }
+
+   @Override
+   public String toString() {
+      final StringBuffer sb = new StringBuffer("Pixel{");
+      sb.append("argb=").append(argb);
+      sb.append(", x=").append(x);
+      sb.append(", y=").append(y);
+      sb.append('}');
+      return sb.toString();
+   }
 }

@@ -21,18 +21,18 @@ import com.sksamuel.scrimage.pixels.Pixel;
 
 public class OpacityFilter implements Filter {
 
-    private final float amount;
+   private final float amount;
 
-    public OpacityFilter(float amount) {
-        this.amount = amount;
-    }
+   public OpacityFilter(float amount) {
+      this.amount = amount;
+   }
 
-    public void apply(ImmutableImage image) {
-        image.mapInPlace((x, y, p) -> {
-            int _r = (int) (p.red() + (255 - p.red()) * amount);
-            int _g = (int) (p.green() + (255 - p.green()) * amount);
-            int _b = (int) (p.blue() + (255 - p.blue()) * amount);
-            return new Pixel(x, y, _r, _g, _b, p.alpha());
-        });
-    }
+   public void apply(ImmutableImage image) {
+      image.mapInPlace(p -> {
+         int _r = (int) (p.red() + (255 - p.red()) * amount);
+         int _g = (int) (p.green() + (255 - p.green()) * amount);
+         int _b = (int) (p.blue() + (255 - p.blue()) * amount);
+         return new Pixel(p.x, p.y, _r, _g, _b, p.alpha());
+      });
+   }
 }

@@ -22,12 +22,12 @@ import com.sksamuel.scrimage.pixels.Pixel;
 public class GrayscaleFilter implements Filter {
 
     public void apply(ImmutableImage image) {
-        image.mapInPlace((x, y, p) -> {
+        image.mapInPlace((p) -> {
             double red = 0.21 * p.red();
             double green = 0.71 * p.green();
             double blue = 0.07 * p.blue();
             int gray = (int) (red + green + blue);
-            return new Pixel(x, y, gray, gray, gray, p.alpha());
+            return new Pixel(p.x, p.y, gray, gray, gray, p.alpha());
         });
     }
 }
