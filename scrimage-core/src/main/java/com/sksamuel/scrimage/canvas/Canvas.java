@@ -17,6 +17,10 @@ public class Canvas {
         this.image = image;
     }
 
+    public ImmutableImage getImage() {
+       return image;
+    }
+
     private Graphics2D g2(ImmutableImage image) {
         return (Graphics2D) image.awt().getGraphics();
     }

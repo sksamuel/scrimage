@@ -4,57 +4,48 @@ import com.sksamuel.scrimage.canvas.Drawable;
 import com.sksamuel.scrimage.canvas.GraphicsContext;
 import com.sksamuel.scrimage.canvas.RichGraphics2D;
 
+import java.util.Arrays;
 import java.util.List;
-
-
-//object Polygon {
-//
-//  implicit def awt2polygon(awt: java.awt.Polygon, context: GraphicsContext): Polygon = {
-//    val points = awt.xpoints.zip(awt.ypoints).map { case (x, y) => new java.awt.Point(x, y) }.toIndexedSeq
-//    Polygon(points, context)
-//  }
-//
-//  def rectangle(x: Int, y: Int, width: Int, height: Int, context: GraphicsContext): Polygon = {
-//    Polygon(
-//      Seq(
-//        new java.awt.Point(x, y),
-//        new java.awt.Point(x + width, y),
-//        new java.awt.Point(x + width, y + height),
-//        new java.awt.Point(x, y + height)
-//      ),
-//      context
-//    )
-//  }
-//}
-
 
 public class Polygon implements Drawable {
 
-    private final List<java.awt.Point> points;
-    private final GraphicsContext context;
+   public static Polygon rectangle(int x, int y, int width, int height, GraphicsContext context) {
+      return new Polygon(
+         Arrays.asList(
+            new java.awt.Point(x, y),
+            new java.awt.Point(x + width, y),
+            new java.awt.Point(x + width, y + height),
+            new java.awt.Point(x, y + height)
+         ),
+         context
+      );
+   }
 
-    public Polygon(List<java.awt.Point> points, GraphicsContext context) {
-        this.points = points;
-        this.context = context;
-    }
+   private final List<java.awt.Point> points;
+   private final GraphicsContext context;
 
-    @Override
-    public void draw(RichGraphics2D g) {
-        int[] xs = points.stream().mapToInt(p -> p.x).toArray();
-        int[] ys = points.stream().mapToInt(p -> p.y).toArray();
-        g.drawPolygon(xs, ys, points.size());
-    }
+   public Polygon(List<java.awt.Point> points, GraphicsContext context) {
+      this.points = points;
+      this.context = context;
+   }
 
-    public FilledPolygon toFilled() {
-        return new FilledPolygon(points, context);
-    }
+   @Override
+   public void draw(RichGraphics2D g) {
+      int[] xs = points.stream().mapToInt(p -> p.x).toArray();
+      int[] ys = points.stream().mapToInt(p -> p.y).toArray();
+      g.drawPolygon(xs, ys, points.size());
+   }
 
-    public Polyline toLine() {
-        return new Polyline(points, context);
-    }
+   public FilledPolygon toFilled() {
+      return new FilledPolygon(points, context);
+   }
 
-    @Override
-    public GraphicsContext context() {
-        return context;
-    }
+   public Polyline toLine() {
+      return new Polyline(points, context);
+   }
+
+   @Override
+   public GraphicsContext context() {
+      return context;
+   }
 }

@@ -4,7 +4,7 @@ import com.sksamuel.scrimage.pixels.Pixel;
 
 import java.awt.*;
 
-interface Color {
+public interface Color {
 
     /**
      * Returns a conversion of this Color into an RGBColor.

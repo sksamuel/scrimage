@@ -1,4 +1,4 @@
-package com.sksamuel.scrimage.pixels;
+package com.sksamuel.scrimage.subpixel;
 
 public interface SubpixelInterpolator {
     int subpixel(double x, double y);

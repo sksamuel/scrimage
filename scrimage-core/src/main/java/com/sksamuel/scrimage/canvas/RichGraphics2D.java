@@ -1,5 +1,7 @@
 package com.sksamuel.scrimage.canvas;
 
+import com.sksamuel.scrimage.canvas.painters.Painter;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Composite;
@@ -44,6 +46,14 @@ public class RichGraphics2D extends Graphics2D {
 
     public void setBlack() {
         setColor(Color.BLACK);
+    }
+
+    public void setColor(com.sksamuel.scrimage.color.Color color) {
+       g2.setColor(color.awt());
+    }
+
+    public void setPainter(Painter painter) {
+       g2.setPaint(painter.paint());
     }
 
     public void setAntiAlias(boolean on) {

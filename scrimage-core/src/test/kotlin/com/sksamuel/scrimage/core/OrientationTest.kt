@@ -17,7 +17,7 @@ class OrientationTest : WordSpec({
       IOUtils.toByteArray(javaClass.getResourceAsStream(filePath))
 
    "iphone image" should {
-      "be re-orientated"  {
+      "!be re-orientated"  {
          // Images from: https://github.com/recurser/exif-orientation-examples
 
          val writer = JpegWriter(100, true)

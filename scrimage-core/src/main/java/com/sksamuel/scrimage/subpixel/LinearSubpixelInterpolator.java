@@ -1,6 +1,8 @@
-package com.sksamuel.scrimage.pixels;
+package com.sksamuel.scrimage.subpixel;
 
 import com.sksamuel.scrimage.AwtImage;
+import com.sksamuel.scrimage.pixels.Pixel;
+import com.sksamuel.scrimage.pixels.PixelTools;
 
 import java.util.Arrays;
 import java.util.Collections;
