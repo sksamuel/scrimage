@@ -1431,6 +1431,13 @@ public class ImmutableImage extends MutableImage {
    }
 
    /**
+    * Returns the average colour of all pixels in this image
+    */
+   public RGBColor average() {
+      return Arrays.stream(pixels()).map(Pixel::toColor).reduce(com.sksamuel.scrimage.color.Color::average).get();
+   }
+
+   /**
     * Maps the pixels of this image into another image by applying the given function to each pixel.
     * <p>
     * The function accepts a pixel being transformed and returns the transformed (or original) pixel.
