@@ -51,6 +51,10 @@ public class Pixel {
         return argb & 0xFF;
     }
 
+    public int average() {
+        return (red() + green() + blue()) / 3;
+    }
+
     // use toARGBInt() or .argb
     @Deprecated
     public int toInt() {
