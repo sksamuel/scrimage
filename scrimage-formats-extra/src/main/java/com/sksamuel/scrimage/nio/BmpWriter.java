@@ -1,10 +1,9 @@
 package com.sksamuel.scrimage.nio;
 
-public class PnmWriter extends TwelveMonkeysWriter {
+public class BmpWriter extends TwelveMonkeysWriter {
 
     @Override
     public String format() {
-        return "PNM";
+        return "bmp";
     }
 }
-

@@ -11,11 +11,13 @@ object Libs {
 
    object TwelveMonkeys {
       const val imageIoCore = "com.twelvemonkeys.imageio:imageio-core:$TwelveMonkeysVersion"
-      const val imageIoJpeg = "com.twelvemonkeys.imageio:imageio-jpeg:$TwelveMonkeysVersion"
-      val imageIoPcx = "com.twelvemonkeys.imageio:imageio-pcx:$TwelveMonkeysVersion"
-      val imageIoTga = "com.twelvemonkeys.imageio:imageio-tga:$TwelveMonkeysVersion"
-      val imageIoTiff = "com.twelvemonkeys.imageio:imageio-tiff:$TwelveMonkeysVersion"
-      val imageIoBmp = "com.twelvemonkeys.imageio:imageio-bmp:$TwelveMonkeysVersion"
+      const val jpeg = "com.twelvemonkeys.imageio:imageio-jpeg:$TwelveMonkeysVersion"
+      const val pcx = "com.twelvemonkeys.imageio:imageio-pcx:$TwelveMonkeysVersion"
+      const val pnm = "com.twelvemonkeys.imageio:imageio-pcx:$TwelveMonkeysVersion"
+      const val tga = "com.twelvemonkeys.imageio:imageio-tga:$TwelveMonkeysVersion"
+      const val tiff = "com.twelvemonkeys.imageio:imageio-tiff:$TwelveMonkeysVersion"
+      const val bmp = "com.twelvemonkeys.imageio:imageio-bmp:$TwelveMonkeysVersion"
+      const val iff = "com.twelvemonkeys.imageio:imageio-bmp:$TwelveMonkeysVersion"
    }
 
    object Kotest {

@@ -23,6 +23,5 @@ abstract class TwelveMonkeysWriter implements ImageWriter {
         writer.write(null, new IIOImage(image.awt(), null, null), params);
         ios.close();
         writer.dispose();
-//        IOUtils.closeQuietly(out);
     }
 }
