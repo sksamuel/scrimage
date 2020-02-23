@@ -2,8 +2,7 @@ package com.sksamuel.scrimage.canvas.drawables;
 
 import com.sksamuel.scrimage.canvas.Drawable;
 import com.sksamuel.scrimage.canvas.GraphicsContext;
-
-import java.awt.*;
+import com.sksamuel.scrimage.canvas.RichGraphics2D;
 
 public class Text implements Drawable {
 
@@ -20,7 +19,7 @@ public class Text implements Drawable {
     }
 
     @Override
-    public void draw(Graphics2D g2) {
+    public void draw(RichGraphics2D g2) {
         context.configure(g2);
         g2.drawString(text, x, y);
     }

@@ -2,8 +2,7 @@ package com.sksamuel.scrimage.canvas.drawables;
 
 import com.sksamuel.scrimage.canvas.Drawable;
 import com.sksamuel.scrimage.canvas.GraphicsContext;
-
-import java.awt.Graphics2D;
+import com.sksamuel.scrimage.canvas.RichGraphics2D;
 
 public class FilledRect implements Drawable {
 
@@ -23,7 +22,7 @@ public class FilledRect implements Drawable {
 
 
     @Override
-    public void draw(Graphics2D g) {
+    public void draw(RichGraphics2D g) {
         g.fillRect(x, y, width, height);
     }
 

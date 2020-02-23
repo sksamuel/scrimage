@@ -1,17 +1,15 @@
 package com.sksamuel.scrimage.canvas;
 
-import java.awt.*;
-
 public interface GraphicsContext {
 
+    /**
+     * An implementation of [GraphicsContext] that does not change the Graphics object.
+     */
     static GraphicsContext identity() {
-        return new GraphicsContext() {
-            @Override
-            public void configure(Graphics2D g2) {
-
-            }
+        return g2 -> {
         };
     }
 
-    void configure(Graphics2D g2);
+    void configure(RichGraphics2D g2);
 }
+

@@ -2,8 +2,7 @@ package com.sksamuel.scrimage.canvas.drawables;
 
 import com.sksamuel.scrimage.canvas.Drawable;
 import com.sksamuel.scrimage.canvas.GraphicsContext;
-
-import java.awt.*;
+import com.sksamuel.scrimage.canvas.RichGraphics2D;
 
 public class RoundedRect implements Drawable {
 
@@ -26,7 +25,7 @@ public class RoundedRect implements Drawable {
     }
 
     @Override
-    public void draw(Graphics2D g) {
+    public void draw(RichGraphics2D g) {
         g.drawRoundRect(x, y, width, height, arcWidth, arcHeight);
     }
 

@@ -2,8 +2,7 @@ package com.sksamuel.scrimage.canvas.drawables;
 
 import com.sksamuel.scrimage.canvas.Drawable;
 import com.sksamuel.scrimage.canvas.GraphicsContext;
-
-import java.awt.*;
+import com.sksamuel.scrimage.canvas.RichGraphics2D;
 
 public class FilledArc implements Drawable {
 
@@ -26,7 +25,7 @@ public class FilledArc implements Drawable {
     }
 
     @Override
-    public void draw(Graphics2D g) {
+    public void draw(RichGraphics2D g) {
         g.fillArc(x, y, width, height, startAngle, endAngle);
     }
 

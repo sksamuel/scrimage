@@ -3,8 +3,7 @@ package com.sksamuel.scrimage.canvas.drawables;
 import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.canvas.Drawable;
 import com.sksamuel.scrimage.canvas.GraphicsContext;
-
-import java.awt.*;
+import com.sksamuel.scrimage.canvas.RichGraphics2D;
 
 public class DrawableImage implements Drawable {
 
@@ -20,8 +19,16 @@ public class DrawableImage implements Drawable {
         this.context = context;
     }
 
+    public DrawableImage(ImmutableImage image, int x, int y) {
+        this.image = image;
+        this.x = x;
+        this.y = y;
+        this.context = GraphicsContext.identity();
+    }
+
+
     @Override
-    public void draw(Graphics2D g) {
+    public void draw(RichGraphics2D g) {
         g.drawImage(image.awt(), x, y, null);
     }
 

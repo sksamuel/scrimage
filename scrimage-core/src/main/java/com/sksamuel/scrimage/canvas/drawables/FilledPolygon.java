@@ -2,8 +2,8 @@ package com.sksamuel.scrimage.canvas.drawables;
 
 import com.sksamuel.scrimage.canvas.Drawable;
 import com.sksamuel.scrimage.canvas.GraphicsContext;
+import com.sksamuel.scrimage.canvas.RichGraphics2D;
 
-import java.awt.*;
 import java.util.List;
 
 public class FilledPolygon implements Drawable {
@@ -17,7 +17,7 @@ public class FilledPolygon implements Drawable {
     }
 
     @Override
-    public void draw(Graphics2D g) {
+    public void draw(RichGraphics2D g) {
         int[] xs = points.stream().mapToInt(p -> p.x).toArray();
         int[] ys = points.stream().mapToInt(p -> p.y).toArray();
         g.fillPolygon(xs, ys, points.size());
