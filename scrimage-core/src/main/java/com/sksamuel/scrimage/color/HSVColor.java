@@ -1,5 +1,9 @@
 package com.sksamuel.scrimage.color;
 
+import java.util.Objects;
+
+import static java.lang.Math.round;
+
 /**
  * Hue/Saturation/Value
  * <p>
@@ -8,7 +12,7 @@ package com.sksamuel.scrimage.color;
  * The lightness component should be between 0.0 and 1.0
  * The alpha component should be between 0.0 and 1.0
  */
-class HSVColor implements Color {
+public class HSVColor implements Color {
 
     public final float hue;
     public final float saturation;
@@ -31,57 +35,48 @@ class HSVColor implements Color {
         return this;
     }
 
-    // credit to https://github.com/mjackson/mjijackson.github.com/blob/master/2008/02/rgb-to-hsl-and-rgb-to-hsv-color-model-conversion-algorithms-in-javascript.txt
+    // credit to https://stackoverflow.com/questions/7896280/converting-from-hsv-hsb-in-java-to-rgb-without-using-java-awt-color-disallowe
     public RGBColor toRGB() {
 
-        // assumes h is in th range [0,1] not [0,360) so must convert
-        float h = hue / 360f;
-        float s = saturation;
-        float v = value;
+        // assumes h is in the range [0,1] not [0,360) so must convert
+        float h01 = hue / 360f;
+        int h = (int) (h01 * 6);
+        float f = h01 * 6 - h;
+        float p = value * (1 - saturation) * 256;
+        float q = value * (1 - f * saturation) * 256;
+        float t = value * (1 - (1 - f) * saturation) * 256;
 
-        float i = (float) Math.floor(h * 6f);
-        float f = h * 6f - i;
-        float p = v * (1 - s);
-        float q = v * (1 - f * s);
-        float t = v * (1 - (1 - f) * s);
-
-        float r, g, b;
-
-        switch ((int) (i % 6)) {
+        switch (h) {
             case 0:
-                r = v;
-                g = t;
-                b = p;
-                break;
+                return new RGBColor(round(value * 256), round(t), round(p));
             case 1:
-                r = q;
-                g = v;
-                b = p;
-                break;
+                return new RGBColor(round(q), round(value * 256), round(p));
             case 2:
-                r = q;
-                g = v;
-                b = t;
-                break;
+                return new RGBColor(round(p), round(value * 256), round(t));
             case 3:
-                r = p;
-                g = q;
-                b = v;
-                break;
+                return new RGBColor(round(p), round(q), round(value * 256));
             case 4:
-                r = t;
-                g = p;
-                b = v;
-                break;
+                return new RGBColor(round(t), round(p), round(value * 256));
             case 5:
-                r = v;
-                g = p;
-                b = q;
-                break;
+                return new RGBColor(round(value * 256), round(p), round(q));
             default:
-                throw new RuntimeException("Cannot convert from HSV to RGB: from " + this);
+                throw new RuntimeException("Error converting HSV to RGB. HSV was " + hue + ", " + saturation + ", " + value);
         }
+    }
 
-        return new RGBColor(Math.round(r * 255), Math.round(g * 255), Math.round(b * 255), 255);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        HSVColor hsvColor = (HSVColor) o;
+        return Float.compare(hsvColor.hue, hue) == 0 &&
+                Float.compare(hsvColor.saturation, saturation) == 0 &&
+                Float.compare(hsvColor.value, value) == 0 &&
+                Float.compare(hsvColor.alpha, alpha) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(hue, saturation, value, alpha);
     }
 }

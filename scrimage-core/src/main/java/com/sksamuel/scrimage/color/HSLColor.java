@@ -1,5 +1,7 @@
 package com.sksamuel.scrimage.color;
 
+import java.util.Objects;
+
 /**
  * Hue/Saturation/Lightness
  * <p>
@@ -8,7 +10,7 @@ package com.sksamuel.scrimage.color;
  * The lightness component should be between0.0and1.0
  * The alpha component should be between0.0and1.0
  */
-public class HSLColor {
+public class HSLColor implements Color {
 
     public final float hue;
     public final float saturation;
@@ -69,5 +71,21 @@ public class HSLColor {
             float b = hue2rgb(p, q, h - 1f / 3f);
             return new RGBColor(Math.round(r * 255), Math.round(g * 255), Math.round(b * 255), 255);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        HSLColor hslColor = (HSLColor) o;
+        return Float.compare(hslColor.hue, hue) == 0 &&
+                Float.compare(hslColor.saturation, saturation) == 0 &&
+                Float.compare(hslColor.lightness, lightness) == 0 &&
+                Float.compare(hslColor.alpha, alpha) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(hue, saturation, lightness, alpha);
     }
 }

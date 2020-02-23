@@ -1,5 +1,7 @@
 package com.sksamuel.scrimage.color;
 
+import java.util.Objects;
+
 /**
  * Red/Green/Blue
  * <p>
@@ -11,6 +13,13 @@ public class RGBColor implements Color {
     public final int green;
     public final int blue;
     public final int alpha;
+
+    /**
+     * Creates an RGB with default alpha of 255.
+     */
+    public RGBColor(int red, int green, int blue) {
+        this(red, green, blue, 255);
+    }
 
     public RGBColor(int red, int green, int blue, int alpha) {
 
@@ -48,7 +57,7 @@ public class RGBColor implements Color {
     }
 
     public int toARGBInt() {
-        return ((alpha & 0xFF) << 24) | ((red & 0xFF) << 16) | ((green & 0xFF) << 8) | blue & 0xFF;
+        return ((alpha & 0xFF) << 24) | ((red & 0xFF) << 16) | ((green & 0xFF) << 8) | ((blue & 0xFF));
     }
 
     public RGBColor toRGB() {
@@ -70,6 +79,7 @@ public class RGBColor implements Color {
     }
 
     // credit to https://github.com/mjackson/mjijackson.github.com/blob/master/2008/02/rgb-to-hsl-and-rgb-to-hsv-color-model-conversion-algorithms-in-javascript.txt
+    @Override
     public HSVColor toHSV() {
 
         float r = red / 255f;
@@ -141,5 +151,21 @@ public class RGBColor implements Color {
         }
 
         return new HSLColor(h * 360f, s, l, 1f);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RGBColor rgbColor = (RGBColor) o;
+        return red == rgbColor.red &&
+                green == rgbColor.green &&
+                blue == rgbColor.blue &&
+                alpha == rgbColor.alpha;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(red, green, blue, alpha);
     }
 }

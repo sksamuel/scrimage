@@ -2,6 +2,7 @@ package com.sksamuel.scrimage.pixels;
 
 import com.sksamuel.scrimage.color.RGBColor;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -66,5 +67,20 @@ public class Pixel {
 
     public Pixel mapByComponent(Function<Integer, Integer> f) {
         return new Pixel(x, y, f.apply(red()), f.apply(blue()), f.apply(green()), f.apply(alpha()));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Pixel pixel = (Pixel) o;
+        return argb == pixel.argb &&
+                x == pixel.x &&
+                y == pixel.y;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(argb, x, y);
     }
 }

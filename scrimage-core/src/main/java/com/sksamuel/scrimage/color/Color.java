@@ -41,7 +41,11 @@ interface Color {
      * Returns a HEX String of this colour. Eg for 0,255,0, this method will return 00FF00.
      */
     default String toHex() {
-        return Integer.toHexString(toRGB().toARGBInt() & 0xffffff).toUpperCase();
+        StringBuilder hex = new StringBuilder(Integer.toHexString(toRGB().toARGBInt() & 0xffffff).toUpperCase());
+        while (hex.length() < 6) {
+            hex.insert(0, "0");
+        }
+        return hex.toString();
     }
 
     default java.awt.Color awt() {

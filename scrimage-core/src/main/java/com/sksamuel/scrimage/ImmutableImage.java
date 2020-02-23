@@ -410,6 +410,14 @@ public class ImmutableImage extends MutableImage {
     }
 
     /**
+     * Convenience method for cover(targetWidth, targetHeight, ScaleMethod.Bicubic, Position.Center)
+     */
+    public ImmutableImage cover(int targetWidth,
+                                int targetHeight) {
+        return cover(targetWidth, targetHeight, ScaleMethod.Bicubic, Position.Center);
+    }
+
+    /**
      * Returns a copy of the canvas with the given dimensions where the
      * original image has been scaled to completely cover the new dimensions
      * whilst retaining the original aspect ratio.
@@ -1281,7 +1289,6 @@ public class ImmutableImage extends MutableImage {
     public byte[] bytes(ImageWriter writer) throws IOException {
         return forWriter(writer).bytes();
     }
-
 
     public WriteContext forWriter(ImageWriter writer) {
         return new WriteContext(writer, this);

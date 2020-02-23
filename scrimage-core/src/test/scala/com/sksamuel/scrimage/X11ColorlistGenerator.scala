@@ -4,7 +4,6 @@ import org.apache.commons.lang3.text.WordUtils
 import scala.io.Source
 
 
-/** @author Stephen Samuel */
 object X11ColorlistGenerator extends App {
   val file = "/etc/X11/rgb.txt"
   Using.resource(Source.fromFile(file)) { lines =>
