@@ -14,18 +14,3 @@ public interface Drawable {
         return null;
     }
 }
-
-
-//    object Drawable{
-//
-//        def apply(img:ImmutableImage,x:Int,y:Int):DrawableImage=DrawableImage(img,x,y,new GraphicsContext(){
-//        override def configure(g2:Graphics2D):Unit={}
-//        })
-//
-//        def apply(str:String,x:Int,y:Int):Text=Text(str,x,y,new GraphicsContext(){
-//        override def configure(g2:Graphics2D):Unit={}
-//        })
-//        }
-
-
-

@@ -834,8 +834,8 @@ public class ImmutableImage extends MutableImage {
     }
 
     /**
-     * Creates a new image which is the result of this image padded to the canvas size specified.
-     * If this image is already larger than the specified pad then the sizes of the existing
+     * Creates a new ImmutableImage which is the result of this image padded to the canvas size specified.
+     * If this image is already larger than the specified dimensions then the sizes of the existing
      * image will be used instead.
      * <p>
      * Eg, requesting a pad of 200,200 on an image of 250,300 will result
@@ -858,7 +858,7 @@ public class ImmutableImage extends MutableImage {
     }
 
     /**
-     * Creates a new image by adding the given number of columns/rows on left, top, right and bottom.
+     * Creates a new ImmutableImage by adding the given number of columns/rows on left, top, right and bottom.
      *
      * @param left   the number of columns/pixels to add on the left
      * @param top    the number of rows/pixels to add to the top
@@ -1027,6 +1027,28 @@ public class ImmutableImage extends MutableImage {
      */
     public ImmutableImage scale(double scaleFactor, ScaleMethod scaleMethod) {
         return scaleTo((int) (width * scaleFactor), (int) (height * scaleFactor), scaleMethod);
+    }
+
+    /**
+     * Convenience method for scaleTo(targetWidth, targetHeight, ScaleMethod.Bicubic);
+     */
+    public ImmutableImage scaleTo(int targetWidth,
+                                  int targetHeight) {
+        return scaleTo(targetWidth, targetHeight, ScaleMethod.Bicubic);
+    }
+
+    /**
+     * Returns true if this image supports transparency/alpha in its underlying data model.
+     */
+    public boolean hasAlpha() {
+        return awt().getColorModel().hasAlpha();
+    }
+
+    /**
+     * Returns true if this image supports transparency/alpha in its underlying data model.
+     */
+    public boolean hasTransparency() {
+        return awt().getColorModel().hasAlpha();
     }
 
     /**
