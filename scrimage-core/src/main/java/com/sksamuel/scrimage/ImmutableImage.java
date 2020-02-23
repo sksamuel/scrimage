@@ -325,6 +325,13 @@ public class ImmutableImage extends MutableImage {
     }
 
     /**
+     * Returns the AWT type of this image.
+     */
+    public int getType() {
+        return awt().getType();
+    }
+
+    /**
      * Creates an empty ImmutableImage of the same concrete type as this image and with the same dimensions.
      * The underlying pixels will not be initialized.
      *
@@ -339,13 +346,6 @@ public class ImmutableImage extends MutableImage {
      */
     public ImmutableImage bound(int w, int h) {
         return bound(w, h, ScaleMethod.Bicubic);
-    }
-
-    /**
-     * Returns the AWT type of this image.
-     */
-    public int getType() {
-        return awt().getType();
     }
 
     /**
@@ -417,13 +417,16 @@ public class ImmutableImage extends MutableImage {
     }
 
     /**
-     * Returns a copy of the canvas with the given dimensions where the
-     * original image has been scaled to completely cover the new dimensions
-     * whilst retaining the original aspect ratio.
+     * Returns an image with the given dimensions where this image has been scaled to
+     * completely cover the new dimensions whilst retaining the original aspect ratio.
      * <p>
-     * If the new dimensions have a different aspect ratio than the old image
+     * If the given dimensions have a different aspect ratio than this image
      * then the image will be cropped so that it still covers the new area
      * without leaving any background.
+     *
+     * In other words, the image "covers" the target dimensions with the potential loss of some of the image if
+     * the aspect ratio change. Similar to taking a 16:9 movie and resizing it for a 4:3 screen. You can either
+     * lose part of the image (this operation) or resize it so there is empty space on two sides (the fit operation).
      *
      * @param targetWidth  the target width
      * @param targetHeight the target height
@@ -482,9 +485,22 @@ public class ImmutableImage extends MutableImage {
     }
 
     /**
+     * Convenience method for:
+     * fit(canvasWidth, canvasHeight, Colors.Transparent.toAWT(), ScaleMethod.Bicubic, Position.Center)
+     */
+    public ImmutableImage fit(int canvasWidth,
+                              int canvasHeight) {
+        return fit(canvasWidth, canvasHeight, Colors.Transparent.toAWT(), ScaleMethod.Bicubic, Position.Center);
+    }
+
+    /**
      * Returns a copy of this image with the given dimensions
      * where the original image has been scaled to fit completely
      * inside the new dimensions whilst retaining the original aspect ratio.
+     *
+     * In other words, the image "fits" the target dimensions without losing any of the image if
+     * the aspect ratio change. Similar to taking a 16:9 movie and resizing it for a 4:3 screen. You can either
+     * lose part of the image (cover operation) or resize it so there is empty space on two sides (this operation).
      *
      * @param canvasWidth  the target width
      * @param canvasHeight the target height
