@@ -803,20 +803,25 @@ public class ImmutableImage extends MutableImage {
      * Returns a copy of this image rotated 90 degrees anti-clockwise (counter clockwise to US English speakers).
      */
     public ImmutableImage rotateLeft() {
-        return wrapAwt(rotate(-Math.PI / 2), metadata);
+        Radians angle = new Radians(-Math.PI / 2);
+        return rotate(angle);
     }
 
     /**
      * Returns a copy of this image rotated 90 degrees clockwise.
      */
     public ImmutableImage rotateRight() {
-        return wrapAwt(rotate(Math.PI / 2), metadata);
+        Radians angle = new Radians(Math.PI / 2);
+        return rotate(angle);
     }
 
-    public ImmutableImage rotateRadians(double theta) {
-        return wrapAwt(rotate(theta), metadata);
+    public ImmutableImage rotate(Radians radians) {
+        return wrapAwt(super.rotateByRadians(radians), metadata);
     }
 
+    public ImmutableImage rotate(Degrees degrees) {
+        return rotate(degrees.toRadians());
+    }
 
     /**
      * Creates a new image which is the result of this image

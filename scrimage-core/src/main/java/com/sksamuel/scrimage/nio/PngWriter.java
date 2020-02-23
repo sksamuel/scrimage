@@ -37,6 +37,10 @@ public class PngWriter implements ImageWriter {
 
     private final int compressionLevel;
 
+    public PngWriter() {
+        this.compressionLevel = 9;
+    }
+
     public PngWriter(int compressionLevel) {
         this.compressionLevel = compressionLevel;
     }

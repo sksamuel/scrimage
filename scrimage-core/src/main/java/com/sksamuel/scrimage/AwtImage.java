@@ -433,17 +433,17 @@ public class AwtImage {
     }
 
     /**
-     * Returns a new AWT Image rotated with the given angle (in degrees)
+     * Returns a new AWT Image rotated with the given angle (in radians)
      */
     @SuppressWarnings("SuspiciousNameCombination")
-    protected BufferedImage rotate(double angle) {
+    protected BufferedImage rotateByRadians(Radians angle) {
         BufferedImage target = new BufferedImage(height, width, awt.getType());
         Graphics2D g2 = (Graphics2D) target.getGraphics();
         final int offsetx, offsety;
-        if (angle < 0) {
+        if (angle.value < 0) {
             offsetx = 0;
             offsety = width;
-        } else if (angle > 0) {
+        } else if (angle.value > 0) {
             offsetx = height;
             offsety = 0;
         } else {
@@ -451,7 +451,7 @@ public class AwtImage {
             offsety = 0;
         }
         g2.translate(offsetx, offsety);
-        g2.rotate(angle);
+        g2.rotate(angle.value);
         g2.drawImage(awt, 0, 0, null);
         g2.dispose();
         return target;
