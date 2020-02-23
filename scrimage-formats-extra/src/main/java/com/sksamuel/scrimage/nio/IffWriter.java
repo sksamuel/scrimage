@@ -4,7 +4,7 @@ public class IffWriter extends TwelveMonkeysWriter {
 
     @Override
     public String format() {
-        return "IFF";
+        return "iff";
     }
 }
 

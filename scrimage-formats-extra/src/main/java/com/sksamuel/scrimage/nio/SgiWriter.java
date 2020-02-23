@@ -1,10 +1,10 @@
 package com.sksamuel.scrimage.nio;
 
-public class TgaWriter extends TwelveMonkeysWriter {
+public class SgiWriter extends TwelveMonkeysWriter {
 
   @Override
   public String format() {
-    return "tga";
+    return "sgi";
   }
 }
 
