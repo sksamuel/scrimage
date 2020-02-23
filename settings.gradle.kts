@@ -1,7 +1,6 @@
 enableFeaturePreview("GRADLE_METADATA")
 
 include("scrimage-core")
-include("scrimage-kotlin")
 include("scrimage-filters")
 include("scrimage-formats-extra")
 include("scrimage-scala_2.12")

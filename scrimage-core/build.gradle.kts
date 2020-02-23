@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+   implementation(kotlin("stdlib-jdk8"))
    api(Libs.TwelveMonkeys.imageIoCore)
    api(Libs.TwelveMonkeys.jpeg)
    api(Libs.Drewnoaks.metadataExtractor)
@@ -32,6 +33,16 @@ tasks.named<Test>("test") {
       )
       exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
    }
+}
+
+val compileKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
+compileKotlin.kotlinOptions {
+   jvmTarget = "1.8"
+}
+
+val compileTestKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
+compileTestKotlin.kotlinOptions {
+   jvmTarget = "1.8"
 }
 
 apply("../publish.gradle.kts")
