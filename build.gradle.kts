@@ -33,7 +33,7 @@ allprojects {
    group = "com.sksamuel.scrimage"
 
    if (isGithub) {
-      version = "3.0.0." + Ci.githubBuildNumber + "-SNAPSHOT"
+      version = "4.0.0." + Ci.githubBuildNumber + "-SNAPSHOT"
    }
 }
 
