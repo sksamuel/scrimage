@@ -6,12 +6,11 @@
 [<img src="https://img.shields.io/maven-central/v/com.sksamuel.scrimage/scrimage-core_2.12.svg?label=latest%20release%20for%202.12"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22scrimage-core_2.12.0-M3%22)
 [<img src="https://img.shields.io/nexus/s/https/oss.sonatype.org/com.sksamuel.scrimage/scrimage-core.svg?label=latest%20snapshot&style=plastic"/>](https://oss.sonatype.org/content/repositories/snapshots/com/sksamuel/scrimage/)
 
-This readme is for the 3.0.0 RELEASE. For earlier releases see [README_2.x.md](2.x readme).
+This readme is for the 4.0.0 pre-release. For earlier releases see [here](README_2.x.md).
 
-Scrimage is a consistent, idiomatic, and immutable JVM library for manipulating and processing of images. 
-The aim of the this library is to provide a quick and easy way to do the kinds of image operations that are most common, 
-such as scaling to fit a size or bounds, rotating, converting between formats and applying filters. It is not intended to provide functionality that might be required by a
-more "serious" image processing application - such as face recognition or movement tracking.
+Scrimage is immutable, functional, and performant JVM library for manipulation of images.
+The aim of the this library is to provide a simple and concise way to do the kinds of image operations that are most common, 
+such as scaling to fit a size or bounds, rotating, converting between formats and applying filters. It is not intended to provide functionality that might be required by a more "serious" image processing application - such as face recognition or movement tracking.
 
 A typical use case for this library would be creating thumbnails of images uploaded by users in a web app, or resizing a
 set of images to have a consistent size, or optimizing PNG uploads by users to apply maximum compression, or applying a grayscale filter in a print application.
