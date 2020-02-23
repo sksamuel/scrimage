@@ -77,6 +77,8 @@ public class ImmutableImage extends MutableImage {
         this.metadata = metadata;
     }
 
+    // ----- Image Builder Methods ------ //
+
     /**
      * Create a new [ImmutableImage] from a source AWT Image.
      * This method will copy the source image so that modifications to the original
@@ -167,7 +169,7 @@ public class ImmutableImage extends MutableImage {
      * @param height the height of the new image
      * @return the new Image with the given width and height
      */
-    public static ImmutableImage create(int width, int height, int type) {
+    public static ImmutableImage blank(int width, int height, int type) {
         BufferedImage target = new BufferedImage(width, height, type);
         return new ImmutableImage(target, ImageMetadata.empty);
     }
@@ -183,8 +185,8 @@ public class ImmutableImage extends MutableImage {
      * @param height the height of the new image
      * @return the new Image with the given width and height
      */
-    public static ImmutableImage create(int width, int height) {
-        return create(width, height, CANONICAL_DATA_TYPE);
+    public static ImmutableImage blank(int width, int height) {
+        return blank(width, height, CANONICAL_DATA_TYPE);
     }
 
     /**
@@ -210,7 +212,7 @@ public class ImmutableImage extends MutableImage {
      * @return the new Image
      */
     public static ImmutableImage filled(int width, int height, Color color, int type) {
-        ImmutableImage target = create(width, height, type);
+        ImmutableImage target = blank(width, height, type);
         for (int w = 0; w < width; w++) {
             for (int h = 0; h < height; h++) {
                 target.awt().setRGB(w, h, RGBColor.fromAwt(color).toARGBInt());
@@ -218,7 +220,6 @@ public class ImmutableImage extends MutableImage {
         }
         return target;
     }
-
 
     /**
      * Create a new Image from an input stream. This is intended to create
@@ -253,6 +254,7 @@ public class ImmutableImage extends MutableImage {
     /**
      * Create a new Image from an array of pixels. The specified
      * width and height must match the number of pixels.
+     * The image's type will be CANONICAL_DATA_TYPE.
      *
      * @return a new Image
      */
@@ -262,7 +264,7 @@ public class ImmutableImage extends MutableImage {
 
     public static ImmutableImage create(int w, int h, Pixel[] pixels, int type) {
         assert w * h == pixels.length;
-        ImmutableImage image = ImmutableImage.create(w, h, type);
+        ImmutableImage image = ImmutableImage.blank(w, h, type);
         image.mapInPlace((x, y, pixel) -> pixels[PixelTools.coordsToOffset(x, y, w)]);
         return image;
     }
@@ -293,6 +295,10 @@ public class ImmutableImage extends MutableImage {
         return Orientation.reorient(image, metadata).associateMetadata(metadata);
     }
 
+
+    // ----- End Builder Methods ------ //
+
+
     private PixelsExtractor pixelExtractor() {
         return area -> pixels(area.x, area.y, area.w, area.h);
     }
@@ -318,28 +324,14 @@ public class ImmutableImage extends MutableImage {
         return subimage(x1, y1, x2 - x1, y2 - y1);
     }
 
-    public ImmutableImage blank(int w, int h) {
-        return blank(w, h, null);
-    }
-
     /**
-     * Creates an empty image of the same concrete type as this type with the given dimensions.
-     * If the optional color is specified then the background pixels will all be set to that color.
-     */
-    public ImmutableImage blank(int w, int h, Color color) {
-        ImmutableImage target = wrapAwt(new BufferedImage(w, h, super.awt().getType()), metadata);
-        if (color != null)
-            target.fillInPlace(color);
-        return target;
-    }
-
-    /**
-     * Creates an empty ImmutableImage with the same dimensions as this image.
+     * Creates an empty ImmutableImage of the same concrete type as this image and with the same dimensions.
+     * The underlying pixels will not be initialized.
      *
      * @return a new Image that is a clone of this image but with uninitialized data
      */
     public ImmutableImage blank() {
-        return blank(width, height);
+        return blank(width, height, getType());
     }
 
     /**
@@ -347,6 +339,13 @@ public class ImmutableImage extends MutableImage {
      */
     public ImmutableImage bound(int w, int h) {
         return bound(w, h, ScaleMethod.Bicubic);
+    }
+
+    /**
+     * Returns the AWT type of this image.
+     */
+    public int getType() {
+        return awt().getType();
     }
 
     /**
@@ -726,7 +725,7 @@ public class ImmutableImage extends MutableImage {
         if (targetWidth == width && targetHeight == height) return this;
         else {
             Dimension dim = position.calculateXY(targetWidth, targetHeight, width, height);
-            return blank(targetWidth, targetHeight, background).overlay(this, dim.getX(), dim.getY());
+            return filled(targetWidth, targetHeight, background).overlay(this, dim.getX(), dim.getY());
         }
     }
 
@@ -875,7 +874,7 @@ public class ImmutableImage extends MutableImage {
     public ImmutableImage padWith(int left, int top, int right, int bottom, Color color) {
         int w = width + left + right;
         int h = height + top + bottom;
-        return blank(w, h, color).overlay(this, left, top);
+        return filled(w, h, color).overlay(this, left, top);
     }
 
     /**
