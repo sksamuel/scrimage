@@ -28,8 +28,9 @@ public class Canvas {
     public void drawInPlace(Collection<Drawable> drawables) {
         Graphics2D g = g2(image);
         drawables.forEach(d -> {
-            d.context().configure(g);
-            d.draw(g);
+            RichGraphics2D rich2d = new RichGraphics2D(g);
+            d.context().configure(rich2d);
+            d.draw(rich2d);
         });
         g.dispose();
     }
@@ -42,8 +43,9 @@ public class Canvas {
         ImmutableImage target = image.copy();
         Graphics2D g = g2(target);
         drawables.forEach(d -> {
-            d.context().configure(g);
-            d.draw(g);
+            RichGraphics2D rich2d = new RichGraphics2D(g);
+            d.context().configure(rich2d);
+            d.draw(rich2d);
         });
         g.dispose();
         return new Canvas(target);
