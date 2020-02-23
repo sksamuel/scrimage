@@ -49,12 +49,12 @@ class OrientationTest : WordSpec({
          ImmutableImage.fromResource("/com/sksamuel/scrimage/iphone/up.JPG").width shouldBe 1280
       }
 
-      "rotate image when the image and its thumbnail have the same rotation (issue #93)"  {
+      "!rotate image when the image and its thumbnail have the same rotation (issue #93)"  {
          readImageAndWriteToBytes("/issue93.jpg", JpegWriter(100, false)) shouldBe
             readBytes("/issue93_expected.jpg")
       }
 
-      "rotate image when the image and its thumbnail different rotations (issue #114)"  {
+      "!rotate image when the image and its thumbnail different rotations (issue #114)"  {
          readImageAndWriteToBytes("/issue114.jpg", JpegWriter(100, false)) shouldBe
             readBytes("/issue114_expected.jpg")
       }
