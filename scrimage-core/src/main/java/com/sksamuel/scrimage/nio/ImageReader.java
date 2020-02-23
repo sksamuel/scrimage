@@ -18,7 +18,7 @@ import java.util.Optional;
  */
 public class ImageReader {
 
-    private static Collection<Reader> readers = Arrays.asList(new JavaImageIOReader(), new PngReader(), new JavaImageIO2Reader());
+    private static Collection<Reader> readers = Arrays.asList(new JavaImageIOReader(), new JavaImageIO2Reader(), new PngReader(), new OpenGifReader());
 
     public static ImmutableImage fromFile(File file) throws IOException {
         return fromFile(file, ImmutableImage.CANONICAL_DATA_TYPE);
@@ -53,7 +53,7 @@ public class ImageReader {
             if (!image.isPresent()) {
                 try {
                     image = Optional.ofNullable(reader.fromBytes(bytes, type));
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
         }

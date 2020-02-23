@@ -7,16 +7,10 @@ dependencies {
    api(Libs.TwelveMonkeys.imageIoCore)
    api(Libs.TwelveMonkeys.imageIoJpeg)
    api(Libs.Drewnoaks.metadataExtractor)
+   implementation("com.github.zh79325:open-gif:1.0.4")
    implementation(Libs.commons.io)
    implementation(Libs.Hjg.pngj)
-
    testImplementation(Libs.Kotest.junit5)
-
-//   "com.twelvemonkeys.common"  % "common-lang"         % TwelveMonkeysVersion,
-//   "com.twelvemonkeys.common"  % "common-io"           % TwelveMonkeysVersion,
-//   "com.twelvemonkeys.common"  % "common-image"        % TwelveMonkeysVersion,
-//   "commons-io"                % "commons-io"          % CommonsIoVersion,
-//   "org.apache.commons"        % "commons-lang3"       % "3.9"
 }
 
 java {
