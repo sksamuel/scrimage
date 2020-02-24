@@ -23,26 +23,26 @@ import java.util.*;
  * A filter which "dissolves" an image by thresholding the alpha channel with random numbers.
  */
 public class DissolveFilter extends PointFilter {
-	
+
 	private float density = 1;
 	private float softness = 0;
 	private float minDensity, maxDensity;
 	private Random randomNumbers;
-	
+
 	public DissolveFilter() {
 	}
 
 	/**
 	 * Set the density of the image in the range 0..1.
 	 * @param density the density
-     * @min-value 0
-     * @max-value 1
+     * min-value 0
+     * max-value 1
      * @see #getDensity
 	 */
 	public void setDensity( float density ) {
 		this.density = density;
 	}
-	
+
 	/**
 	 * Get the density of the image.
 	 * @return the density
@@ -51,18 +51,18 @@ public class DissolveFilter extends PointFilter {
 	public float getDensity() {
 		return density;
 	}
-	
+
 	/**
 	 * Set the softness of the dissolve in the range 0..1.
 	 * @param softness the softness
-     * @min-value 0
-     * @max-value 1
+     * min-value 0
+     * max-value 1
      * @see #getSoftness
 	 */
 	public void setSoftness( float softness ) {
 		this.softness = softness;
 	}
-	
+
 	/**
 	 * Get the softness of the dissolve.
 	 * @return the softness
@@ -71,7 +71,7 @@ public class DissolveFilter extends PointFilter {
 	public float getSoftness() {
 		return softness;
 	}
-	
+
     public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
 		float d = (1-density) * (1+softness);
 		minDensity = d-softness;
@@ -79,7 +79,7 @@ public class DissolveFilter extends PointFilter {
 		randomNumbers = new Random( 0 );
 		return super.filter( src, dst );
 	}
-	
+
 	public int filterRGB(int x, int y, int rgb) {
 		int a = (rgb >> 24) & 0xff;
 		float v = randomNumbers.nextFloat();

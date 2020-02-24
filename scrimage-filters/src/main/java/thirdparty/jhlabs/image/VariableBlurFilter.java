@@ -79,11 +79,11 @@ public class VariableBlurFilter extends AbstractBufferedImageOp {
             dstCM = src.getColorModel();
         return new BufferedImage(dstCM, dstCM.createCompatibleWritableRaster(src.getWidth(), src.getHeight()), dstCM.isAlphaPremultiplied(), null);
     }
-    
+
     public Rectangle2D getBounds2D( BufferedImage src ) {
         return new Rectangle(0, 0, src.getWidth(), src.getHeight());
     }
-    
+
     public Point2D getPoint2D( Point2D srcPt, Point2D dstPt ) {
         if ( dstPt == null )
             dstPt = new Point2D.Double();
@@ -164,7 +164,7 @@ public class VariableBlurFilter extends AbstractBufferedImageOp {
 					tb -= b[0] * i2;
                     i2 = 0;
 				}
-                
+
                 ta += a[i1] - a[i2];
                 tr += r[i1] - r[i2];
                 tg += g[i1] - g[i2];
@@ -176,7 +176,7 @@ public class VariableBlurFilter extends AbstractBufferedImageOp {
 			inIndex += width;
         }
     }
-    
+
 	/**
      * Override this to get a different blur radius at eahc point.
      * @param x the x coordinate
@@ -192,13 +192,13 @@ public class VariableBlurFilter extends AbstractBufferedImageOp {
 	/**
 	 * Set the horizontal size of the blur.
 	 * @param hRadius the radius of the blur in the horizontal direction
-     * @min-value 0
+     * min-value 0
      * @see #getHRadius
 	 */
 	public void setHRadius(int hRadius) {
 		this.hRadius = hRadius;
 	}
-	
+
 	/**
 	 * Get the horizontal size of the blur.
 	 * @return the radius of the blur in the horizontal direction
@@ -207,17 +207,17 @@ public class VariableBlurFilter extends AbstractBufferedImageOp {
 	public int getHRadius() {
 		return hRadius;
 	}
-	
+
 	/**
 	 * Set the vertical size of the blur.
 	 * @param vRadius the radius of the blur in the vertical direction
-     * @min-value 0
+     * min-value 0
      * @see #getVRadius
 	 */
 	public void setVRadius(int vRadius) {
 		this.vRadius = vRadius;
 	}
-	
+
 	/**
 	 * Get the vertical size of the blur.
 	 * @return the radius of the blur in the vertical direction
@@ -226,17 +226,17 @@ public class VariableBlurFilter extends AbstractBufferedImageOp {
 	public int getVRadius() {
 		return vRadius;
 	}
-	
+
 	/**
 	 * Set the radius of the effect.
 	 * @param radius the radius
-     * @min-value 0
+     * min-value 0
      * @see #getRadius
 	 */
 	public void setRadius(int radius) {
 		this.hRadius = this.vRadius = radius;
 	}
-	
+
 	/**
 	 * Get the radius of the effect.
 	 * @return the radius
@@ -245,17 +245,17 @@ public class VariableBlurFilter extends AbstractBufferedImageOp {
 	public int getRadius() {
 		return hRadius;
 	}
-	
+
 	/**
 	 * Set the number of iterations the blur is performed.
 	 * @param iterations the number of iterations
-     * @min-value 0
+     * min-value 0
      * @see #getIterations
 	 */
 	public void setIterations(int iterations) {
 		this.iterations = iterations;
 	}
-	
+
 	/**
 	 * Get the number of iterations the blur is performed.
 	 * @return the number of iterations
@@ -264,7 +264,7 @@ public class VariableBlurFilter extends AbstractBufferedImageOp {
 	public int getIterations() {
 		return iterations;
 	}
-	
+
 	/**
 	 * Set the mask used to give the amount of blur at each point.
 	 * @param blurMask the mask
@@ -273,7 +273,7 @@ public class VariableBlurFilter extends AbstractBufferedImageOp {
 	public void setBlurMask(BufferedImage blurMask) {
 		this.blurMask = blurMask;
 	}
-	
+
 	/**
 	 * Get the mask used to give the amount of blur at each point.
 	 * @return the mask
@@ -282,7 +282,7 @@ public class VariableBlurFilter extends AbstractBufferedImageOp {
 	public BufferedImage getBlurMask() {
 		return blurMask;
 	}
-	
+
 	public String toString() {
 		return "Blur/Variable Blur...";
 	}

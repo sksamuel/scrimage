@@ -31,7 +31,7 @@ public class DisplaceFilter extends TransformFilter {
 
 	public DisplaceFilter() {
 	}
-	
+
 	/**
 	 * Set the displacement map.
 	 * @param displacementMap an image representing the displacment at each point
@@ -53,14 +53,14 @@ public class DisplaceFilter extends TransformFilter {
 	/**
 	 * Set the amount of distortion.
 	 * @param amount the amount
-     * @min-value 0
-     * @max-value 1
+     * min-value 0
+     * max-value 1
      * @see #getAmount
 	 */
 	public void setAmount(float amount) {
 		this.amount = amount;
 	}
-	
+
 	/**
 	 * Get the amount of distortion.
 	 * @return the amount
@@ -69,7 +69,7 @@ public class DisplaceFilter extends TransformFilter {
 	public float getAmount() {
 		return amount;
 	}
-	
+
     public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
 		int w = src.getWidth();
 		int h = src.getHeight();
@@ -78,12 +78,12 @@ public class DisplaceFilter extends TransformFilter {
 
 		dw = dm.getWidth();
 		dh = dm.getHeight();
-		
+
 		int[] mapPixels = new int[dw*dh];
 		getRGB( dm, 0, 0, dw, dh, mapPixels );
 		xmap = new int[dw*dh];
 		ymap = new int[dw*dh];
-		
+
 		int i = 0;
 		for ( int y = 0; y < dh; y++ ) {
 			for ( int x = 0; x < dw; x++ ) {
@@ -115,7 +115,7 @@ public class DisplaceFilter extends TransformFilter {
 		xmap = ymap = null;
 		return dst;
 	}
-	
+
 	protected void transformInverse(int x, int y, float[] out) {
 		float xDisplacement, yDisplacement;
 		float nx = x;

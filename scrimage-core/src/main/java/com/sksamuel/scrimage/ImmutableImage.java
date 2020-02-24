@@ -985,16 +985,16 @@ public class ImmutableImage extends MutableImage {
    /**
     * Scale will resize the canvas and scale the image to match.
     * This is like a "image resize" in Photoshop.
-    * <p>
+    *
     * scaleToHeight will scale the image so that the new image has a height that matches the
     * given targetHeight.
-    * <p>
+    *
     * If keepAspectRatio is true, then the width will also be scaled so that the aspect ratio
     * of the image does not change.
     * If keepAspectRatio is false, then the width will stay the same.
-    * <p>
+    *
     * Eg, an image of 200,300 with a scaleToHeight of 450 and keepAspectRatio of true will result
-    * in a scaled image of 300,450 (because 300 -> 450 is 1.5 and so 200 x 1.5 is 300).
+    * in a scaled image of 300,450 (because 300 to 450 is 1.5 and so 200 x 1.5 is 300).
     *
     * @param targetHeight    the target height
     * @param scaleMethod     the type of scaling method to use.

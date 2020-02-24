@@ -57,8 +57,8 @@ public class GaussianFilter extends ConvolveFilter {
      * Set the radius of the kernel, and hence the amount of blur. The bigger the radius, the longer this filter will take.
      *
      * @param radius the radius of the blur in pixels.
-     * @min-value 0
-     * @max-value 100+
+     * min-value 0
+     * max-value 100+
      * @see #getRadius
      */
     public void setRadius(float radius) {

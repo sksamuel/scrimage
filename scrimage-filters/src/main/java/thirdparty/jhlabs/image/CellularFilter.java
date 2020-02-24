@@ -49,7 +49,7 @@ public class CellularFilter extends WholeImageFilter implements Function2D, Clon
 	private float max;
 	private static byte[] probabilities;
 	private float gradientCoefficient;
-	
+
 	public final static int RANDOM = 0;
 	public final static int SQUARE = 1;
 	public final static int HEXAGONAL = 2;
@@ -74,15 +74,13 @@ public class CellularFilter extends WholeImageFilter implements Function2D, Clon
 				int end = (int)(total * 8192);
 				for (int j = start; j < end; j++)
 					probabilities[j] = (byte)i;
-			}	
+			}
 		}
 	}
-	
+
 	/**
      * Specifies the scale of the texture.
      * @param scale the scale of the texture.
-     * @min-value 1
-     * @max-value 300+
      * @see #getScale
      */
 	public void setScale(float scale) {
@@ -101,8 +99,6 @@ public class CellularFilter extends WholeImageFilter implements Function2D, Clon
 	/**
      * Specifies the stretch factor of the texture.
      * @param stretch the stretch factor of the texture.
-     * @min-value 1
-     * @max-value 50+
      * @see #getStretch
      */
 	public void setStretch(float stretch) {
@@ -121,7 +117,6 @@ public class CellularFilter extends WholeImageFilter implements Function2D, Clon
 	/**
      * Specifies the angle of the texture.
      * @param angle the angle of the texture.
-     * @angle
      * @see #getAngle
      */
 	public void setAngle(float angle) {
@@ -207,7 +202,7 @@ public class CellularFilter extends WholeImageFilter implements Function2D, Clon
 	public void setColormap(Colormap colormap) {
 		this.colormap = colormap;
 	}
-	
+
     /**
      * Get the colormap to be used for the filter.
      * @return the colormap
@@ -216,7 +211,7 @@ public class CellularFilter extends WholeImageFilter implements Function2D, Clon
 	public Colormap getColormap() {
 		return colormap;
 	}
-	
+
 	public void setRandomness(float randomness) {
 		this.randomness = randomness;
 	}
@@ -244,8 +239,8 @@ public class CellularFilter extends WholeImageFilter implements Function2D, Clon
 	/**
      * Specifies the turbulence of the texture.
      * @param turbulence the turbulence of the texture.
-     * @min-value 0
-     * @max-value 1
+     * min-value 0
+     * max-value 1
      * @see #getTurbulence
      */
 	public void setTurbulence(float turbulence) {
@@ -264,8 +259,8 @@ public class CellularFilter extends WholeImageFilter implements Function2D, Clon
 	/**
 	 * Set the amount of effect.
 	 * @param amount the amount
-     * @min-value 0
-     * @max-value 1
+     * min-value 0
+     * max-value 1
      * @see #getAmount
 	 */
 	public void setAmount(float amount) {
@@ -288,7 +283,7 @@ public class CellularFilter extends WholeImageFilter implements Function2D, Clon
 		public float cubeX, cubeY;
 		public float distance;
 	}
-	
+
 	private float checkCube(float x, float y, int cubeX, int cubeY, Point[] results) {
 
 		Noise noise = new Noise();
@@ -412,7 +407,7 @@ public class CellularFilter extends WholeImageFilter implements Function2D, Clon
 		}
 		return results[2].distance;
 	}
-	
+
 	public float evaluate(float x, float y) {
 		for (int j = 0; j < results.length; j++)
 			results[j].distance = Float.POSITIVE_INFINITY;
@@ -458,7 +453,7 @@ public class CellularFilter extends WholeImageFilter implements Function2D, Clon
 		}
 		return t;
 	}
-	
+
 	public float turbulence2(float x, float y, float freq) {
 		float t = 0.0f;
 
@@ -526,9 +521,9 @@ public class CellularFilter extends WholeImageFilter implements Function2D, Clon
 //			f.colormap = (Colormap)colormap.clone();
 		return f;
 	}
-	
+
 	public String toString() {
 		return "Texture/Cellular...";
 	}
-	
+
 }

@@ -16,6 +16,10 @@ fun Project.publishing(action: PublishingExtension.() -> Unit) =
 fun Project.signing(configure: SigningExtension.() -> Unit): Unit =
    configure(configure)
 
+fun Project.java(configure: JavaPluginExtension.() -> Unit): Unit =
+   configure(configure)
+
+
 val publications: PublicationContainer = (extensions.getByName("publishing") as PublishingExtension).publications
 
 signing {
@@ -24,8 +28,9 @@ signing {
       sign(publications)
 }
 
-val sourcesJar by tasks.registering(Jar::class) {
-   classifier = "sources"
+java {
+   withJavadocJar()
+   withSourcesJar()
 }
 
 publishing {
@@ -45,7 +50,6 @@ publishing {
    publications {
       register("mavenJava", MavenPublication::class) {
          from(components["java"])
-         artifact(sourcesJar.get())
          pom {
             name.set("Scrimage")
             description.set("JVM Image Library")

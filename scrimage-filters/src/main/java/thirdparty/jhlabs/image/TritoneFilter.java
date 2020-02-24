@@ -28,7 +28,7 @@ public class TritoneFilter extends PointFilter {
 	private int midColor = 0xff888888;
 	private int highColor = 0xffffffff;
     private int[] lut;
-	
+
     public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
         lut = new int[256];
         for ( int i = 0; i < 128; i++ ) {
@@ -43,7 +43,7 @@ public class TritoneFilter extends PointFilter {
         lut = null;
         return dst;
     }
-    
+
 	public int filterRGB( int x, int y, int rgb ) {
         return lut[ PixelUtils.brightness( rgb ) ];
 	}
@@ -56,7 +56,7 @@ public class TritoneFilter extends PointFilter {
 	public void setShadowColor( int shadowColor ) {
 		this.shadowColor = shadowColor;
 	}
-	
+
     /**
      * Get the shadow color.
      * @return the shadow color
@@ -69,16 +69,14 @@ public class TritoneFilter extends PointFilter {
     /**
      * Set the mid color.
      * @param midColor the mid color
-     * @see #getmidColor
      */
 	public void setMidColor( int midColor ) {
 		this.midColor = midColor;
 	}
-	
+
     /**
      * Get the mid color.
      * @return the mid color
-     * @see #setmidColor
      */
 	public int getMidColor() {
 		return midColor;
@@ -87,16 +85,14 @@ public class TritoneFilter extends PointFilter {
     /**
      * Set the high color.
      * @param highColor the high color
-     * @see #gethighColor
      */
 	public void setHighColor( int highColor ) {
 		this.highColor = highColor;
 	}
-	
+
     /**
      * Get the high color.
      * @return the high color
-     * @see #sethighColor
      */
 	public int getHighColor() {
 		return highColor;

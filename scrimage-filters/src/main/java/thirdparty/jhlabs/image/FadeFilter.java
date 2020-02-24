@@ -32,7 +32,6 @@ public class FadeFilter extends PointFilter {
 	/**
      * Specifies the angle of the texture.
      * @param angle the angle of the texture.
-     * @angle
      * @see #getAngle
      */
 	public void setAngle(float angle) {
@@ -91,7 +90,7 @@ public class FadeFilter extends PointFilter {
 		this.height = height;
 		super.setDimensions(width, height);
 	}
-	
+
 	public int filterRGB(int x, int y, int rgb) {
 		float nx = m00*x + m01*y;
 		float ny = m10*x + m11*y;
@@ -120,7 +119,7 @@ public class FadeFilter extends PointFilter {
 			return 2*b-x;
 		return x;
 	}
-	
+
 /*
 	public float star(float x, float y, int sides, float rMin, float rMax) {
 		float sideAngle = 2*Math.PI / sides;

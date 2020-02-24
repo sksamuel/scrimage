@@ -25,22 +25,22 @@ import java.awt.image.*;
 public class GlowFilter extends GaussianFilter {
 
 	private float amount = 0.5f;
-	
+
 	public GlowFilter() {
 		radius = 2;
 	}
-	
+
 	/**
 	 * Set the amount of glow.
 	 * @param amount the amount
-     * @min-value 0
-     * @max-value 1
+     * min-value 0
+     * max-value 1
      * @see #getAmount
 	 */
 	public void setAmount( float amount ) {
 		this.amount = amount;
 	}
-	
+
 	/**
 	 * Get the amount of glow.
 	 * @return the amount
@@ -49,7 +49,7 @@ public class GlowFilter extends GaussianFilter {
 	public float getAmount() {
 		return amount;
 	}
-	
+
     public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
         int width = src.getWidth();
         int height = src.getHeight();

@@ -19,7 +19,7 @@ package thirdparty.jhlabs.image;
 import java.util.*;
 
 public class SparkleFilter extends PointFilter {
-	
+
 	private int rays = 50;
 	private int radius = 25;
 	private int amount = 50;
@@ -30,7 +30,7 @@ public class SparkleFilter extends PointFilter {
 	private long seed = 371;
 	private float[] rayLengths;
 	private Random randomNumbers = new Random();
-	
+
 	public SparkleFilter() {
 	}
 
@@ -53,14 +53,14 @@ public class SparkleFilter extends PointFilter {
 	/**
 	 * Set the amount of sparkle.
 	 * @param amount the amount
-     * @min-value 0
-     * @max-value 1
+     * min-value 0
+     * max-value 1
      * @see #getAmount
 	 */
 	public void setAmount(int amount) {
 		this.amount = amount;
 	}
-	
+
 	/**
 	 * Get the amount of sparkle.
 	 * @return the amount
@@ -69,7 +69,7 @@ public class SparkleFilter extends PointFilter {
 	public int getAmount() {
 		return amount;
 	}
-	
+
 	public void setRays(int rays) {
 		this.rays = rays;
 	}
@@ -81,7 +81,7 @@ public class SparkleFilter extends PointFilter {
 	/**
 	 * Set the radius of the effect.
 	 * @param radius the radius
-     * @min-value 0
+     * min-value 0
      * @see #getRadius
 	 */
 	public void setRadius(int radius) {
@@ -108,7 +108,7 @@ public class SparkleFilter extends PointFilter {
 		for (int i = 0; i < rays; i++)
 			rayLengths[i] = radius + randomness / 100.0f * radius * (float)randomNumbers.nextGaussian();
 	}
-	
+
 	public int filterRGB(int x, int y, int rgb) {
 		float dx = x-centreX;
 		float dy = y-centreY;

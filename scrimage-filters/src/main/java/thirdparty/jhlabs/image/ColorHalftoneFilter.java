@@ -22,7 +22,7 @@ import java.awt.image.*;
  * A Filter to pixellate images.
  */
 public class ColorHalftoneFilter extends AbstractBufferedImageOp {
-	
+
 	private float dotRadius = 2;
     private float cyanScreenAngle = (float)Math.toRadians( 108 );
     private float magentaScreenAngle = (float)Math.toRadians( 162 );
@@ -34,8 +34,8 @@ public class ColorHalftoneFilter extends AbstractBufferedImageOp {
 	/**
 	 * Set the pixel block size.
 	 * @param dotRadius the number of pixels along each block edge
-     * @min-value 1
-     * @max-value 100+
+     * min-value 1
+     * max-value 100+
      * @see #getdotRadius
 	 */
 	public void setdotRadius( float dotRadius ) {
@@ -135,7 +135,7 @@ public class ColorHalftoneFilter extends AbstractBufferedImageOp {
                     // Transform x,y into halftone screen coordinate space
                     float tx = x*cos + y*sin;
                     float ty = -x*sin + y*cos;
-                    
+
                     // Find the nearest grid point
                     tx = tx-ImageMath.mod( tx-halfGridSize, gridSize )+halfGridSize;
                     ty = ty-ImageMath.mod( ty-halfGridSize, gridSize )+halfGridSize;

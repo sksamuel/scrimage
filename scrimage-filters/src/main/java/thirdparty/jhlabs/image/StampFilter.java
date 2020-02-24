@@ -49,13 +49,13 @@ public class StampFilter extends PointFilter {
 	/**
 	 * Set the radius of the effect.
 	 * @param radius the radius
-     * @min-value 0
+     * min-value 0
      * @see #getRadius
 	 */
 	public void setRadius(float radius) {
 		this.radius = radius;
 	}
-	
+
 	/**
 	 * Get the radius of the effect.
 	 * @return the radius
@@ -73,7 +73,7 @@ public class StampFilter extends PointFilter {
 	public void setThreshold(float threshold) {
 		this.threshold = threshold;
 	}
-	
+
 	/**
      * Get the threshold value.
      * @return the threshold value
@@ -82,12 +82,12 @@ public class StampFilter extends PointFilter {
 	public float getThreshold() {
 		return threshold;
 	}
-	
+
 	/**
 	 * Set the softness of the effect in the range 0..1.
 	 * @param softness the softness
-     * @min-value 0
-     * @max-value 1
+     * min-value 0
+     * max-value 1
      * @see #getSoftness
 	 */
 	public void setSoftness(float softness) {

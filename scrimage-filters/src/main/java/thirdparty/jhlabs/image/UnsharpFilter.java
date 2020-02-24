@@ -26,11 +26,11 @@ public class UnsharpFilter extends GaussianFilter {
 
 	private float amount = 0.5f;
 	private int threshold = 1;
-	
+
 	public UnsharpFilter() {
 		radius = 2;
 	}
-	
+
 	/**
      * Set the threshold value.
      * @param threshold the threshold value
@@ -39,7 +39,7 @@ public class UnsharpFilter extends GaussianFilter {
 	public void setThreshold( int threshold ) {
 		this.threshold = threshold;
 	}
-	
+
 	/**
      * Get the threshold value.
      * @return the threshold value
@@ -48,18 +48,18 @@ public class UnsharpFilter extends GaussianFilter {
 	public int getThreshold() {
 		return threshold;
 	}
-	
+
 	/**
 	 * Set the amount of sharpening.
 	 * @param amount the amount
-     * @min-value 0
-     * @max-value 1
+     * min-value 0
+     * max-value 1
      * @see #getAmount
 	 */
 	public void setAmount( float amount ) {
 		this.amount = amount;
 	}
-	
+
 	/**
 	 * Get the amount of sharpening.
 	 * @return the amount
@@ -68,7 +68,7 @@ public class UnsharpFilter extends GaussianFilter {
 	public float getAmount() {
 		return amount;
 	}
-	
+
     public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
         int width = src.getWidth();
         int height = src.getHeight();

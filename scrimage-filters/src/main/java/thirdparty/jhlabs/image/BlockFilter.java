@@ -22,7 +22,7 @@ import java.awt.image.*;
  * A Filter to pixellate images.
  */
 public class BlockFilter extends AbstractBufferedImageOp {
-	
+
 	private int blockSize = 2;
 
     /**
@@ -42,8 +42,8 @@ public class BlockFilter extends AbstractBufferedImageOp {
 	/**
 	 * Set the pixel block size.
 	 * @param blockSize the number of pixels along each block edge
-     * @min-value 1
-     * @max-value 100+
+     * min-value 1
+     * max-value 100+
      * @see #getBlockSize
 	 */
 	public void setBlockSize(int blockSize) {

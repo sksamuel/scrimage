@@ -23,7 +23,7 @@ import java.awt.image.*;
  * A filter which produces a water ripple distortion.
  */
 public class WaterFilter extends TransformFilter {
-	
+
 	private float wavelength = 16;
 	private float amplitude = 10;
 	private float phase = 0;
@@ -110,7 +110,7 @@ public class WaterFilter extends TransformFilter {
 	public float getCentreX() {
 		return centreX;
 	}
-	
+
 	/**
 	 * Set the centre of the effect in the Y direction as a proportion of the image size.
 	 * @param centreY the center
@@ -128,7 +128,7 @@ public class WaterFilter extends TransformFilter {
 	public float getCentreY() {
 		return centreY;
 	}
-	
+
 	/**
 	 * Set the centre of the effect as a proportion of the image size.
 	 * @param centre the center
@@ -147,11 +147,11 @@ public class WaterFilter extends TransformFilter {
 	public Point2D getCentre() {
 		return new Point2D.Float( centreX, centreY );
 	}
-	
+
 	/**
 	 * Set the radius of the effect.
 	 * @param radius the radius
-     * @min-value 0
+     * min-value 0
      * @see #getRadius
 	 */
 	public void setRadius(float radius) {
@@ -170,7 +170,7 @@ public class WaterFilter extends TransformFilter {
 	private boolean inside(int v, int a, int b) {
 		return a <= v && v <= b;
 	}
-	
+
     public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
 		icentreX = src.getWidth() * centreX;
 		icentreY = src.getHeight() * centreY;
@@ -179,7 +179,7 @@ public class WaterFilter extends TransformFilter {
 		radius2 = radius*radius;
 		return super.filter( src, dst );
 	}
-	
+
 	protected void transformInverse(int x, int y, float[] out) {
 		float dx = x-icentreX;
 		float dy = y-icentreY;
@@ -201,5 +201,5 @@ public class WaterFilter extends TransformFilter {
 	public String toString() {
 		return "Distort/Water Ripples...";
 	}
-	
+
 }

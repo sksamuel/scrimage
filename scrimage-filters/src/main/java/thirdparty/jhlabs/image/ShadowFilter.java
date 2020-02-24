@@ -24,7 +24,7 @@ import java.awt.image.*;
  * A filter which draws a drop shadow based on the alpha channel of the image.
  */
 public class ShadowFilter extends AbstractBufferedImageOp {
-	
+
 	private float radius = 5;
 	private float angle = (float)Math.PI*6/4;
 	private float distance = 5;
@@ -56,7 +56,6 @@ public class ShadowFilter extends AbstractBufferedImageOp {
 	/**
      * Specifies the angle of the shadow.
      * @param angle the angle of the shadow.
-     * @angle
      * @see #getAngle
      */
 	public void setAngle(float angle) {
@@ -98,7 +97,7 @@ public class ShadowFilter extends AbstractBufferedImageOp {
 	public void setRadius(float radius) {
 		this.radius = radius;
 	}
-	
+
 	/**
 	 * Get the radius of the kernel.
 	 * @return the radius
@@ -190,7 +189,7 @@ public class ShadowFilter extends AbstractBufferedImageOp {
 		}
         return r;
     }
-    
+
     public Point2D getPoint2D( Point2D srcPt, Point2D dstPt ) {
         if ( dstPt == null )
             dstPt = new Point2D.Double();
@@ -226,7 +225,7 @@ public class ShadowFilter extends AbstractBufferedImageOp {
         float shadowG = ((shadowColor >> 8) & 0xff) / 255f;
         float shadowB = (shadowColor & 0xff) / 255f;
 
-		// Make a black mask from the image's alpha channel 
+		// Make a black mask from the image's alpha channel
         float[][] extractAlpha = {
             { 0, 0, 0, shadowR },
             { 0, 0, 0, shadowG },

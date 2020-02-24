@@ -30,15 +30,15 @@ public class ExposureFilter extends TransferFilter {
     /**
      * Set the exposure level.
      * @param exposure the exposure level
-     * @min-value 0
-     * @max-value 5+
+     * min-value 0
+     * max-value 5+
      * @see #getExposure
      */
 	public void setExposure(float exposure) {
 		this.exposure = exposure;
 		initialized = false;
 	}
-	
+
     /**
      * Get the exposure level.
      * @return the exposure level

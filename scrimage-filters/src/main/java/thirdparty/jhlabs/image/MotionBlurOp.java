@@ -36,7 +36,7 @@ public class MotionBlurOp extends AbstractBufferedImageOp {
      */
     public MotionBlurOp() {
 	}
-	
+
     /**
      * Construct a MotionBlurOp.
      * @param distance the distance of blur.
@@ -50,11 +50,10 @@ public class MotionBlurOp extends AbstractBufferedImageOp {
         this.rotation = rotation;
         this.zoom = zoom;
     }
-    
+
 	/**
      * Specifies the angle of blur.
      * @param angle the angle of blur.
-     * @angle
      * @see #getAngle
      */
 	public void setAngle( float angle ) {
@@ -69,7 +68,7 @@ public class MotionBlurOp extends AbstractBufferedImageOp {
 	public float getAngle() {
 		return angle;
 	}
-	
+
 	/**
      * Set the distance of blur.
      * @param distance the distance of blur.
@@ -87,7 +86,7 @@ public class MotionBlurOp extends AbstractBufferedImageOp {
 	public float getDistance() {
 		return distance;
 	}
-	
+
 	/**
      * Set the blur rotation.
      * @param rotation the angle of rotation.
@@ -105,7 +104,7 @@ public class MotionBlurOp extends AbstractBufferedImageOp {
 	public float getRotation() {
 		return rotation;
 	}
-	
+
 	/**
      * Set the blur zoom.
      * @param zoom the zoom factor.
@@ -123,7 +122,7 @@ public class MotionBlurOp extends AbstractBufferedImageOp {
 	public float getZoom() {
 		return zoom;
 	}
-	
+
 	/**
 	 * Set the centre of the effect in the X direction as a proportion of the image size.
 	 * @param centreX the center
@@ -141,7 +140,7 @@ public class MotionBlurOp extends AbstractBufferedImageOp {
 	public float getCentreX() {
 		return centreX;
 	}
-	
+
 	/**
 	 * Set the centre of the effect in the Y direction as a proportion of the image size.
 	 * @param centreY the center
@@ -159,7 +158,7 @@ public class MotionBlurOp extends AbstractBufferedImageOp {
 	public float getCentreY() {
 		return centreY;
 	}
-	
+
 	/**
 	 * Set the centre of the effect as a proportion of the image size.
 	 * @param centre the center
@@ -178,7 +177,7 @@ public class MotionBlurOp extends AbstractBufferedImageOp {
 	public Point2D getCentre() {
 		return new Point2D.Float( centreX, centreY );
 	}
-	
+
     private int log2( int n ) {
         int m = 1;
         int log2n = 0;
@@ -208,14 +207,14 @@ public class MotionBlurOp extends AbstractBufferedImageOp {
 		translateY /= maxDistance;
 		scale /= maxDistance;
 		rotate /= maxDistance;
-		
+
         if ( steps == 0 ) {
             Graphics2D g = dst.createGraphics();
             g.drawRenderedImage( src, null );
             g.dispose();
             return dst;
         }
-        
+
         BufferedImage tmp = createCompatibleDestImage( src, null );
         for ( int i = 0; i < steps; i++ ) {
             Graphics2D g = tmp.createGraphics();
@@ -244,7 +243,7 @@ public class MotionBlurOp extends AbstractBufferedImageOp {
         }
         return dst;
     }
-    
+
 	public String toString() {
 		return "Blur/Faster Motion Blur...";
 	}

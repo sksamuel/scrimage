@@ -26,7 +26,7 @@ public class SmartBlurFilter extends AbstractBufferedImageOp {
 	private int hRadius = 5;
 	private int vRadius = 5;
 	private int threshold = 10;
-	
+
     public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
         int width = src.getWidth();
         int height = src.getHeight();
@@ -121,13 +121,13 @@ public class SmartBlurFilter extends AbstractBufferedImageOp {
 	/**
 	 * Set the horizontal size of the blur.
 	 * @param hRadius the radius of the blur in the horizontal direction
-     * @min-value 0
+     * min-value 0
      * @see #getHRadius
 	 */
 	public void setHRadius(int hRadius) {
 		this.hRadius = hRadius;
 	}
-	
+
 	/**
 	 * Get the horizontal size of the blur.
 	 * @return the radius of the blur in the horizontal direction
@@ -136,17 +136,17 @@ public class SmartBlurFilter extends AbstractBufferedImageOp {
 	public int getHRadius() {
 		return hRadius;
 	}
-	
+
 	/**
 	 * Set the vertical size of the blur.
 	 * @param vRadius the radius of the blur in the vertical direction
-     * @min-value 0
+     * min-value 0
      * @see #getVRadius
 	 */
 	public void setVRadius(int vRadius) {
 		this.vRadius = vRadius;
 	}
-	
+
 	/**
 	 * Get the vertical size of the blur.
 	 * @return the radius of the blur in the vertical direction
@@ -155,17 +155,17 @@ public class SmartBlurFilter extends AbstractBufferedImageOp {
 	public int getVRadius() {
 		return vRadius;
 	}
-	
+
 	/**
 	 * Set the radius of the effect.
 	 * @param radius the radius
-     * @min-value 0
+     * min-value 0
      * @see #getRadius
 	 */
 	public void setRadius(int radius) {
 		this.hRadius = this.vRadius = radius;
 	}
-	
+
 	/**
 	 * Get the radius of the effect.
 	 * @return the radius
@@ -174,7 +174,7 @@ public class SmartBlurFilter extends AbstractBufferedImageOp {
 	public int getRadius() {
 		return hRadius;
 	}
-	
+
 	/**
      * Set the threshold value.
      * @param threshold the threshold value
@@ -183,7 +183,7 @@ public class SmartBlurFilter extends AbstractBufferedImageOp {
 	public void setThreshold(int threshold) {
 		this.threshold = threshold;
 	}
-	
+
 	/**
      * Get the threshold value.
      * @return the threshold value
@@ -192,7 +192,7 @@ public class SmartBlurFilter extends AbstractBufferedImageOp {
 	public int getThreshold() {
 		return threshold;
 	}
-	
+
 	public String toString() {
 		return "Blur/Smart Blur...";
 	}

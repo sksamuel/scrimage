@@ -22,7 +22,7 @@ import java.awt.image.*;
  * A filter which uses a another image as a ask to produce a halftoning effect.
  */
 public class HalftoneFilter extends AbstractBufferedImageOp {
-	
+
 	private float softness = 0.1f;
 	private boolean invert;
 	private boolean monochrome;
@@ -34,14 +34,12 @@ public class HalftoneFilter extends AbstractBufferedImageOp {
 	/**
 	 * Set the softness of the effect in the range 0..1.
 	 * @param softness the softness
-     * @min-value 0
-     * @max-value 1
      * @see #getSoftness
 	 */
 	public void setSoftness( float softness ) {
 		this.softness = softness;
 	}
-	
+
 	/**
 	 * Get the softness of the effect.
 	 * @return the softness
@@ -50,7 +48,7 @@ public class HalftoneFilter extends AbstractBufferedImageOp {
 	public float getSoftness() {
 		return softness;
 	}
-	
+
 	/**
 	 * Set the halftone mask.
 	 * @param mask the mask
@@ -59,7 +57,7 @@ public class HalftoneFilter extends AbstractBufferedImageOp {
 	public void setMask( BufferedImage mask ) {
 		this.mask = mask;
 	}
-	
+
 	/**
 	 * Get the halftone mask.
 	 * @return the mask
@@ -68,15 +66,15 @@ public class HalftoneFilter extends AbstractBufferedImageOp {
 	public BufferedImage getMask() {
 		return mask;
 	}
-	
+
 	public void setInvert( boolean invert ) {
 		this.invert = invert;
 	}
-	
+
 	public boolean getInvert() {
 		return invert;
 	}
-	
+
 	/**
 	 * Set whether to do monochrome halftoning.
 	 * @param monochrome true for monochrome halftoning
@@ -85,7 +83,7 @@ public class HalftoneFilter extends AbstractBufferedImageOp {
 	public void setMonochrome(boolean monochrome) {
 		this.monochrome = monochrome;
 	}
-	
+
 	/**
 	 * Get whether to do monochrome halftoning.
 	 * @return true for monochrome halftoning

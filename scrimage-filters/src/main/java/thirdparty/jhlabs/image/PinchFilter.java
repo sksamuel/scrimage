@@ -35,7 +35,7 @@ public class PinchFilter extends TransformFilter {
 	private float icentreY;
 	private float width;
 	private float height;
-	
+
 	public PinchFilter() {
 	}
 
@@ -47,7 +47,7 @@ public class PinchFilter extends TransformFilter {
 	public void setAngle(float angle) {
 		this.angle = angle;
 	}
-	
+
 	/**
 	 * Get the angle of twist.
 	 * @return the angle in radians.
@@ -56,7 +56,7 @@ public class PinchFilter extends TransformFilter {
 	public float getAngle() {
 		return angle;
 	}
-	
+
 	/**
 	 * Set the centre of the effect in the X direction as a proportion of the image size.
 	 * @param centreX the center
@@ -74,7 +74,7 @@ public class PinchFilter extends TransformFilter {
 	public float getCentreX() {
 		return centreX;
 	}
-	
+
 	/**
 	 * Set the centre of the effect in the Y direction as a proportion of the image size.
 	 * @param centreY the center
@@ -92,7 +92,7 @@ public class PinchFilter extends TransformFilter {
 	public float getCentreY() {
 		return centreY;
 	}
-	
+
 	/**
 	 * Set the centre of the effect as a proportion of the image size.
 	 * @param centre the center
@@ -111,11 +111,11 @@ public class PinchFilter extends TransformFilter {
 	public Point2D getCentre() {
 		return new Point2D.Float( centreX, centreY );
 	}
-	
+
 	/**
 	 * Set the radius of the effect.
 	 * @param radius the radius
-     * @min-value 0
+     * min-value 0
      * @see #getRadius
 	 */
 	public void setRadius(float radius) {
@@ -134,8 +134,8 @@ public class PinchFilter extends TransformFilter {
 	/**
 	 * Set the amount of pinch.
 	 * @param amount the amount
-     * @min-value -1
-     * @max-value 1
+     * min-value -1
+     * max-value 1
      * @see #getAmount
 	 */
 	public void setAmount(float amount) {
@@ -161,7 +161,7 @@ public class PinchFilter extends TransformFilter {
 		radius2 = radius*radius;
 		return super.filter( src, dst );
 	}
-	
+
 	protected void transformInverse(int x, int y, float[] out) {
 		float dx = x-icentreX;
 		float dy = y-icentreY;

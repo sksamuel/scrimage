@@ -77,9 +77,6 @@ public class SmearFilter extends WholeImageFilter {
 
 	/**
      * Specifies the angle of the texture.
-     * @param angle the angle of the texture.
-     * @angle
-     * @see #getAngle
      */
 	public void setAngle(float angle) {
 		this.angle = angle;
@@ -87,8 +84,6 @@ public class SmearFilter extends WholeImageFilter {
 
 	/**
      * Returns the angle of the texture.
-     * @return the angle of the texture.
-     * @see #setAngle
      */
 	public float getAngle() {
 		return angle;
@@ -121,11 +116,11 @@ public class SmearFilter extends WholeImageFilter {
 	public void randomize() {
 		seed = new Date().getTime();
 	}
-	
+
 	private float random(float low, float high) {
 		return low+(high-low) * randomGenerator.nextFloat();
 	}
-	
+
 	protected int[] filterPixels( int width, int height, int[] inPixels, Rectangle transformedSpace ) {
 		int[] outPixels = new int[width * height];
 
@@ -181,7 +176,7 @@ public class SmearFilter extends WholeImageFilter {
 				int x1 = sx+dx;
 				int y1 = sy+dy;
 				int x, y, d, incrE, incrNE, ddx, ddy;
-				
+
 				if (x1 < x0)
 					ddx = -1;
 				else
@@ -271,5 +266,5 @@ public class SmearFilter extends WholeImageFilter {
 	public String toString() {
 		return "Effects/Smear...";
 	}
-	
+
 }

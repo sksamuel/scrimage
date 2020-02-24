@@ -26,7 +26,7 @@ import java.beans.*;
  * e.g. to create a blur transition, you could write: new TransitionFilter( new BoxBlurFilter(), "radius", 0, 100 );
  */
 public class TransitionFilter extends AbstractBufferedImageOp {
-	
+
 	private float transition = 0;
 	private BufferedImage destination;
     private String property;
@@ -86,14 +86,14 @@ public class TransitionFilter extends AbstractBufferedImageOp {
 	/**
 	 * Set the transition of the image in the range 0..1.
 	 * @param transition the transition
-     * @min-value 0
-     * @max-value 1
+     * min-value 0
+     * max-value 1
      * @see #getTransition
 	 */
 	public void setTransition( float transition ) {
 		this.transition = transition;
 	}
-	
+
 	/**
 	 * Get the transition of the image.
 	 * @return the transition
@@ -102,7 +102,7 @@ public class TransitionFilter extends AbstractBufferedImageOp {
 	public float getTransition() {
 		return transition;
 	}
-	
+
     /**
      * Set the destination image.
      * @param destination the destination image
@@ -111,7 +111,7 @@ public class TransitionFilter extends AbstractBufferedImageOp {
 	public void setDestination( BufferedImage destination ) {
 		this.destination = destination;
 	}
-	
+
     /**
      * Get the destination image.
      * @return the destination image
@@ -120,17 +120,17 @@ public class TransitionFilter extends AbstractBufferedImageOp {
 	public BufferedImage getDestination() {
 		return destination;
 	}
-	
+
 /*
 	public void setFilter( BufferedImageOp filter ) {
 		this.filter = filter;
 	}
-	
+
 	public int getFilter() {
 		return filter;
 	}
 */
-	
+
     /**
      * Prepare the filter for the transiton at a given time.
      * The default implementation sets the given filter property, but you could override this method to make other changes.
@@ -144,7 +144,7 @@ public class TransitionFilter extends AbstractBufferedImageOp {
             throw new IllegalArgumentException("Error setting value for property: "+property);
         }
 	}
-	
+
     public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
         if ( dst == null )
             dst = createCompatibleDestImage( src, null );

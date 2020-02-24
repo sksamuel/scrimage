@@ -11,7 +11,6 @@ import java.awt.image.DataBuffer;
 
 /**
  * Based on work from Java Image Util ( http://schmidt.devlib.org/jiu/ )
- * <p/>
  * Note that the filter method is not thread safe
  *
  * @author Morten Nobel-Joergensen

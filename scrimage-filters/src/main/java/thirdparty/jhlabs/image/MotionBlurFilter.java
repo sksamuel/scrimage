@@ -51,11 +51,10 @@ public class MotionBlurFilter extends AbstractBufferedImageOp {
         this.rotation = rotation;
         this.zoom = zoom;
     }
-    
+
 	/**
      * Specifies the angle of blur.
      * @param angle the angle of blur.
-     * @angle
      * @see #getAngle
      */
 	public void setAngle( float angle ) {
@@ -70,7 +69,7 @@ public class MotionBlurFilter extends AbstractBufferedImageOp {
 	public float getAngle() {
 		return angle;
 	}
-	
+
 	/**
      * Set the distance of blur.
      * @param distance the distance of blur.
@@ -88,7 +87,7 @@ public class MotionBlurFilter extends AbstractBufferedImageOp {
 	public float getDistance() {
 		return distance;
 	}
-	
+
 	/**
      * Set the blur rotation.
      * @param rotation the angle of rotation.
@@ -106,7 +105,7 @@ public class MotionBlurFilter extends AbstractBufferedImageOp {
 	public float getRotation() {
 		return rotation;
 	}
-	
+
 	/**
      * Set the blur zoom.
      * @param zoom the zoom factor.
@@ -124,7 +123,7 @@ public class MotionBlurFilter extends AbstractBufferedImageOp {
 	public float getZoom() {
 		return zoom;
 	}
-	
+
 	/**
      * Set whether to wrap at the image edges.
      * @param wrapEdges true if it should wrap.
