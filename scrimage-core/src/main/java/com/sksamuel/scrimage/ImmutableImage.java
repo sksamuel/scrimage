@@ -374,7 +374,10 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Returns a new Image with the brightness adjusted.
+    *
+    * @deprecated use the brightness filter"
     */
+   @Deprecated
    public ImmutableImage brightness(double factor) {
       ImmutableImage target = copy();
       target.rescaleInPlace(factor);
@@ -407,6 +410,12 @@ public class ImmutableImage extends MutableImage {
       return target;
    }
 
+   /**
+    * Returns a new Image with the contrast adjusted.
+    *
+    * @deprecated use the contrast filter"
+    */
+   @Deprecated
    public ImmutableImage contrast(double factor) {
       ImmutableImage target = copy();
       target.contrastInPlace(factor);
@@ -1314,13 +1323,17 @@ public class ImmutableImage extends MutableImage {
       return target;
    }
 
+   public ImmutableImage alphamask(ImmutableImage mask) {
+      return alphamask(mask, 0);
+   }
+
    /**
     * Returns a new ImmutableImage with the given alpha mask applied to this image.
     * The channel is an int which indicates which argb channel to use from the mask image.
     * For example to use the red channel set channel to 1 (0123 = argb)
     */
    public ImmutableImage alphamask(ImmutableImage mask, int channel) {
-      assert (channel > 0 && channel <= 3);
+      assert (channel >= 0 && channel <= 3);
 
       ImmutableImage copy = copy();
       RGBColor[] imageColors = copy.colors();
@@ -1333,20 +1346,20 @@ public class ImmutableImage extends MutableImage {
          int alpha;
          switch (channel) {
             case 1:
-               alpha = maskColors[i].toARGBInt() << 8; // Shift red to alpha
+               alpha = (maskColors[i].toARGBInt() & 0x00FF0000) << 8; // Shift red to alpha
                break;
             case 2:
-               alpha = maskColors[i].toARGBInt() << 16; // Shift green to alpha
+               alpha = (maskColors[i].toARGBInt() & 0x0000FF00) << 16; // Shift green to alpha
                break;
             case 3:
-               alpha = maskColors[i].toARGBInt() << 24; // Shift blue to alpha
+               alpha = (maskColors[i].toARGBInt() & 0x000000FF) << 24; // Shift blue to alpha
                break;
             default:
-               alpha = maskColors[i].toARGBInt(); // use alpha channel
+               alpha = (maskColors[i].toARGBInt() & 0xFF000000); // use alpha channel
                break;
          }
          int masked = color | alpha;
-         copy.setColor(i,  RGBColor.fromARGBInt(masked));
+         copy.setColor(i, RGBColor.fromARGBInt(masked));
       }
       return copy;
    }

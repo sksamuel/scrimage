@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -103,7 +104,7 @@ public class AwtImage {
     * Returns the colors of this image represented as an array of RGBColor.
     */
    public RGBColor[] colors() {
-      return (RGBColor[]) Arrays.stream(pixels()).map(Pixel::toColor).toArray();
+      return Arrays.stream(pixels()).map(Pixel::toColor).toArray(RGBColor[]::new);
    }
 
    /**
