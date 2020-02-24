@@ -1,8 +1,10 @@
-package com.sksamuel.scrimage;
+package com.sksamuel.scrimage.metadata;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Metadata;
+import com.sksamuel.scrimage.Directory;
+import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.nio.PngWriter;
 
 import java.io.ByteArrayInputStream;

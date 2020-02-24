@@ -1,28 +1,33 @@
 package com.sksamuel.scrimage;
 
+import com.sksamuel.scrimage.angles.Radians;
 import com.sksamuel.scrimage.color.RGBColor;
-import com.sksamuel.scrimage.subpixel.LinearSubpixelInterpolator;
 import com.sksamuel.scrimage.pixels.Pixel;
 import com.sksamuel.scrimage.pixels.PixelTools;
 import com.sksamuel.scrimage.scaling.AwtNearestNeighbourScale;
 import com.sksamuel.scrimage.scaling.Scale;
 import com.sksamuel.scrimage.scaling.ScrimageNearestNeighbourScale;
+import com.sksamuel.scrimage.subpixel.LinearSubpixelInterpolator;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.Spliterators;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 /**
- * Read only operations on a BufferedImage.
- * You can think of this as a pimped-immutable-BufferedImage.
+ * Wraps an AWT BufferedImage with some basic helper functions related to sizes, pixels etc.
+ * It also includes methods to write out the image.
  * None of the operations in this class will mutate the underlying awt buffer.
  */
 public class AwtImage {
@@ -36,6 +41,10 @@ public class AwtImage {
       this.awt = awt;
       width = awt.getWidth();
       height = awt.getHeight();
+   }
+
+   public ImmutableImage toImmutableImage() {
+      return ImmutableImage.wrapAwt(awt);
    }
 
    /**
@@ -77,6 +86,13 @@ public class AwtImage {
    public double ratio() {
       if (height == 0) return 0;
       else return width / (double) height;
+   }
+
+   /**
+    * Returns the AWT type of this image.
+    */
+   public int getType() {
+      return awt().getType();
    }
 
    /**
@@ -228,7 +244,7 @@ public class AwtImage {
     * @return true if p holds for at least one pixel
     */
    public boolean exists(Predicate<Pixel> p) {
-      return stream().anyMatch(p);
+      return Arrays.stream(pixels()).anyMatch(p);
    }
 
    /**
@@ -345,7 +361,7 @@ public class AwtImage {
     * @return the set of distinct Colors
     */
    public Set<RGBColor> colours() {
-      return stream().map(Pixel::toColor).collect(Collectors.toSet());
+      return Arrays.stream(pixels()).map(Pixel::toColor).collect(Collectors.toSet());
    }
 
    /**
@@ -365,11 +381,7 @@ public class AwtImage {
     * @return the number of pixels that evaluated true
     */
    public long count(Predicate<Pixel> p) {
-      return stream().filter(p).count();
-   }
-
-   public Stream<Pixel> stream() {
-      return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator(), 0), false);
+      return Arrays.stream(pixels()).filter(p).count();
    }
 
    /**
@@ -431,7 +443,7 @@ public class AwtImage {
    }
 
    /**
-    * Returns a new AWT Image scaled using nearest-neighbour.
+    * Returns a new AWT BufferedImage scaled using nearest-neighbour.
     */
    protected BufferedImage fastScaleAwt(int targetWidth, int targetHeight) {
       return scale(targetWidth, targetHeight, new AwtNearestNeighbourScale());
@@ -460,5 +472,89 @@ public class AwtImage {
       g2.drawImage(awt, 0, 0, null);
       g2.dispose();
       return target;
+   }
+
+   /**
+    * Returns true if the given predicate holds for all pixels in the image.
+    */
+   public boolean forAll(Predicate<Pixel> predicate) {
+      return Arrays.stream(pixels()).allMatch(predicate);
+   }
+
+   /**
+    * Programatically returns the origin point of top left.
+    */
+   public Pixel topLeftPixel() {
+      return pixel(0, 0);
+   }
+
+   public Pixel bottomLeftPixel() {
+      return pixel(0, height - 1);
+   }
+
+   public Pixel topRightPixel() {
+      return pixel(width - 1, 0);
+   }
+
+   public Pixel bottomRightPixel() {
+      return pixel(width - 1, height - 1);
+   }
+
+   /**
+    * Returns true if this image supports transparency/alpha in its underlying data model.
+    */
+   public boolean hasAlpha() {
+      return awt().getColorModel().hasAlpha();
+   }
+
+   /**
+    * Returns true if this image supports transparency/alpha in its underlying data model.
+    */
+   public boolean hasTransparency() {
+      return awt().getColorModel().hasAlpha();
+   }
+
+   /**
+    * Returns the average colour of all pixels in this image
+    */
+   public RGBColor average() {
+      return Arrays.stream(pixels()).map(Pixel::toColor).reduce(com.sksamuel.scrimage.color.Color::average).get();
+   }
+
+   /**
+    * Returns true if all the pixels on this image are a single color.
+    *
+    * @param color the color to test pixels against
+    */
+   public boolean isFilled(Color color) {
+      return forAll(p -> p.argb == RGBColor.fromAwt(color).toARGBInt());
+   }
+
+   public Path output(ImageWriter writer, String path) throws IOException {
+      return forWriter(writer).write(Paths.get(path));
+   }
+
+   public File output(ImageWriter writer, File file) throws IOException {
+      return forWriter(writer).write(file);
+   }
+
+   public Path output(ImageWriter writer, Path path) throws IOException {
+      return forWriter(writer).write(path);
+   }
+
+   public byte[] bytes(ImageWriter writer) throws IOException {
+      return forWriter(writer).bytes();
+   }
+
+   public WriteContext forWriter(ImageWriter writer) {
+      return new WriteContext(writer, this);
+   }
+
+   /**
+    * Returns a byte array stream consisting of the pixels of this image written out using
+    * the supplied writer.
+    */
+   public ByteArrayInputStream stream(ImageWriter writer) throws IOException {
+      return forWriter(writer).stream();
    }
 }

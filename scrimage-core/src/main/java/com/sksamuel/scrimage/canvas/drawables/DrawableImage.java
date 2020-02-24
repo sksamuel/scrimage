@@ -3,7 +3,7 @@ package com.sksamuel.scrimage.canvas.drawables;
 import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.canvas.Drawable;
 import com.sksamuel.scrimage.canvas.GraphicsContext;
-import com.sksamuel.scrimage.canvas.RichGraphics2D;
+import com.sksamuel.scrimage.graphics.RichGraphics2D;
 
 public class DrawableImage implements Drawable {
 

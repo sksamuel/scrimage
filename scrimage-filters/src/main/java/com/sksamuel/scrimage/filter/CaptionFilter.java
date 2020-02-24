@@ -2,7 +2,7 @@ package com.sksamuel.scrimage.filter;
 
 import com.sksamuel.scrimage.Dimension;
 import com.sksamuel.scrimage.Filter;
-import com.sksamuel.scrimage.Graphics2DUtils;
+import com.sksamuel.scrimage.graphics.Graphics2DUtils;
 import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.Position;
 import com.sksamuel.scrimage.canvas.Canvas;

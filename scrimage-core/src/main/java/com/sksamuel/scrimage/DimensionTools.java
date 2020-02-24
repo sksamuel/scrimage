@@ -20,46 +20,46 @@ import java.awt.Color;
 
 public class DimensionTools {
 
-    public static final Color BG_COLOR = java.awt.Color.WHITE;
-    public static final int SCALING_METHOD = java.awt.Image.SCALE_AREA_AVERAGING;
+   public static final Color BG_COLOR = java.awt.Color.WHITE;
+   public static final int SCALING_METHOD = java.awt.Image.SCALE_AREA_AVERAGING;
 
-    public static Dimension dimensionsToCover(Dimension target, Dimension source) {
+   public static Dimension dimensionsToCover(Dimension target, Dimension source) {
 
-        double xscale = target.getX() / (double) source.getX();
-        double yscale = target.getY() / (double) source.getY();
+      double xscale = target.getX() / (double) source.getX();
+      double yscale = target.getY() / (double) source.getY();
 
-        if (xscale > yscale) {
-            return new Dimension((int) Math.ceil(source.getX() * xscale), (int) Math.ceil(source.getY() * xscale));
-        } else {
-            return new Dimension((int) Math.ceil(source.getX() * yscale), (int) Math.ceil(source.getY() * yscale));
-        }
-    }
+      if (xscale > yscale) {
+         return new Dimension((int) Math.ceil(source.getX() * xscale), (int) Math.ceil(source.getY() * xscale));
+      } else {
+         return new Dimension((int) Math.ceil(source.getX() * yscale), (int) Math.ceil(source.getY() * yscale));
+      }
+   }
 
-    /**
-     * Returns width and height that allow the given source width, height to fit inside the target width, height
-     * without losing aspect ratio
-     */
-    public static Dimension dimensionsToFit(Dimension target, Dimension source) {
+   /**
+    * Returns width and height that allow the given source width, height to fit inside the target width, height
+    * without losing aspect ratio
+    */
+   public static Dimension dimensionsToFit(Dimension target, Dimension source) {
 
-        // if target width/height is zero then we have no preference for that, so set it to the original value,
-        // since it cannot be any larger
-        int maxWidth;
-        if (target.getX() == 0) {
-            maxWidth = source.getX();
-        } else {
-            maxWidth = target.getX();
-        }
+      // if target width/height is zero then we have no preference for that, so set it to the original value,
+      // since it cannot be any larger
+      int maxWidth;
+      if (target.getX() == 0) {
+         maxWidth = source.getX();
+      } else {
+         maxWidth = target.getX();
+      }
 
-        int maxHeight;
-        if (target.getY() == 0) {
-            maxHeight = source.getY();
-        } else {
-            maxHeight = target.getY();
-        }
+      int maxHeight;
+      if (target.getY() == 0) {
+         maxHeight = source.getY();
+      } else {
+         maxHeight = target.getY();
+      }
 
-        if (maxWidth * source.getY() < maxHeight * source.getX())
-            return new Dimension(maxWidth, (int) (source.getY() * maxWidth / source.getX()));
-        else
-            return new Dimension((int) (source.getX() * maxHeight / source.getY()), maxHeight);
-    }
+      if (maxWidth * source.getY() < maxHeight * source.getX())
+         return new Dimension(maxWidth, (int) (source.getY() * maxWidth / source.getX()));
+      else
+         return new Dimension((int) (source.getX() * maxHeight / source.getY()), maxHeight);
+   }
 }

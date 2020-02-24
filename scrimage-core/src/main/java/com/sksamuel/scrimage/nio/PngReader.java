@@ -3,7 +3,7 @@ package com.sksamuel.scrimage.nio;
 import ar.com.hjg.pngj.ImageLineHelper;
 import ar.com.hjg.pngj.ImageLineInt;
 import com.sksamuel.scrimage.ImmutableImage;
-import com.sksamuel.scrimage.ImageMetadata;
+import com.sksamuel.scrimage.metadata.ImageMetadata;
 import com.sksamuel.scrimage.color.RGBColor;
 
 import java.awt.image.*;

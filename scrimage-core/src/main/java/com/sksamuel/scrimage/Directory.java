@@ -1,5 +1,7 @@
 package com.sksamuel.scrimage;
 
+import com.sksamuel.scrimage.metadata.Tag;
+
 import java.util.Arrays;
 
 public class Directory {

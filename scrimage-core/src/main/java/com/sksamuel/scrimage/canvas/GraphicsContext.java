@@ -1,5 +1,7 @@
 package com.sksamuel.scrimage.canvas;
 
+import com.sksamuel.scrimage.graphics.RichGraphics2D;
+
 public interface GraphicsContext {
 
     /**

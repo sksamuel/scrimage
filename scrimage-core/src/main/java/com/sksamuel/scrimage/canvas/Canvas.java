@@ -1,6 +1,7 @@
 package com.sksamuel.scrimage.canvas;
 
 import com.sksamuel.scrimage.ImmutableImage;
+import com.sksamuel.scrimage.graphics.RichGraphics2D;
 
 import java.awt.*;
 import java.util.Arrays;

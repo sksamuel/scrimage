@@ -16,8 +16,11 @@
 
 package com.sksamuel.scrimage;
 
+import com.sksamuel.scrimage.angles.Degrees;
+import com.sksamuel.scrimage.angles.Radians;
 import com.sksamuel.scrimage.color.Colors;
 import com.sksamuel.scrimage.color.RGBColor;
+import com.sksamuel.scrimage.metadata.ImageMetadata;
 import com.sksamuel.scrimage.nio.ImageReader;
 import com.sksamuel.scrimage.pixels.Pixel;
 import com.sksamuel.scrimage.pixels.PixelTools;
@@ -40,16 +43,12 @@ import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferInt;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 /**
  * An immutable Image backed by an AWT BufferedImage.
@@ -333,13 +332,6 @@ public class ImmutableImage extends MutableImage {
    }
 
    /**
-    * Returns the AWT type of this image.
-    */
-   public int getType() {
-      return awt().getType();
-   }
-
-   /**
     * Creates an empty ImmutableImage of the same concrete type as this image and with the same dimensions.
     * The underlying pixels will not be initialized.
     *
@@ -605,22 +597,6 @@ public class ImmutableImage extends MutableImage {
    }
 
    /**
-    * Returns true if all the pixels on this image are a single color.
-    *
-    * @param color the color to test pixels against
-    */
-   public boolean isFilled(Color color) {
-      return forAll(p -> p.argb == RGBColor.fromAwt(color).toARGBInt());
-   }
-
-   /**
-    * Returns true if the given predicate holds for all pixels in the image.
-    */
-   public boolean forAll(Predicate<Pixel> predicate) {
-      return Arrays.stream(pixels()).allMatch(predicate);
-   }
-
-   /**
     * Flips this image horizontally.
     *
     * @return The result of flipping this image horizontally.
@@ -629,25 +605,6 @@ public class ImmutableImage extends MutableImage {
       AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
       tx.translate(-width, 0);
       return wrapAwt(affineTransform(tx), metadata);
-   }
-
-   /**
-    * Programatically returns the origin point of top left.
-    */
-   public Pixel topLeftPixel() {
-      return pixel(0, 0);
-   }
-
-   public Pixel bottomLeftPixel() {
-      return pixel(0, height - 1);
-   }
-
-   public Pixel topRightPixel() {
-      return pixel(width - 1, 0);
-   }
-
-   public Pixel bottomRightPixel() {
-      return pixel(width - 1, height - 1);
    }
 
    /**
@@ -698,18 +655,6 @@ public class ImmutableImage extends MutableImage {
    public ImmutableImage op(BufferedImageOp op) {
       BufferedImage after = op.filter(awt(), null);
       return wrapAwt(after, metadata);
-   }
-
-   public Path output(ImageWriter writer, String path) throws IOException {
-      return forWriter(writer).write(Paths.get(path));
-   }
-
-   public File output(ImageWriter writer, File file) throws IOException {
-      return forWriter(writer).write(file);
-   }
-
-   public Path output(ImageWriter writer, Path path) throws IOException {
-      return forWriter(writer).write(path);
    }
 
    /**
@@ -1182,20 +1127,6 @@ public class ImmutableImage extends MutableImage {
    }
 
    /**
-    * Returns true if this image supports transparency/alpha in its underlying data model.
-    */
-   public boolean hasAlpha() {
-      return awt().getColorModel().hasAlpha();
-   }
-
-   /**
-    * Returns true if this image supports transparency/alpha in its underlying data model.
-    */
-   public boolean hasTransparency() {
-      return awt().getColorModel().hasAlpha();
-   }
-
-   /**
     * Extracts a subimage, but using subpixel interpolation.
     */
    public ImmutableImage subpixelSubimage(double x,
@@ -1412,29 +1343,6 @@ public class ImmutableImage extends MutableImage {
     */
    public ImmutableImage zoom(double factor, ScaleMethod method) {
       return scale(factor, method).resizeTo(width, height, Position.Center, Color.WHITE);
-   }
-
-   public byte[] bytes(ImageWriter writer) throws IOException {
-      return forWriter(writer).bytes();
-   }
-
-   public WriteContext forWriter(ImageWriter writer) {
-      return new WriteContext(writer, this);
-   }
-
-   /**
-    * Returns a byte array stream consisting of the pixels of this image written out using
-    * the supplied writer.
-    */
-   public ByteArrayInputStream stream(ImageWriter writer) throws IOException {
-      return forWriter(writer).stream();
-   }
-
-   /**
-    * Returns the average colour of all pixels in this image
-    */
-   public RGBColor average() {
-      return Arrays.stream(pixels()).map(Pixel::toColor).reduce(com.sksamuel.scrimage.color.Color::average).get();
    }
 
    /**

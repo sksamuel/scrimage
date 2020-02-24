@@ -20,9 +20,9 @@ class TrimTest : FunSpec({
    }
 
    test("trim should revert padWith") {
-      val image = ImmutableImage.create(85, 56)
-      val same = image.padWith(10, 2, 5, 7).trim(10, 2, 5, 7)
-      image.width shouldBe same.width
-      image.height shouldBe same.height
+      val i = ImmutableImage.create(85, 56)
+      val same = i.padWith(10, 2, 5, 7).trim(10, 2, 5, 7)
+      i.width shouldBe same.width
+      i.height shouldBe same.height
    }
 })

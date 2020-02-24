@@ -1,6 +1,8 @@
 package com.sksamuel.scrimage;
 
 import com.drew.metadata.exif.ExifIFD0Directory;
+import com.sksamuel.scrimage.metadata.ImageMetadata;
+import com.sksamuel.scrimage.metadata.Tag;
 
 import java.util.Arrays;
 import java.util.Set;
