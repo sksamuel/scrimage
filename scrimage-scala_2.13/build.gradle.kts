@@ -3,6 +3,6 @@ plugins {
 }
 
 dependencies {
-   implementation("org.scala-lang:scala-library:2.12.10")
+   implementation("org.scala-lang:scala-library:2.13.1")
    implementation(project(":scrimage-core"))
 }

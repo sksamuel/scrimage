@@ -230,17 +230,6 @@ public class AwtImage {
    }
 
    /**
-    * Returns true if the predicate is true for all pixels in the image.
-    *
-    * @param predicate a predicate function that accepts 3 parameters - the x,y coordinate and the pixel at that coordinate
-    * @return true if f holds for at least one pixel
-    */
-   public boolean forall(Predicate<Pixel> predicate) {
-      //return Arrays.stream(points()).allMatch(predicate);
-      return false;
-   }
-
-   /**
     * Executes the given side effecting function on each pixel.
     *
     * @param fn a function that accepts a pixel
