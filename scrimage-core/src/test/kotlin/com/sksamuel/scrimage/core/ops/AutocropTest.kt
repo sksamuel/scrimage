@@ -1,6 +1,6 @@
 @file:Suppress("BlockingMethodInNonBlockingContext")
 
-package com.sksamuel.scrimage.core
+package com.sksamuel.scrimage.core.ops
 
 import com.sksamuel.scrimage.ImmutableImage
 import io.kotest.core.spec.style.FunSpec

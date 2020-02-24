@@ -13,11 +13,11 @@ import java.util.Arrays;
 import java.util.function.Function;
 
 /**
- * Contains methods that operate on an AWT BufferedImage by mutating the buffer in place.
- * All methods in this class should return void as they operate on the underlying image.
+ * Extends [AwtImage] with methods that operate on a [BufferedImage] by mutating the buffer.
+ * All methods in this class should return void as they operate on the underlying image in place.
  * <p>
- * This class cannot contain methods that result in a change canvas size, as there is no
- * way to mutate the size of an AWT image once created.
+ * This class cannot contain methods that result in a changed canvas size, as there is no
+ * way to mutate the size of a raster once created.
  */
 public class MutableImage extends AwtImage {
 
@@ -40,7 +40,7 @@ public class MutableImage extends AwtImage {
       });
    }
 
-   protected void removetrans(java.awt.Color color) {
+   public void replaceTransparencyInPlace(java.awt.Color color) {
       Arrays.stream(pixels()).forEach(pixel -> {
          Pixel withoutTrans = PixelTools.replaceTransparencyWithColor(pixel, color);
          awt().setRGB(pixel.x, pixel.y, withoutTrans.toARGBInt());
@@ -50,14 +50,14 @@ public class MutableImage extends AwtImage {
    /**
     * Fills all pixels the given color on the existing image.
     */
-   protected void fillInPlace(Color color) {
+   public void fillInPlace(Color color) {
       Arrays.stream(points()).forEach(point -> awt().setRGB(point.x, point.y, RGBColor.fromAwt(color).toARGBInt()));
    }
 
    /**
     * Applies the given image over the current buffer.
     */
-   protected void overlayInPlace(BufferedImage overlay, int x, int y) {
+   public void overlayInPlace(BufferedImage overlay, int x, int y) {
       Graphics2D g2 = (Graphics2D) awt().getGraphics();
       g2.drawImage(overlay, x, y, null);
       g2.dispose();
@@ -70,13 +70,13 @@ public class MutableImage extends AwtImage {
    /**
     * Mutates this image by scaling all pixel values by the given factor (brightness in other words).
     */
-   protected void rescaleInPlace(double factor) {
+   public void rescaleInPlace(double factor) {
       RescaleOp rescale = new RescaleOp((float) factor, 0f,
          new RenderingHints(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY));
       rescale.filter(awt(), awt());
    }
 
-   protected void contrastInPlace(double factor) {
+   public void contrastInPlace(double factor) {
       Arrays.stream(points()).forEach(p -> {
          Pixel pixel = pixel(p.x, p.y);
          int r = PixelTools.truncate((factor * (pixel.red() - 128)) + 128);

@@ -36,13 +36,10 @@ import thirdparty.mortennobel.TriangleFilter;
 import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
-import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferInt;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -540,55 +537,6 @@ public class ImmutableImage extends MutableImage {
    }
 
    /**
-    * Returns the pixels of this image represented as an array of Pixels.
-    */
-   public Pixel[] pixels() {
-      DataBuffer buffer = awt().getRaster().getDataBuffer();
-      if (buffer instanceof DataBufferInt) {
-         DataBufferInt intbuffer = (DataBufferInt) buffer;
-         int[] data = intbuffer.getData();
-         int index = 0;
-         Pixel[] pixels = new Pixel[data.length];
-         if (awt().getType() == BufferedImage.TYPE_INT_ARGB) {
-            while (index < data.length) {
-               Point point = PixelTools.offsetToPoint(index, width);
-               pixels[index] = new Pixel(point.x, point.y, data[index]);
-               index++;
-            }
-         } else if (awt().getType() == BufferedImage.TYPE_INT_RGB) {
-            while (index < data.length) {
-               Point point = PixelTools.offsetToPoint(index, width);
-               pixels[index] = new Pixel(point.x, point.y, data[index]);
-               index++;
-            }
-         } else if (awt().getType() == BufferedImage.TYPE_4BYTE_ABGR) {
-            while (index < data.length) {
-               int alpha = data[index];
-               int blue = data[index + 1];
-               int green = data[index + 2];
-               int red = data[index + 3];
-               Point point = PixelTools.offsetToPoint(index, width);
-               pixels[index / 4] = new Pixel(point.x, point.y, data[index / 4]);
-               index = index + 4;
-            }
-         } else {
-            throw new RuntimeException("Unsupported image type " + awt().getType());
-         }
-         return pixels;
-      } else {
-         Pixel[] pixels = new Pixel[width * height];
-         int index = 0;
-         for (int y = 0; y < width; y++) {
-            for (int x = 0; x < width; x++) {
-               pixels[index++] = new Pixel(x, y, awt().getRGB(x, y));
-
-            }
-         }
-         return pixels;
-      }
-   }
-
-   /**
     * Applies an affine transform in place.
     */
    private BufferedImage affineTransform(AffineTransform tx) {
@@ -980,7 +928,7 @@ public class ImmutableImage extends MutableImage {
     */
    public ImmutableImage removeTransparency(Color color) {
       ImmutableImage target = copy();
-      target.removetrans(color);
+      target.replaceTransparencyInPlace(color);
       return target;
    }
 

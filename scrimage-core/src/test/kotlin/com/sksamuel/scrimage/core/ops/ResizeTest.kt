@@ -1,4 +1,4 @@
-package com.sksamuel.scrimage.core
+package com.sksamuel.scrimage.core.ops
 
 import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.Position
