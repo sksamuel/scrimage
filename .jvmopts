@@ -1,5 +1,0 @@
--Dfile.encoding=UTF8
--Xms256m
--Xmx2g
--Xss2m
--XX:+CMSClassUnloadingEnabled
