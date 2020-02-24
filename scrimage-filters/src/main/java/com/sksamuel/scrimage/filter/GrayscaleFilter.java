@@ -17,17 +17,17 @@ package com.sksamuel.scrimage.filter;
 
 import com.sksamuel.scrimage.Filter;
 import com.sksamuel.scrimage.ImmutableImage;
-import com.sksamuel.scrimage.pixels.Pixel;
+import com.sksamuel.scrimage.color.RGBColor;
 
 public class GrayscaleFilter implements Filter {
 
-    public void apply(ImmutableImage image) {
-        image.mapInPlace((p) -> {
-            double red = 0.21 * p.red();
-            double green = 0.71 * p.green();
-            double blue = 0.07 * p.blue();
-            int gray = (int) (red + green + blue);
-            return new Pixel(p.x, p.y, gray, gray, gray, p.alpha());
-        });
-    }
+   public void apply(ImmutableImage image) {
+      image.mapInPlace((p) -> {
+         double red = 0.21 * p.red();
+         double green = 0.71 * p.green();
+         double blue = 0.07 * p.blue();
+         int gray = (int) (red + green + blue);
+         return new RGBColor(gray, gray, gray, p.alpha()).awt();
+      });
+   }
 }
