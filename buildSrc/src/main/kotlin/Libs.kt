@@ -1,7 +1,6 @@
 object Libs {
 
-   val kotlinVersion = "1.3.61"
-   val dokkaVersion = "0.10.0"
+   const val kotlinVersion = "1.3.61"
 
    const val org = "com.sksamuel.scrimage"
    const val TwelveMonkeysVersion = "3.5"
@@ -19,6 +18,10 @@ object Libs {
       const val bmp = "com.twelvemonkeys.imageio:imageio-bmp:$TwelveMonkeysVersion"
       const val iff = "com.twelvemonkeys.imageio:imageio-iff:$TwelveMonkeysVersion"
       const val sgi = "com.twelvemonkeys.imageio:imageio-sgi:$TwelveMonkeysVersion"
+   }
+
+   object Zh {
+      const val opengif = "com.github.zh79325:open-gif:1.0.4"
    }
 
    object Kotest {

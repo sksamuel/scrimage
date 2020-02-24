@@ -8,7 +8,7 @@ dependencies {
    api(Libs.TwelveMonkeys.imageIoCore)
    api(Libs.TwelveMonkeys.jpeg)
    api(Libs.Drewnoaks.metadataExtractor)
-   implementation("com.github.zh79325:open-gif:1.0.4")
+   implementation(Libs.Zh.opengif)
    implementation(Libs.commons.io)
    implementation(Libs.Hjg.pngj)
    testImplementation(Libs.Kotest.junit5)

@@ -19,7 +19,7 @@ plugins {
    id("maven-publish")
    signing
    id("com.adarshr.test-logger") version "2.0.0"
-   kotlin("jvm").apply(false).version("1.3.61")
+   kotlin("jvm").apply(false).version(Libs.kotlinVersion)
 }
 
 allprojects {
@@ -30,7 +30,7 @@ allprojects {
       google()
    }
 
-   group = "com.sksamuel.scrimage"
+   group = Libs.org
 
    if (isGithub) {
       version = "4.0.0." + Ci.githubBuildNumber + "-SNAPSHOT"
