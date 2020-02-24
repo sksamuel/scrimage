@@ -1,9 +1,7 @@
 <img src="./SCRIMAGE.png" alt="logo"/>
 
 ![build_test](https://github.com/sksamuel/scrimage/workflows/build_test/badge.svg)
-[<img src="https://img.shields.io/maven-central/v/com.sksamuel.scrimage/scrimage-core_2.10.svg?label=latest%20release%20for%202.10"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22scrimage-core_2.10%22)
-[<img src="https://img.shields.io/maven-central/v/com.sksamuel.scrimage/scrimage-core_2.11.svg?label=latest%20release%20for%202.11"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22scrimage-core_2.11%22)
-[<img src="https://img.shields.io/maven-central/v/com.sksamuel.scrimage/scrimage-core_2.12.svg?label=latest%20release%20for%202.12"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22scrimage-core_2.12.0-M3%22)
+[<img src="https://img.shields.io/maven-central/v/com.sksamuel.scrimage/scrimage-core.svg?label=latest%20release"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22scrimage-scala_2.12)
 [<img src="https://img.shields.io/nexus/s/https/oss.sonatype.org/com.sksamuel.scrimage/scrimage-core.svg?label=latest%20snapshot&style=plastic"/>](https://oss.sonatype.org/content/repositories/snapshots/com/sksamuel/scrimage/)
 
 This readme is for the 4.0.0 pre-release. For earlier releases see [here](README_2.x.md).
