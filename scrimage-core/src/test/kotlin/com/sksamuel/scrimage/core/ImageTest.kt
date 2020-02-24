@@ -87,7 +87,7 @@ class ImageTest : FunSpec({
       }
       val col = striped.col(51)
       striped.height shouldBe col.size
-      col.forAll { if (it.y % 2 == 0) it.argb shouldBe red else it.argb shouldBe blue }
+      col.forAll { if (it.y % 2 == 0) it.argb shouldBe red.toARGBInt() else it.argb shouldBe blue.toARGBInt() }
    }
 
    test("row") {
@@ -101,7 +101,7 @@ class ImageTest : FunSpec({
 
       val row = striped.row(44)
       striped.width shouldBe row.size
-      row.forAll { if (it.x % 2 == 0) it.argb shouldBe red else it.argb shouldBe blue }
+      row.forAll { if (it.x % 2 == 0) it.argb shouldBe red.toARGBInt() else it.argb shouldBe blue.toARGBInt() }
    }
 
 

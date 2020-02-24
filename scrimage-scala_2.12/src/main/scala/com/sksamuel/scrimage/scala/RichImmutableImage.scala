@@ -25,7 +25,7 @@ class RichImmutableImage(image: ImmutableImage) {
       image.forAll(fn)
    }
 
-   def foreach(f: Pixel => Unit) {
+   def foreach(f: Pixel => Unit): Unit = {
       val fn: java.util.function.Consumer[Pixel] = (t: Pixel) => f(t)
       image.forEach(fn)
    }

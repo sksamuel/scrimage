@@ -83,16 +83,16 @@ class PixelsTest : FunSpec({
       val striped = ImmutableImage.create(200, 100).map { p -> if (p.y % 2 == 0) red.awt() else blue.awt() }
       val pixels = striped.pixels(10, 10, 10, 10)
       for (k in 0..9) {
-         pixels[k].toARGBInt() shouldBe red
+         pixels[k].toARGBInt() shouldBe red.toARGBInt()
       }
       for (k in 10..19) {
-         pixels[k].toARGBInt() shouldBe blue
+         pixels[k].toARGBInt() shouldBe blue.toARGBInt()
       }
       for (k in 20..29) {
-         pixels[k].toARGBInt() shouldBe red
+         pixels[k].toARGBInt() shouldBe red.toARGBInt()
       }
       for (k in 30..39) {
-         pixels[k].toARGBInt() shouldBe blue
+         pixels[k].toARGBInt() shouldBe blue.toARGBInt()
       }
    }
 })
