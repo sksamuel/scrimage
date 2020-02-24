@@ -76,6 +76,10 @@ public class RGBColor implements Color {
       return new RGBColor(red, g, blue, alpha);
    }
 
+   public int[] toArray() {
+      return new int[]{alpha, red, green, blue};
+   }
+
    /**
     * Returns a conversion of this color into a CYMK color.
     * If this colour is already a CYMK then the same instance will be returned.
