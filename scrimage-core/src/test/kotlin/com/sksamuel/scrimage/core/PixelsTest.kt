@@ -78,10 +78,9 @@ class PixelsTest : FunSpec({
    }
 
    test("pixels region") {
-      val red = RGBColor(255, 0, 0).toARGBInt()
-      val blue = RGBColor(0, 0, 255).toARGBInt()
-      val striped =
-         ImmutableImage.create(200, 100).map { p -> if (p.y % 2 == 0) Pixel(p.x, p.y, red) else Pixel(p.x, p.y, blue) }
+      val red = RGBColor(255, 0, 0)
+      val blue = RGBColor(0, 0, 255)
+      val striped = ImmutableImage.create(200, 100).map { p -> if (p.y % 2 == 0) red.awt() else blue.awt() }
       val pixels = striped.pixels(10, 10, 10, 10)
       for (k in 0..9) {
          pixels[k].toARGBInt() shouldBe red

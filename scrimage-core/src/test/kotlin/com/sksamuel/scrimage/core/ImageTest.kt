@@ -5,13 +5,12 @@ package com.sksamuel.scrimage.core
 import com.sksamuel.scrimage.Dimension
 import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.color.RGBColor
-import com.sksamuel.scrimage.pixels.Pixel
+import java.awt.Color
+import java.awt.image.BufferedImage
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.inspectors.forAll
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import java.awt.Color
-import java.awt.image.BufferedImage
 
 class ImageTest : FunSpec({
 
@@ -72,7 +71,7 @@ class ImageTest : FunSpec({
 
    test("map modifies each pixel and returns image") {
       val i = ImmutableImage.create(100, 100)
-      val mapped = i.map { p -> Pixel(p.x, p.y, 255, 0, 255, 0) }
+      val mapped = i.map { RGBColor(255, 0, 255, 0).awt() }
       mapped.argb().forAll {
          it shouldBe intArrayOf(0, 255, 0, 255)
       }
@@ -80,11 +79,11 @@ class ImageTest : FunSpec({
 
    test("column") {
 
-      val red = RGBColor(255, 0, 0).toARGBInt()
-      val blue = RGBColor(0, 0, 255).toARGBInt()
+      val red = RGBColor(255, 0, 0)
+      val blue = RGBColor(0, 0, 255)
 
       val striped = ImmutableImage.create(200, 100).map { p ->
-         if (p.y % 2 == 0) Pixel(p.x, p.y, red) else Pixel(p.x, p.y, blue)
+         if (p.y % 2 == 0) red.awt() else blue.awt()
       }
       val col = striped.col(51)
       striped.height shouldBe col.size
@@ -93,11 +92,11 @@ class ImageTest : FunSpec({
 
    test("row") {
 
-      val red = RGBColor(255, 0, 0).toARGBInt()
-      val blue = RGBColor(0, 0, 255).toARGBInt()
+      val red = RGBColor(255, 0, 0)
+      val blue = RGBColor(0, 0, 255)
 
       val striped = ImmutableImage.create(200, 100).map { p ->
-         if (p.x % 2 == 0) Pixel(p.x, p.y, red) else Pixel(p.x, p.y, blue)
+         if (p.x % 2 == 0) red.awt() else blue.awt()
       }
 
       val row = striped.row(44)

@@ -262,10 +262,16 @@ public class ImmutableImage extends MutableImage {
       return create(w, h, pixels, CANONICAL_DATA_TYPE);
    }
 
+   /**
+    * Create a new Image from an array of pixels with the given type. The specified
+    * width and height must match the number of pixels.
+    *
+    * @return a new Image
+    */
    public static ImmutableImage create(int w, int h, Pixel[] pixels, int type) {
       assert w * h == pixels.length;
       ImmutableImage image = ImmutableImage.create(w, h, type);
-      image.mapInPlace((pixel) -> pixels[PixelTools.coordsToOffset(pixel.x, pixel.y, w)]);
+      image.mapInPlace((pixel) -> pixels[PixelTools.coordsToOffset(pixel.x, pixel.y, w)].toColor().awt());
       return image;
    }
 
@@ -1296,11 +1302,11 @@ public class ImmutableImage extends MutableImage {
    /**
     * Maps the pixels of this image into another image by applying the given function to each pixel.
     * <p>
-    * The function accepts a pixel being transformed and returns the transformed (or original) pixel.
+    * The function accepts a pixel being transformed and returns a new (or same) color.
     *
     * @param mapper the function to transform pixel x,y with existing value p into new pixel value p' (p prime)
     */
-   public ImmutableImage map(Function<Pixel, Pixel> mapper) {
+   public ImmutableImage map(Function<Pixel, Color> mapper) {
       ImmutableImage target = copy();
       target.mapInPlace(mapper);
       return target;
