@@ -50,7 +50,7 @@ public class ImageMetadata {
         try {
             return fromMetadata(ImageMetadataReader.readMetadata(in));
         } catch (ImageProcessingException e) {
-            throw new RuntimeException(e);
+           return ImageMetadata.empty;
         }
     }
 
