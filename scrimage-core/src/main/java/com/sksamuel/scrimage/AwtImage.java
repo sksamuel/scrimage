@@ -98,6 +98,13 @@ public class AwtImage {
    }
 
    /**
+    * Returns the colors of this image represented as an array of RGBColor.
+    */
+   public RGBColor[] colors() {
+      return (RGBColor[]) Arrays.stream(pixels()).map(Pixel::toColor).toArray();
+   }
+
+   /**
     * Returns the pixels of this image represented as an array of Pixels.
     */
    public Pixel[] pixels() {

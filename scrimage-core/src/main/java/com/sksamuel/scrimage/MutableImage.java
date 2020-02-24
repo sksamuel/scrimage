@@ -4,9 +4,7 @@ import com.sksamuel.scrimage.color.RGBColor;
 import com.sksamuel.scrimage.pixels.Pixel;
 import com.sksamuel.scrimage.pixels.PixelTools;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
 import java.util.Arrays;
@@ -63,8 +61,17 @@ public class MutableImage extends AwtImage {
       g2.dispose();
    }
 
-   public void setPixel(int x, int y, Pixel pixel) {
-      awt().setRGB(x, y, pixel.toARGBInt());
+   public void setColor(int offset, com.sksamuel.scrimage.color.Color color) {
+      Point point = PixelTools.offsetToPoint(offset, width);
+      awt().setRGB(point.x, point.y, color.toRGB().toARGBInt());
+   }
+
+   public void setColor(int x, int y, com.sksamuel.scrimage.color.Color color) {
+      awt().setRGB(x, y, color.toRGB().toARGBInt());
+   }
+
+   public void setPixel(Pixel pixel) {
+      awt().setRGB(pixel.x, pixel.y, pixel.toARGBInt());
    }
 
    /**
@@ -83,7 +90,7 @@ public class MutableImage extends AwtImage {
          int g = PixelTools.truncate((factor * (pixel.green() - 128)) + 128);
          int b = PixelTools.truncate((factor * (pixel.blue() - 128)) + 128);
          Pixel pixel2 = new Pixel(pixel.x, pixel.y, r, g, b, pixel.alpha());
-         setPixel(p.x, p.y, pixel2);
+         setPixel(pixel2);
       });
    }
 }

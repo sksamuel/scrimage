@@ -985,14 +985,14 @@ public class ImmutableImage extends MutableImage {
    /**
     * Scale will resize the canvas and scale the image to match.
     * This is like a "image resize" in Photoshop.
-    *
+    * <p>
     * scaleToHeight will scale the image so that the new image has a height that matches the
     * given targetHeight.
-    *
+    * <p>
     * If keepAspectRatio is true, then the width will also be scaled so that the aspect ratio
     * of the image does not change.
     * If keepAspectRatio is false, then the width will stay the same.
-    *
+    * <p>
     * Eg, an image of 200,300 with a scaleToHeight of 450 and keepAspectRatio of true will result
     * in a scaled image of 300,450 (because 300 to 450 is 1.5 and so 200 x 1.5 is 300).
     *
@@ -1310,5 +1310,42 @@ public class ImmutableImage extends MutableImage {
       ImmutableImage target = copy();
       target.mapInPlace(mapper);
       return target;
+   }
+
+   /**
+    * Returns a new ImmutableImage with the given alpha mask applied to this image.
+    * The channel is an int which indicates which argb channel to use from the mask image.
+    * For example to use the red channel set channel to 1 (0123 = argb)
+    */
+   public ImmutableImage alphamask(ImmutableImage mask, int channel) {
+      assert (channel > 0 && channel <= 3);
+
+      ImmutableImage copy = copy();
+      RGBColor[] imageColors = copy.colors();
+
+      RGBColor[] maskColors = mask.colors();
+
+      int count = count();
+      for (int i = 0; i < count; i++) {
+         int color = imageColors[i].toARGBInt() & 0x00ffffff; // Mask preexisting alpha
+         int alpha;
+         switch (channel) {
+            case 1:
+               alpha = maskColors[i].toARGBInt() << 8; // Shift red to alpha
+               break;
+            case 2:
+               alpha = maskColors[i].toARGBInt() << 16; // Shift green to alpha
+               break;
+            case 3:
+               alpha = maskColors[i].toARGBInt() << 24; // Shift blue to alpha
+               break;
+            default:
+               alpha = maskColors[i].toARGBInt(); // use alpha channel
+               break;
+         }
+         int masked = color | alpha;
+         copy.setColor(i,  RGBColor.fromARGBInt(masked));
+      }
+      return copy;
    }
 }
