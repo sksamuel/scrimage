@@ -15,7 +15,6 @@
  */
 package com.sksamuel.scrimage.filter;
 
-import com.sksamuel.scrimage.BufferedOpFilter;
 import thirdparty.jhlabs.image.GainFilter;
 
 import java.awt.image.BufferedImageOp;

@@ -4,7 +4,8 @@ import java.awt.Color
 import java.io.File
 import java.nio.file.Path
 
-import com.sksamuel.scrimage.{ImageWriter, ImmutableImage}
+import com.sksamuel.scrimage.ImmutableImage
+import com.sksamuel.scrimage.nio.ImageWriter
 import com.sksamuel.scrimage.pixels.Pixel
 
 import scala.language.implicitConversions

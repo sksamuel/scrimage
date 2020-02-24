@@ -1,7 +1,7 @@
 package com.sksamuel
 
 import com.sksamuel.scrimage.color.Color
-import com.sksamuel.scrimage.nio.PngWriter
+import com.sksamuel.scrimage.nio.{ImageWriter, PngWriter}
 
 import scala.language.implicitConversions
 

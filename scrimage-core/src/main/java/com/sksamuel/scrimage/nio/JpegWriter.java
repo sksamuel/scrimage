@@ -1,7 +1,6 @@
 package com.sksamuel.scrimage.nio;
 
 import com.sksamuel.scrimage.AwtImage;
-import com.sksamuel.scrimage.ImageWriter;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;

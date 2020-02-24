@@ -1,6 +1,5 @@
 package com.sksamuel.scrimage.filter;
 
-import com.sksamuel.scrimage.Filter;
 import com.sksamuel.scrimage.FontUtils;
 import com.sksamuel.scrimage.ImmutableImage;
 

@@ -1,6 +1,5 @@
 package com.sksamuel.scrimage.filter;
 
-import com.sksamuel.scrimage.BufferedOpFilter;
 import thirdparty.jhlabs.image.RGBAdjustFilter;
 
 import java.awt.image.BufferedImageOp;

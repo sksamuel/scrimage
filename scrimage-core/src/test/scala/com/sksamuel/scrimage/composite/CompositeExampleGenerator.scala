@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.composite
 
-import com.sksamuel.scrimage.{Composite, ImmutableImage}
+import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.nio.{JpegWriter, PngWriter}
 import java.io.File
 import java.nio.charset.Charset

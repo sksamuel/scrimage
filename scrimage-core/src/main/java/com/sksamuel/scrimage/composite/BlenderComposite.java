@@ -1,7 +1,6 @@
 package com.sksamuel.scrimage.composite;
 
 import com.sksamuel.scrimage.AwtImage;
-import com.sksamuel.scrimage.Composite;
 import thirdparty.romainguy.BlendComposite;
 import thirdparty.romainguy.BlendingMode;
 

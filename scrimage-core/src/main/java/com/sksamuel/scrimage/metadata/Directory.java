@@ -1,6 +1,4 @@
-package com.sksamuel.scrimage;
-
-import com.sksamuel.scrimage.metadata.Tag;
+package com.sksamuel.scrimage.metadata;
 
 import java.util.Arrays;
 

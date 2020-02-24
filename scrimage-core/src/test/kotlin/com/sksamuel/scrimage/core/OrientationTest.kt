@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage.core
 
 import com.sksamuel.scrimage.nio.JpegWriter
-import com.sksamuel.scrimage.ImageWriter
+import com.sksamuel.scrimage.nio.ImageWriter
 import com.sksamuel.scrimage.ImmutableImage
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe

@@ -15,8 +15,6 @@
  */
 package com.sksamuel.scrimage.filter;
 
-import com.sksamuel.scrimage.BufferedOpFilter;
-
 import java.awt.image.BufferedImageOp;
 
 public class PosterizeFilter extends BufferedOpFilter {

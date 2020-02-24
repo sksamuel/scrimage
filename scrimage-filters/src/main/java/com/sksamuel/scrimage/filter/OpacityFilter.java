@@ -15,10 +15,8 @@
  */
 package com.sksamuel.scrimage.filter;
 
-import com.sksamuel.scrimage.Filter;
 import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.color.RGBColor;
-import com.sksamuel.scrimage.pixels.Pixel;
 
 public class OpacityFilter implements Filter {
 

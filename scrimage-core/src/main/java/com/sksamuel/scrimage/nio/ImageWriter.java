@@ -1,4 +1,6 @@
-package com.sksamuel.scrimage;
+package com.sksamuel.scrimage.nio;
+
+import com.sksamuel.scrimage.AwtImage;
 
 import java.io.IOException;
 import java.io.OutputStream;

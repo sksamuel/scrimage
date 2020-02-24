@@ -1,6 +1,7 @@
 package com.sksamuel.scrimage;
 
 import com.drew.metadata.exif.ExifIFD0Directory;
+import com.sksamuel.scrimage.metadata.Directory;
 import com.sksamuel.scrimage.metadata.ImageMetadata;
 import com.sksamuel.scrimage.metadata.Tag;
 
@@ -32,8 +33,6 @@ public class Orientation {
     // that aren't actually orientation tags, which happens occasionally.
     // It seems to happen particularly with Sony cameras
     public static ImmutableImage reorient(ImmutableImage image, ImageMetadata metadata) {
-
-
         Set<String> imageOrientations = imageOrientationsOf(metadata);
         String first = imageOrientations.stream().findFirst().orElse("-1");
         switch (first) {

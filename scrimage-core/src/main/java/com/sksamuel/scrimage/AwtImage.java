@@ -2,6 +2,8 @@ package com.sksamuel.scrimage;
 
 import com.sksamuel.scrimage.angles.Radians;
 import com.sksamuel.scrimage.color.RGBColor;
+import com.sksamuel.scrimage.nio.ImageWriter;
+import com.sksamuel.scrimage.nio.WriteContext;
 import com.sksamuel.scrimage.pixels.Pixel;
 import com.sksamuel.scrimage.pixels.PixelTools;
 import com.sksamuel.scrimage.scaling.AwtNearestNeighbourScale;

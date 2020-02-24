@@ -1,4 +1,6 @@
-package com.sksamuel.scrimage;
+package com.sksamuel.scrimage.filter;
+
+import com.sksamuel.scrimage.ImmutableImage;
 
 import java.io.IOException;
 import java.util.Collection;

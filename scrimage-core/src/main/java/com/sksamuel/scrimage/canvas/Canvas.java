@@ -9,6 +9,7 @@ import java.util.Collection;
 
 /**
  * A Canvas extends an ImmutableImage with functionality for drawing.
+ * It is essentially some sugar around using the Graphics2D functionality in AWT.
  */
 public class Canvas {
 

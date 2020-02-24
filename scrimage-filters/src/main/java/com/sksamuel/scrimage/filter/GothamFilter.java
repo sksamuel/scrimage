@@ -1,7 +1,5 @@
 package com.sksamuel.scrimage.filter;
 
-import com.sksamuel.scrimage.PipelineFilter;
-
 import java.util.Arrays;
 
 public class GothamFilter extends PipelineFilter {

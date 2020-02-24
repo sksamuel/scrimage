@@ -20,6 +20,8 @@ import com.sksamuel.scrimage.angles.Degrees;
 import com.sksamuel.scrimage.angles.Radians;
 import com.sksamuel.scrimage.color.Colors;
 import com.sksamuel.scrimage.color.RGBColor;
+import com.sksamuel.scrimage.composite.Composite;
+import com.sksamuel.scrimage.filter.Filter;
 import com.sksamuel.scrimage.metadata.ImageMetadata;
 import com.sksamuel.scrimage.nio.ImageReader;
 import com.sksamuel.scrimage.pixels.Pixel;

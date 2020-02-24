@@ -13,10 +13,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage;
+package com.sksamuel.scrimage.composite;
 
-import java.io.IOException;
+import com.sksamuel.scrimage.AwtImage;
 
-public interface Filter {
-    void apply(ImmutableImage image) throws IOException;
+public interface Composite {
+
+  /**
+   * Apply the overlay image onto the given source image using
+   * this composite.
+   */
+  void apply(AwtImage src, AwtImage overlay);
 }
