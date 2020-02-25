@@ -1,16 +1,14 @@
-import java.awt.image.BufferedImage
-import java.io.File
-import javax.imageio.ImageIO
+package com.sksamuel.scrimage.scala;
 
 object GrayScale{
 
 	/**
-	    * Method to convert Coloured of an GrayScale image 
+	    * Method to convert Coloured of an GrayScale image
 	    * @param Image, @param typeImage
 	    * @return
     	*/
 
-	
+
 	def grayScale(image : BufferedImage, imageType : String) : BufferedImage = {
 	     var height : Int = image.getHeight()
 	     var width : Int = image.getWidth()
@@ -26,7 +24,7 @@ object GrayScale{
 		}
 		image
 	}
-	
+
 	def grayPixel(image : BufferedImage, pixel : Int, imageType : String) : Int = {
 		var red : Int = (pixel >> 16) & 0xff
     		var green : Int = (pixel >> 8) & 0xff
@@ -34,12 +32,12 @@ object GrayScale{
 		var avg : Int = ((0.2989 * red + 0.5870 * green + 0.1140 * blue).asInstanceOf[Int])
 		var gray : Int = 0
 		if (imageType == "png") {
-		     var alpha : Int = (pixel >> 24) & 0xff				
+		     var alpha : Int = (pixel >> 24) & 0xff
 		     gray = (alpha << 24) | (avg << 16) | (avg << 8) | avg;
 		} else {
 		     gray = (avg << 16) | (avg << 8) | avg;
 		}
 		gray
 	}
-	
+
 }

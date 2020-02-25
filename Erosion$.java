@@ -1,4 +1,4 @@
-import java.awt.image.BufferedImage
+package com.sksamuel.scrimage.scala;
 
 object Erosion{
 

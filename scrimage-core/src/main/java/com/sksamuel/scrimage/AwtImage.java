@@ -587,7 +587,10 @@ public class AwtImage {
    /**
     * Returns a byte array stream consisting of the pixels of this image written out using
     * the supplied writer.
+    *
+    * @deprecated pointless method that simply wraps bytes()
     */
+   @Deprecated
    public ByteArrayInputStream stream(ImageWriter writer) throws IOException {
       return forWriter(writer).stream();
    }
