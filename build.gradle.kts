@@ -33,7 +33,7 @@ allprojects {
    group = Libs.org
 
    if (isGithub) {
-      version = "4.0.0." + Ci.githubBuildNumber + "-SNAPSHOT"
+      version = "4.0.0." + Ci.githubRunId + "-SNAPSHOT"
    }
 }
 
