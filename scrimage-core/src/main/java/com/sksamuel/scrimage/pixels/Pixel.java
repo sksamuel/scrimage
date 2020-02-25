@@ -24,19 +24,27 @@ public class Pixel {
    public Pixel(int x, int y, int r, int g, int b, int alpha) {
       this.x = x;
       this.y = y;
-      this.argb = alpha << 24 | (r & 0xFF) << 16 | (g & 0xFF) << 8 | (b & 0xFF);
+      this.argb = PixelTools.argb(alpha, r, g, b);
    }
 
    public int alpha() {
-      return argb >> 24 & 0xFF;
+      return PixelTools.alpha(argb);
    }
 
    public int red() {
-      return argb >> 16 & 0xFF;
+      return PixelTools.red(argb);
    }
 
    public int green() {
-      return argb >> 8 & 0xFF;
+      return PixelTools.green(argb);
+   }
+
+   public int blue() {
+      return PixelTools.blue(argb);
+   }
+
+   public int average() {
+      return (red() + green() + blue()) / 3;
    }
 
    public int x() {
@@ -45,14 +53,6 @@ public class Pixel {
 
    public int y() {
       return y;
-   }
-
-   public int blue() {
-      return argb & 0xFF;
-   }
-
-   public int average() {
-      return (red() + green() + blue()) / 3;
    }
 
    // use toARGBInt() or .argb

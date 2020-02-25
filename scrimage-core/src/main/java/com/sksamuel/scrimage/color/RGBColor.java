@@ -1,5 +1,7 @@
 package com.sksamuel.scrimage.color;
 
+import com.sksamuel.scrimage.pixels.PixelTools;
+
 import java.util.Objects;
 
 /**
@@ -35,10 +37,10 @@ public class RGBColor implements Color {
    }
 
    public static RGBColor fromARGBInt(int argb) {
-      int alpha = argb >> 24 & 0xFF;
-      int red = argb >> 16 & 0xFF;
-      int green = argb >> 8 & 0xFF;
-      int blue = argb & 0xFF;
+      int alpha = PixelTools.alpha(argb);
+      int red = PixelTools.red(argb);
+      int green = PixelTools.green(argb);
+      int blue = PixelTools.blue(argb);
       return new RGBColor(red, green, blue, alpha);
    }
 
@@ -57,7 +59,7 @@ public class RGBColor implements Color {
    }
 
    public int toARGBInt() {
-      return ((alpha & 0xFF) << 24) | ((red & 0xFF) << 16) | ((green & 0xFF) << 8) | ((blue & 0xFF));
+      return PixelTools.argb(alpha, red, green, blue);
    }
 
    public RGBColor toRGB() {

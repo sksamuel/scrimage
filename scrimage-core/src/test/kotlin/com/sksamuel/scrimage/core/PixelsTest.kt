@@ -1,8 +1,9 @@
+@file:Suppress("BlockingMethodInNonBlockingContext")
+
 package com.sksamuel.scrimage.core
 
 import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.color.RGBColor
-import com.sksamuel.scrimage.pixels.Pixel
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.inspectors.forAll
 import io.kotest.matchers.shouldBe
@@ -75,6 +76,12 @@ class PixelsTest : FunSpec({
       val image = ImmutableImage.filled(20, 20, Color.YELLOW)
       val pixel = image.pixel(10, 10)
       pixel.toARGBInt() shouldBe 0xFFFFFF00.toInt()
+   }
+
+   test("get pixel supports alpha") {
+      val image = ImmutableImage.loader().fromResource("/balloon.png")
+      image.pixel(0, 0).toARGBInt() shouldBe 0
+      image.pixel(400, 400).toARGBInt() shouldBe 0xFFef5940.toInt()
    }
 
    test("pixels region") {

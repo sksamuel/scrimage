@@ -370,6 +370,10 @@ public class ImmutableImage extends MutableImage {
       return r -> pixels(r.x, r.y, r.width, r.height);
    }
 
+   public ImmutableImage autocrop() {
+      return autocrop(Colors.Transparent.awt());
+   }
+
    public ImmutableImage autocrop(Color color) {
       return autocrop(color, 0);
    }

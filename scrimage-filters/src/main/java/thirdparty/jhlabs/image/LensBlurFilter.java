@@ -195,7 +195,6 @@ public class LensBlurFilter extends AbstractBufferedImageOp {
 
         for (int tileY = -iradius; tileY < height; tileY += tileHeight - 2 * iradius) {
             for (int tileX = -iradius; tileX < width; tileX += tileWidth - 2 * iradius) {
-//                System.out.println("Tile: "+tileX+" "+tileY+" "+tileWidth+" "+tileHeight);
 
                 // Clip the tile to the image bounds
                 int tx = tileX, ty = tileY, tw = tileWidth, th = tileHeight;
