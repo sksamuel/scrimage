@@ -7,6 +7,7 @@ import com.sksamuel.scrimage.metadata.ImageMetadata;
 import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 
 public class ImmutableImageLoader {
@@ -67,7 +68,11 @@ public class ImmutableImageLoader {
    }
 
    public ImmutableImage fromResource(String resource) throws IOException {
-      return load(new InputStreamImageSource(getClass().getResourceAsStream(resource)));
+      return fromStream(getClass().getResourceAsStream(resource));
+   }
+
+   public ImmutableImage fromStream(InputStream stream) throws IOException {
+      return load(new InputStreamImageSource(stream));
    }
 
    public ImmutableImage load(ImageSource source) throws IOException {
