@@ -33,7 +33,7 @@ class PngWriterTest extends WordSpec with Matchers {
     }
     "png reader reads an image correctly" in {
       val expected = ImmutableImage.fromResource("/com/sksamuel/scrimage/io/bird_300_200.png")
-      val actual = new PngReader().fromBytes(IOUtils.toByteArray(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png")))
+      val actual = new PngReader().read(IOUtils.toByteArray(getClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png")))
       assert(actual.width === expected.width)
       assert(actual.height === expected.height)
       assert(actual === expected)

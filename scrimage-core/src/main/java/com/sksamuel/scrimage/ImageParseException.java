@@ -1,4 +1,6 @@
 package com.sksamuel.scrimage;
 
-public class ImageParseException extends RuntimeException {
+import java.io.IOException;
+
+public class ImageParseException extends IOException {
 }

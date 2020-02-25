@@ -47,7 +47,7 @@ class ImageTest : FunSpec({
       image.hashCode() shouldBe bird.hashCode()
       image shouldBe bird
 
-      val otherImage = ImmutableImage.fromAwt(BufferedImage(445, 464, ImmutableImage.CANONICAL_DATA_TYPE))
+      val otherImage = ImmutableImage.fromAwt(BufferedImage(445, 464, ImmutableImage.DEFAULT_DATA_TYPE))
       otherImage.hashCode() shouldNotBe image.hashCode()
       otherImage shouldNotBe image
    }

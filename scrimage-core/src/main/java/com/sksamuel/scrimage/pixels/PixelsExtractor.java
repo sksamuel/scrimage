@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage.pixels;
 
-import com.sksamuel.scrimage.Area;
+import java.awt.Rectangle;
 
 public interface PixelsExtractor {
-    Pixel[] apply(Area area);
+    Pixel[] apply(Rectangle rectangle);
 }

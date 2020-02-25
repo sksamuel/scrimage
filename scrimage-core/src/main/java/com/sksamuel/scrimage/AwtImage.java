@@ -144,12 +144,11 @@ public class AwtImage {
          }
          return pixels;
       } else {
-         Pixel[] pixels = new Pixel[width * height];
+         Pixel[] pixels = new Pixel[count()];
          int index = 0;
-         for (int y = 0; y < width; y++) {
+         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                pixels[index++] = new Pixel(x, y, awt().getRGB(x, y));
-
             }
          }
          return pixels;

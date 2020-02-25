@@ -23,7 +23,9 @@ import com.sksamuel.scrimage.color.RGBColor;
 import com.sksamuel.scrimage.composite.Composite;
 import com.sksamuel.scrimage.filter.Filter;
 import com.sksamuel.scrimage.metadata.ImageMetadata;
-import com.sksamuel.scrimage.nio.ImageReader;
+import com.sksamuel.scrimage.nio.ByteArrayImageSource;
+import com.sksamuel.scrimage.nio.ImageReaders;
+import com.sksamuel.scrimage.nio.ImmutableImageLoader;
 import com.sksamuel.scrimage.pixels.Pixel;
 import com.sksamuel.scrimage.pixels.PixelTools;
 import com.sksamuel.scrimage.pixels.PixelsExtractor;
@@ -38,6 +40,7 @@ import thirdparty.mortennobel.TriangleFilter;
 import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -68,7 +71,15 @@ public class ImmutableImage extends MutableImage {
       ImageIO.scanForPlugins();
    }
 
-   public static final int CANONICAL_DATA_TYPE = BufferedImage.TYPE_INT_ARGB;
+   public static final int DEFAULT_DATA_TYPE = BufferedImage.TYPE_INT_ARGB;
+   // use DEFAULT_DATA_TYPE
+   @Deprecated
+   public static final int CANONICAL_DATA_TYPE = DEFAULT_DATA_TYPE;
+   public static final int UNDERLYING_DATA_TYPE = -1;
+
+   public static ImmutableImageLoader loader() {
+      return new ImmutableImageLoader();
+   }
 
    private ImmutableImage(BufferedImage awt, ImageMetadata metadata) {
       super(awt);
@@ -76,10 +87,6 @@ public class ImmutableImage extends MutableImage {
    }
 
    // ----- Image Builder Methods ------ //
-
-   public static ImmutableImage fromAwt(java.awt.Image awt) {
-      return fromAwt(awt, CANONICAL_DATA_TYPE);
-   }
 
    /**
     * Create a new [ImmutableImage] from a source AWT Image.
@@ -89,8 +96,23 @@ public class ImmutableImage extends MutableImage {
     * @param awt the source AWT Image
     * @return a new ImmutableImage
     */
-   public static ImmutableImage fromAwt(java.awt.Image awt, int type) {
-      BufferedImage target = new BufferedImage(awt.getWidth(null), awt.getHeight(null), type);
+   public static ImmutableImage fromAwt(BufferedImage awt) {
+      return fromAwt(awt, UNDERLYING_DATA_TYPE);
+   }
+
+   /**
+    * Create a new [ImmutableImage] from a source AWT Image.
+    * This method will copy the source image so that modifications to the original
+    * do not write forward to this image.
+    * The resulting image will have the given type unless UNDERLYING_DATA_TYPE is used, then
+    * the type will be the same as the input image.
+    *
+    * @param awt the source AWT Image
+    * @return a new ImmutableImage
+    */
+   public static ImmutableImage fromAwt(BufferedImage awt, int type) {
+      int imageType = (type == UNDERLYING_DATA_TYPE) ? awt.getType() : type;
+      BufferedImage target = new BufferedImage(awt.getWidth(null), awt.getHeight(null), imageType);
       Graphics g2 = target.getGraphics();
       g2.drawImage(awt, 0, 0, null);
       g2.dispose();
@@ -126,6 +148,8 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Creates a new [ImmutableImage] from an AWT image by wrapping that source image.
+    * If the given awt image does not have the same type as requested, then this will
+    * force the image to be copied use [fromAwt].
     *
     * @param awt  the source AWT Image
     * @param type the AWT image type to use. If the image is not in this format already it will be coped.
@@ -133,8 +157,8 @@ public class ImmutableImage extends MutableImage {
     * @return a new Scrimage Image
     */
    public static ImmutableImage wrapAwt(BufferedImage awt, int type) {
-      if (type == -1 || awt.getType() == type) return new ImmutableImage(awt, ImageMetadata.empty);
-      else return fromAwt(awt, CANONICAL_DATA_TYPE);
+      if (type == UNDERLYING_DATA_TYPE || awt.getType() == type) return new ImmutableImage(awt, ImageMetadata.empty);
+      else return fromAwt(awt, type);
    }
 
    public static ImmutableImage wrapPixels(int w, int h, Pixel[] pixels, ImageMetadata metadata) {
@@ -144,7 +168,10 @@ public class ImmutableImage extends MutableImage {
    /**
     * Creates a new [ImmutableImage] from a file.
     * This method will also attach metadata.
+    *
+    * @deprecated use ImmutableImage.loader().fromFile(file);
     */
+   @Deprecated
    public static ImmutableImage fromFile(File file) throws IOException {
       return fromPath(file.toPath());
    }
@@ -152,7 +179,10 @@ public class ImmutableImage extends MutableImage {
    /**
     * Creates a new [ImmutableImage] from a path.
     * This method will also attach metadata.
+    *
+    * @deprecated use ImmutableImage.loader().fromPath(path);
     */
+   @Deprecated
    public static ImmutableImage fromPath(Path path) throws IOException {
       assert path != null;
       try (InputStream in = Files.newInputStream(path)) {
@@ -161,11 +191,24 @@ public class ImmutableImage extends MutableImage {
    }
 
    /**
+    * Create a new ImmutableImage that is the given width and height with no initialization.
+    * This will usually result in a default black background (all pixel data defaulting to zeroes)
+    * but that is not guaranteed.
+    * The type of the image will be [ImmutableImage.DEFAULT_DATA_TYPE].
+    *
+    * @param width  the width of the new image
+    * @param height the height of the new image
+    * @return the new Image with the given width and height
+    */
+   public static ImmutableImage create(int width, int height) {
+      return create(width, height, DEFAULT_DATA_TYPE);
+   }
+
+   /**
     * Create a new ImmutableImage that is the given width and height and type with no initialization.
     * This will usually result in a default black background (all pixel data defaulting to zeroes)
     * but that is not guaranteed.
-    * <p>
-    * The type of the image will be [ImmutableImage.CANONICAL_DATA_TYPE].
+    * The underlying image will have the type specified.
     *
     * @param width  the width of the new image
     * @param height the height of the new image
@@ -174,21 +217,6 @@ public class ImmutableImage extends MutableImage {
    public static ImmutableImage create(int width, int height, int type) {
       BufferedImage target = new BufferedImage(width, height, type);
       return new ImmutableImage(target, ImageMetadata.empty);
-   }
-
-   /**
-    * Create a new ImmutableImage that is the given width and height with no initialization.
-    * This will usually result in a default black background (all pixel data defaulting to zeroes)
-    * but that is not guaranteed.
-    * <p>
-    * The type of the image will be [ImmutableImage.CANONICAL_DATA_TYPE].
-    *
-    * @param width  the width of the new image
-    * @param height the height of the new image
-    * @return the new Image with the given width and height
-    */
-   public static ImmutableImage create(int width, int height) {
-      return create(width, height, CANONICAL_DATA_TYPE);
    }
 
    /**
@@ -201,7 +229,7 @@ public class ImmutableImage extends MutableImage {
     * @return the new Image
     */
    public static ImmutableImage filled(int width, int height, Color color) {
-      return filled(width, height, color, ImmutableImage.CANONICAL_DATA_TYPE);
+      return filled(width, height, color, ImmutableImage.DEFAULT_DATA_TYPE);
    }
 
    /**
@@ -230,11 +258,26 @@ public class ImmutableImage extends MutableImage {
     *
     * @param in the stream to read the bytes from
     * @return a new Image
+    * @deprecated use ImmutableImage.loader().fromFile(file);
     */
+   @Deprecated
    public static ImmutableImage fromStream(InputStream in) throws IOException {
-      return fromStream(in, CANONICAL_DATA_TYPE);
+      return fromStream(in, UNDERLYING_DATA_TYPE);
    }
 
+   /**
+    * Create a new Image from an input stream. This is intended to create
+    * an image from an image format eg PNG, not from a stream of pixels.
+    * This method will also attach metadata if available.
+    * The image will have the given type. If the given type is not the same
+    * as stored in the stream, this will force the image to be copied.
+    * Consider using fromStream(in).
+    *
+    * @param in the stream to read the bytes from
+    * @return a new Image
+    * @deprecated use ImmutableImage.loader().fromFile(file);
+    */
+   @Deprecated
    public static ImmutableImage fromStream(InputStream in, int type) throws IOException {
       assert in != null;
       byte[] bytes = IOUtils.toByteArray(in);
@@ -244,11 +287,18 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Creates a new Image from the resource on the classpath.
+    *
+    * @deprecated use ImmutableImage.loader().fromResource(file);
     */
+   @Deprecated
    public static ImmutableImage fromResource(String path) throws IOException {
-      return fromResource(path, CANONICAL_DATA_TYPE);
+      return fromResource(path, DEFAULT_DATA_TYPE);
    }
 
+   /**
+    * @deprecated use ImmutableImage.loader().fromResource(file);
+    */
+   @Deprecated
    public static ImmutableImage fromResource(String path, int type) throws IOException {
       return fromStream(ImmutableImage.class.getResourceAsStream(path), type);
    }
@@ -261,7 +311,7 @@ public class ImmutableImage extends MutableImage {
     * @return a new Image
     */
    public static ImmutableImage create(int w, int h, Pixel[] pixels) {
-      return create(w, h, pixels, CANONICAL_DATA_TYPE);
+      return create(w, h, pixels, DEFAULT_DATA_TYPE);
    }
 
    /**
@@ -283,32 +333,41 @@ public class ImmutableImage extends MutableImage {
     *
     * @param bytes the bytes from the format stream
     * @return a new Image
+    * @deprecated use ImmutableImage.loader().fromBytes(file);
     */
+   @Deprecated
    public static ImmutableImage parse(byte[] bytes) throws IOException {
-      return parse(bytes, CANONICAL_DATA_TYPE);
+      return parse(bytes, -1);
    }
 
    /**
     * Create a new Image from an array of bytes. This is intended to create
     * an image from an image format eg PNG, not from a stream of pixels.
+    * <p>
+    * The final image will have the given type. Note, if the image is not
+    * stored in the given type, then it will need to be copied. Unless you have
+    * a reason to specify the format, use parse(byte[]) and allow the image readers
+    * to choose the most appropriate type.
     *
     * @param bytes the bytes from the format stream
     * @return a new Image
+    * @deprecated use ImmutableImage.loader().fromBytes(file);
     */
+   @Deprecated
    public static ImmutableImage parse(byte[] bytes, int type) throws IOException {
-      assert type > 0;
-      ImmutableImage image = ImageReader.fromBytes(bytes, type);
+      ImmutableImage image = ImageReaders.read(new ByteArrayImageSource(bytes), null);
       ImageMetadata metadata = ImageMetadata.fromBytes(bytes);
+      if (type > 0) {
+         image = image.copy(type);
+      }
       // detect iphone mode, and rotate
       return Orientation.reorient(image, metadata).associateMetadata(metadata);
    }
 
-
    // ----- End Builder Methods ------ //
 
-
    private PixelsExtractor pixelExtractor() {
-      return area -> pixels(area.x, area.y, area.w, area.h);
+      return r -> pixels(r.x, r.y, r.width, r.height);
    }
 
    public ImmutableImage autocrop(Color color) {
@@ -374,10 +433,7 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Returns a new Image with the brightness adjusted.
-    *
-    * @deprecated use the brightness filter"
     */
-   @Deprecated
    public ImmutableImage brightness(double factor) {
       ImmutableImage target = copy();
       target.rescaleInPlace(factor);
@@ -391,9 +447,14 @@ public class ImmutableImage extends MutableImage {
     * @return A copy of this image.
     */
    public ImmutableImage copy() {
-      ImmutableImage target = create(width, height);
-      target.overlayInPlace(awt(), 0, 0);
-      return target;
+      return fromAwt(awt());
+   }
+
+   /**
+    * Returns a copy of this image with the BufferedImage type set to the given value.
+    */
+   public ImmutableImage copy(int type) {
+      return fromAwt(awt(), type);
    }
 
    /**
@@ -410,12 +471,13 @@ public class ImmutableImage extends MutableImage {
       return target;
    }
 
+   public ImageMetadata getMetadata() {
+      return metadata;
+   }
+
    /**
     * Returns a new Image with the contrast adjusted.
-    *
-    * @deprecated use the contrast filter"
     */
-   @Deprecated
    public ImmutableImage contrast(double factor) {
       ImmutableImage target = copy();
       target.contrastInPlace(factor);
@@ -1147,6 +1209,10 @@ public class ImmutableImage extends MutableImage {
       return wrapPixels(w, h, pixels(x, y, w, h), metadata);
    }
 
+   public ImmutableImage subimage(Rectangle rectangle) {
+      return subimage(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+   }
+
    /**
     * Returns a new Image which is the source image, but only keeping a max of k columns from the left.
     */
@@ -1292,7 +1358,7 @@ public class ImmutableImage extends MutableImage {
     * <p>
     * Both the original and the new image will share a buffer
     */
-   private ImmutableImage associateMetadata(ImageMetadata metadata) {
+   public ImmutableImage associateMetadata(ImageMetadata metadata) {
       return new ImmutableImage(awt(), metadata);
    }
 
@@ -1321,46 +1387,5 @@ public class ImmutableImage extends MutableImage {
       ImmutableImage target = copy();
       target.mapInPlace(mapper);
       return target;
-   }
-
-   public ImmutableImage alphamask(ImmutableImage mask) {
-      return alphamask(mask, 0);
-   }
-
-   /**
-    * Returns a new ImmutableImage with the given alpha mask applied to this image.
-    * The channel is an int which indicates which argb channel to use from the mask image.
-    * For example to use the red channel set channel to 1 (0123 = argb)
-    */
-   public ImmutableImage alphamask(ImmutableImage mask, int channel) {
-      assert (channel >= 0 && channel <= 3);
-
-      ImmutableImage copy = copy();
-      RGBColor[] imageColors = copy.colors();
-
-      RGBColor[] maskColors = mask.colors();
-
-      int count = count();
-      for (int i = 0; i < count; i++) {
-         int color = imageColors[i].toARGBInt() & 0x00ffffff; // Mask preexisting alpha
-         int alpha;
-         switch (channel) {
-            case 1:
-               alpha = (maskColors[i].toARGBInt() & 0x00FF0000) << 8; // Shift red to alpha
-               break;
-            case 2:
-               alpha = (maskColors[i].toARGBInt() & 0x0000FF00) << 16; // Shift green to alpha
-               break;
-            case 3:
-               alpha = (maskColors[i].toARGBInt() & 0x000000FF) << 24; // Shift blue to alpha
-               break;
-            default:
-               alpha = (maskColors[i].toARGBInt() & 0xFF000000); // use alpha channel
-               break;
-         }
-         int masked = color | alpha;
-         copy.setColor(i, RGBColor.fromARGBInt(masked));
-      }
-      return copy;
    }
 }

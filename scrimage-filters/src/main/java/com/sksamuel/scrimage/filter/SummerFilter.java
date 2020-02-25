@@ -30,7 +30,7 @@ public class SummerFilter implements Filter {
 
     static {
         try {
-            summer = ImmutableImage.fromResource("/com/sksamuel/scrimage/filter/summer1.jpg", ImmutableImage.CANONICAL_DATA_TYPE);
+            summer = ImmutableImage.fromResource("/com/sksamuel/scrimage/filter/summer1.jpg", ImmutableImage.DEFAULT_DATA_TYPE);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
