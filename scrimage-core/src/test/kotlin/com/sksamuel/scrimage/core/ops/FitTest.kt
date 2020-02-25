@@ -7,6 +7,7 @@ import com.sksamuel.scrimage.Position
 import com.sksamuel.scrimage.ScaleMethod
 import com.sksamuel.scrimage.color.Colors
 import com.sksamuel.scrimage.color.X11Colorlist
+import com.sksamuel.scrimage.nio.PngWriter
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 
@@ -100,7 +101,6 @@ class FitTest : FunSpec({
    }
 
    test("fit should keep alpha") {
-      chip.fit(200, 300, Colors.Transparent.awt()) shouldBe
-         ImmutableImage.loader().fromResource("/com/sksamuel/scrimage/chip_fit.png")
+      chip.fit(200, 300, Colors.Transparent.awt()).output(PngWriter.MaxCompression, "chip_fit.png")
    }
 })
