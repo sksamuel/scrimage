@@ -47,21 +47,21 @@ Reading an image, scaling it to 50% using the Bicubic method, and writing out as
 ```scala
 val in = ... // input stream
 val out = ... // output stream
-Image.fromStream(in).scale(0.5, Bicubic).output(out) // an implicit PNG writer is in scope by default
+ImmutableImage.loader().fromStream(in).scale(0.5, Bicubic).output(out) // an implicit PNG writer is in scope by default
 ```
 
 Reading an image from a java File, applying a blur filter, then flipping it on the horizontal axis, then writing out as a Jpeg
 ```scala
 val inFile = ... // input File
 val outFile = ... // output File
-Image.fromFile(inFile).filter(BlurFilter).flipX.output(outFile)(JpegWriter()) // specified Jpeg
+ImmutableImage.loader().fromFile(inFile).filter(BlurFilter).flipX.output(outFile)(JpegWriter()) // specified Jpeg
 ```
 
 Padding an image with a 20 pixel border around the edges in red
 ```scala
 val in = ... // input stream
 val out = ... // output stream
-Image.fromStream(in).pad(20, Color.Red)
+ImmutableImage.loader().fromStream(in).pad(20, Color.Red)
 ```
 
 Enlarging the canvas of an image without scaling the image. Note: the resize methods change the canvas size,
@@ -69,14 +69,14 @@ and the scale methods are used to scale/resize the actual image. This terminolog
 ```scala
 val in = ... // input stream
 val out = ... // output stream
-Image.fromStream(in).resize(600,400)
+ImmutableImage.loader().fromStream(in).resize(600,400)
 ```
 
 Scaling an image to a specific size using a fast non-smoothed scale
 ```scala
 val in = ... // input stream
 val out = ... // output stream
-Image.fromStream(in).scaleTo(300, 200, FastScale)
+ImmutableImage.loader().fromStream(in).scaleTo(300, 200, FastScale)
 ```
 
 Writing out a heavily compressed Jpeg thumbnail
@@ -84,14 +84,14 @@ Writing out a heavily compressed Jpeg thumbnail
 implicit val writer = JpegWriter().withCompression(50)
 val in = ... // input stream
 val out = ... // output stream
-Image.fromStream(in).fit(180,120).output(new File("image.jpeg"))
+ImmutableImage.loader().fromStream(in).fit(180,120).output(new File("image.jpeg"))
 ```
 
 Printing the sizes and ratio of the image
 ```scala
 val in = ... // input stream
 val out = ... // output stream
-val image = Image.fromStream(in)
+val image = ImmutableImage.loader().fromStream(in)
 println(s"Width: ${image.width} Height: ${image.height} Ratio: ${image.ratio}")
 ```
 
@@ -99,14 +99,14 @@ Converting a byte array in JPEG to a byte array in PNG
 ```
 val in : Array[Byte] = ... // array of bytes in JPEG say
 val out = Image(in).write // default is PNG
-val out2 = Image(in).bytes) // an implicit PNG writer is in scope by default with max compression
+val out2 = ImmutableImage.loader().fromBytes(in).bytes) // an implicit PNG writer is in scope by default with max compression
 ```
 
 Coverting an input stream to a PNG with no compression
 ```
 implicit val writer = PngWriter.NoCompression
 val in : InputStream = ... // some input stream
-val out = Image.fromStream(in).stream
+val out = ImmutableImage.loader().fromStream(in).stream
 ```
 
 ### Input / Output
@@ -118,7 +118,7 @@ To load an image simply use the Image companion methods on an input stream, file
 The format does not matter as the underlying reader will determine that. Eg,
 ```scala
 val in = ... // a handle to an input stream
-val image = Image.fromInputStream(in)
+val image = ImmutableImage.loader().fromStream(in)
 ```
 
 To save a method, Scrimage requires an ImageWriter. You can use this implicitly or explicitly. A PngWriter is in scope
@@ -174,7 +174,7 @@ Apple iPhone's have this annoying "feature" where an image taken when the phone 
 saved as landscape with a flag set to whether it was portrait or not. Scrimage will detect this flag, if it is present on the file, and correct the
 orientation for you automatically. Most image readers do this, such as web browsers, but you might have noticed some things do not, such as intellij.
 
-Note: This will only work if you use `Image.fromStream`, `Image.fromResource`, or `Image.fromFile`, as otherwise the metadata will not be available.
+Note: This can be disabled by setting `detectOrientation(false)` on the `ImmutableImage.loader()` instance.
 
 ### X11 Colors
 
@@ -209,6 +209,8 @@ The results are for 100 runs of a resize to a fixed width / height.
 As you can see, ImgScalr is the fastest for a simple rescale, but Scrimage is much faster than the rest for a high quality scale.
 
 
+
+
 ### Including Scrimage in your project
 
 Scrimage is available on maven central. There are several dependencies.
@@ -240,6 +242,16 @@ Or finally if Maven then use:
     <artifactId>scrimage-core</artifactId>
     <version>${version}</version>
 ```
+
+
+### Scala Helpers
+
+If you are using Scala, then you can add the module `"com.sksamuel.scrimage" %% "scrimage-scala_2.x" % "$version"` to
+your build. Then adding `import com.sksamuel.scrimage.scala._` will bring into scope some useful implicits.
+
+Firstly, an implicit `PNGWriter` so you do not have to specify it when outputting images. Secondly, a conversion to / from
+`java.awt.Color` and Scrimage's `RGBColor`. Lastly, forall, foreach and map methods on `ImmutableImage` which work with Scala
+functions.
 
 
 ### Filters
