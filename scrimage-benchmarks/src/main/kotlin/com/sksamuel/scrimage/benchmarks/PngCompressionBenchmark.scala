@@ -1,8 +1,9 @@
-package com.sksamuel.scrimage.nio
+package com.sksamuel.scrimage.benchmarks
+
+import java.io.File
 
 import com.sksamuel.scrimage.ImmutableImage
-import java.io.File
-import scala.concurrent.duration._
+import com.sksamuel.scrimage.nio.PngWriter
 
 object PngCompressionBenchmark extends App {
 

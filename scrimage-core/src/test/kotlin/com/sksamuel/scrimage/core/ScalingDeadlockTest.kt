@@ -1,3 +1,5 @@
+@file:Suppress("BlockingMethodInNonBlockingContext")
+
 package com.sksamuel.scrimage.core
 
 import com.sksamuel.scrimage.ImmutableImage
@@ -9,15 +11,19 @@ import kotlin.concurrent.thread
 
 class ScalingDeadlockTest : FunSpec({
 
-   val image = ImmutableImage.fromStream(javaClass.getResourceAsStream("/com/sksamuel/scrimage/bird.jpg"))
+   val image = ImmutableImage.loader().fromStream(javaClass.getResourceAsStream("/com/sksamuel/scrimage/bird.jpg"))
 
    test("image scale should not deadlock on multiple concurrent scales") {
       val images = mutableListOf<ImmutableImage>()
       val latch = CountDownLatch(50)
       repeat(50) {
          thread {
-            images.add(image.scaleTo(200, 200))
-            latch.countDown()
+            try {
+               images.add(image.scaleTo(200, 200))
+               latch.countDown()
+            } catch (t: Throwable) {
+               t.printStackTrace()
+            }
          }
       }
       latch.await()

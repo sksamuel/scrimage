@@ -1,4 +1,4 @@
-package benchmarks
+package com.sksamuel.scrimage.benchmarks
 
 import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.nio.PngWriter
