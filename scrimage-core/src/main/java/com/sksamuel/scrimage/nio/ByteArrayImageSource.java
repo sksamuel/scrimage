@@ -1,9 +1,5 @@
 package com.sksamuel.scrimage.nio;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 public class ByteArrayImageSource implements ImageSource {
 
    private final byte[] bytes;
@@ -13,7 +9,7 @@ public class ByteArrayImageSource implements ImageSource {
    }
 
    @Override
-   public InputStream open() throws IOException {
-      return new ByteArrayInputStream(bytes);
+   public byte[] read() {
+      return bytes;
    }
 }

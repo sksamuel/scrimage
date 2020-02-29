@@ -24,7 +24,7 @@ public class ImageMetadata {
 
    public static ImageMetadata load(ImageSource source) throws IOException {
       try {
-         return fromMetadata(ImageMetadataReader.readMetadata(source.open()));
+         return fromMetadata(ImageMetadataReader.readMetadata(new ByteArrayInputStream(source.read())));
       } catch (ImageProcessingException e) {
          return ImageMetadata.empty;
       }

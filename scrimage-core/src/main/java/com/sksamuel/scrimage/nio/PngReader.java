@@ -12,15 +12,18 @@ import java.awt.image.ColorModel;
 import java.awt.image.DataBufferInt;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.ByteArrayInputStream;
+import java.util.Arrays;
 
 public class PngReader implements ImageReader {
 
    @Override
-   public ImmutableImage read(InputStream input, Rectangle rectangle) {
+   public ImmutableImage read(byte[] bytes, Rectangle rectangle) {
 
-      ar.com.hjg.pngj.PngReader pngr = new ar.com.hjg.pngj.PngReader(input);
+      if (!isPng(bytes))
+         return null;
+
+      ar.com.hjg.pngj.PngReader pngr = new ar.com.hjg.pngj.PngReader(new ByteArrayInputStream(bytes));
 
       int channels = pngr.imgInfo.channels;
       int bitDepth = pngr.imgInfo.bitDepth;
@@ -83,10 +86,12 @@ public class PngReader implements ImageReader {
       return image;
    }
 
-//   public boolean supports(byte[] bytes) {
-//      byte[] expected = new byte[]{(byte) 0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A, 0x0A};
-//      byte[] actual = new byte[8];
-//      System.arraycopy(bytes, 0, actual, 0, 8);
-//      return Arrays.equals(expected, actual);
-//   }
+   private boolean isPng(byte[] bytes) {
+      if (bytes.length < 8)
+         return false;
+      byte[] expected = new byte[]{(byte) 0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A, 0x0A};
+      byte[] actual = new byte[8];
+      System.arraycopy(bytes, 0, actual, 0, 8);
+      return Arrays.equals(expected, actual);
+   }
 }

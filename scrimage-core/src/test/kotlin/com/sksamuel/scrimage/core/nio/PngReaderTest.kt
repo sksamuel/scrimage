@@ -16,7 +16,7 @@ class PngReaderTest : WordSpec({
    "PngReader" should {
       "be able to read pngs of all channels"  {
          val files = File(javaClass.getResource("/png").file).listFiles()!!
-         val images = files.map { file -> PngReader().read(Files.newInputStream(file.toPath()), null) }
+         val images = files.map { file -> PngReader().read(Files.readAllBytes(file.toPath()), null) }
          images.size shouldBe 13
       }
       "use backing awt image with transparency"  {

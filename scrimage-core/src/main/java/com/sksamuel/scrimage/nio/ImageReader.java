@@ -4,13 +4,18 @@ import com.sksamuel.scrimage.ImmutableImage;
 
 import java.awt.Rectangle;
 import java.io.IOException;
-import java.io.InputStream;
 
 public interface ImageReader {
 
-   default ImmutableImage read(InputStream input) throws IOException {
-      return read(input, null);
+   default ImmutableImage read(byte[] bytes) throws IOException {
+      return read(bytes, null);
    }
 
-   ImmutableImage read(InputStream input, Rectangle rectangle) throws IOException;
+   default ImmutableImage read(byte[] bytes, Rectangle rectangle) throws IOException {
+      ImmutableImage image = read(bytes);
+      if (image == null)
+         return null;
+      else
+         return image.subimage(rectangle);
+   }
 }

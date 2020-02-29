@@ -2,7 +2,6 @@ package com.sksamuel.scrimage.nio;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -19,7 +18,7 @@ public class FileImageSource implements ImageSource {
    }
 
    @Override
-   public InputStream open() throws IOException {
-      return Files.newInputStream(path);
+   public byte[] read() throws IOException {
+      return Files.readAllBytes(path);
    }
 }

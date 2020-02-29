@@ -8,8 +8,8 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Optional;
 
@@ -39,9 +39,13 @@ public class ImageIOReader implements ImageReader {
    }
 
    @Override
-   public ImmutableImage read(InputStream input, Rectangle rectangle) throws IOException {
+   public ImmutableImage read(byte[] bytes, Rectangle rectangle) throws IOException {
+      if (bytes == null)
+         throw new RuntimeException("bytes cannot be null");
 
-      ImageInputStream iis = ImageIO.createImageInputStream(input);
+      ImageInputStream iis = ImageIO.createImageInputStream(new ByteArrayInputStream(bytes));
+      if (iis == null)
+         throw new RuntimeException("iis was null from " + bytes);
       Iterator<javax.imageio.ImageReader> readers = ImageIO.getImageReaders(iis);
       while (readers.hasNext()) {
          Optional<ImmutableImage> image = tryLoad(readers.next(), iis, rectangle);

@@ -1214,7 +1214,10 @@ public class ImmutableImage extends MutableImage {
    }
 
    public ImmutableImage subimage(Rectangle rectangle) {
-      return subimage(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+      if (rectangle == null)
+         return this;
+      else
+         return subimage(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
    }
 
    /**

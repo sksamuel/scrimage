@@ -8,7 +8,6 @@ import com.sksamuel.scrimage.nio.JpegWriter
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 import java.awt.Color
-import java.io.ByteArrayInputStream
 import java.io.File
 import java.nio.file.Files
 
@@ -19,12 +18,12 @@ class JpegReaderTest : WordSpec({
    "ImageIO" should {
       "be able to read all jpegs"  {
          val files = File(javaClass.getResource("/jpeg").file).listFiles()!!
-         val images = files.map { file -> ImageIOReader().read(Files.newInputStream(file.toPath()), null) }
+         val images = files.map { file -> ImageIOReader().read(Files.readAllBytes(file.toPath()), null) }
          files.size shouldBe images.size
       }
 
       "extract image type from the processed image"  {
-         val image = ImageIOReader().read(ByteArrayInputStream(jpeg))
+         val image = ImageIOReader().read(jpeg)
          image.awt().colorModel.hasAlpha() shouldBe false
       }
    }

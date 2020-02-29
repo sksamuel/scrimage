@@ -1,5 +1,7 @@
 package com.sksamuel.scrimage.nio;
 
+import org.apache.commons.io.IOUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -12,7 +14,8 @@ public class InputStreamImageSource implements ImageSource {
    }
 
    @Override
-   public InputStream open() throws IOException {
-      return stream;
+   public byte[] read() throws IOException {
+      return IOUtils.toByteArray(stream);
    }
 }
+

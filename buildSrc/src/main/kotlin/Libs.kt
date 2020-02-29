@@ -20,6 +20,10 @@ object Libs {
       const val sgi = "com.twelvemonkeys.imageio:imageio-sgi:$TwelveMonkeysVersion"
    }
 
+   object NatGeo {
+      val tiff = "mil.nga:tiff:2.0.1"
+   }
+
    object Zh {
       const val opengif = "com.github.zh79325:open-gif:1.0.4"
    }

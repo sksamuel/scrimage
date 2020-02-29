@@ -7,6 +7,7 @@ import com.sksamuel.scrimage.nio.PngReader
 import com.sksamuel.scrimage.nio.PngWriter
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
+import org.apache.commons.io.IOUtils
 
 class PngWriterTest : WordSpec({
 
@@ -33,8 +34,8 @@ class PngWriterTest : WordSpec({
       }
       "png reader reads an image correctly"  {
          val expected = ImmutableImage.loader().fromResource("/com/sksamuel/scrimage/io/bird_300_200.png")
-         val actual =
-            PngReader().read(javaClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png"), null)
+         val bytes = IOUtils.toByteArray(javaClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_300_200.png"))
+         val actual = PngReader().read(bytes, null)
          actual.width shouldBe expected.width
          actual.height shouldBe expected.height
          actual shouldBe expected

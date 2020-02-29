@@ -77,14 +77,15 @@ public class ImmutableImageLoader {
 
    public ImmutableImage load(ImageSource source) throws IOException {
 
-      ImmutableImage image = ImageReaders.read(source, rectangle);
+      ImageSource cached = new CachedImageSource(source);
+      ImmutableImage image = ImageReaders.read(cached, rectangle);
 
       if (type > 0 && type != image.getType()) {
          image = image.copy(type);
       }
 
       if (metadata) {
-         ImageMetadata metadata = ImageMetadata.load(source);
+         ImageMetadata metadata = ImageMetadata.load(cached);
          image = image.associateMetadata(metadata);
       }
 
