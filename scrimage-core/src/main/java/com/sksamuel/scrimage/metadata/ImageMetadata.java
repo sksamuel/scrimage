@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
@@ -105,5 +106,9 @@ public class ImageMetadata {
 
    public Tag[] tags() {
       return Arrays.stream(directories).flatMap(dir -> Arrays.stream(dir.getTags())).toArray(Tag[]::new);
+   }
+
+   public Optional<Orientation> getOrientation() {
+      return OrientationTools.imageOrientationsOf(this).stream().findFirst();
    }
 }

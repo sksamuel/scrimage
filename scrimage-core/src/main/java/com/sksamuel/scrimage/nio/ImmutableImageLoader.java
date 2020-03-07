@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage.nio;
 
 import com.sksamuel.scrimage.ImmutableImage;
-import com.sksamuel.scrimage.Orientation;
+import com.sksamuel.scrimage.metadata.OrientationTools;
 import com.sksamuel.scrimage.metadata.ImageMetadata;
 
 import java.awt.Rectangle;
@@ -90,7 +90,7 @@ public class ImmutableImageLoader {
       }
 
       if (reorientate) {
-         image = Orientation.reorient(image, image.getMetadata());
+         image = OrientationTools.reorient(image, image.getMetadata());
       }
 
       return image;
