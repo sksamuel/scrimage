@@ -105,14 +105,22 @@ public class ImmutableImage extends MutableImage {
     * Create a new [ImmutableImage] from a source AWT Image.
     * This method will copy the source image so that modifications to the original
     * do not write forward to this image.
-    * The resulting image will have the given type unless UNDERLYING_DATA_TYPE is used, then
-    * the type will be the same as the input image.
+    * <p>
+    * If the given type > 0, then a copy will be made using that type for the image.
+    * If the param type is -1, then the source image type will be used, unless the source image
+    * has type 0, in which case BufferedImage.TYPE_INT_ARGB will be used.
     *
     * @param awt the source AWT Image
     * @return a new ImmutableImage
     */
    public static ImmutableImage fromAwt(BufferedImage awt, int type) {
-      int imageType = (type == UNDERLYING_DATA_TYPE) ? awt.getType() : type;
+      int imageType = type;
+      if (type == UNDERLYING_DATA_TYPE) {
+         imageType = awt.getType();
+      }
+      if (imageType == 0) {
+         imageType = BufferedImage.TYPE_INT_ARGB;
+      }
       BufferedImage target = new BufferedImage(awt.getWidth(null), awt.getHeight(null), imageType);
       Graphics g2 = target.getGraphics();
       g2.drawImage(awt, 0, 0, null);
@@ -149,12 +157,15 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Creates a new [ImmutableImage] from an AWT image by wrapping that source image.
+    * Since the source buffer is wrapped, any changes to the original will write through.
+    * If you require a completely independent and truely immutable image, then consider [fromAwt].
+    * <p>
     * If the given awt image does not have the same type as requested, then this will
-    * force the image to be copied use [fromAwt].
+    * force the image to be copied using [fromAwt].
     *
     * @param awt  the source AWT Image
     * @param type the AWT image type to use. If the image is not in this format already it will be coped.
-    *             specify -1 if you want to use the original
+    *             specify UNDERLYING_DATA_TYPE if you want to use the original
     * @return a new Scrimage Image
     */
    public static ImmutableImage wrapAwt(BufferedImage awt, int type) {
