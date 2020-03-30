@@ -106,7 +106,7 @@ public class ImmutableImage extends MutableImage {
     * This method will copy the source image so that modifications to the original
     * do not write forward to this image.
     * <p>
-    * If the given type > 0, then a copy will be made using that type for the image.
+    * If the given type is greater than 0, then a copy will be made using that type for the image.
     * If the param type is -1, then the source image type will be used, unless the source image
     * has type 0, in which case BufferedImage.TYPE_INT_ARGB will be used.
     *
