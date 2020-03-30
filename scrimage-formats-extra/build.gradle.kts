@@ -14,6 +14,7 @@ dependencies {
    implementation(Libs.TwelveMonkeys.iff)
    implementation(Libs.TwelveMonkeys.sgi)
    testImplementation(Libs.Kotest.junit5)
+   testImplementation(Libs.Kotest.assertions)
 }
 
 java {

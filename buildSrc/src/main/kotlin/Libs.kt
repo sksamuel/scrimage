@@ -1,6 +1,6 @@
 object Libs {
 
-   const val kotlinVersion = "1.3.61"
+   const val kotlinVersion = "1.3.71"
 
    const val org = "com.sksamuel.scrimage"
    const val TwelveMonkeysVersion = "3.5"
@@ -20,16 +20,13 @@ object Libs {
       const val sgi = "com.twelvemonkeys.imageio:imageio-sgi:$TwelveMonkeysVersion"
    }
 
-   object NatGeo {
-      val tiff = "mil.nga:tiff:2.0.1"
-   }
-
    object Zh {
       const val opengif = "com.github.zh79325:open-gif:1.0.4"
    }
 
    object Kotest {
-      const val junit5 = "io.kotest:kotest-runner-junit5:4.0.0-BETA1"
+      const val assertions = "io.kotest:kotest-assertions-core-jvm:4.0.1"
+      const val junit5 = "io.kotest:kotest-runner-junit5-jvm:4.0.1"
    }
 
    object Drewnoaks {
@@ -40,7 +37,7 @@ object Libs {
       const val pngj = "ar.com.hjg:pngj:$PngjVersion"
    }
 
-   object commons {
+   object Commons {
       const val io = "commons-io:commons-io:$CommonsIoVersion"
    }
 }

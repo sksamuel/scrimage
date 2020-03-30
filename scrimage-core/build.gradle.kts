@@ -9,9 +9,10 @@ dependencies {
    api(Libs.TwelveMonkeys.jpeg)
    api(Libs.Drewnoaks.metadataExtractor)
    implementation(Libs.Zh.opengif)
-   implementation(Libs.commons.io)
+   implementation(Libs.Commons.io)
    implementation(Libs.Hjg.pngj)
    testImplementation(Libs.Kotest.junit5)
+   testImplementation(Libs.Kotest.assertions)
 }
 
 java {

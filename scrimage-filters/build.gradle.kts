@@ -4,9 +4,10 @@ plugins {
 }
 
 dependencies {
-   implementation(Libs.commons.io)
+   implementation(Libs.Commons.io)
    implementation(project(":scrimage-core"))
    testImplementation(Libs.Kotest.junit5)
+   testImplementation(Libs.Kotest.assertions)
 }
 
 java {
