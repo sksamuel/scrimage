@@ -4,7 +4,7 @@
 [<img src="https://img.shields.io/maven-central/v/com.sksamuel.scrimage/scrimage-core.svg?label=latest%20release"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22scrimage-core)
 [<img src="https://img.shields.io/nexus/s/https/oss.sonatype.org/com.sksamuel.scrimage/scrimage-core.svg?label=latest%20snapshot"/>](https://oss.sonatype.org/content/repositories/snapshots/com/sksamuel/scrimage/)
 
-This readme is for the 4.0.0 pre-release. For earlier releases see [here](README_2.x.md).
+This readme is for the 4.0.0 release. For earlier releases see [here](README_2.x.md).
 
 Scrimage is immutable, functional, and performant JVM library for manipulation of images.
 The aim of the this library is to provide a simple and concise way to do the kinds of image operations that are most common,
