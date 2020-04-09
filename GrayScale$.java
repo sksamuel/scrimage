@@ -1,4 +1,4 @@
-package com.sksamuel.scrimage.scala;
+package com.sksamuel.scrimage.implicits;
 
 object GrayScale{
 

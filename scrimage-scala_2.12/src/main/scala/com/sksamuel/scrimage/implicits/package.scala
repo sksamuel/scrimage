@@ -1,16 +1,28 @@
-package com.sksamuel.scrimage.scala
+package com.sksamuel.scrimage
 
-import java.awt.Color
+import java.awt.{Color, Graphics2D}
 import java.io.File
 import java.nio.file.Path
 
-import com.sksamuel.scrimage.ImmutableImage
-import com.sksamuel.scrimage.nio.ImageWriter
+import com.sksamuel.scrimage.canvas.{Canvas, GraphicsContext}
+import com.sksamuel.scrimage.graphics.RichGraphics2D
+import com.sksamuel.scrimage.nio.{ImageWriter, PngWriter}
 import com.sksamuel.scrimage.pixels.Pixel
 
 import scala.language.implicitConversions
 
-object implicits {
+package object implicits {
+
+   implicit val writer: ImageWriter = PngWriter.MaxCompression
+   implicit def color2awt(color: com.sksamuel.scrimage.color.Color): java.awt.Color = color.awt()
+
+   implicit def toCanvas(image: ImmutableImage): Canvas = new Canvas(image)
+   implicit def toImage(canvas: Canvas): ImmutableImage = canvas.getImage
+
+   implicit def toGraphicsContext(fn: Graphics2D => Unit): GraphicsContext = new GraphicsContext {
+      override def configure(g2: RichGraphics2D): Unit = fn(g2)
+   }
+
    implicit class RichImmutableImage(image: ImmutableImage) {
 
       def map(f: Pixel => Color): ImmutableImage = {
