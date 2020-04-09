@@ -146,6 +146,8 @@ val image = ... // some image
 image.output(new File("/home/sam/compressed_spahgetti.png"))
 ```
 
+
+
 ### Metadata
 
 Scrimage builds on the [metadata-extractor](https://github.com/drewnoakes/metadata-extractor) project to provide the ability to read metadata.
@@ -168,6 +170,8 @@ FormatDetector.detect(bytes) // returns an Option[Format] with the detected form
 FormatDetector.detect(in) // same thing from an input stream
 ```
 
+
+
 ### IPhone Orientation
 
 Apple iPhone's have this annoying "feature" where an image taken when the phone is rotated is not saved as a rotated file. Instead the image is always
@@ -188,6 +192,31 @@ For example,
 
 `val awt = X11Colorlist.MistyRose.awt()`
 
+
+
+### Animated GIFs
+
+Scrimage supports animated GIFs using the `StreamingGifWriter` class. First we create an instance of the writer, specifying the delay between images and if we should loop.
+Then we open a stream, specifying the output path and the AWT image type.
+
+```kotlin
+val stream = StreamingGifWriter(Duration.ofSeconds(2), true)
+stream.prepareStream("/path/to/gif.gif", BufferedImage.TYPE_INT_ARGB)
+```
+
+Next we can add as many images as we want, each an instance of `ImmutableImage`. Eg,
+
+```kotlin
+stream.writeFrame(image0)
+stream.writeFrame(image1)
+stream.writeFrame(imageN)
+```
+
+Finally we close the stream and the GIF is persisted to disk.
+
+```kotlin
+stream.finish()
+```
 
 
 

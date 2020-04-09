@@ -37,128 +37,134 @@ import java.time.Duration;
  */
 public class StreamingGifWriter {
 
-    private final Duration frameDelay;
-    private final boolean infiniteLoop;
+   private final Duration frameDelay;
+   private final boolean infiniteLoop;
 
-    public StreamingGifWriter(Duration frameDelay, boolean infiniteLoop) {
-        this.frameDelay = frameDelay;
-        this.infiniteLoop = infiniteLoop;
-    }
+   public StreamingGifWriter() {
+      this.frameDelay = Duration.ofSeconds(2);
+      this.infiniteLoop = true;
+   }
 
-    public StreamingGifWriter withFrameDelay(Duration delay) {
-        return new StreamingGifWriter(delay, infiniteLoop);
-    }
 
-    public StreamingGifWriter withInfiniteLoop(boolean infiniteLoop) {
-        return new StreamingGifWriter(frameDelay, infiniteLoop);
-    }
+   public StreamingGifWriter(Duration frameDelay, boolean infiniteLoop) {
+      this.frameDelay = frameDelay;
+      this.infiniteLoop = infiniteLoop;
+   }
 
-    /**
-     * Returns an existing child node, or creates and returns a new child node (if
-     * the requested node does not exist).
-     *
-     * @param rootNode the <tt>IIOMetadataNode</tt> to search for the child node.
-     * @param nodeName the name of the child node.
-     * @return the child node, if found or a new node created with the given name.
-     */
-    private IIOMetadataNode getNode(IIOMetadataNode rootNode, String nodeName) {
-        for (int i = 0; i < rootNode.getLength(); i++) {
-            IIOMetadataNode node = (IIOMetadataNode) rootNode.item(i);
-            if (node.getNodeName().equalsIgnoreCase(nodeName)) {
-                return node;
-            }
-        }
-        IIOMetadataNode node = new IIOMetadataNode(nodeName);
-        rootNode.appendChild(node);
-        return node;
-    }
+   public StreamingGifWriter withFrameDelay(Duration delay) {
+      return new StreamingGifWriter(delay, infiniteLoop);
+   }
 
-    interface GifStream {
-        GifStream writeFrame(ImmutableImage image) throws IOException;
+   public StreamingGifWriter withInfiniteLoop(boolean infiniteLoop) {
+      return new StreamingGifWriter(frameDelay, infiniteLoop);
+   }
 
-        GifStream writeFrame(ImmutableImage image, Duration delay) throws IOException;
+   /**
+    * Returns an existing child node, or creates and returns a new child node (if
+    * the requested node does not exist).
+    *
+    * @param rootNode the <tt>IIOMetadataNode</tt> to search for the child node.
+    * @param nodeName the name of the child node.
+    * @return the child node, if found or a new node created with the given name.
+    */
+   private IIOMetadataNode getNode(IIOMetadataNode rootNode, String nodeName) {
+      for (int i = 0; i < rootNode.getLength(); i++) {
+         IIOMetadataNode node = (IIOMetadataNode) rootNode.item(i);
+         if (node.getNodeName().equalsIgnoreCase(nodeName)) {
+            return node;
+         }
+      }
+      IIOMetadataNode node = new IIOMetadataNode(nodeName);
+      rootNode.appendChild(node);
+      return node;
+   }
 
-        void finish() throws IOException;
-    }
+   interface GifStream {
+      GifStream writeFrame(ImmutableImage image) throws IOException;
 
-    GifStream prepareStream(String path, int imageType) throws IOException {
-        return prepareStream(Paths.get(path), imageType);
-    }
+      GifStream writeFrame(ImmutableImage image, Duration delay) throws IOException;
 
-    GifStream prepareStream(Path path, int imageType) throws IOException {
-        return prepareStream(path.toFile(), imageType);
-    }
+      void finish() throws IOException;
+   }
 
-    GifStream prepareStream(File file, int imageType) throws IOException {
+   public GifStream prepareStream(String path, int imageType) throws IOException {
+      return prepareStream(Paths.get(path), imageType);
+   }
 
-        ImageWriter writer = ImageIO.getImageWritersBySuffix("gif").next();
-        ImageWriteParam imageWriteParam = writer.getDefaultWriteParam();
+   public GifStream prepareStream(Path path, int imageType) throws IOException {
+      return prepareStream(path.toFile(), imageType);
+   }
 
-        ImageTypeSpecifier imageTypeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(imageType);
-        IIOMetadata imageMetaData = writer.getDefaultImageMetadata(imageTypeSpecifier, imageWriteParam);
+   public GifStream prepareStream(File file, int imageType) throws IOException {
 
-        String metaFormatName = imageMetaData.getNativeMetadataFormatName();
+      ImageWriter writer = ImageIO.getImageWritersBySuffix("gif").next();
+      ImageWriteParam imageWriteParam = writer.getDefaultWriteParam();
 
-        IIOMetadataNode root = (IIOMetadataNode) imageMetaData.getAsTree(metaFormatName);
+      ImageTypeSpecifier imageTypeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(imageType);
+      IIOMetadata imageMetaData = writer.getDefaultImageMetadata(imageTypeSpecifier, imageWriteParam);
 
-        IIOMetadataNode graphicsControlExtensionNode = getNode(root, "GraphicControlExtension");
-        graphicsControlExtensionNode.setAttribute("disposalMethod", "none");
-        graphicsControlExtensionNode.setAttribute("userInputFlag", "FALSE");
-        graphicsControlExtensionNode.setAttribute("transparentColorFlag", "FALSE");
-        graphicsControlExtensionNode.setAttribute("delayTime", (frameDelay.toMillis() / 10) + "");
-        graphicsControlExtensionNode.setAttribute("transparentColorIndex", "0");
+      String metaFormatName = imageMetaData.getNativeMetadataFormatName();
 
-        IIOMetadataNode commentsNode = getNode(root, "CommentExtensions");
-        commentsNode.setAttribute("CommentExtension", "Created by Scrimage");
+      IIOMetadataNode root = (IIOMetadataNode) imageMetaData.getAsTree(metaFormatName);
 
-        IIOMetadataNode appEntensionsNode = getNode(root, "ApplicationExtensions");
-        IIOMetadataNode child = new IIOMetadataNode("ApplicationExtension");
+      IIOMetadataNode graphicsControlExtensionNode = getNode(root, "GraphicControlExtension");
+      graphicsControlExtensionNode.setAttribute("disposalMethod", "none");
+      graphicsControlExtensionNode.setAttribute("userInputFlag", "FALSE");
+      graphicsControlExtensionNode.setAttribute("transparentColorFlag", "FALSE");
+      graphicsControlExtensionNode.setAttribute("delayTime", (frameDelay.toMillis() / 10) + "");
+      graphicsControlExtensionNode.setAttribute("transparentColorIndex", "0");
 
-        child.setAttribute("applicationID", "NETSCAPE");
-        child.setAttribute("authenticationCode", "2.0");
+      IIOMetadataNode commentsNode = getNode(root, "CommentExtensions");
+      commentsNode.setAttribute("CommentExtension", "Created by Scrimage");
 
-        int loop = infiniteLoop ? 0 : 1;
-        byte[] childobj = new byte[3];
-        childobj[0] = 0x1;
-        childobj[1] = (byte) (loop & 0xFF);
-        childobj[2] = (byte) ((loop >> 8) & 0xFF);
-        child.setUserObject(childobj);
-        appEntensionsNode.appendChild(child);
+      IIOMetadataNode appEntensionsNode = getNode(root, "ApplicationExtensions");
+      IIOMetadataNode child = new IIOMetadataNode("ApplicationExtension");
 
-        imageMetaData.setFromTree(metaFormatName, root);
+      child.setAttribute("applicationID", "NETSCAPE");
+      child.setAttribute("authenticationCode", "2.0");
 
-        FileImageOutputStream fos = new FileImageOutputStream(file);
+      int loop = infiniteLoop ? 0 : 1;
+      byte[] childobj = new byte[3];
+      childobj[0] = 0x1;
+      childobj[1] = (byte) (loop & 0xFF);
+      childobj[2] = (byte) ((loop >> 8) & 0xFF);
+      child.setUserObject(childobj);
+      appEntensionsNode.appendChild(child);
 
-        writer.setOutput(fos);
-        writer.prepareWriteSequence(null);
+      imageMetaData.setFromTree(metaFormatName, root);
 
-        return new GifStream() {
-            @Override
-            public GifStream writeFrame(ImmutableImage image) throws IOException {
-                writer.writeToSequence(new IIOImage(image.awt(), null, imageMetaData), imageWriteParam);
-                return this;
-            }
+      FileImageOutputStream fos = new FileImageOutputStream(file);
 
-            @Override
-            public GifStream writeFrame(ImmutableImage image, Duration delay) throws IOException {
-                IIOMetadataNode rootOverride = (IIOMetadataNode) imageMetaData.getAsTree(metaFormatName);
-                IIOMetadataNode graphicsControlExtensionNodeOverride = getNode(rootOverride, "GraphicControlExtension");
-                graphicsControlExtensionNodeOverride.setAttribute("delayTime", (delay.toMillis() / 10L) + "");
-                imageMetaData.setFromTree(metaFormatName, rootOverride);
+      writer.setOutput(fos);
+      writer.prepareWriteSequence(null);
 
-                writer.writeToSequence(new IIOImage(image.awt(), null, imageMetaData), imageWriteParam);
+      return new GifStream() {
+         @Override
+         public GifStream writeFrame(ImmutableImage image) throws IOException {
+            writer.writeToSequence(new IIOImage(image.awt(), null, imageMetaData), imageWriteParam);
+            return this;
+         }
 
-                imageMetaData.setFromTree(metaFormatName, root);
-                return this;
-            }
+         @Override
+         public GifStream writeFrame(ImmutableImage image, Duration delay) throws IOException {
+            IIOMetadataNode rootOverride = (IIOMetadataNode) imageMetaData.getAsTree(metaFormatName);
+            IIOMetadataNode graphicsControlExtensionNodeOverride = getNode(rootOverride, "GraphicControlExtension");
+            graphicsControlExtensionNodeOverride.setAttribute("delayTime", (delay.toMillis() / 10L) + "");
+            imageMetaData.setFromTree(metaFormatName, rootOverride);
 
-            @Override
-            public void finish() throws IOException {
-                writer.endWriteSequence();
-                writer.dispose();
-                fos.close();
-            }
-        };
-    }
+            writer.writeToSequence(new IIOImage(image.awt(), null, imageMetaData), imageWriteParam);
+
+            imageMetaData.setFromTree(metaFormatName, root);
+            return this;
+         }
+
+         @Override
+         public void finish() throws IOException {
+            writer.endWriteSequence();
+            writer.dispose();
+            fos.close();
+         }
+      };
+   }
 
 }
