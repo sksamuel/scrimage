@@ -176,21 +176,21 @@ orientation for you automatically. Most image readers do this, such as web brows
 
 Note: This can be disabled by setting `detectOrientation(false)` on the `ImmutableImage.loader()` instance.
 
+
+
+
+
 ### X11 Colors
 
-There is a full list of X11 defined colors in the X11Colorlist class. This can be imported `import X11Colorlist._` and used when you want to programatically
-specify colours, and gives more options than the standard 20 or so that are built into java.awt.Colo.
+There is a full list of [X11 defined colors](https://en.wikipedia.org/wiki/X11_color_names) in the `X11Colorlist` class. These can be used and converted to AWT `Color` when you need more than the defaults built into the JDK.
 
-### Migration from 1.4.x to 2.0.0
+For example,
 
-The major difference in 2.0.0 is the way the outputting works. See the earlier input/output section on how to update your code to use the new writers.
+`val awt = X11Colorlist.MistyRose.awt()`
 
-Changelist:
-* Changed output methods to use typeclass approach
-* Removal of Mutableimage and replacement of AsyncImage with ParImage
-* Introduction of "Pixel" abstraction for methods that operate directly on pixels
-* Addition of metadata
-* Addition of io packag
+
+
+
 
 ### Benchmarks
 
@@ -207,6 +207,10 @@ The results are for 100 runs of a resize to a fixed width / height.
 | Scrimage | 113ms | 2730ms (Bicubic) |
 
 As you can see, ImgScalr is the fastest for a simple rescale, but Scrimage is much faster than the rest for a high quality scale.
+
+
+
+
 
 
 
