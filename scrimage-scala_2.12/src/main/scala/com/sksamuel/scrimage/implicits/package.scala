@@ -1,10 +1,11 @@
 package com.sksamuel.scrimage
 
-import java.awt.{Color, Graphics2D}
+import java.awt.Color
+import java.awt.geom.Rectangle2D
 import java.io.File
 import java.nio.file.Path
 
-import com.sksamuel.scrimage.canvas.{Canvas, GraphicsContext}
+import com.sksamuel.scrimage.canvas.{Canvas, Drawable, GraphicsContext}
 import com.sksamuel.scrimage.graphics.RichGraphics2D
 import com.sksamuel.scrimage.nio.{ImageWriter, PngWriter}
 import com.sksamuel.scrimage.pixels.Pixel
@@ -19,8 +20,14 @@ package object implicits {
    implicit def toCanvas(image: ImmutableImage): Canvas = new Canvas(image)
    implicit def toImage(canvas: Canvas): ImmutableImage = canvas.getImage
 
-   implicit def toGraphicsContext(fn: Graphics2D => Unit): GraphicsContext = new GraphicsContext {
-      override def configure(g2: RichGraphics2D): Unit = fn(g2)
+   implicit def toGraphicsContext(fn: RichGraphics2D => Unit): GraphicsContext = (g2: RichGraphics2D) => fn(g2)
+
+   implicit class RichRectangle2D(rect: Rectangle2D) {
+      def tupled: (Double, Double) = (rect.getX, rect.getY)
+   }
+
+   implicit class RichCanvas(canvas: Canvas) {
+      def draw(drawables: Seq[Drawable]): Canvas = drawables.foldLeft(canvas) { case (acc, d) => acc.draw(d) }
    }
 
    implicit class RichImmutableImage(image: ImmutableImage) {
@@ -55,5 +62,7 @@ package object implicits {
       def bytes(implicit writer: ImageWriter): Unit = {
          image.bytes(writer)
       }
+
+      def draw(drawables: Seq[Drawable]): Canvas = drawables.foldLeft(new Canvas(image)) { case (acc, d) => acc.draw(d) }
    }
 }

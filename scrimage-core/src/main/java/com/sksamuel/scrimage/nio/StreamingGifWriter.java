@@ -79,12 +79,10 @@ public class StreamingGifWriter {
       return node;
    }
 
-   interface GifStream {
+   public interface GifStream extends AutoCloseable {
       GifStream writeFrame(ImmutableImage image) throws IOException;
 
       GifStream writeFrame(ImmutableImage image, Duration delay) throws IOException;
-
-      void finish() throws IOException;
    }
 
    public GifStream prepareStream(String path, int imageType) throws IOException {
@@ -159,7 +157,7 @@ public class StreamingGifWriter {
          }
 
          @Override
-         public void finish() throws IOException {
+         public void close() throws IOException {
             writer.endWriteSequence();
             writer.dispose();
             fos.close();
