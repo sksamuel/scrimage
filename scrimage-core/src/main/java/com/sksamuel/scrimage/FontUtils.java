@@ -1,6 +1,8 @@
 package com.sksamuel.scrimage;
 
-import java.awt.*;
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.GraphicsEnvironment;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
@@ -8,7 +10,7 @@ import java.io.InputStream;
 
 public class FontUtils {
 
-   public Rectangle2D fontBounds(String text, Font font) {
+   public static Rectangle2D fontBounds(String text, Font font) {
       return font.getStringBounds(text, new FontRenderContext(font.getTransform(), false, false)).getBounds2D();
    }
 

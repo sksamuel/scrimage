@@ -1,8 +1,8 @@
 package com.sksamuel.scrimage.nio;
 
 import com.sksamuel.scrimage.ImmutableImage;
-import com.sksamuel.scrimage.metadata.OrientationTools;
 import com.sksamuel.scrimage.metadata.ImageMetadata;
+import com.sksamuel.scrimage.metadata.OrientationTools;
 
 import java.awt.Rectangle;
 import java.io.File;
@@ -16,6 +16,10 @@ public class ImmutableImageLoader {
    private Rectangle rectangle = null;
    private int type = 0;
    private boolean metadata = true;
+
+   public static ImmutableImageLoader create() {
+      return new ImmutableImageLoader();
+   }
 
    /**
     * Set to true to reorientate the image if applicable. Requires metadata to be enabled.
@@ -61,6 +65,10 @@ public class ImmutableImageLoader {
 
    public ImmutableImage fromFile(File file) throws IOException {
       return load(new FileImageSource(file));
+   }
+
+   public ImmutableImage fromFile(String file) throws IOException {
+      return fromFile(new File(file));
    }
 
    public ImmutableImage fromPath(Path path) throws IOException {
