@@ -200,22 +200,22 @@ Scrimage supports animated GIFs using the `StreamingGifWriter` class. First we c
 Then we open a stream, specifying the output path and the AWT image type.
 
 ```kotlin
-val stream = StreamingGifWriter(Duration.ofSeconds(2), true)
-stream.prepareStream("/path/to/gif.gif", BufferedImage.TYPE_INT_ARGB)
+val writer = StreamingGifWriter(Duration.ofSeconds(2), true)
+val gif = writer.prepareStream("/path/to/gif.gif", BufferedImage.TYPE_INT_ARGB)
 ```
 
 Next we can add as many images as we want, each an instance of `ImmutableImage`. Eg,
 
 ```kotlin
-stream.writeFrame(image0)
-stream.writeFrame(image1)
-stream.writeFrame(imageN)
+gif.writeFrame(image0)
+gif.writeFrame(image1)
+gif.writeFrame(imageN)
 ```
 
 Finally we close the stream and the GIF is persisted to disk.
 
 ```kotlin
-stream.finish()
+gif.finish()
 ```
 
 
