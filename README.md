@@ -265,7 +265,7 @@ implementation("com.sksamuel.scrimage:scrimage-core:<version>")
 
 Else if using SBT then:
 ```scala
-libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-core" % "$version"
+libraryDependencies += "com.sksamuel.scrimage" % "scrimage-core" % "$version"
 ```
 
 Or finally if Maven then use:
