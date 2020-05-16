@@ -20,6 +20,7 @@ import ar.com.hjg.pngj.FilterType;
 import ar.com.hjg.pngj.ImageInfo;
 import ar.com.hjg.pngj.ImageLineInt;
 import com.sksamuel.scrimage.AwtImage;
+import com.sksamuel.scrimage.metadata.ImageMetadata;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -59,7 +60,7 @@ public class PngWriter implements ImageWriter {
     }
 
     @Override
-    public void write(AwtImage image, OutputStream out) throws IOException {
+    public void write(AwtImage image, ImageMetadata metadata, OutputStream out) throws IOException {
 
         if (image.awt().getType() == BufferedImage.TYPE_INT_ARGB) {
 

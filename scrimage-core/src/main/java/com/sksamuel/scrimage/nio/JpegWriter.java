@@ -1,6 +1,7 @@
 package com.sksamuel.scrimage.nio;
 
 import com.sksamuel.scrimage.AwtImage;
+import com.sksamuel.scrimage.metadata.ImageMetadata;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -40,7 +41,7 @@ public class JpegWriter implements ImageWriter {
    }
 
    @Override
-   public void write(AwtImage image, OutputStream out) throws IOException {
+   public void write(AwtImage image, ImageMetadata metadata, OutputStream out) throws IOException {
 
       javax.imageio.ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
       ImageWriteParam params = writer.getDefaultWriteParam();

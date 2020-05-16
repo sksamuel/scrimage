@@ -26,7 +26,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -581,7 +580,7 @@ public class AwtImage {
    }
 
    public WriteContext forWriter(ImageWriter writer) {
-      return new WriteContext(writer, this);
+      return new WriteContext(writer, this, null);
    }
 
    /**

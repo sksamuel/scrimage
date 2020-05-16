@@ -1,6 +1,7 @@
 package com.sksamuel.scrimage.nio;
 
 import com.sksamuel.scrimage.AwtImage;
+import com.sksamuel.scrimage.metadata.ImageMetadata;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -13,5 +14,5 @@ import java.io.OutputStream;
  * @see com.sksamuel.scrimage.nio.GifWriter
  */
 public interface ImageWriter {
-   void write(AwtImage image, OutputStream out) throws IOException;
+   void write(AwtImage image, ImageMetadata metadata, OutputStream out) throws IOException;
 }

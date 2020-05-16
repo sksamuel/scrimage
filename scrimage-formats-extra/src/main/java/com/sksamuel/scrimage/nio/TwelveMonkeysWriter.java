@@ -1,6 +1,7 @@
 package com.sksamuel.scrimage.nio;
 
 import com.sksamuel.scrimage.AwtImage;
+import com.sksamuel.scrimage.metadata.ImageMetadata;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -14,7 +15,7 @@ abstract class TwelveMonkeysWriter implements ImageWriter {
     public abstract String format();
 
     @Override
-    public void write(AwtImage image, OutputStream out) throws IOException {
+    public void write(AwtImage image, ImageMetadata metadata, OutputStream out) throws IOException {
         javax.imageio.ImageWriter writer = ImageIO.getImageWritersByFormatName(format()).next();
         ImageOutputStream ios = ImageIO.createImageOutputStream(out);
         ImageWriteParam params = writer.getDefaultWriteParam();
