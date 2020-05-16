@@ -13,6 +13,7 @@ dependencies {
    implementation(Libs.Hjg.pngj)
    testImplementation(Libs.Kotest.junit5)
    testImplementation(Libs.Kotest.assertions)
+   testImplementation(Libs.Kotest.console)
 }
 
 java {

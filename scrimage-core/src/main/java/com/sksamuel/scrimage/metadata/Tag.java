@@ -51,4 +51,15 @@ public class Tag {
    public String getValue() {
       return value;
    }
+
+   @Override
+   public String toString() {
+      final StringBuffer sb = new StringBuffer("Tag{");
+      sb.append("name='").append(name).append('\'');
+      sb.append(", type=").append(type);
+      sb.append(", rawValue='").append(rawValue).append('\'');
+      sb.append(", value='").append(value).append('\'');
+      sb.append('}');
+      return sb.toString();
+   }
 }

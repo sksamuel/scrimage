@@ -26,7 +26,9 @@ import com.sksamuel.scrimage.metadata.ImageMetadata;
 import com.sksamuel.scrimage.metadata.OrientationTools;
 import com.sksamuel.scrimage.nio.ByteArrayImageSource;
 import com.sksamuel.scrimage.nio.ImageReaders;
+import com.sksamuel.scrimage.nio.ImageWriter;
 import com.sksamuel.scrimage.nio.ImmutableImageLoader;
+import com.sksamuel.scrimage.nio.WriteContext;
 import com.sksamuel.scrimage.pixels.Pixel;
 import com.sksamuel.scrimage.pixels.PixelTools;
 import com.sksamuel.scrimage.pixels.PixelsExtractor;
@@ -1406,5 +1408,10 @@ public class ImmutableImage extends MutableImage {
       ImmutableImage target = copy();
       target.mapInPlace(mapper);
       return target;
+   }
+
+   @Override
+   public WriteContext forWriter(ImageWriter writer) {
+      return new WriteContext(writer, this, metadata);
    }
 }

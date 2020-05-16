@@ -47,21 +47,10 @@ package object implicits {
          image.forEach(fn)
       }
 
-      def output(file: File)(implicit writer: ImageWriter): Unit = {
-         image.output(writer, file)
-      }
-
-      def output(path: Path)(implicit writer: ImageWriter): Unit = {
-         image.output(writer, path)
-      }
-
-      def output(path: String)(implicit writer: ImageWriter): Unit = {
-         image.output(writer, path)
-      }
-
-      def bytes(implicit writer: ImageWriter): Unit = {
-         image.bytes(writer)
-      }
+      def output(file: File)(implicit writer: ImageWriter): File = image.output(writer, file)
+      def output(path: Path)(implicit writer: ImageWriter): Path = image.output(writer, path)
+      def output(path: String)(implicit writer: ImageWriter): Path = image.output(writer, path)
+      def bytes(implicit writer: ImageWriter): Array[Byte] = image.bytes(writer)
 
       def draw(drawables: Seq[Drawable]): Canvas = drawables.foldLeft(new Canvas(image)) { case (acc, d) => acc.draw(d) }
    }
