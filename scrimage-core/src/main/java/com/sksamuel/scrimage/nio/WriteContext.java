@@ -1,8 +1,13 @@
 package com.sksamuel.scrimage.nio;
 
 import com.sksamuel.scrimage.AwtImage;
+import com.sksamuel.scrimage.metadata.ImageMetadata;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,15 +16,17 @@ public class WriteContext {
 
    private final ImageWriter writer;
    private final AwtImage image;
+   private final ImageMetadata metadata;
 
-   public WriteContext(ImageWriter writer, AwtImage image) {
+   public WriteContext(ImageWriter writer, AwtImage image, ImageMetadata metadata) {
       this.writer = writer;
       this.image = image;
+      this.metadata = metadata;
    }
 
    public byte[] bytes() throws IOException {
       ByteArrayOutputStream bos = new ByteArrayOutputStream();
-      writer.write(image, bos);
+      writer.write(image, metadata, bos);
       return bos.toByteArray();
    }
 
@@ -38,12 +45,12 @@ public class WriteContext {
 
    public Path write(Path path) throws IOException {
       try (OutputStream out = Files.newOutputStream(path)) {
-         writer.write(image, out);
+         writer.write(image, metadata, out);
       }
       return path;
    }
 
    public void write(OutputStream out) throws IOException {
-      writer.write(image, out);
+      writer.write(image, metadata, out);
    }
 }
