@@ -4,8 +4,6 @@ object Libs {
 
    const val org = "com.sksamuel.scrimage"
    const val TwelveMonkeysVersion = "3.5"
-   const val PngjVersion = "2.1.0"
-   const val MetadataExtractorVersion = "2.13.0"
    const val CommonsIoVersion = "2.6"
 
    object TwelveMonkeys {
@@ -25,17 +23,20 @@ object Libs {
    }
 
    object Kotest {
-      const val assertions = "io.kotest:kotest-assertions-core-jvm:4.1.1"
-      const val junit5 = "io.kotest:kotest-runner-junit5-jvm:4.1.1"
-      const val console = "io.kotest:kotest-runner-console-jvm:4.1.1"
+      private const val version = "4.1.1"
+      const val assertions = "io.kotest:kotest-assertions-core-jvm:$version"
+      const val junit5 = "io.kotest:kotest-runner-junit5-jvm:$version"
+      const val console = "io.kotest:kotest-runner-console-jvm:$version"
    }
 
    object Drewnoaks {
-      const val metadataExtractor = "com.drewnoakes:metadata-extractor:$MetadataExtractorVersion"
+      private const val Version = "2.14.0"
+      const val metadataExtractor = "com.drewnoakes:metadata-extractor:$Version"
    }
 
    object Hjg {
-      const val pngj = "ar.com.hjg:pngj:$PngjVersion"
+      private const val Version = "2.1.0"
+      const val pngj = "ar.com.hjg:pngj:$Version"
    }
 
    object Commons {
