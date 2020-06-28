@@ -25,9 +25,9 @@ object Libs {
    }
 
    object Kotest {
-      const val assertions = "io.kotest:kotest-assertions-core-jvm:4.1.0.279-SNAPSHOT"
-      const val junit5 = "io.kotest:kotest-runner-junit5-jvm:4.1.0.279-SNAPSHOT"
-      const val console = "io.kotest:kotest-runner-console-jvm:4.1.0.279-SNAPSHOT"
+      const val assertions = "io.kotest:kotest-assertions-core-jvm:4.1.1"
+      const val junit5 = "io.kotest:kotest-runner-junit5-jvm:4.1.1"
+      const val console = "io.kotest:kotest-runner-console-jvm:4.1.1"
    }
 
    object Drewnoaks {
