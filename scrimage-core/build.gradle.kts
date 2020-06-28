@@ -4,13 +4,13 @@ plugins {
 }
 
 dependencies {
-   implementation(kotlin("stdlib-jdk8"))
    api(Libs.TwelveMonkeys.imageIoCore)
    api(Libs.TwelveMonkeys.jpeg)
    api(Libs.Drewnoaks.metadataExtractor)
    implementation(Libs.Zh.opengif)
    implementation(Libs.Commons.io)
    implementation(Libs.Hjg.pngj)
+   testImplementation(kotlin("stdlib-jdk8"))
    testImplementation(Libs.Kotest.junit5)
    testImplementation(Libs.Kotest.assertions)
    testImplementation(Libs.Kotest.console)
