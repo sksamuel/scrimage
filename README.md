@@ -279,7 +279,7 @@ Or finally if Maven then use:
 
 ### Scala Helpers
 
-If you are using Scala, then you can add the module `"com.sksamuel.scrimage" %% "scrimage-scala_2.x" % "$version"` to
+If you are using Scala, then you can add the module `"com.sksamuel.scrimage" %% "scrimage-scala" % "$version"` to
 your build. Then adding `import com.sksamuel.scrimage.scala._` will bring into scope some useful implicits.
 
 Firstly, an implicit `PNGWriter` so you do not have to specify it when outputting images. Secondly, a conversion to / from
