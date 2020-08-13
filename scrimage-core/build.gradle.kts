@@ -13,7 +13,6 @@ dependencies {
    testImplementation(kotlin("stdlib-jdk8"))
    testImplementation(Libs.Kotest.junit5)
    testImplementation(Libs.Kotest.assertions)
-   testImplementation(Libs.Kotest.console)
 }
 
 java {

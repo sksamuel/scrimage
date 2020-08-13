@@ -26,30 +26,36 @@ import java.io.IOException;
 
 public class SummerFilter implements Filter {
 
-    private static final ImmutableImage summer;
+   private static final ImmutableImage summer;
 
-    static {
-        try {
-            summer = ImmutableImage.fromResource("/com/sksamuel/scrimage/filter/summer1.jpg", ImmutableImage.DEFAULT_DATA_TYPE);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+   static {
+      try {
+         summer = ImmutableImage.loader().fromResource("/com/sksamuel/scrimage/filter/summer1.jpg").copy(BufferedImage.TYPE_INT_ARGB);
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
+   }
 
-    private final boolean vignette;
+   private final boolean vignette;
 
-    public SummerFilter(boolean vignette) {
-        this.vignette = vignette;
-    }
+   public SummerFilter(boolean vignette) {
+      this.vignette = vignette;
+   }
 
-    @Override
-    public void apply(ImmutableImage image) throws IOException {
-        ImmutableImage scaled = ImmutableImage.wrapAwt(summer.scaleTo(image.width, image.height, ScaleMethod.Bicubic).awt(), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
-        g2.setComposite(BlendComposite.getInstance(BlendingMode.INVERSE_COLOR_BURN, 0.5f));
-        g2.drawImage(scaled.awt(), 0, 0, null);
-        g2.dispose();
-        if (vignette)
-            new VignetteFilter(0.92f, 0.98f, 0.3f, Color.BLACK).apply(image);
-    }
+   @Override
+   public void apply(ImmutableImage image) throws IOException {
+      ImmutableImage scaled = ImmutableImage.wrapAwt(summer.scaleTo(image.width, image.height, ScaleMethod.Bicubic).awt(), BufferedImage.TYPE_INT_ARGB);
+      ImmutableImage copy;
+      if (image.getType() == BufferedImage.TYPE_INT_ARGB || image.getType() == BufferedImage.TYPE_INT_RGB) {
+         copy = image;
+      } else {
+         copy = image.copy(BufferedImage.TYPE_INT_ARGB);
+      }
+      Graphics2D g2 = (Graphics2D) copy.awt().getGraphics();
+      g2.setComposite(BlendComposite.getInstance(BlendingMode.INVERSE_COLOR_BURN, 0.5f));
+      g2.drawImage(scaled.awt(), 0, 0, null);
+      g2.dispose();
+      if (vignette)
+         new VignetteFilter(0.92f, 0.98f, 0.3f, Color.BLACK).apply(copy);
+   }
 }

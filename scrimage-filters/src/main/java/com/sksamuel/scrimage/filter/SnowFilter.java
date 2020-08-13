@@ -26,22 +26,30 @@ import java.io.IOException;
 
 public class SnowFilter implements Filter {
 
-    private static final ImmutableImage snow;
+   private static final ImmutableImage snow;
 
-    static {
-        try {
-            snow = ImmutableImage.fromResource("/com/sksamuel/scrimage/filter/snow1.jpg", ImmutableImage.CANONICAL_DATA_TYPE);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+   static {
+      try {
+         snow = ImmutableImage.loader().fromResource("/com/sksamuel/scrimage/filter/snow1.jpg");
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
+   }
 
-    @Override
-    public void apply(ImmutableImage image) {
-        ImmutableImage scaled = ImmutableImage.wrapAwt(snow.scaleTo(image.width, image.height, ScaleMethod.Bicubic).awt(), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
-        g2.setComposite(new BlendComposite(BlendingMode.SCREEN, 1.0f));
-        g2.drawImage(scaled.awt(), 0, 0, null);
-        g2.dispose();
-    }
+   @Override
+   public void apply(ImmutableImage image) {
+      ImmutableImage scaled = ImmutableImage.wrapAwt(snow.scaleTo(image.width, image.height, ScaleMethod.Bicubic).awt(), BufferedImage.TYPE_INT_ARGB);
+
+      ImmutableImage copy;
+      if (image.getType() == BufferedImage.TYPE_INT_ARGB || image.getType() == BufferedImage.TYPE_INT_RGB) {
+         copy = image;
+      } else {
+         copy = image.copy(BufferedImage.TYPE_INT_ARGB);
+      }
+
+      Graphics2D g2 = (Graphics2D) copy.awt().getGraphics();
+      g2.setComposite(new BlendComposite(BlendingMode.SCREEN, 1.0f));
+      g2.drawImage(scaled.awt(), 0, 0, null);
+      g2.dispose();
+   }
 }

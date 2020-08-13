@@ -6,28 +6,44 @@ import thirdparty.misc.DaisyFilter;
 import thirdparty.romainguy.BlendComposite;
 import thirdparty.romainguy.BlendingMode;
 
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 public class OldPhotoFilter implements Filter {
 
-    @Override
-    public void apply(ImmutableImage image) throws IOException {
+   private static final ImmutableImage film;
 
-        DaisyFilter daisy = new DaisyFilter();
-        BufferedImage filtered = daisy.filter(image.awt());
+   static {
+      try {
+         film = ImmutableImage.loader().fromResource("/com/sksamuel/scrimage/filter/film1.jpg");
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
+   }
 
-        Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
-        g2.drawImage(filtered, 0, 0, null);
+   @Override
+   public void apply(ImmutableImage image) throws IOException {
 
-        final ImmutableImage film = ImmutableImage.fromResource("/com/sksamuel/scrimage/filter/film1.jpg", ImmutableImage.CANONICAL_DATA_TYPE);
-        BufferedImage filmSized = film.scaleTo(image.width, image.height, ScaleMethod.Bicubic).awt();
-        BufferedImage filmSizedSameType = ImmutableImage.fromAwt(filmSized, image.awt().getType()).awt();
+      ImmutableImage copy;
+      if (image.getType() == BufferedImage.TYPE_INT_ARGB || image.getType() == BufferedImage.TYPE_INT_RGB) {
+         copy = image;
+      } else {
+         copy = image.copy(BufferedImage.TYPE_INT_ARGB);
+      }
 
-        g2.setComposite(BlendComposite.getInstance(BlendingMode.INVERSE_COLOR_DODGE, 0.30f));
-        g2.drawImage(filmSizedSameType, 0, 0, null);
-        g2.dispose();
-    }
+      DaisyFilter daisy = new DaisyFilter();
+      BufferedImage filtered = daisy.filter(copy.awt());
+
+      Graphics2D g2 = (Graphics2D) copy.awt().getGraphics();
+      g2.drawImage(filtered, 0, 0, null);
+
+      BufferedImage filmSized = film.scaleTo(copy.width, copy.height, ScaleMethod.Bicubic).awt();
+      BufferedImage filmSizedSameType = ImmutableImage.fromAwt(filmSized, copy.awt().getType()).awt();
+
+      g2.setComposite(BlendComposite.getInstance(BlendingMode.INVERSE_COLOR_DODGE, 0.30f));
+      g2.drawImage(filmSizedSameType, 0, 0, null);
+      g2.dispose();
+   }
 }
 
