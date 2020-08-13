@@ -33,8 +33,8 @@ public class VignetteFilter implements Filter {
     public VignetteFilter(float start, float end, float blur, Color color) {
         assert start >= 0;
         assert start <= 1;
-        assert blur <= 0;
-        assert blur >= 1;
+        assert blur >= 0;
+        assert blur <= 1;
         this.start = start;
         this.end = end;
         this.blur = blur;
