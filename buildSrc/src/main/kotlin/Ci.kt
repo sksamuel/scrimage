@@ -1,12 +1,18 @@
-import org.gradle.internal.os.OperatingSystem
-
 object Ci {
 
-   val isGithub = System.getenv("GITHUB_ACTIONS") == "true"
-   val githubRunId: String = System.getenv("GITHUB_RUN_ID") ?: "0"
+   // this is the version used for building snapshots
+   // .buildnumber-snapshot will be appended
+   private const val snapshotBase = "4.2.0"
 
-   val isReleaseVersion = !isGithub
+   private val githubRunNumber = System.getenv("GITHUB_RUN_NUMBER")
 
-   val ideaActive = System.getProperty("idea.active") == "true"
-   val os: OperatingSystem = org.gradle.internal.os.OperatingSystem.current()
+   private val snapshotVersion = when (githubRunNumber) {
+      null -> "$snapshotBase-LOCAL"
+      else -> "$snapshotBase.${githubRunNumber}-SNAPSHOT"
+   }
+
+   private val releaseVersion = System.getenv("RELEASE_VERSION")
+
+   val isRelease = releaseVersion != null
+   val version = releaseVersion ?: snapshotVersion
 }

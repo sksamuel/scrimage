@@ -1,5 +1,3 @@
-import Ci.isGithub
-
 buildscript {
 
    repositories {
@@ -35,16 +33,13 @@ allprojects {
    }
 
    group = Libs.org
-
-   if (isGithub) {
-      version = "4.1.0." + Ci.githubRunId + "-SNAPSHOT"
-   }
+   version = Ci.version
 }
 
 val publications: PublicationContainer = (extensions.getByName("publishing") as PublishingExtension).publications
 
 signing {
    useGpgCmd()
-   if (Ci.isReleaseVersion)
+   if (Ci.isRelease)
       sign(publications)
 }
