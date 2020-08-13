@@ -7,8 +7,8 @@ repositories {
    mavenCentral()
 }
 
-val ossrhUsername: String by project
-val ossrhPassword: String by project
+val signingKey: String? by project
+val signingPassword: String? by project
 
 fun Project.publishing(action: PublishingExtension.() -> Unit) =
    configure(action)
@@ -24,8 +24,13 @@ val publications: PublicationContainer = (extensions.getByName("publishing") as 
 
 signing {
    useGpgCmd()
-   if (Ci.isRelease)
+   if (signingKey != null && signingPassword != null) {
+      @Suppress("UnstableApiUsage")
+      useInMemoryPgpKeys(signingKey, signingPassword)
+   }
+   if (Ci.isRelease) {
       sign(publications)
+   }
 }
 
 java {
