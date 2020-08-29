@@ -3,7 +3,7 @@ object Libs {
    const val kotlinVersion = "1.3.72"
 
    const val org = "com.sksamuel.scrimage"
-   const val TwelveMonkeysVersion = "3.5"
+   const val TwelveMonkeysVersion = "3.6"
    const val CommonsIoVersion = "2.6"
 
    object TwelveMonkeys {
@@ -23,7 +23,7 @@ object Libs {
    }
 
    object Kotest {
-      private const val version = "4.1.3"
+      private const val version = "4.2.2"
       const val assertions = "io.kotest:kotest-assertions-core-jvm:$version"
       const val junit5 = "io.kotest:kotest-runner-junit5-jvm:$version"
    }
