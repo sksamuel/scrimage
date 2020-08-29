@@ -114,6 +114,8 @@ val out = ImmutableImage.loader().fromStream(in).stream
 Scrimage supports loading and saving of images in the common web formats (currently png, jpeg, gif, tiff).
 In addition it extends javas image.io support by giving you an easy way to compress / optimize / interlace the images when saving.
 
+Note: Some the tiff support is via javax.imageio which has issues with some tiff images. If this happens, try using the `scrimage-formats-extra` module which provides extra image formats via the [TwelveMonkeys library](https://github.com/haraldk/TwelveMonkeys).
+
 To load an image simply use the Image companion methods on an input stream, file, filepath (String) or a byte array.
 The format does not matter as the underlying reader will determine that. Eg,
 ```scala
