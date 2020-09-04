@@ -47,9 +47,8 @@ public class RichGraphics2D extends Graphics2D {
     * Sets a simple dashed stroke where the width of the dash and the dash-gap are set by the dashWidth arg.
     * For a more complicated dashing stroke, create an instance of BasicStroke and pass to setStroke.
     */
-   public void setDashedStroke(float width, float dashWidth) {
-      float[] dashes = new float[]{dashWidth, dashWidth};
-      Stroke stroke = new BasicStroke(width, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10.0f, dashes, 0f);
+   public void setDashedStroke(float width, float... dashWidths) {
+      Stroke stroke = new BasicStroke(width, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10.0f, dashWidths, 0f);
       setStroke(stroke);
    }
 
