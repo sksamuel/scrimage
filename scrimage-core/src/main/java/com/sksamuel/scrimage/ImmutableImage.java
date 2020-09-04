@@ -18,6 +18,7 @@ package com.sksamuel.scrimage;
 
 import com.sksamuel.scrimage.angles.Degrees;
 import com.sksamuel.scrimage.angles.Radians;
+import com.sksamuel.scrimage.canvas.Canvas;
 import com.sksamuel.scrimage.color.Colors;
 import com.sksamuel.scrimage.color.RGBColor;
 import com.sksamuel.scrimage.composite.Composite;
@@ -1408,6 +1409,13 @@ public class ImmutableImage extends MutableImage {
       ImmutableImage target = copy();
       target.mapInPlace(mapper);
       return target;
+   }
+
+   /**
+    * Returns a Canvas that wraps this image.
+    */
+   public Canvas toCanvas() {
+      return new Canvas(this);
    }
 
    @Override
