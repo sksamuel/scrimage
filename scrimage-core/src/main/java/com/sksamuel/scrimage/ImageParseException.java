@@ -6,7 +6,7 @@ import java.util.List;
 
 public class ImageParseException extends IOException {
 
-   private List<Throwable> errors;
+   private final List<Throwable> errors;
 
    public ImageParseException() {
       errors = new ArrayList<>();

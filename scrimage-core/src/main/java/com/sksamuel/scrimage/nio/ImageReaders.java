@@ -13,11 +13,11 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
- * Utilites for reading of an Image to an array of bytes in a specified format.
+ * Utilities for reading of an Image to an array of bytes in a specified format.
  */
 public class ImageReaders {
 
-   private static List<ImageReader> readers = detectReaders();
+   private static final List<ImageReader> readers = detectReaders();
 
    private static List<ImageReader> detectReaders() {
       return StreamSupport.stream(ServiceLoader.load(ImageReader.class).spliterator(), false).collect(Collectors.toList());

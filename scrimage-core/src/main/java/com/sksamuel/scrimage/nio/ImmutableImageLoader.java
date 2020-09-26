@@ -42,7 +42,7 @@ public class ImmutableImageLoader {
 
    /**
     * Specifies a region of the image to be loaded. Specifying a region here, rather than resizing
-    * the canvas after load can result in a performance gain.
+    * the canvas after load can result in a performance gain under certain loaders.
     */
    public ImmutableImageLoader sourceRegion(Rectangle rectangle) {
       this.rectangle = rectangle;
