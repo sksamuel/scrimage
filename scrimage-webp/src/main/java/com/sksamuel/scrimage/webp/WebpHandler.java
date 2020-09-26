@@ -46,7 +46,7 @@ public class WebpHandler {
    private static boolean setExecutable() throws IOException, InterruptedException {
       return new ProcessBuilder("chmod", "+x", binary.toAbsolutePath().toString())
          .start()
-         .waitFor(30, TimeUnit.MINUTES);
+         .waitFor(30, TimeUnit.SECONDS);
    }
 
    public byte[] convert(byte[] bytes) throws IOException, InterruptedException {
