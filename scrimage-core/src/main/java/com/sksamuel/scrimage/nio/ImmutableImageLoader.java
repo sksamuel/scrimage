@@ -76,11 +76,16 @@ public class ImmutableImageLoader {
    }
 
    public ImmutableImage fromResource(String resource) throws IOException {
-      return fromStream(getClass().getResourceAsStream(resource));
+      InputStream in = getClass().getResourceAsStream(resource);
+      if (in == null)
+         throw new IOException("Could not locate resource: " + resource);
+      return fromStream(in);
    }
 
-   public ImmutableImage fromStream(InputStream stream) throws IOException {
-      return load(new InputStreamImageSource(stream));
+   public ImmutableImage fromStream(InputStream in) throws IOException {
+      if (in == null)
+         throw new IOException("Input stream is null");
+      return load(new InputStreamImageSource(in));
    }
 
    public ImmutableImage load(ImageSource source) throws IOException {

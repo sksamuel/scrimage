@@ -13,7 +13,7 @@ public class ImageParseException extends IOException {
    }
 
    public ImageParseException(List<Throwable> errors) {
-      super(errors.get(0));
+      super("Image parsing failed due to: " + errors);
       this.errors = errors;
    }
 
