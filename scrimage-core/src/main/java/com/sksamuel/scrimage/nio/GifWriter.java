@@ -47,10 +47,12 @@ public class GifWriter implements ImageWriter {
         javax.imageio.ImageWriter writer = ImageIO.getImageWritersByFormatName("gif").next();
         ImageWriteParam params = writer.getDefaultWriteParam();
 
-        if (progressive) {
-            params.setProgressiveMode(ImageWriteParam.MODE_DEFAULT);
-        } else {
-            params.setProgressiveMode(ImageWriteParam.MODE_DISABLED);
+        if (params.canWriteProgressive()) {
+          if (progressive) {
+              params.setProgressiveMode(ImageWriteParam.MODE_DEFAULT);
+          } else {
+              params.setProgressiveMode(ImageWriteParam.MODE_DISABLED);
+          }
         }
 
         try (MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream(out)) {
