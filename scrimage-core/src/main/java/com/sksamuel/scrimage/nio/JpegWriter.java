@@ -49,10 +49,12 @@ public class JpegWriter implements ImageWriter {
          params.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
          params.setCompressionQuality(compression / 100f);
       }
-      if (progressive) {
-         params.setProgressiveMode(ImageWriteParam.MODE_DEFAULT);
-      } else {
-         params.setProgressiveMode(ImageWriteParam.MODE_DISABLED);
+      if (params.canWriteProgressive()) {
+         if (progressive) {
+            params.setProgressiveMode(ImageWriteParam.MODE_DEFAULT);
+         } else {
+            params.setProgressiveMode(ImageWriteParam.MODE_DISABLED);
+         }
       }
 
       // in openjdk, awt cannot write out jpegs that have a transparency bit, even if that is set to 255.
