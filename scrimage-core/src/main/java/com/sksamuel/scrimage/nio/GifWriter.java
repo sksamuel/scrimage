@@ -60,7 +60,5 @@ public class GifWriter implements ImageWriter {
             writer.write(null, new IIOImage(image.awt(), null, null), params);
             writer.dispose();
         }
-
-//        IOUtils.closeQuietly(out);
     }
 }
