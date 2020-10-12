@@ -68,7 +68,6 @@ nav:
          - "take.md"
          - "translate.md"
          - "trim.md"
-         - "underlay.md"
          - "zoom.md"
    -  Filters:
          - "filters.md"
