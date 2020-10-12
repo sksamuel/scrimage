@@ -28,7 +28,9 @@ An image can be created by [copying](copy.md) an existing image.
 
 ### Input / Output
 
-The heart of any image library is [reading and writing](io.md) in the various formats. Scrimage supports all the formats provided by javax.imageio along with extra formats in the modules `scrimage-formats-extra` and `scrimage-webp`.
+The heart of any image library is [reading and writing](io.md) in the various formats.
+Scrimage supports all the formats provided by javax.imageio along with extra formats in the
+modules `scrimage-formats-extra` and `scrimage-webp`.
 
 ### Image Operations
 
@@ -47,9 +49,12 @@ Scrimage comes with a wide array of [filters](filters.md) in the module `scrimag
 
 
 
-### Other
+### Metadata
 
+Scrimage builds on the [metadata-extractor](https://github.com/drewnoakes/metadata-extractor) project to provide
+the ability to read metadata from an image.
 
+Read more details [here](metadata.md).
 
 
 ### Quick Examples
