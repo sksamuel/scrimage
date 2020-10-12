@@ -15,4 +15,4 @@ A typical use case for this library would be creating thumbnails of images uploa
 set of product images so that they all have the same dimensions, or optimizing PNG uploads by users to apply maximum compression,
 or applying a grayscale filter in a print application.
 
-To begin, head over to the [microsite](https://github.com/sksamuel/scrimage).
+To begin, head over to the [microsite](https://sksamuel.github.io/scrimage).
