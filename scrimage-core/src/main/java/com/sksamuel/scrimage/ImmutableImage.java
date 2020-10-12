@@ -1427,6 +1427,10 @@ public class ImmutableImage extends MutableImage {
       return new ImmutableImage(awt(), metadata);
    }
 
+   public ImmutableImage zoom(double factor) {
+      return zoom(factor, ScaleMethod.Bicubic);
+   }
+
    /**
     * Returns a new image that is the result of scaling this image but without changing the canvas size.
     * <p>

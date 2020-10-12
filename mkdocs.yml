@@ -51,7 +51,7 @@ nav:
    -  Operations:
          - "autocrop.md"
          - "brightness.md"
-         - "blurstretch.md"
+         - "blur-and-stretch.md"
          - "bound.md"
          - "contrast.md"
          - "cover.md"
