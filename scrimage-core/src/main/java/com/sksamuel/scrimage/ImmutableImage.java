@@ -483,7 +483,6 @@ public class ImmutableImage extends MutableImage {
     *
     * @param composite   the composite to use. See com.sksamuel.scrimage.Composite.
     * @param applicative the image to apply with the composite.
-    *
     * @return A new image with the given image applied using the given composite.
     */
    public ImmutableImage composite(Composite composite, ImmutableImage applicative) {
@@ -1236,6 +1235,8 @@ public class ImmutableImage extends MutableImage {
     * @return a new Image that is the subimage
     */
    public ImmutableImage subimage(int x, int y, int w, int h) {
+      if (w <= 0) throw new RuntimeException("Width cannot be <= 0");
+      if (h <= 0) throw new RuntimeException("Height cannot be <= 0");
       return wrapPixels(w, h, pixels(x, y, w, h), metadata);
    }
 
@@ -1257,7 +1258,9 @@ public class ImmutableImage extends MutableImage {
     * Returns a new Image which is the source image, but only keeping a max of k columns from the right.
     */
    public ImmutableImage takeRight(int k) {
-      return subimage(Math.min(0, width - k), k, 0, height);
+      // trim k to the max we can use, which is the width
+      int maxK = Math.min(k, width);
+      return subimage(width - maxK, 0, maxK, height);
    }
 
    /**
@@ -1271,7 +1274,9 @@ public class ImmutableImage extends MutableImage {
     * Returns a new Image which is the source image, but only keeping a max of k rows from the bottom.
     */
    public ImmutableImage takeBottom(int k) {
-      return subimage(0, Math.min(0, height - k), width, height);
+      // trim k to the max we can use, which is the height
+      int maxK = Math.min(k, height);
+      return subimage(0, height - maxK, width, maxK);
    }
 
    /**
