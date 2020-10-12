@@ -11,13 +11,6 @@ Secondly, the metadata can be loaded without an Image being needed, by using the
 
 Once you have the metadata object, you can invoke `directories` or `tags` to see the information.
 
-### Format Detection
 
-If you are interested in detecting the format of an image (which you don't need to do when simply loading an image, as Scrimage will figure it out for you)
-then you can use the FormatDetector. The detector recognises PNG, JPEG and GIF.
-
-```kotlin
-FormatDetector.detect(bytes) // returns an Option[Format] with the detected format if any
-FormatDetector.detect(in) // same thing from an input stream
 ```
 
