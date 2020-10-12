@@ -1,12 +1,15 @@
 Filters
 =======
 
-### Filters
-
 Scrimage comes with a wide array of filters. Most of these filters I have not written myself,
-but rather collected from other open source imaging libraries (for compliance with licenses and / or attribution - see file headers), and either re-written them in Scala, wrapped them in Scala, fixed bugs or improved them.
+but rather collected from other open source imaging libraries (for compliance with licenses and / or attribution - see file headers),
+and either wrapped them, fixed bugs or improved them.
 
-Some filters have options which can be set when creating the filters. All filters are immutable. Most filters have sensible default options as default parameters.
+Some filters have options which can be set when creating the filters.
+All filters are immutable. Most filters have sensible default options as default parameters.
+
+!!! note
+    These filters require the `scrimage-filters` module to be added to your build.
 
 Click on the small images to see an enlarged example.
 
