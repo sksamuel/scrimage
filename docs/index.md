@@ -28,7 +28,7 @@ An image can be created by [copying](copy.md) an existing image.
 
 ### Input / Output
 
-The heart of any image library is [reading and writing](io.md) in the various formats. Scrimage supports all the formats provided by javax.imageio along with extra formats in the module `scrimage-formats-extra`.
+The heart of any image library is [reading and writing](io.md) in the various formats. Scrimage supports all the formats provided by javax.imageio along with extra formats in the modules `scrimage-formats-extra` and `scrimage-webp`.
 
 ### Image Operations
 
