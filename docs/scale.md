@@ -16,15 +16,37 @@ performing the scale. Options are `FastScale`, `Lanczos3`, `BSpline`, `Bilinear`
 
 ### Examples
 
-Using this image scaled to 640 x 360 as our input:
+Using this image as our input:
 
 ![source image](images/input_640_360.jpg)
 
-| Code | Output |
-| ---- | ------ |
-| `image.scaleToWidth(400)`                         | ![scale](images/scale_w400.jpg) |
-| `image.scaleToHeight(200)`                        | ![scale](images/scale_h200.jpg) |
-| `image.scaleTo(400, 400)`                         | ![scale](images/scale_400_400.jpg) |
-| `image.scaleTo(400, 400, ScaleMethod.FastScale)`  | ![scale](images/scale_400_400_fast.jpg) |
-| `image.scale(0.5)`                                | ![scale](images/scale_0.5.jpg) |
 
+```kotlin
+image.scaleToWidth(400)
+```
+
+![scale](images/scale_h200.jpg)
+
+```kotlin
+image.scaleToHeight(200)
+```
+
+![scale](images/scale_w400.jpg)
+
+```kotlin
+image.scaleTo(400, 400)
+```
+
+![scale](images/scale_400_400.jpg)
+
+```kotlin
+image.scaleTo(400, 400, ScaleMethod.FastScale)
+```
+
+![scale](images/scale_400_400_fast.jpg)
+
+```kotlin
+image.scale(0.5)
+```
+
+![scale](images/scale_0.5.jpg)
