@@ -23,12 +23,12 @@ repo_url: https://github.com/sksamuel/scrimage
 
 theme:
    icon:
+      logo: material/camera
       repo: fontawesome/brands/github
    name: material
    palette:
       primary: black
       accent: orange
-   logo: 'SCRIMAGE.png'
    features:
       - search.highlight
 
