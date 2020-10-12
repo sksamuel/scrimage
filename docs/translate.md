@@ -14,7 +14,8 @@ Using this image as our input:
 
 
 ```kotlin
-image.translate(100, 0) // translate 100 pixels right
+ // translate 100 pixels right
+image.translate(100, 0)
 ```
 
 ![image](images/translate_100_0.jpg)
@@ -22,7 +23,8 @@ image.translate(100, 0) // translate 100 pixels right
 
 
 ```kotlin
-image.translate(100, 0, Color.BLUE) // translate 100 pixels right with specified bg
+ // translate 100 pixels right with specified bg
+image.translate(100, 0, Color.BLUE)
 ```
 
 ![image](images/translate_100_0_blue.jpg)
@@ -30,7 +32,8 @@ image.translate(100, 0, Color.BLUE) // translate 100 pixels right with specified
 
 
 ```kotlin
-image.translate(120, 80) // translate on both axis
+ // translate on both axis
+image.translate(120, 80)
 ```
 
 ![image](images/translate_120_80.jpg)
@@ -38,7 +41,8 @@ image.translate(120, 80) // translate on both axis
 
 
 ```kotlin
-image.translate(120, -80, Color.RED) // translate in negative directions with specified bg
+ // translate in negative directions with specified bg
+image.translate(120, -80, Color.RED)
 ```
 
 ![image](images/translate_-120_-80.jpg)
