@@ -15,7 +15,7 @@ don't want to scale up the image if is already smaller.
 
 Using this image scaled to 640 x 360 as our input:
 
-<img src="/images/input.jpg" width=400"/>
+![source image](images/input_640_360.jpg)
 
 | Code | Output |
 | ---- | ------ |

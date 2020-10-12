@@ -23,7 +23,7 @@ a scale method (defaults to ScaleMethod.Bicubic), and the position of the source
 
 Using this image scaled to 640 x 360 as our input:
 
-<img src="/images/input.jpg" width=400"/>
+![source image](images/input_640_360.jpg)
 
 | Code | Output |
 | ---- | ------ |

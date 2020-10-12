@@ -18,13 +18,13 @@ performing the scale. Options are `FastScale`, `Lanczos3`, `BSpline`, `Bilinear`
 
 Using this image scaled to 640 x 360 as our input:
 
-<img src="/images/input.jpg" width=400"/>
+![source image](images/input_640_360.jpg)
 
 | Code | Output |
 | ---- | ------ |
-| `image.scaleToWidth(400)`                    | <img src="/images/scale_w400.jpg"/> |
-| `image.scaleToHeight(200)`                   | <img src="/images/scale_h200.jpg"/> |
-| `image.scaleTo(400, 400)`       | <img src="/images/scale_400_400.jpg"/> |
-| `image.scaleTo(400, 400, ScaleMethod.FastScale)`  | <img src="/images/scale_400_400_fast.jpg"/> |
-| `image.scale(0.5)`                                | <img src="/images/scale_0.5.jpg"/> |
+| `image.scaleToWidth(400)`                         | ![scale](images/scale_w400.jpg) |
+| `image.scaleToHeight(200)`                        | ![scale](images/scale_h200.jpg) |
+| `image.scaleTo(400, 400)`                         | ![scale](images/scale_400_400.jpg) |
+| `image.scaleTo(400, 400, ScaleMethod.FastScale)`  | ![scale](images/scale_400_400_fast.jpg) |
+| `image.scale(0.5)`                                | ![scale](images/scale_0.5.jpg) |
 

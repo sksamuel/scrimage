@@ -14,7 +14,7 @@ Any excess pixels from the overlay image are ignored. For example, if the overla
 
 Using these images as our input:
 
-<img src="/images/input.jpg" width=400"/>
+![source image](images/input_640_360.jpg)
 <img src="/images/picard.jpg" width=320"/>
 
 | Code | Output |

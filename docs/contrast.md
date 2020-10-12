@@ -8,7 +8,7 @@ Returns a new image with the contrast adjusted by the given factor.
 
 Using this image as our input:
 
-<img src="/images/input.jpg" width=400"/>
+![source image](images/input_640_360.jpg)
 
 | Code | Output |
 | ---- | ------ |
