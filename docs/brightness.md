@@ -12,5 +12,5 @@ Using this image as our input:
 
 | Code | Output |
 | ---- | ------ |
-| `image.brightness(2.0)`                  | <img src="/images/brightness_output_2.0.jpg" width=400"/> |
-| `image.brightness(0.5)`                  | <img src="/images/brightness_output_0.5.jpg" width=400"/> |
+| `image.brightness(2.0)`     | ![image](images/brightness_output_2.0.jpg) |
+| `image.brightness(0.5)`     | ![image](images/brightness_output_0.5.jpg) |

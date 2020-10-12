@@ -12,6 +12,6 @@ Using this image scaled to 640 x 360 as our input:
 
 | Code | Output |
 | ---- | ------ |
-| `image.rotateLeft()`                       | <img src="/images/rotate_left.jpg"/> |
-| `image.rotateRight()`                      | <img src="/images/rotate_right.jpg"/> |
-| `image.rotate(new Radians(1.15))`          | <img src="/images/rotate_1.15_rads.jpg"/> |
+| `image.rotateLeft()`                       | ![image](images/rotate_left.jpg) |
+| `image.rotateRight()`                      | ![image](images/rotate_right.jpg) |
+| `image.rotate(new Radians(1.15))`          | ![image](images/rotate_1.15_rads.jpg) |

@@ -15,9 +15,15 @@ Any excess pixels from the overlay image are ignored. For example, if the overla
 Using these images as our input:
 
 ![source image](images/input_640_360.jpg)
-<img src="/images/picard.jpg" width=320"/>
+![source image](images/picard.jpg)
 
-| Code | Output |
-| ---- | ------ |
-| `image.overlay(picard, 25, 25)` | <img src="/images/overlay_25_25.jpg" width=400"/> |
-| `image.overlay(picard, -75, 0)` | <img src="/images/overlay_-75_0.jpg" width=400"/> |
+```
+image.overlay(picard, 25, 25)
+```
+
+![image](images/overlay_25_25.jpg)
+
+
+```
+image.overlay(picard, -75, 0)
+```

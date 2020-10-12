@@ -12,5 +12,5 @@ Using this image as our input:
 
 | Code | Output |
 | ---- | ------ |
-| `image.contrast(2.0)`          | ![image](images/contrast_2.0.jpg) |
-| `image.contrast(0.5)`          | ![image](images/contrast_0.5.jpg) |
+| `image.contrast(2.0)`     | ![image](images/contrast_2.0.jpg) |
+| `image.contrast(0.5)`     | ![image](images/contrast_0.5.jpg) |
