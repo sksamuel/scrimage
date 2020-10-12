@@ -19,10 +19,15 @@ package com.sksamuel.scrimage;
 import com.sksamuel.scrimage.angles.Degrees;
 import com.sksamuel.scrimage.angles.Radians;
 import com.sksamuel.scrimage.canvas.Canvas;
+import com.sksamuel.scrimage.canvas.GraphicsContext;
+import com.sksamuel.scrimage.canvas.drawables.FilledRect;
+import com.sksamuel.scrimage.canvas.painters.LinearGradient;
+import com.sksamuel.scrimage.canvas.painters.Painter;
 import com.sksamuel.scrimage.color.Colors;
 import com.sksamuel.scrimage.color.RGBColor;
 import com.sksamuel.scrimage.composite.Composite;
 import com.sksamuel.scrimage.filter.Filter;
+import com.sksamuel.scrimage.graphics.RichGraphics2D;
 import com.sksamuel.scrimage.metadata.ImageMetadata;
 import com.sksamuel.scrimage.metadata.OrientationTools;
 import com.sksamuel.scrimage.nio.ByteArrayImageSource;
@@ -558,6 +563,28 @@ public class ImmutableImage extends MutableImage {
    public ImmutableImage fill(Color color) {
       ImmutableImage target = blank();
       target.fillInPlace(color);
+      return target;
+   }
+
+   /**
+    * Creates a new Image with the same dimensions of this image and with
+    * all the pixels initialized using the given painter.
+    *
+    * @return a new Image with the same dimensions as this
+    */
+   public ImmutableImage fill(Painter painter) {
+      ImmutableImage target = blank();
+      Painter temp = painter;
+      if (painter instanceof LinearGradient) {
+         LinearGradient linear = (LinearGradient) painter;
+         if (linear.getX1() == Integer.MIN_VALUE && linear.getX2() == Integer.MAX_VALUE) {
+            temp = new LinearGradient(0, 0, linear.getColor1(), width, 0, linear.getColor2());
+         } else if (linear.getY1() == Integer.MIN_VALUE && linear.getY2() == Integer.MAX_VALUE) {
+            temp = new LinearGradient(0, 0, linear.getColor1(), 0, height, linear.getColor2());
+         }
+      }
+      Painter finalTemp = temp;
+      target.toCanvas().drawInPlace(new FilledRect(0, 0, width, height, g2 -> g2.setPainter(finalTemp)));
       return target;
    }
 
