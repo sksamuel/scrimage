@@ -23,16 +23,24 @@ such as [drewnoakes/metadata-extractor](https://github.com/drewnoakes/metadata-e
 
 ### Creation methods
 
-Fill, Blank, Copy, etc
+Creation methods create a new image by specifying the dimensions. They can start with a specified colour using [fill](fill.md) or undefined using [blank](blank.md).
+An image can be created by [copying](copy.md) an existing image.
+
+### Input / Output
+
+The heart of any image library is [reading and writing](io.md) in the various formats. Scrimage supports all the formats provided by javax.imageio along with extra formats in the module `scrimage-formats-extra`.
 
 ### Image Operations
 
-These operations all operate on an existing image, returning a copy of that image.
-The more complicated operations have a link to more detailed documentation.
+These operations operate on an image, returning a copy of that image.
+For instance, [fit](fit.md) will resize an image to fit into a specified set of bounds, and [scale](scale.md) will change the size of an image.
+
+For the full list of operations, see the menu on the left.
 
 
 ### Filters
 
+Scrimage comes with a wide array of [filters](filters.md) in the module `scrimage-filters`.
 
 
 ### Composites

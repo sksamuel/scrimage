@@ -3,7 +3,7 @@ Filters
 
 ### Filters
 
-Scrimage comes with a wide array (or Iterable ;) of filters. Most of these filters I have not written myself,
+Scrimage comes with a wide array of filters. Most of these filters I have not written myself,
 but rather collected from other open source imaging libraries (for compliance with licenses and / or attribution - see file headers), and either re-written them in Scala, wrapped them in Scala, fixed bugs or improved them.
 
 Some filters have options which can be set when creating the filters. All filters are immutable. Most filters have sensible default options as default parameters.
