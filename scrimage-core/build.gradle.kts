@@ -11,6 +11,7 @@ dependencies {
    implementation(Libs.Commons.io)
    implementation(Libs.Hjg.pngj)
    testImplementation(kotlin("stdlib-jdk8"))
+   testImplementation(Libs.Kotest.api)
    testImplementation(Libs.Kotest.junit5)
    testImplementation(Libs.Kotest.assertions)
 }

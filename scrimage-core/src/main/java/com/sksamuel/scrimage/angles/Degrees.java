@@ -8,6 +8,6 @@ public class Degrees {
    }
 
    public Radians toRadians() {
-      return new Radians((int) ((double) value * Math.PI / 180.0));
+      return new Radians(((double) value * Math.PI / 180.0));
    }
 }
