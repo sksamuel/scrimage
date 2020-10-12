@@ -1,0 +1,72 @@
+site_name: Scrimage Image Library
+
+# Meta tags (placed in header)
+site_description: Java, Scala, Kotlin image manipulation library.
+site_author: sksamuel
+site_url: https://github.com/sksamuel/scrimage
+
+markdown_extensions:
+   - admonition
+   - pymdownx.arithmatex
+   - pymdownx.details
+   - pymdownx.tabbed
+   - codehilite
+   - pymdownx.superfences
+   - admonition
+   - attr_list
+   -  pymdownx.highlight:
+         use_pygments: true
+
+# Repository (add link to repository on each page)
+repo_name: scrimage
+repo_url: https://github.com/sksamuel/scrimage
+
+theme:
+   icon:
+      repo: fontawesome/brands/github
+   name: material
+   palette:
+      primary: black
+      accent: orange
+   logo: 'SCRIMAGE.png'
+   features:
+      - search.highlight
+
+plugins:
+   - search
+
+nav:
+   -  Overview:
+         -  "Welcome": "index.md"
+         - "quick_start.md"
+         - "changelog.md"
+   -  IO:
+         - "loading.md"
+         - "saving.md"
+         - "metadata.md"
+   -  Creation:
+         - "blank.md"
+         - "create.md"
+         - "copy.md"
+         - "fill.md"
+   -  Operations:
+         - "autocrop.md"
+         - "brightness.md"
+         - "blurstretch.md"
+         - "bound.md"
+         - "contrast.md"
+         - "cover.md"
+         - "fit.md"
+         - "max.md"
+         - "pad.md"
+         - "overlay.md"
+         - "resize.md"
+         - "rotate.md"
+         - "scale.md"
+         - "take.md"
+         - "translate.md"
+         - "trim.md"
+         - "underlay.md"
+         - "zoom.md"
+   -  Filters:
+         - "filters.md"
