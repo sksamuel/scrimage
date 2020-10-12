@@ -514,6 +514,15 @@ public class ImmutableImage extends MutableImage {
    }
 
    /**
+    * Convenience method for cover(targetWidth, targetHeight, ScaleMethod.Bicubic, position)
+    */
+   public ImmutableImage cover(int targetWidth,
+                               int targetHeight,
+                               Position position) {
+      return cover(targetWidth, targetHeight, ScaleMethod.Bicubic, position);
+   }
+
+   /**
     * Returns an image with the given dimensions where this image has been scaled to
     * completely cover the new dimensions whilst retaining the original aspect ratio.
     * <p>
