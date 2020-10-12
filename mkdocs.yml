@@ -46,9 +46,7 @@ nav:
          -  "Metadata": "metadata.md"
          -  "Format Detection": "format_detection.md"
    -  Creation:
-         - "blank.md"
          - "create.md"
-         - "copy.md"
          - "fill.md"
    -  Operations:
          - "autocrop.md"
