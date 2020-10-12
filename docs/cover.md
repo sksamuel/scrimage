@@ -27,9 +27,9 @@ Using this image scaled to 640 x 360 as our input:
 
 | Code | Output |
 | ---- | ------ |
-| `image.cover(400, 300)`                       | <img src="/images/cover_400_300.jpg"/> |
-| `image.cover(500, 200)`                       | <img src="/images/cover_500_200.jpg"/> |
-| `image.cover(500, 200, Position.TopLeft)`     | <img src="/images/cover_500_200_top_left.jpg"/> |
-| `image.cover(400, 400)`                       | <img src="/images/cover_400_400.jpg"/> |
-| `image.cover(400, 400, Position.CenterRight)` | <img src="/images/cover_400_400_center_right.jpg"/> |
+| `image.cover(400, 300)`                       | ![image](images/cover_400_300.jpg) |
+| `image.cover(500, 200)`                       | ![image](images/cover_500_200.jpg) |
+| `image.cover(500, 200, Position.TopLeft)`     | ![image](images/cover_500_200_top_left.jpg) |
+| `image.cover(400, 400)`                       | ![image](images/cover_400_400.jpg) |
+| `image.cover(400, 400, Position.CenterRight)` | ![image](images/cover_400_400_center_right.jpg) |
 
