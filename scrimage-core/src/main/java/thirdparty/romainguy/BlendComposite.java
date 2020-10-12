@@ -108,7 +108,7 @@ public final class BlendComposite implements Composite {
 
       public void compose(Raster src, Raster dstIn, WritableRaster dstOut) {
          if (src.getSampleModel().getDataType() != DataBuffer.TYPE_INT)
-            throw new IllegalStateException("src must store pixels as INT but was " + src.getSampleModel().getDataType());
+            throw new IllegalStateException("Input image must store pixels as ints. Convert your input image using " + src.getSampleModel().getDataType());
 
          if (dstIn.getSampleModel().getDataType() != DataBuffer.TYPE_INT)
             throw new IllegalStateException("dstIn must store pixels as INT but was " + dstIn.getSampleModel().getDataType());

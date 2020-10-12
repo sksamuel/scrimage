@@ -470,7 +470,8 @@ public class ImmutableImage extends MutableImage {
    }
 
    /**
-    * Returns a copy of this image with the BufferedImage type set to the given value.
+    * Returns a copy of this image with the underlying image type set to the given value.
+    * The type value is one of the AWT standard image types, taken from BufferedImage.
     */
    public ImmutableImage copy(int type) {
       return fromAwt(awt(), type);
@@ -482,6 +483,7 @@ public class ImmutableImage extends MutableImage {
     *
     * @param composite   the composite to use. See com.sksamuel.scrimage.Composite.
     * @param applicative the image to apply with the composite.
+    *
     * @return A new image with the given image applied using the given composite.
     */
    public ImmutableImage composite(Composite composite, ImmutableImage applicative) {
