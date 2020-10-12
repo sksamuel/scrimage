@@ -15,15 +15,18 @@ Any excess pixels from the overlay image are ignored. For example, if the overla
 Using these images as our input:
 
 ![source image](images/input_640_360.jpg)
+
 ![source image](images/picard.jpg)
 
-```
+```kotlin
 image.overlay(picard, 25, 25)
 ```
 
 ![image](images/overlay_25_25.jpg)
 
 
-```
+```kotlin
 image.overlay(picard, -75, 0)
 ```
+
+![image](images/overlay_-75_0.jpg)
