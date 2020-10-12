@@ -14,6 +14,6 @@ Using this image scaled to 640 x 360 as our input:
 
 | Code | Output |
 | ---- | ------ |
-| `image.takeLeft(300)`                    | <img src="/images/take_l300.jpg"/> |
-| `image.takeLeft(300).takeTop(200)`       | <img src="/images/take_l300_t200.jpg"/> |
-| `image.takeRight(400).takeBottom(200)`   | <img src="/images/take_r400_b200.jpg"/> |
+| `image.takeLeft(300)`                    | ![image](images/take_l300.jpg) |
+| `image.takeLeft(300).takeTop(200)`       | ![image](images/take_l300_t200.jpg) |
+| `image.takeRight(400).takeBottom(200)`   | ![image](images/take_r400_b200.jpg) |

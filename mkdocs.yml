@@ -57,6 +57,7 @@ nav:
          - "contrast.md"
          - "cover.md"
          - "fit.md"
+         - "flip.md"
          - "max.md"
          - "pad.md"
          - "overlay.md"
