@@ -21,6 +21,7 @@ around the [TwelveMonkeys](https://github.com/haraldk/TwelveMonkeys) library.
 
     ```scala
     libraryDependencies += "com.sksamuel.scrimage" % "scrimage-core" % "$version"
+    libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-scala" % "$version"
     ```
 
 === "Maven"
@@ -38,10 +39,8 @@ around the [TwelveMonkeys](https://github.com/haraldk/TwelveMonkeys) library.
 
 ### Scala Helpers
 
-If you are using Scala, then you can add the module `"com.sksamuel.scrimage" %% "scrimage-scala" % "$version"` to
-your build.
-
-Then adding `import com.sksamuel.scrimage.scala._` will bring into scope some useful implicits.
+If you are using Scala and you have added the scala module, then add the import
+`import com.sksamuel.scrimage.scala._` to bring into scope some useful implicits.
 
 Firstly, an implicit `PNGWriter` so you do not have to specify it when outputting images.
 Secondly, a conversion to / from
