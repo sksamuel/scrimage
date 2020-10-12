@@ -41,9 +41,10 @@ nav:
          - "quick_start.md"
          - "changelog.md"
    -  IO:
-         - "loading.md"
-         - "saving.md"
-         - "metadata.md"
+         -  "Reading/Writing": "io.md"
+         -  "Extra Formats": "extra_formats.md"
+         -  "Metadata": "metadata.md"
+         -  "Format Detection": "format_detection.md"
    -  Creation:
          - "blank.md"
          - "create.md"
