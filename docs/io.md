@@ -13,21 +13,55 @@ In addition, it extends javas image.io support by giving you an easy way to set 
 ## Reading
 
 To load an image we use the `ImmutableImageLoader` interface.
-This allows us to customize behavior and specify the input source.
-An instanc can be created via `ImmutableImage.loader()`.
+An instance can be created via `ImmutableImage.loader()`.
+
+This allows us to customize loading behavior and specify the input source.
+Supported sources are input streams, byte arrays, files, paths, classpath resources or anything that implements
+the `ImageSource` interface.
 
 
 For example, to load an image from the filesystem:
 
-```kotlin
-val image = ImmutableImage.loader().fromResource(file)
-```
 
-or to load from an input stream
+=== "Java"
 
-```kotlin
-val image = ImmutableImage.loader().fromBytes(bytes)
-```
+    ```java
+    ImmutableImage image = ImmutableImage.loader().fromFile(file);
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    val image = ImmutableImage.loader().fromFile(file)
+    ```
+
+=== "Scala"
+
+    ```scala
+    val image = ImmutableImage.loader().fromFile(file)
+    ```
+
+or to load from a byte array:
+
+
+=== "Java"
+
+    ```java
+    ImmutableImage image = ImmutableImage.loader().fromBytes(bytes);
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    val image = ImmutableImage.loader().fromBytes(bytes)
+    ```
+
+=== "Scala"
+
+    ```scala
+    val image = ImmutableImage.loader().fromBytes(bytes)
+    ```
+
 
 We can load from byte arrays, streams, files, paths, resources and so on.
 
@@ -51,17 +85,56 @@ Some programs use the filename extension to infer, but with Scrimage you must sp
 
 For example, to save an image as a PNG:
 
-```kotlin
-val image = ... // some image
-image.output(PngWriter.Default, new File("/home/sam/spaghetti.png")) // write out
-```
+
+
+=== "Java"
+
+    ```java
+    ImmutableImage image = ... // some image
+    // write out to a file
+    image.output(PngWriter.Default, new File("/home/sam/spaghetti.png"));
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    val image = ... // some image
+    // write out to a file
+    image.output(PngWriter.Default, File("/home/sam/spaghetti.png"))
+    ```
+
+=== "Scala"
+
+    ```scala
+    val image = ... // some image
+    // write out to a file
+    image.output(PngWriter.Default, new File("/home/sam/spaghetti.png"))
+    ```
+
+
 
 If you want to override the configuration for a writer then you can do this when you create the writer.
 For example to save a JPEG with 50% compression:
 
-```kotlin
-val writer = JpegWriter().withCompression(50).withProgressive(true)
-val image = ... // some image
-image.output(writer, new File("/home/sam/compressed_spahgetti.jpg"))
-```
 
+
+=== "Java"
+
+    ```java
+    JpegWriter writer = new JpegWriter().withCompression(50).withProgressive(true);
+    image.output(writer, new File("/home/sam/spaghetti.png"));
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    val writer = JpegWriter().withCompression(50).withProgressive(true)
+    image.output(writer, File("/home/sam/spaghetti.png"))
+    ```
+
+=== "Scala"
+
+    ```scala
+    val writer = new JpegWriter().withCompression(50).withProgressive(true)
+    image.output(writer, new File("/home/sam/spaghetti.png"))
+    ```
