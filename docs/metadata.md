@@ -16,7 +16,7 @@ For example, we can print out all the tags in an image via this code:
 === "Java"
 
     ```
-    ImageMetadata meta = ImageMetadata.fromStream(stream)
+    ImageMetadata meta = ImageMetadata.fromStream(stream);
     Arrays.stream(meta.tags()).forEach(tag -> System.out.println(tag));
     ```
 
