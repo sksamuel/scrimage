@@ -1,0 +1,15 @@
+plugins {
+   id 'org.jetbrains.kotlin.jvm'
+   id("me.champeau.gradle.jmh") version "0.5.2"
+}
+
+dependencies {
+   jmh project(":scrimage-core")
+   jmh "org.imgscalr:imgscalr-lib:4.2"
+   jmh "net.coobird:thumbnailator:0.4.12"
+}
+
+java {
+   sourceCompatibility = JavaVersion.VERSION_1_8
+   targetCompatibility = JavaVersion.VERSION_1_8
+}
