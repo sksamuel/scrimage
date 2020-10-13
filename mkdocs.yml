@@ -44,10 +44,10 @@ nav:
          -  "Creating an image": "create.md"
          -  "Pixel Functions": "pixels.md"
          -  "Colors": "colors.md"
+         -  "Metadata": "metadata.md"
    -  IO:
          -  "Reading/Writing": "io.md"
          -  "Extra Formats": "extra_formats.md"
-         -  "Metadata": "metadata.md"
          -  "Format Detection": "format_detection.md"
          -  "Animated Gif": "animated_gif.md"
    -  Operations:

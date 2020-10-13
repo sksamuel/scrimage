@@ -1,8 +1,10 @@
 Scale
 =====
 
-Scales the image. This operation will change both the canvas and the image.
+Scales an image up or down. This operation will change both the canvas and the image.
 This is what most people want when they think of "resizing" an image.
+
+If instead, we wish to change the image "canvas" without scaling up or down, then [resize](resize.md) is the right operation.
 
 We can perform a scale operation with a specified width and height. Or we can specify only a width or height
 and Scrimage will adjust the other dimension to keep the aspect ratio constant.
