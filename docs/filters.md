@@ -5,11 +5,35 @@ Scrimage comes with a wide array of filters. Most of these filters I have not wr
 but rather collected from other open source imaging libraries (for compliance with licenses and / or attribution - see file headers),
 and either wrapped them, fixed bugs or improved them.
 
+!!! note
+    These filters require the `scrimage-filters` module to be added to your build.
+
+Applying a filter returns a new image. The original image is unmodified.
 Some filters have options which can be set when creating the filters.
 All filters are immutable. Most filters have sensible default options as default parameters.
 
-!!! note
-    These filters require the `scrimage-filters` module to be added to your build.
+To apply a filter, we just use the `filter` method on an image, for example:
+
+
+=== "Java"
+
+    ```
+    ImmutableImage composed = image.filter(new DitherFilter())
+    ```
+
+=== "Kotlin"
+
+    ```
+    val composed = image.filter(DitherFilter())
+    ```
+
+=== "Scala"
+
+    ```
+    val composed = image.composite(new DitherFilter())
+    ```
+
+
 
 Click on the small images to see an enlarged example.
 

@@ -68,5 +68,6 @@ nav:
          - "translate.md"
          - "trim.md"
          - "zoom.md"
-   -  Filters:
+   -  Filters and Composites:
          - "filters.md"
+         - "composites.md"

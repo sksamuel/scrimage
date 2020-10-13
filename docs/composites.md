@@ -6,9 +6,27 @@ Scrimage comes with the usual composites built in. This grid shows the effect of
 mailbox. The first column is the composite with a value of 0.5f, and the second column with 1f. Note, if you reverse
 the order of the images then the effects would be reversed.
 
-The code required to perform a composite is simply.
+The code required to perform a composite is simple:
 
-`val composed = image1.composite(new XYZComposite(alpha), image2)`
+
+=== "Java"
+
+    ```
+    ImmutableImage composed = image1.composite(new XYZComposite(alpha), image2)
+    ```
+
+=== "Kotlin"
+
+    ```
+    val composed = image1.composite(XYZComposite(alpha), image2)
+    ```
+
+=== "Scala"
+
+    ```
+    val composed = image1.composite(new XYZComposite(alpha), image2)
+    ```
+
 
 Click on an example to see it full screen.
 
