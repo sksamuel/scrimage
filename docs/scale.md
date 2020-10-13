@@ -11,9 +11,6 @@ and Scrimage will adjust the other dimension to keep the aspect ratio constant.
 
 Alternatively, we can specify a scale factor, which will multiply the width and height by that factor.
 
-Each scale operation has a `ScaleMethod` parameter that allows us to specify the algorithm to be used when
-performing the scale. Options are `FastScale`, `Lanczos3`, `BSpline`, `Bilinear`, `Bicubic`. Bicucbic is the default.
-
 
 
 ### Examples
@@ -42,6 +39,7 @@ image.scaleTo(400, 400)
 ![scale](images/scale_400_400.jpg)
 
 ```kotlin
+// using the fast scale method
 image.scaleTo(400, 400, ScaleMethod.FastScale)
 ```
 
@@ -52,3 +50,32 @@ image.scale(0.5) // keeps aspect ratio, applies factor to width and height
 ```
 
 ![scale](images/scale_0.5.jpg)
+
+
+### Scale Algorithms
+
+Each scale operation has a `ScaleMethod` parameter that allows us to specify the algorithm to be used when
+performing the scale. Options are `FastScale`, `Lanczos3`, `BSpline`, `Bilinear`, `Bicubic`. Bicucbic is the default.
+
+Here is the same image scaled using each of the algorithms. Click on the image to see the full size.
+
+*Fast Scale*
+
+[![fast scale](images/scale_fast_scale.jpg)](images/scale_fast_scale.jpg)
+
+*BSpline*
+
+[![fast scale](images/scale_bspline.jpg)](images/scale_bspline.jpg)
+
+*Lanczos3*
+
+[![fast scale](images/scale_lanczos3.jpg)](images/scale_lanczos3.jpg)
+
+*Bilinear*
+
+[![fast scale](images/scale_bilinear.jpg)](images/scale_bilinear.jpg)
+
+*Bicubic*
+
+[![fast scale](images/scale_bicubic.jpg)](images/scale_bicubic.jpg)
+
