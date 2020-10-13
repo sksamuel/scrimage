@@ -69,7 +69,7 @@ public interface Color {
    /**
     * Returns the average of this Color merged with another Color.
     * Takes into account alpha and returns the average as an RGB value.
-    *
+    * <p>
     * See https://stackoverflow.com/questions/1944095/how-to-mix-two-argb-pixels
     */
    default RGBColor average(Color other) {
@@ -89,35 +89,3 @@ public interface Color {
       return new java.awt.Color(toRGB().toARGBInt());
    }
 }
-
-//class IntConvert(val i:Int)extends AnyVal{
-//        def toColor:RGBColor=apply(i)
-//        }
-//        implicit
-//
-//class ColorConvert(val c:Color)extends AnyVal{
-//        def toAWT:java.awt.Color=new java.awt.Color(c.toRGB.toInt)
-//        }
-//        implicit
-//
-//class AwtColorConvert(val awt:java.awt.Color)extends AnyVal{
-//        def toColor:RGBColor=RGBColor(awt.getRed,awt.getGreen,awt.getBlue,awt.getAlpha)
-//        }
-//
-//        def apply(red:Int,green:Int,blue:Int,alpha:Int=255):RGBColor=RGBColor(red,green,blue,alpha)
-//        def apply(argb:Int):RGBColor={
-//        val alpha=(argb>>24)&0xFF
-//        val red=(argb>>16)&0xFF
-//        val green=(argb>>8)&0xFF
-//        val blue=argb&0xFF
-//        RGBColor(red,green,blue,alpha)
-//        }
-//
-//        val White=RGBColor(255,255,255)
-//        val Black=RGBColor(0,0,0)
-//        }
-//
-//
-//        case
-//
-

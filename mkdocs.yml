@@ -43,6 +43,7 @@ nav:
          -  "Introduction": "api_intro.md"
          -  "Creating an image": "create.md"
          -  "Pixel Functions": "pixels.md"
+         -  "Colors": "colors.md"
    -  IO:
          -  "Reading/Writing": "io.md"
          -  "Extra Formats": "extra_formats.md"

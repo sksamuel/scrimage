@@ -1,7 +1,7 @@
 Create
 =====
 
-There are a couple of ways to create a completely empty empty.
+There are a couple of ways to create a completely empty image.
 
 The first is with the `create` static method on `ImmutableImage`. This allows us to specify the width, height
 and optionally the AWT image type (eg 4 byte ARGB).

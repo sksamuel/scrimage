@@ -64,3 +64,17 @@ Tag{name='X Resolution', type=282, rawValue='72', value='72 dots per inch'}
 Tag{name='Y Resolution', type=283, rawValue='72', value='72 dots per inch'}
 ...
 ```
+
+### Orientation
+
+The orientation tag is a commonly used tag, so there is a function to specifically retrieve this,
+if defined (sometimes, eg on Sony cameras, it is defined more than once!).
+
+
+These helper methods are found in the `OrientationTools` class.
+
+For example:
+
+```
+OrientationTools.imageOrientationsOf(image.metadata);
+```
