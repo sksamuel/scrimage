@@ -1,23 +1,23 @@
-name: master
+name: benchmarks
 
 on:
-  push:
-    paths-ignore:
-      - 'doc/**'
-      - '*.md'
-    branches:
-      - master
+   push:
+      paths-ignore:
+         - 'doc/**'
+         - '*.md'
+      branches:
+         - master
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+   build:
+      runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout the repo
-        uses: actions/checkout@v2
+      steps:
+         -  name: Checkout the repo
+            uses: actions/checkout@v2
 
-      - name: Run benchmarks
-        run: ./gradlew jmh
+         -  name: Run benchmarks
+            run: ./gradlew jmh
 
 env:
-  GRADLE_OPTS: -Dorg.gradle.configureondemand=true -Dorg.gradle.parallel=false -Dorg.gradle.jvmargs="-Xmx3g -XX:MaxPermSize=2048m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8"
+   GRADLE_OPTS: -Dorg.gradle.configureondemand=true -Dorg.gradle.parallel=false -Dorg.gradle.jvmargs="-Xmx3g -XX:MaxPermSize=2048m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8"
