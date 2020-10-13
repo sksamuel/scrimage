@@ -39,15 +39,15 @@ nav:
    -  Overview:
          -  "Welcome": "index.md"
          - "quick_start.md"
-         - "changelog.md"
+   -  Api:
+         - "Introduction": "api_intro.md"
+         - "Creating an image": "create.md"
+         - "Pixel Functions": "pixels.md"
    -  IO:
          -  "Reading/Writing": "io.md"
          -  "Extra Formats": "extra_formats.md"
          -  "Metadata": "metadata.md"
          -  "Format Detection": "format_detection.md"
-   -  Creation:
-         - "create.md"
-         - "fill.md"
    -  Operations:
          - "autocrop.md"
          - "brightness.md"
@@ -55,6 +55,7 @@ nav:
          - "bound.md"
          - "contrast.md"
          - "cover.md"
+         - "fill.md"
          - "fit.md"
          - "flip.md"
          - "max.md"
