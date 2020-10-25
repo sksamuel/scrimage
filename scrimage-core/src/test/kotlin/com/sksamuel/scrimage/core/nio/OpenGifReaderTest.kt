@@ -8,7 +8,7 @@ import io.kotest.matchers.shouldBe
 class OpenGifReaderTest : FunSpec() {
    init {
       test("reading all frames of an animated gif") {
-         val frames = OpenGifReader().readAll(this::class.java.getResourceAsStream("/animated.gif").readAllBytes())
+         val frames = OpenGifReader().readAll(this::class.java.getResourceAsStream("/animated.gif").readBytes())
          frames.size shouldBe 34
          frames.forAll {
             it.width shouldBe 648
