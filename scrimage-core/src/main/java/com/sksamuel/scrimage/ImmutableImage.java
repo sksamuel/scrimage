@@ -1195,19 +1195,19 @@ public class ImmutableImage extends MutableImage {
          case Lanczos3:
             Lanczos3Filter lan = ResampleFilters.lanczos3Filter;
             ImmutableImage s1 = op(new ResampleOp(lan, targetWidth, targetHeight));
-            return wrapAwt(s1.awt(), this.awt().getType());
+            return wrapAwt(s1.awt(), s1.awt().getType());
          case BSpline:
             BSplineFilter bs = ResampleFilters.bSplineFilter;
             ImmutableImage s2 = op(new ResampleOp(bs, targetWidth, targetHeight));
-            return wrapAwt(s2.awt(), this.awt().getType());
+            return wrapAwt(s2.awt(), s2.awt().getType());
          case Bilinear:
             TriangleFilter t = ResampleFilters.triangleFilter;
             ImmutableImage s3 = op(new ResampleOp(t, targetWidth, targetHeight));
-            return wrapAwt(s3.awt(), this.awt().getType());
+            return wrapAwt(s3.awt(), s3.awt().getType());
          case Bicubic:
             BiCubicFilter bi = ResampleFilters.biCubicFilter;
             ImmutableImage s4 = op(new ResampleOp(bi, targetWidth, targetHeight));
-            return wrapAwt(s4.awt(), this.awt().getType());
+            return wrapAwt(s4.awt(), s4.awt().getType());
          default:
             throw new UnsupportedOperationException();
       }
