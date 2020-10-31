@@ -52,7 +52,7 @@ class ImageTest : FunSpec({
       otherImage shouldNotBe image
    }
 
-   test("brightness happy path") {
+   test("!brightness happy path") {
       val brightened = small.brightness(1.5)
       brightened shouldBe ImmutableImage.fromResource("/com/sksamuel/scrimage/bird_small_brightened.png")
    }
