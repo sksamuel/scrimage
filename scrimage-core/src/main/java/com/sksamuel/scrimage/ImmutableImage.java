@@ -551,7 +551,9 @@ public class ImmutableImage extends MutableImage {
       Dimension coveredDimensions = DimensionTools.dimensionsToCover(new Dimension(targetWidth, targetHeight), new Dimension(width, height));
       ImmutableImage scaled = scaleTo(coveredDimensions.getX(), coveredDimensions.getY(), scaleMethod);
       Dimension dim = position.calculateXY(targetWidth, targetHeight, coveredDimensions.getX(), coveredDimensions.getY());
-      return create(targetWidth, targetHeight).overlay(scaled, dim.getX(), dim.getY());
+      ImmutableImage result = create(targetWidth, targetHeight);
+      result.overlayInPlace(scaled.awt(), dim.getX(), dim.getY());
+      return result;
    }
 
    /**
