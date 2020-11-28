@@ -47,6 +47,7 @@ nav:
          -  "Metadata": "metadata.md"
    -  IO:
          -  "Reading/Writing": "io.md"
+         -  "Webp": "webp.md"
          -  "Extra Formats": "extra_formats.md"
          -  "Format Detection": "format_detection.md"
          -  "Animated Gif": "animated_gif.md"
