@@ -36,6 +36,7 @@ import com.sksamuel.scrimage.nio.WriteContext;
 import com.sksamuel.scrimage.pixels.Pixel;
 import com.sksamuel.scrimage.pixels.PixelTools;
 import com.sksamuel.scrimage.pixels.PixelsExtractor;
+import com.sksamuel.scrimage.transform.Transform;
 import org.apache.commons.io.IOUtils;
 import thirdparty.colorthief.ColorThief;
 import thirdparty.colorthief.MMCQ;
@@ -1483,5 +1484,19 @@ public class ImmutableImage extends MutableImage {
    @Override
    public WriteContext forWriter(ImageWriter writer) {
       return new WriteContext(writer, this, metadata);
+   }
+
+   public ImmutableImage overlay(ImmutableImage image, Position position) {
+      ImmutableImage copy = this.copy();
+      copy.overlayInPlace(
+         image.awt(),
+         position.calculateX(copy.width, copy.height, image.width, image.height),
+         position.calculateY(copy.width, copy.height, image.width, image.height)
+      );
+      return copy;
+   }
+
+   public ImmutableImage transform(Transform transform) throws IOException {
+      return transform.apply(this);
    }
 }
