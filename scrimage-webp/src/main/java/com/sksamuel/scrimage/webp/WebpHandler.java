@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 abstract class WebpHandler {
@@ -13,13 +14,17 @@ abstract class WebpHandler {
       return Files.createTempFile(name, "binary");
    }
 
-   protected static void installBinary(String source, Path output) throws IOException {
-      InputStream in = WebpHandler.class.getResourceAsStream(source);
-      if (in == null)
-         throw new IOException("Could not locate webp binary at " + source);
-      Files.copy(in, output, StandardCopyOption.REPLACE_EXISTING);
-      in.close();
-      setExecutable(output);
+   protected static void installBinary(Path output, String... sources) throws IOException {
+      for (String source : sources) {
+         InputStream in = WebpHandler.class.getResourceAsStream(source);
+         if (in != null) {
+            Files.copy(in, output, StandardCopyOption.REPLACE_EXISTING);
+            in.close();
+            setExecutable(output);
+            return;
+         }
+      }
+      throw new IOException("Could not locate webp binary at " + Arrays.toString(sources));
    }
 
    private static boolean setExecutable(Path output) throws IOException {

@@ -22,17 +22,14 @@ public class DWebpHandler extends WebpHandler {
    }
 
    /**
-    * Scrimage does not ship with the dwebp binary. You must place it on the classpath,
-    * under a directory called `webp_binaries`.
+    * Scrimage includes the latest dwebp binary. Alternatively, you can provide another version by
+    * placing it on the classpath at `webp_binaries`, eg, /webp_binaries/dwebp.
     * <p>
-    * When required to be invoked,this method will attempt to locate the dwebp binary at
-    * `/webp_binaries/dwebp`
-    * <p>
-    * The binary can be downloaded here:
+    * Binaries can be downloaded here:
     * https://storage.googleapis.com/downloads.webmproject.org/releases/webp/index.html
     */
    private static void installDWebp() throws IOException {
-      installBinary("/webp_binaries/dwebp", binary);
+      installBinary(binary, "/webp_binaries/dwebp", "/dist_webp_binaries/dwebp");
    }
 
    public byte[] convert(byte[] bytes) throws IOException {

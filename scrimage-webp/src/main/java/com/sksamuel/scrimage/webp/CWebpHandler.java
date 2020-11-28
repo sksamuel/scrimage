@@ -16,24 +16,21 @@ public class CWebpHandler extends WebpHandler {
       try {
          // write out binary to a location we can execute it from
          binary = createPlaceholder("cwebp");
-         installDWebp();
+         installCWebp();
       } catch (IOException e) {
          throw new RuntimeException(e);
       }
    }
 
    /**
-    * Scrimage does not ship with the cwebp binary. You must place it on the classpath,
-    * under a directory called `webp_binaries`.
+    * Scrimage includes the latest cwebp binary. Alternatively, you can provide another version by
+    * placing it on the classpath at `webp_binaries`, eg, /webp_binaries/cwebp.
     * <p>
-    * In other orders, this method will attempt to locate the dwebp binary at
-    * `/webp_binaries/cwebp`
-    * <p>
-    * The binary can be downloaded here:
+    * Binaries can be downloaded here:
     * https://storage.googleapis.com/downloads.webmproject.org/releases/webp/index.html
     */
-   private static void installDWebp() throws IOException {
-      installBinary("/webp_binaries/cwebp", binary);
+   private static void installCWebp() throws IOException {
+      installBinary(binary, "/webp_binaries/cwebp", "/dist_webp_binaries/cwebp");
    }
 
    public byte[] convert(byte[] bytes,

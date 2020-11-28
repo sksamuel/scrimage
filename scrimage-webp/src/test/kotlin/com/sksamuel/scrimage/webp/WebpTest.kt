@@ -11,21 +11,21 @@ import java.io.IOException
 class WebpTest : FunSpec() {
    init {
 
-      test("webp reader").config(enabledIf = { System.getenv("CI") == null }) {
+      test("webp reader") {
          val image = ImmutableImage.loader().fromResource("/test.webp")
          image.width shouldBe 2000
          image.height shouldBe 2000
       }
 
-      test("webp write").config(enabledIf = { System.getenv("CI") == null }) {
+      test("webp writer") {
          ImmutableImage.loader().fromResource("/spacedock.jpg").scale(0.5)
             .bytes(WebpWriter.MAX_LOSSLESS_COMPRESSION) shouldBe
             javaClass.getResourceAsStream("/spacedock.webp").readAllBytes()
       }
 
-      test("dwebp should capture error on failure").config(enabledIf = { System.getenv("CI") == null }) {
+      test("dwebp should capture error on failure") {
          shouldThrow<IOException> {
-            ImmutableImage.loader().fromResource("/webp_binaries/dwebp")
+            ImmutableImage.loader().fromResource("/dist_webp_binaries/dwebp")
          }.message.shouldContain("BITSTREAM_ERROR")
       }
    }

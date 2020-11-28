@@ -3,7 +3,7 @@ package com.sksamuel.scrimage.nio;
 import com.sksamuel.scrimage.ImageParseException;
 import com.sksamuel.scrimage.ImmutableImage;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,11 +20,7 @@ public class ImageReaders {
    private static final List<ImageReader> readers = detectReaders();
 
    private static List<ImageReader> detectReaders() {
-      try {
-         return StreamSupport.stream(ServiceLoader.load(ImageReader.class).spliterator(), false).collect(Collectors.toList());
-      } catch (Throwable e) {
-         throw new RuntimeException("Could not load service classes for image reader" + e);
-      }
+      return StreamSupport.stream(ServiceLoader.load(ImageReader.class).spliterator(), false).collect(Collectors.toList());
    }
 
    public static ImmutableImage read(ImageSource source, Rectangle rectangle) throws IOException {
