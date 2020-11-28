@@ -7,16 +7,23 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import java.io.IOException
 
+// these tests cannot run on the server as we cannot include webp with our code
 class WebpTest : FunSpec() {
    init {
 
-      test("webp conversion") {
+      test("webp reader").config(enabledIf = { System.getenv("CI") == null }) {
          val image = ImmutableImage.loader().fromResource("/test.webp")
          image.width shouldBe 2000
          image.height shouldBe 2000
       }
 
-      test("webp should capture error on failure") {
+      test("webp write").config(enabledIf = { System.getenv("CI") == null }) {
+         ImmutableImage.loader().fromResource("/spacedock.jpg").scale(0.5)
+            .bytes(WebpWriter.MAX_LOSSLESS_COMPRESSION) shouldBe
+            javaClass.getResourceAsStream("/spacedock.webp").readAllBytes()
+      }
+
+      test("dwebp should capture error on failure").config(enabledIf = { System.getenv("CI") == null }) {
          shouldThrow<IOException> {
             ImmutableImage.loader().fromResource("/webp_binaries/dwebp")
          }.message.shouldContain("BITSTREAM_ERROR")

@@ -8,15 +8,15 @@ import java.io.IOException;
 
 public class WebpImageReader implements ImageReader {
 
-   private final WebpHandler handler = new WebpHandler();
-
    @Override
    public ImmutableImage read(byte[] bytes) throws IOException {
+      final DWebpHandler handler;
       try {
-         byte[] png = handler.convert(bytes);
-         return new ImageIOReader().read(png);
-      } catch (InterruptedException e) {
-         throw new IOException(e);
+         handler = new DWebpHandler();
+      } catch (Throwable t) {
+         throw new IOException("Could not initialize dwebp handler", t);
       }
+      byte[] png = handler.convert(bytes);
+      return new ImageIOReader().read(png);
    }
 }

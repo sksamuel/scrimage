@@ -20,7 +20,11 @@ public class ImageReaders {
    private static final List<ImageReader> readers = detectReaders();
 
    private static List<ImageReader> detectReaders() {
-      return StreamSupport.stream(ServiceLoader.load(ImageReader.class).spliterator(), false).collect(Collectors.toList());
+      try {
+         return StreamSupport.stream(ServiceLoader.load(ImageReader.class).spliterator(), false).collect(Collectors.toList());
+      } catch (Throwable e) {
+         throw new RuntimeException("Could not load service classes for image reader" + e);
+      }
    }
 
    public static ImmutableImage read(ImageSource source, Rectangle rectangle) throws IOException {
