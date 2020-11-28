@@ -61,8 +61,27 @@ public class Pixel {
       return toARGBInt();
    }
 
+   /**
+    * Returns this pixel as a packed ARGB int.
+    *
+    * @return
+    */
    public int toARGBInt() {
       return argb;
+   }
+
+   /**
+    * Returns this pixel as an array of ARGB values.
+    */
+   public int[] toARGB() {
+      return new int[]{alpha(), red(), green(), blue()};
+   }
+
+   /**
+    * Returns this pixel as an array of RGB values, ignoring any alpha value.
+    */
+   public int[] toRGB() {
+      return new int[]{red(), green(), blue()};
    }
 
    public RGBColor toColor() {

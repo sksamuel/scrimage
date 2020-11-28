@@ -19,7 +19,6 @@ package com.sksamuel.scrimage;
 import com.sksamuel.scrimage.angles.Degrees;
 import com.sksamuel.scrimage.angles.Radians;
 import com.sksamuel.scrimage.canvas.Canvas;
-import com.sksamuel.scrimage.canvas.GraphicsContext;
 import com.sksamuel.scrimage.canvas.drawables.FilledRect;
 import com.sksamuel.scrimage.canvas.painters.LinearGradient;
 import com.sksamuel.scrimage.canvas.painters.Painter;
@@ -27,7 +26,6 @@ import com.sksamuel.scrimage.color.Colors;
 import com.sksamuel.scrimage.color.RGBColor;
 import com.sksamuel.scrimage.composite.Composite;
 import com.sksamuel.scrimage.filter.Filter;
-import com.sksamuel.scrimage.graphics.RichGraphics2D;
 import com.sksamuel.scrimage.metadata.ImageMetadata;
 import com.sksamuel.scrimage.metadata.OrientationTools;
 import com.sksamuel.scrimage.nio.ByteArrayImageSource;
@@ -39,6 +37,8 @@ import com.sksamuel.scrimage.pixels.Pixel;
 import com.sksamuel.scrimage.pixels.PixelTools;
 import com.sksamuel.scrimage.pixels.PixelsExtractor;
 import org.apache.commons.io.IOUtils;
+import thirdparty.colorthief.ColorThief;
+import thirdparty.colorthief.MMCQ;
 import thirdparty.mortennobel.BSplineFilter;
 import thirdparty.mortennobel.BiCubicFilter;
 import thirdparty.mortennobel.Lanczos3Filter;
@@ -59,6 +59,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.function.Function;
 
 /**
@@ -673,6 +674,16 @@ public class ImmutableImage extends MutableImage {
       ImmutableImage result = ImmutableImage.filled(canvasWidth, canvasHeight, color);
       result.overlayInPlace(scaled.awt(), dim.getX(), dim.getY());
       return result;
+   }
+
+   /**
+    * Returns the most n used colours in this image.
+    *
+    * @param colours how many colours to quantize for.
+    */
+   public RGBColor[] quantize(int colours) {
+      MMCQ.CMap cmap = ColorThief.getColorMap(this.awt(), colours);
+      return Arrays.stream(cmap.palette()).map(RGBColor::fromRGB).toArray(RGBColor[]::new);
    }
 
    /**

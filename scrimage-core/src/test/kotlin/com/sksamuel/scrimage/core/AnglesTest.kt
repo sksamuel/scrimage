@@ -6,10 +6,11 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.doubles.plusOrMinus
 import io.kotest.matchers.shouldBe
 
-data class DegreeConversion(val input: Int, val output: Double)
-
 class AnglesTest : FunSpec() {
    init {
+
+      data class DegreeConversion(val input: Int, val output: Double)
+
       context("degrees to rads") {
          forAll(
             DegreeConversion(45, 0.785398),

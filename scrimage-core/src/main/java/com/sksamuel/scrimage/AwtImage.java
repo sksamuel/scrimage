@@ -130,10 +130,6 @@ public class AwtImage {
             }
          } else if (awt().getType() == BufferedImage.TYPE_4BYTE_ABGR) {
             while (index < data.length) {
-               int alpha = data[index];
-               int blue = data[index + 1];
-               int green = data[index + 2];
-               int red = data[index + 3];
                Point point = PixelTools.offsetToPoint(index, width);
                pixels[index / 4] = new Pixel(point.x, point.y, data[index / 4]);
                index = index + 4;
@@ -308,6 +304,15 @@ public class AwtImage {
     */
    public int[][] argb() {
       return Arrays.stream(points()).map(p -> argb(p.x, p.y)).toArray(int[][]::new);
+   }
+
+   /**
+    * Returns the ARGB components for all pixels in this image as packed ints.
+    *
+    * @return an array containing the packed ARGB int for each pixel.
+    */
+   public int[] argbints() {
+      return Arrays.stream(points()).mapToInt(p -> color(p.x, p.y).toARGBInt()).toArray();
    }
 
    public int[] rgb(int x, int y) {

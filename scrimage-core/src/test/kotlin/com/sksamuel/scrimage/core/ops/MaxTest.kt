@@ -9,7 +9,7 @@ import io.kotest.matchers.shouldBe
 
 class MaxTest : FunSpec({
 
-   val image = ImmutableImage.fromResource("/com/sksamuel/scrimage/bird.jpg")
+   val image = ImmutableImage.loader().fromResource("/com/sksamuel/scrimage/bird.jpg")
 
    test("when maxing an image the dimensions should not exceed the bounds") {
       val maxed = image.max(20, 20)

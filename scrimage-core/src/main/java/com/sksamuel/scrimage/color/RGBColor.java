@@ -44,8 +44,19 @@ public class RGBColor implements Color {
       return new RGBColor(red, green, blue, alpha);
    }
 
+   public static RGBColor fromRGBInt(int rgb) {
+      int red = PixelTools.red(rgb);
+      int green = PixelTools.green(rgb);
+      int blue = PixelTools.blue(rgb);
+      return new RGBColor(red, green, blue);
+   }
+
    public static RGBColor fromAwt(java.awt.Color color) {
       return new RGBColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+   }
+
+   public static RGBColor fromRGB(int[] rgb) {
+      return new RGBColor(rgb[0], rgb[1], rgb[2]);
    }
 
    /**
