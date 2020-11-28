@@ -20,7 +20,7 @@ class WebpTest : FunSpec() {
       test("webp writer") {
          ImmutableImage.loader().fromResource("/spacedock.jpg").scale(0.5)
             .bytes(WebpWriter.MAX_LOSSLESS_COMPRESSION) shouldBe
-            javaClass.getResourceAsStream("/spacedock.webp").readAllBytes()
+            javaClass.getResourceAsStream("/spacedock.webp").readBytes()
       }
 
       test("dwebp should capture error on failure") {
