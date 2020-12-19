@@ -73,14 +73,14 @@ class ColorTest : WordSpec({
          val rgb = HSVColor(99f, 0.51f, 0.61f, 1f).toRGB()
          rgb.red shouldBe 104
          rgb.green shouldBe 156
-         rgb.blue shouldBe 77
+         rgb.blue shouldBe 76
          rgb.alpha shouldBe 255
       }
       "convert hsv to rgb correctly 4" {
          val rgb = HSVColor(99f, 0.51f, 0.62f, 1f).toRGB()
          rgb.red shouldBe 106
-         rgb.green shouldBe 159
-         rgb.blue shouldBe 78
+         rgb.green shouldBe 158
+         rgb.blue shouldBe 77
          rgb.alpha shouldBe 255
       }
       "convert grayscale to rgb correctly" {
