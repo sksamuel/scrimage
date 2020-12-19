@@ -1,7 +1,9 @@
 package com.sksamuel.scrimage.core.color
 
+import com.sksamuel.scrimage.color.HSVColor
 import com.sksamuel.scrimage.color.RGBColor
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.floats.plusOrMinus
 import io.kotest.matchers.shouldBe
 import java.awt.Color
 
@@ -38,4 +40,18 @@ class RGBColorTest : StringSpec({
       RGBColor.fromARGBInt(1088511) shouldBe RGBColor(16, 155, 255, 0)
    }
 
+   "convert to HSV" {
+      RGBColor(59, 68, 127).toHSV().apply {
+         this.alpha shouldBe 1.0f
+         this.hue.toInt() shouldBe 232
+         this.saturation shouldBe (0.535F plusOrMinus 0.01F)
+         this.value shouldBe (0.498F plusOrMinus 0.01F)
+      }
+      RGBColor(255, 255, 255).toHSV() shouldBe HSVColor(0F, 0F, 1F, 1F)
+   }
+
+   "convert to HSV and back to RGB" {
+      val rgb = RGBColor(255, 255, 255)
+      rgb.toHSV().toRGB() shouldBe rgb
+   }
 })

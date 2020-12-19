@@ -197,4 +197,15 @@ public class RGBColor implements Color {
    public int hashCode() {
       return Objects.hash(red, green, blue, alpha);
    }
+
+   @Override
+   public String toString() {
+      final StringBuffer sb = new StringBuffer("RGBColor{");
+      sb.append("red=").append(red);
+      sb.append(", green=").append(green);
+      sb.append(", blue=").append(blue);
+      sb.append(", alpha=").append(alpha);
+      sb.append('}');
+      return sb.toString();
+   }
 }

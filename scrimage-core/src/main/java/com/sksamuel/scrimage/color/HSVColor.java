@@ -2,8 +2,6 @@ package com.sksamuel.scrimage.color;
 
 import java.util.Objects;
 
-import static java.lang.Math.round;
-
 /**
  * Hue/Saturation/Value
  * <p>
@@ -14,69 +12,56 @@ import static java.lang.Math.round;
  */
 public class HSVColor implements Color {
 
-    public final float hue;
-    public final float saturation;
-    public final float value;
-    public final float alpha;
+   public final float hue;
+   public final float saturation;
+   public final float value;
+   public final float alpha;
 
-    public HSVColor(float hue, float saturation, float value, float alpha) {
-        assert (0 <= hue && hue <= 360f);
-        assert (0 <= saturation && saturation <= 1f);
-        assert (0 <= value && value <= 1f);
-        assert (0 <= alpha && alpha <= 1f);
+   public HSVColor(float hue, float saturation, float value, float alpha) {
+      assert (0 <= hue && hue <= 360f);
+      assert (0 <= saturation && saturation <= 1f);
+      assert (0 <= value && value <= 1f);
+      assert (0 <= alpha && alpha <= 1f);
 
-        this.hue = hue;
-        this.saturation = saturation;
-        this.value = value;
-        this.alpha = alpha;
-    }
+      this.hue = hue;
+      this.saturation = saturation;
+      this.value = value;
+      this.alpha = alpha;
+   }
 
-    public HSVColor toHSV() {
-        return this;
-    }
+   public HSVColor toHSV() {
+      return this;
+   }
 
-    // credit to https://stackoverflow.com/questions/7896280/converting-from-hsv-hsb-in-java-to-rgb-without-using-java-awt-color-disallowe
-    public RGBColor toRGB() {
+   public RGBColor toRGB() {
+      int rgb = java.awt.Color.HSBtoRGB(hue / 360f, saturation, value);
+      return RGBColor.fromRGBInt(rgb);
+   }
 
-        // assumes h is in the range [0,1] not [0,360) so must convert
-        float h01 = hue / 360f;
-        int h = (int) (h01 * 6);
-        float f = h01 * 6 - h;
-        float p = value * (1 - saturation) * 256;
-        float q = value * (1 - f * saturation) * 256;
-        float t = value * (1 - (1 - f) * saturation) * 256;
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      HSVColor hsvColor = (HSVColor) o;
+      return Float.compare(hsvColor.hue, hue) == 0 &&
+         Float.compare(hsvColor.saturation, saturation) == 0 &&
+         Float.compare(hsvColor.value, value) == 0 &&
+         Float.compare(hsvColor.alpha, alpha) == 0;
+   }
 
-        switch (h) {
-            case 0:
-                return new RGBColor(round(value * 256), round(t), round(p));
-            case 1:
-                return new RGBColor(round(q), round(value * 256), round(p));
-            case 2:
-                return new RGBColor(round(p), round(value * 256), round(t));
-            case 3:
-                return new RGBColor(round(p), round(q), round(value * 256));
-            case 4:
-                return new RGBColor(round(t), round(p), round(value * 256));
-            case 5:
-                return new RGBColor(round(value * 256), round(p), round(q));
-            default:
-                throw new RuntimeException("Error converting HSV to RGB. HSV was " + hue + ", " + saturation + ", " + value);
-        }
-    }
+   @Override
+   public int hashCode() {
+      return Objects.hash(hue, saturation, value, alpha);
+   }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        HSVColor hsvColor = (HSVColor) o;
-        return Float.compare(hsvColor.hue, hue) == 0 &&
-                Float.compare(hsvColor.saturation, saturation) == 0 &&
-                Float.compare(hsvColor.value, value) == 0 &&
-                Float.compare(hsvColor.alpha, alpha) == 0;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(hue, saturation, value, alpha);
-    }
+   @Override
+   public String toString() {
+      final StringBuffer sb = new StringBuffer("HSVColor{");
+      sb.append("hue=").append(hue);
+      sb.append(", saturation=").append(saturation);
+      sb.append(", value=").append(value);
+      sb.append(", alpha=").append(alpha);
+      sb.append('}');
+      return sb.toString();
+   }
 }
