@@ -1212,7 +1212,7 @@ public class ImmutableImage extends MutableImage {
             ImmutableImage s3 = op(new ResampleOp(t, targetWidth, targetHeight));
             return wrapAwt(s3.awt(), s3.awt().getType());
          case Progressive:
-            if (targetWidth >= width && targetHeight >= height) return scaleTo(targetWidth, targetHeight, ScaleMethod.Bicubic);
+            if (targetWidth >= width || targetHeight >= height) return scaleTo(targetWidth, targetHeight, ScaleMethod.Bicubic);
             BufferedImage result = ProgressiveScale.scale(awt(), targetWidth, targetHeight, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
             return wrapAwt(result);
          case Bicubic:

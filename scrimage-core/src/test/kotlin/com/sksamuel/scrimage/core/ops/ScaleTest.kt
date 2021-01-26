@@ -26,6 +26,8 @@ class ScaleTest : FunSpec({
 
    test("Progressive bilinear scale up test should complete") {
       image.scaleTo(3000, 3000, ScaleMethod.Progressive).width shouldBe 3000
+      image.scaleTo(3000, 100, ScaleMethod.Progressive).height shouldBe 100
+      image.scaleTo(100, 3000, ScaleMethod.Progressive).width shouldBe 100
    }
 
    test("when scaling an image the output image should match as expected") {
