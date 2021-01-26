@@ -5,7 +5,7 @@ scrimage.iml
 *.iml
 pom.xml.versionsBackup
 
-out/*
+out/
 target/
 build/
 

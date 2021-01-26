@@ -6,7 +6,7 @@ import io.kotest.matchers.shouldBe
 
 class CoverTest : FunSpec({
 
-   val image = ImmutableImage.fromResource("/com/sksamuel/scrimage/bird.jpg")
+   val image = ImmutableImage.loader().fromResource("/com/sksamuel/scrimage/bird.jpg")
 
    test("when covering an image the output image should have the specified dimensions") {
       val covered = image.cover(51, 66)
@@ -16,7 +16,7 @@ class CoverTest : FunSpec({
 
    test("cover operation happy path") {
       val covered = image.cover(200, 200)
-      val expected = ImmutableImage.fromResource("/com/sksamuel/scrimage/bird_cover_200x200.png")
+      val expected = ImmutableImage.loader().fromResource("/com/sksamuel/scrimage/bird_cover_200x200.png")
       covered shouldBe expected
    }
 

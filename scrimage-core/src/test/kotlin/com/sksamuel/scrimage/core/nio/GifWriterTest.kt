@@ -15,16 +15,14 @@ class GifWriterTest : FunSpec({
 
    test("GIF output happy path") {
       val actual = ImmutableImage.loader().fromBytes(original.bytes(GifWriter.Default))
-      val expected =
-         ImmutableImage.fromStream(javaClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_compressed.gif"))
+      val expected = ImmutableImage.loader().fromResource("/com/sksamuel/scrimage/io/bird_compressed.gif")
       expected.pixels().size shouldBe actual.pixels().size
       expected shouldBe actual
    }
 
    test("GIF progressive output happy path") {
       val actual = ImmutableImage.loader().fromBytes(original.bytes(GifWriter.Progressive))
-      val expected =
-         ImmutableImage.loader().fromStream(javaClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_progressive.gif"))
+      val expected = ImmutableImage.loader().fromResource("/com/sksamuel/scrimage/io/bird_progressive.gif")
       expected.pixels().size shouldBe actual.pixels().size
       expected shouldBe actual
    }

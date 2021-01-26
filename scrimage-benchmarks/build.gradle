@@ -6,7 +6,7 @@ plugins {
 dependencies {
    jmh project(":scrimage-core")
    jmh "org.imgscalr:imgscalr-lib:4.2"
-   jmh "net.coobird:thumbnailator:0.4.12"
+   jmh "net.coobird:thumbnailator:0.4.13"
 }
 
 java {
@@ -16,7 +16,12 @@ java {
 
 jmh {
    warmupIterations = 1
-   iterations = 2
-   fork = 2
+   iterations = 3
+   fork = 1
+   batchSize = 5
    operationsPerInvocation = 5
+   warmup = '1s'
+   warmupBatchSize = 5
+   zip64 = true
+   duplicateClassesStrategy = DuplicatesStrategy.WARN
 }
