@@ -28,7 +28,7 @@ public class ScaleBenchmarks {
    @OutputTimeUnit(TimeUnit.MILLISECONDS)
    public void testScaleProgressiveBilinearScrimage(Blackhole blackhole) throws IOException {
       BufferedImage resized = ImmutableImage.loader().fromResource("/colosseum.jpg")
-         .scaleTo(600, 400, ScaleMethod.ProgressiveBilinear)
+         .scaleTo(600, 400, ScaleMethod.Progressive)
          .awt();
       blackhole.consume(resized);
    }

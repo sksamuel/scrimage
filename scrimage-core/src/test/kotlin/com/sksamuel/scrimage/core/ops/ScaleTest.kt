@@ -20,8 +20,12 @@ class ScaleTest : FunSpec({
       image.scaleTo(486, 324, ScaleMethod.Bilinear) shouldBe ImmutableImage.loader().fromResource("/com/sksamuel/scrimage/scale/bird_486_324_bilinear.png")
    }
 
-   test("Progressive bilinear scaleTo test") {
-      image.scaleTo(486, 324, ScaleMethod.ProgressiveBilinear) shouldBe ImmutableImage.loader().fromResource("/com/sksamuel/scrimage/scale/bird_486_324_prog_bilinear.png")
+   test("Progressive bilinear scale down test") {
+      image.scaleTo(486, 324, ScaleMethod.Progressive) shouldBe ImmutableImage.loader().fromResource("/com/sksamuel/scrimage/scale/bird_486_324_prog_bilinear.png")
+   }
+
+   test("Progressive bilinear scale up test should complete") {
+      image.scaleTo(3000, 3000, ScaleMethod.Progressive).width shouldBe 3000
    }
 
    test("when scaling an image the output image should match as expected") {

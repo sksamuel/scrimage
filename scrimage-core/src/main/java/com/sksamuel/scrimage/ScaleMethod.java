@@ -6,5 +6,8 @@ public enum ScaleMethod {
    BSpline,
    Bilinear,
    Bicubic,
-   ProgressiveBilinear,
+   /**
+    * Uses a progressive bilinear on downscale and a bicubic on upscale
+    */
+   Progressive,
 }
