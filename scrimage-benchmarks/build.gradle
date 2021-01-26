@@ -13,3 +13,10 @@ java {
    sourceCompatibility = JavaVersion.VERSION_1_8
    targetCompatibility = JavaVersion.VERSION_1_8
 }
+
+jmh {
+   warmupIterations = 1
+   iterations = 2
+   fork = 2
+   operationsPerInvocation = 5
+}
