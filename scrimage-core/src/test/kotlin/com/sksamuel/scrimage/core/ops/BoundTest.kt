@@ -6,7 +6,7 @@ import io.kotest.matchers.shouldBe
 
 class BoundTest : FunSpec({
 
-   val image = ImmutableImage.fromResource("/com/sksamuel/scrimage/bird.jpg")
+   val image = ImmutableImage.loader().fromResource("/com/sksamuel/scrimage/bird.jpg")
 
    test("when bounding, an image under the bounds should not change") {
       val bounded = image.bound(10000, 10000)

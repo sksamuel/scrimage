@@ -250,6 +250,19 @@ public class AwtImage {
    }
 
    /**
+    * Returns an array of rows, where each row is itself an array of pixels in that row.
+    */
+   public Pixel[][] rows() {
+      Pixel[][] pixels = new Pixel[height][width];
+      for (int y = 0; y < height; y++) {
+         for (int x = 0; x < width; x++) {
+            pixels[y][x] = pixel(x,y);
+         }
+      }
+      return pixels;
+   }
+
+   /**
     * @return the pixels for the column identified by the x co-ordinate. 0 indexed.
     */
    public Pixel[] col(int x) {

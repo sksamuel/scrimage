@@ -3,21 +3,30 @@
 package com.sksamuel.scrimage.core.ops
 
 import com.sksamuel.scrimage.ImmutableImage
+import com.sksamuel.scrimage.ScaleMethod
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.doubles.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 
 class ScaleTest : FunSpec({
 
-   val image = ImmutableImage.fromResource("/com/sksamuel/scrimage/bird.jpg")
+   val image = ImmutableImage.loader().fromResource("/com/sksamuel/scrimage/bird.jpg")
 
-   test("scaling correct scales the image") {
-      image.scaleTo(486, 324) shouldBe ImmutableImage.fromResource("/bird_486_324.png")
+   test("Bicubic scale test") {
+      image.scaleTo(486, 324) shouldBe ImmutableImage.loader().fromResource("/com/sksamuel/scrimage/scale/bird_486_324_bicubic.png")
+   }
+
+   test("Bilinear scale test") {
+      image.scaleTo(486, 324, ScaleMethod.Bilinear) shouldBe ImmutableImage.loader().fromResource("/com/sksamuel/scrimage/scale/bird_486_324_bilinear.png")
+   }
+
+   test("Progressive bilinear scale test") {
+      image.scaleTo(486, 324, ScaleMethod.ProgressiveBilinear) shouldBe ImmutableImage.loader().fromResource("/com/sksamuel/scrimage/scale/bird_486_324_prog_bilinear.png")
    }
 
    test("when scaling an image the output image should match as expected") {
       val scaled = image.scale(0.25)
-      val expected = ImmutableImage.fromResource("/com/sksamuel/scrimage/bird_scale_025.png")
+      val expected = ImmutableImage.loader().fromResource("/com/sksamuel/scrimage/bird_scale_025.png")
       expected.width shouldBe scaled.width
       expected.height shouldBe scaled.height
    }

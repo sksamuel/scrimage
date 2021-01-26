@@ -3,6 +3,7 @@
 package com.sksamuel.scrimage.core.ops
 
 import com.sksamuel.scrimage.ImmutableImage
+import com.sksamuel.scrimage.nio.PngWriter
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.ints.shouldBeLessThanOrEqual
 import io.kotest.matchers.shouldBe
@@ -29,7 +30,7 @@ class MaxTest : FunSpec({
 
    test("max operation happy path") {
       val maxed = image.max(200, 200)
-      val expected = ImmutableImage.fromResource("/com/sksamuel/scrimage/bird_bound_200x200.png")
+      val expected = ImmutableImage.loader().fromResource("/com/sksamuel/scrimage/max/bird_max_200x200.png")
       maxed shouldBe expected
    }
 

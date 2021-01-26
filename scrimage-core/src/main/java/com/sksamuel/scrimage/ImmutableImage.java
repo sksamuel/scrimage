@@ -40,17 +40,10 @@ import com.sksamuel.scrimage.transform.Transform;
 import org.apache.commons.io.IOUtils;
 import thirdparty.colorthief.ColorThief;
 import thirdparty.colorthief.MMCQ;
-import thirdparty.mortennobel.BSplineFilter;
-import thirdparty.mortennobel.BiCubicFilter;
-import thirdparty.mortennobel.Lanczos3Filter;
-import thirdparty.mortennobel.ResampleFilters;
-import thirdparty.mortennobel.ResampleOp;
-import thirdparty.mortennobel.TriangleFilter;
+import thirdparty.mortennobel.*;
 
 import javax.imageio.ImageIO;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -74,9 +67,10 @@ import java.util.function.Function;
  *
  * @author Stephen Samuel
  */
+@SuppressWarnings("unused")
 public class ImmutableImage extends MutableImage {
 
-   private ImageMetadata metadata;
+   private final ImageMetadata metadata;
 
    static {
       ImageIO.scanForPlugins();
@@ -1216,10 +1210,13 @@ public class ImmutableImage extends MutableImage {
             TriangleFilter t = ResampleFilters.triangleFilter;
             ImmutableImage s3 = op(new ResampleOp(t, targetWidth, targetHeight));
             return wrapAwt(s3.awt(), s3.awt().getType());
+         case ProgressiveBilinear:
+            BufferedImage result = ProgressiveScale.scale(awt(), targetWidth, targetHeight, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            return wrapAwt(result);
          case Bicubic:
-            BiCubicFilter bi = ResampleFilters.biCubicFilter;
-            ImmutableImage s4 = op(new ResampleOp(bi, targetWidth, targetHeight));
-            return wrapAwt(s4.awt(), s4.awt().getType());
+            BiCubicFilter b = ResampleFilters.biCubicFilter;
+            ImmutableImage s4 = op(new ResampleOp(b, targetWidth, targetHeight));
+            return wrapAwt(s4.awt());
          default:
             throw new UnsupportedOperationException();
       }

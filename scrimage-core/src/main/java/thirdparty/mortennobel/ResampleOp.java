@@ -83,16 +83,15 @@ public class ResampleOp extends AdvancedResizeOp {
         " at least " + horizontalSubsamplingData.numContributors + "x" + verticalSubsamplingData.numContributors);
     }
 
-    final BufferedImage scrImgCopy = srcImg;
     final byte[][] workPixelsCopy = workPixels;
 
-    horizontallyFromSrcToWork(scrImgCopy, workPixelsCopy, 0, 1);
+    horizontallyFromSrcToWork(srcImg, workPixelsCopy);
 
     byte[] outPixels = new byte[dstWidth * dstHeight * nrChannels];
     // --------------------------------------------------
     // Apply filter to sample vertically from Work to Dst
     // --------------------------------------------------
-    verticalFromWorkToDst(workPixelsCopy, outPixels, 0, 1);
+    verticalFromWorkToDst(workPixelsCopy, outPixels);
 
     //noinspection UnusedAssignment
     workPixels = null; // free memory
@@ -224,13 +223,13 @@ public class ResampleOp extends AdvancedResizeOp {
     return new SubSamplingData(arrN, arrPixel, arrWeight, numContributors);
   }
 
-  private void verticalFromWorkToDst(byte[][] workPixels, byte[] outPixels, int start, int delta) {
+  private void verticalFromWorkToDst(byte[][] workPixels, byte[] outPixels) {
     if (nrChannels == 1) {
-      verticalFromWorkToDstGray(workPixels, outPixels, start, 1);
+      verticalFromWorkToDstGray(workPixels, outPixels);
       return;
     }
     boolean useChannel3 = nrChannels > 3;
-    for (int x = start; x < dstWidth; x += delta) {
+    for (int x = 0; x < dstWidth; x += 1) {
       final int xLocation = x * nrChannels;
       for (int y = dstHeight - 1; y >= 0; y--) {
         final int yTimesNumContributors = y * verticalSubsamplingData.numContributors;
@@ -266,8 +265,8 @@ public class ResampleOp extends AdvancedResizeOp {
     }
   }
 
-  private void verticalFromWorkToDstGray(byte[][] workPixels, byte[] outPixels, int start, int delta) {
-    for (int x = start; x < dstWidth; x += delta) {
+  private void verticalFromWorkToDstGray(byte[][] workPixels, byte[] outPixels) {
+    for (int x = 0; x < dstWidth; x += 1) {
       for (int y = dstHeight - 1; y >= 0; y--) {
         final int yTimesNumContributors = y * verticalSubsamplingData.numContributors;
         final int max = verticalSubsamplingData.arrN[y];
@@ -291,19 +290,16 @@ public class ResampleOp extends AdvancedResizeOp {
   /**
    * Apply filter to sample horizontally from Src to Work
    */
-  private void horizontallyFromSrcToWork(BufferedImage srcImg, byte[][] workPixels, int start, int delta) {
+  private void horizontallyFromSrcToWork(BufferedImage srcImg, byte[][] workPixels) {
     if (nrChannels == 1) {
-      horizontallyFromSrcToWorkGray(srcImg, workPixels, start, delta);
+      horizontallyFromSrcToWorkGray(srcImg, workPixels);
       return;
     }
-    final
-    int[]
-      tempPixels =
-      new int[srcWidth];   // Used if we work on int based bitmaps, later used to keep channel values
+    final int[] tempPixels = new int[srcWidth];   // Used if we work on int based bitmaps, later used to keep channel values
     final byte[] srcPixels = new byte[srcWidth * nrChannels]; // create reusable row to minimize memory overhead
     final boolean useChannel3 = nrChannels > 3;
 
-    for (int k = start; k < srcHeight; k = k + delta) {
+    for (int k = 0; k < srcHeight; k = k + 1) {
       ImageUtils.getPixelsBGR(srcImg, k, srcWidth, srcPixels, tempPixels);
 
       for (int i = dstWidth - 1; i >= 0; i--) {
@@ -341,14 +337,11 @@ public class ResampleOp extends AdvancedResizeOp {
   /**
    * Apply filter to sample horizontally from Src to Work
    */
-  private void horizontallyFromSrcToWorkGray(BufferedImage srcImg, byte[][] workPixels, int start, int delta) {
-    final
-    int[]
-      tempPixels =
-      new int[srcWidth];   // Used if we work on int based bitmaps, later used to keep channel values
+  private void horizontallyFromSrcToWorkGray(BufferedImage srcImg, byte[][] workPixels) {
+    final int[] tempPixels = new int[srcWidth];   // Used if we work on int based bitmaps, later used to keep channel values
     final byte[] srcPixels = new byte[srcWidth]; // create reusable row to minimize memory overhead
 
-    for (int k = start; k < srcHeight; k = k + delta) {
+    for (int k = 0; k < srcHeight; k = k + 1) {
       ImageUtils.getPixelsBGR(srcImg, k, srcWidth, srcPixels, tempPixels);
 
       for (int i = dstWidth - 1; i >= 0; i--) {

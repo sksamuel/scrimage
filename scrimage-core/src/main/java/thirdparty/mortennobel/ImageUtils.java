@@ -41,7 +41,7 @@ public class ImageUtils {
    /**
     * returns one row (height == 1) of byte packed image data in BGR or AGBR form
     */
-   public static byte[] getPixelsBGR(BufferedImage img, int y, int w, byte[] array, int[] temp) {
+   public static void getPixelsBGR(BufferedImage img, int y, int w, byte[] array, int[] temp) {
       final int x = 0;
       final int h = 1;
 
@@ -84,8 +84,6 @@ public class ImageUtils {
             ints2bytes(temp, array, 2, 1, 0);  // rgb -->  bgr
             break;
       }
-
-      return array;
    }
 
    /**
