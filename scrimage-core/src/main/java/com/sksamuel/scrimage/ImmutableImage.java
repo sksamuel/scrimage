@@ -1192,6 +1192,7 @@ public class ImmutableImage extends MutableImage {
    public ImmutableImage scaleTo(int targetWidth,
                                  int targetHeight,
                                  ScaleMethod scaleMethod) {
+      if (targetWidth == width && targetHeight == height) return this;
       switch (scaleMethod) {
          case FastScale:
             if (targetWidth < width && targetHeight < height && awt().getType() == BufferedImage.TYPE_INT_ARGB)
@@ -1211,6 +1212,7 @@ public class ImmutableImage extends MutableImage {
             ImmutableImage s3 = op(new ResampleOp(t, targetWidth, targetHeight));
             return wrapAwt(s3.awt(), s3.awt().getType());
          case ProgressiveBilinear:
+            if (targetWidth >= width && targetHeight >= height) throw new IllegalArgumentException("Cannot upscale image using ProgressiveBilinear");
             BufferedImage result = ProgressiveScale.scale(awt(), targetWidth, targetHeight, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
             return wrapAwt(result);
          case Bicubic:
