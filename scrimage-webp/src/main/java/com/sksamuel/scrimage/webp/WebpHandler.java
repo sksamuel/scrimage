@@ -1,5 +1,7 @@
 package com.sksamuel.scrimage.webp;
 
+import org.apache.commons.lang3.SystemUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -20,7 +22,10 @@ abstract class WebpHandler {
          if (in != null) {
             Files.copy(in, output, StandardCopyOption.REPLACE_EXISTING);
             in.close();
-            setExecutable(output);
+
+            if(!SystemUtils.IS_OS_WINDOWS) {
+               setExecutable(output);
+            }
             return;
          }
       }
