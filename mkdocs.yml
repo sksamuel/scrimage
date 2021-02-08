@@ -39,6 +39,7 @@ nav:
    -  Overview:
          -  "Welcome": "index.md"
          - "quick_start.md"
+         - "changelog.md"
    -  Api:
          -  "Introduction": "api_intro.md"
          -  "Creating an image": "create.md"
