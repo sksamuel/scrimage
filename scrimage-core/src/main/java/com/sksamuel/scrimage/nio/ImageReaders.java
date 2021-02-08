@@ -17,13 +17,25 @@ import java.util.stream.StreamSupport;
  */
 public class ImageReaders {
 
-   private static final List<ImageReader> readers = detectReaders();
+   private static final List<ImageReader> defaultReaders = detectReaders();
 
    private static List<ImageReader> detectReaders() {
-      return StreamSupport.stream(ServiceLoader.load(ImageReader.class).spliterator(), false).collect(Collectors.toList());
+      return detectReaders(Thread.currentThread().getContextClassLoader());
+   }
+
+   private static List<ImageReader> detectReaders(ClassLoader classloader) {
+      return StreamSupport.stream(ServiceLoader.load(ImageReader.class, classloader).spliterator(), false).collect(Collectors.toList());
    }
 
    public static ImmutableImage read(ImageSource source, Rectangle rectangle) throws IOException {
+      return read(source, rectangle, defaultReaders);
+   }
+
+   public static ImmutableImage read(ImageSource source, Rectangle rectangle, ClassLoader classloader) throws IOException {
+      return read(source, rectangle, classloader == null ? defaultReaders : detectReaders(classloader));
+   }
+
+   public static ImmutableImage read(ImageSource source, Rectangle rectangle, List<ImageReader> readers) throws IOException {
       List<Throwable> errors = new ArrayList<>();
       Optional<ImmutableImage> image = Optional.empty();
       for (ImageReader reader : readers) {

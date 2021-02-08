@@ -10,12 +10,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 
+@SuppressWarnings("unused")
 public class ImmutableImageLoader {
 
    private boolean reorientate = true;
    private Rectangle rectangle = null;
    private int type = 0;
    private boolean metadata = true;
+   private ClassLoader classloader = null;
 
    public static ImmutableImageLoader create() {
       return new ImmutableImageLoader();
@@ -59,6 +61,11 @@ public class ImmutableImageLoader {
       return this;
    }
 
+   public ImmutableImageLoader withClassLoader(ClassLoader classloader) {
+      this.classloader = classloader;
+      return this;
+   }
+
    public ImmutableImage fromBytes(byte[] bytes) throws IOException {
       return load(new ByteArrayImageSource(bytes));
    }
@@ -91,7 +98,7 @@ public class ImmutableImageLoader {
    public ImmutableImage load(ImageSource source) throws IOException {
 
       ImageSource cached = new CachedImageSource(source);
-      ImmutableImage image = ImageReaders.read(cached, rectangle);
+      ImmutableImage image = ImageReaders.read(cached, rectangle, classloader);
 
       if (type > 0 && type != image.getType()) {
          image = image.copy(type);
