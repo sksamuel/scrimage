@@ -3,7 +3,7 @@ name: benchmarks
 on:
    push:
       paths-ignore:
-         - 'doc/**'
+         - 'docs/**'
          - '*.md'
          - 'mkdocs.yml'
       branches:
