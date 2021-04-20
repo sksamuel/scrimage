@@ -4,6 +4,12 @@ plugins {
 }
 
 dependencies {
+   implementation(Libs.TwelveMonkeys.imageIoCore)
+   implementation(Libs.TwelveMonkeys.jpeg)
+   implementation(Libs.Drewnoaks.metadataExtractor)
+   implementation(Libs.Zh.opengif)
+   implementation(Libs.Commons.io)
+   implementation(Libs.Hjg.pngj)
    implementation(project(":scrimage-core"))
    testImplementation(kotlin("stdlib"))
    testImplementation(kotlin("stdlib-jdk8"))
