@@ -1,6 +1,7 @@
 enableFeaturePreview("GRADLE_METADATA")
 
 include("scrimage-core")
+include("scrimage-tests")
 include("scrimage-filters")
 include("scrimage-benchmarks")
 include("scrimage-formats-extra")
