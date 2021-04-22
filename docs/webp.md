@@ -4,14 +4,16 @@
 
 Scrimage provides support for webp through the `scrimage-webp` module. To use webp, add this module to your build.
 
-This module uses the `dwebp` and `cwebp` binaries, created by Google. The `scrimage-webp` module comes with the linux_x64
-binaries already included (see
-required [copyright notice](https://github.com/sksamuel/scrimage/blob/master/scrimage-webp/src/main/resources/dist_webp_binaries/LICENSE))
+> animated gif to animated webp is not currently supported in this module.
+
+This module uses the `dwebp` and `cwebp` binaries, created by Google. The `scrimage-webp` module comes with the
+linux_x64, window_x64, mac-10.15 binaries already included (see required [copyright notice](https://github.com/sksamuel/scrimage/blob/master/scrimage-webp/src/main/resources/dist_webp_binaries/LICENSE))
 .
 
-If you don't wish to use the embedded binaries (eg, you need macos or windows binaries), then you
-can [download other versions](https://developers.google.com/speed/webp) and place them on your classpath
-at `/web_binaries/dwebp` or `/web_binaries/cwebp`.
+If you don't wish to use the embedded binaries, then you can [download other versions](https://developers.google.com/speed/webp) and place them
+on your classpath at `/web_binaries/{osName}/dwebp` or `/web_binaries/{osName}/cwebp`.
+
+`{osName}` must be one of `window`, `linux`, `mac`. ie `/web_binaries/window/cwebp`.
 
 Then you should be able to read webp files by using the `ImageLoader` as normal:
 

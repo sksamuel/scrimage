@@ -29,7 +29,7 @@ public class DWebpHandler extends WebpHandler {
     * https://storage.googleapis.com/downloads.webmproject.org/releases/webp/index.html
     */
    private static void installDWebp() throws IOException {
-      installBinary(binary, "/webp_binaries/dwebp", "/dist_webp_binaries/dwebp");
+      installBinary(binary, getBinaryPath("dwebp"));
    }
 
    public byte[] convert(byte[] bytes) throws IOException {
