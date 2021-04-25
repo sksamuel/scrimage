@@ -42,6 +42,7 @@ abstract class WebpHandler {
       }
 
       return new String[] {
+         "/webp_binaries/"      + binaryName,
          "/webp_binaries/"      + os + "/" + binaryName,
          "/dist_webp_binaries/" + os + "/" + binaryName,
       };
