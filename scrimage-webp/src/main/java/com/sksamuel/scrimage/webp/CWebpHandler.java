@@ -30,7 +30,7 @@ public class CWebpHandler extends WebpHandler {
     * https://storage.googleapis.com/downloads.webmproject.org/releases/webp/index.html
     */
    private static void installCWebp() throws IOException {
-      installBinary(binary, "/webp_binaries/cwebp", "/dist_webp_binaries/cwebp");
+      installBinary(binary, getBinaryPath("cwebp"));
    }
 
    public byte[] convert(byte[] bytes,

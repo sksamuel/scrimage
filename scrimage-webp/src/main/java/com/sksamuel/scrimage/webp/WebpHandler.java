@@ -32,6 +32,22 @@ abstract class WebpHandler {
       throw new IOException("Could not locate webp binary at " + Arrays.toString(sources));
    }
 
+   protected static String[] getBinaryPath(String binaryName) {
+      String os = "linux";
+
+      if(SystemUtils.IS_OS_WINDOWS) {
+         os = "window";
+      } else if(SystemUtils.IS_OS_MAC) {
+         os = "mac";
+      }
+
+      return new String[] {
+         "/webp_binaries/"      + binaryName,
+         "/webp_binaries/"      + os + "/" + binaryName,
+         "/dist_webp_binaries/" + os + "/" + binaryName,
+      };
+   }
+
    private static boolean setExecutable(Path output) throws IOException {
       try {
          return new ProcessBuilder("chmod", "+x", output.toAbsolutePath().toString())

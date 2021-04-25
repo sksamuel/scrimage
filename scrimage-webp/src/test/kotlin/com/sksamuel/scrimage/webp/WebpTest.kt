@@ -24,8 +24,10 @@ class WebpTest : FunSpec() {
       }
 
       test("dwebp should capture error on failure") {
+         val dwebpPath = WebpHandler.getBinaryPath("dwebp")[1]
+
          shouldThrow<IOException> {
-            ImmutableImage.loader().fromResource("/dist_webp_binaries/dwebp")
+            ImmutableImage.loader().fromResource(dwebpPath)
          }.message.shouldContain("BITSTREAM_ERROR")
       }
    }
