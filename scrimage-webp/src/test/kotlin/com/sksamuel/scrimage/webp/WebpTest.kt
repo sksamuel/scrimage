@@ -24,7 +24,7 @@ class WebpTest : FunSpec() {
       }
 
       test("dwebp should capture error on failure") {
-         val dwebpPath = WebpHandler.getBinaryPath("dwebp")[1]
+         val dwebpPath = WebpHandler.getBinaryPath("dwebp")[2]
 
          shouldThrow<IOException> {
             ImmutableImage.loader().fromResource(dwebpPath)
