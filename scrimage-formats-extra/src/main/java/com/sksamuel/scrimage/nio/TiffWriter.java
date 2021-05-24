@@ -31,6 +31,9 @@ public class TiffWriter extends TwelveMonkeysWriter {
    /**
     * Sets the compression type.
     * Must be one of https://download.java.net/media/jai-imageio/javadoc/1.1/com/sun/media/imageio/plugins/tiff/TIFFImageWriteParam.html
+    *
+    * @param compressionType the compression type to apply.
+    * @return a copy of this TiffWriter with the given compression applied.
     */
    public TiffWriter withCompressionType(String compressionType) {
       return new TiffWriter(compressionType);

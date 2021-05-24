@@ -3,9 +3,9 @@ plugins {
    kotlin("jvm")
 }
 
-
 dependencies {
    api(project(":scrimage-core"))
+   testImplementation(kotlin("stdlib-jdk8"))
    implementation(Libs.TwelveMonkeys.bmp)
    implementation(Libs.TwelveMonkeys.tga)
    implementation(Libs.TwelveMonkeys.tiff)

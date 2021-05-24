@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
    api(project(":scrimage-core"))
+   testImplementation(kotlin("stdlib-jdk8"))
    implementation(Libs.Commons.lang)
    testImplementation(Libs.Kotest.junit5)
    testImplementation(Libs.Kotest.assertions)

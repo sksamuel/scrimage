@@ -1,8 +1,10 @@
 plugins {
    `java-library`
+   kotlin("jvm")
 }
 
 dependencies {
+   testImplementation(kotlin("stdlib-jdk8"))
    implementation(Libs.TwelveMonkeys.imageIoCore)
    implementation(Libs.TwelveMonkeys.jpeg)
    implementation(Libs.Drewnoaks.metadataExtractor)

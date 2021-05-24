@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+   testImplementation(kotlin("stdlib-jdk8"))
    api(project(":scrimage-core"))
 }
 
