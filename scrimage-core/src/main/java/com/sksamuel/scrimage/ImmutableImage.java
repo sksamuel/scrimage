@@ -405,7 +405,8 @@ public class ImmutableImage extends MutableImage {
     * This method is useful when images have an abudance of a single colour around them.
     *
     * @param color          the color to match
-    * @param colorTolerance the amount of tolerance to use when determining whether the color matches the reference color [0..255]
+    * @param colorTolerance the amount of tolerance to use when determining whether
+    *                       the color matches the reference color [0..255]
     */
    public ImmutableImage autocrop(Color color, int colorTolerance) {
       int x1 = AutocropOps.scanright(color, height, width, 0, pixelExtractor(), colorTolerance);
@@ -416,7 +417,9 @@ public class ImmutableImage extends MutableImage {
    }
 
    /**
-    * Creates an empty ImmutableImage of the same concrete type as this image and with the same dimensions.
+    * Creates an empty ImmutableImage of the same concrete type as this image and with
+    * the same dimensions.
+    * <p>
     * The underlying pixels will not be initialized.
     *
     * @return a new Image that is a clone of this image but with uninitialized data

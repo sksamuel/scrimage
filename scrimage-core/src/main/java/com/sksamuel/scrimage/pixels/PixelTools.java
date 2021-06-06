@@ -78,10 +78,13 @@ public class PixelTools {
    }
 
    /**
-    * Returns true if all pixels in the array have the same color
+    * Returns true if all pixels in the array have the same color, or both are fully transparent.
     */
    public static boolean uniform(Color color, Pixel[] pixels) {
-      return Arrays.stream(pixels).allMatch(p -> p.toARGBInt() == RGBColor.fromAwt(color).toARGBInt());
+      RGBColor target = RGBColor.fromAwt(color);
+      return Arrays.stream(pixels).allMatch(p ->
+         (p.alpha() == 0 && target.alpha == 0) || (p.toARGBInt() == target.toARGBInt())
+      );
    }
 
    /**
@@ -122,7 +125,9 @@ public class PixelTools {
 
    /**
     * Returns true if the colors of all pixels in the array are within the given tolerance
-    * compared to the referenced color
+    * compared to the referenced color.
+    * <p>
+    * If the given colour and target colour are both fully transparent, then they will match.
     */
    public static boolean colorMatches(Color color, int tolerance, Pixel[] pixels) {
       if (tolerance < 0 || tolerance > 255)

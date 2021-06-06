@@ -191,7 +191,8 @@ public class AwtImage {
     */
    public Pixel pixel(int x, int y) {
       try {
-         return new Pixel(x, y, awt.getRGB(x, y));
+         int color = awt.getRGB(x, y);
+         return new Pixel(x, y, color);
       } catch (ArrayIndexOutOfBoundsException e) {
          throw new RuntimeException("Coord (" + x + ", " + y + ") is out of bounds; size is (" + width + "," + height + ")");
       }
