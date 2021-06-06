@@ -1,9 +1,18 @@
 Changelog
 =========
 
+#### 4.0.20
+
+* Autocrop now works on fully transparent pixels.
+
+#### 4.0.19
+
+* All dependencies no longer transitively include kotlin-stdlib.
+* Support webp binary in multiple o/s.
+
 #### 4.0.18
 
-* Core dependency no longer transitively includes kotlin-stdlib. 
+* Core dependency no longer transitively includes kotlin-stdlib.
 
 #### 4.0.17
 
