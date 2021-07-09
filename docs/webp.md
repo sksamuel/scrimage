@@ -10,12 +10,12 @@ This module uses the `dwebp` and `cwebp` binaries, created by Google. The `scrim
 linux_x64, window_x64, mac-10.15 binaries already included (see required [copyright notice](https://github.com/sksamuel/scrimage/blob/master/scrimage-webp/src/main/resources/dist_webp_binaries/LICENSE)).
 
 If you don't wish to use the embedded binaries, then you can [download other versions](https://developers.google.com/speed/webp) and place them
-on your classpath at `/web_binaries/{osName}/dwebp` or `/web_binaries/{osName}/cwebp`.
+on your classpath at `/webp_binaries/{osName}/dwebp` or `/webp_binaries/{osName}/cwebp`.
 
-`{osName}` must be one of `window`, `linux`, `mac`. ie `/web_binaries/window/cwebp`.
+`{osName}` must be one of `window`, `linux`, `mac`. ie `/webp_binaries/window/cwebp`.
 
-or just place your binaries into `/web_binaries/dwebp` or `/web_binaries/cwebp`.
-then scrimage will use `/web_binaries/{binary}` regardless of the binaries which is in os specific directory.
+or just place your binaries into `/webp_binaries/dwebp` or `/webp_binaries/cwebp`.
+then scrimage will use `/webp_binaries/{binary}` regardless of the binaries which is in os specific directory.
 
 Then you should be able to read webp files by using the `ImageLoader` as normal:
 
