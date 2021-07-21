@@ -7,7 +7,7 @@ object Libs {
    const val CommonsLangVersion = "3.11"
 
    object TwelveMonkeys {
-      private const val Version = "3.6"
+      private const val Version = "3.7"
       const val imageIoCore = "com.twelvemonkeys.imageio:imageio-core:$Version"
       const val jpeg = "com.twelvemonkeys.imageio:imageio-jpeg:$Version"
       const val pcx = "com.twelvemonkeys.imageio:imageio-pcx:$Version"
