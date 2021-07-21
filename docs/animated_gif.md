@@ -1,10 +1,45 @@
 Animated GIFs
 ===============
 
-Scrimage supports animated GIFs using the `StreamingGifWriter` class.
+Scrimage supports reading and writing animated GIFs.
 
-First we create an instance of the writer, specifying the frame delay (delay between images) and if we should loop.
-Then we open a stream, specifying the output path, and the AWT image type.
+## Reading
+
+We read an instance of an `AnimatedGif` by using the `AnimatedGifReader.read` method, passing in an `ImageSource`. The
+image source can be constructed from files, bytes, input streams and so on.
+
+Once we have the animated gif object, we can inspect that to retrieve an `ImmutableImage` per frame, the total number of
+frames, delay per frame and so on.
+
+=== "Java"
+
+    ```java
+    AnimatedGif gif = AnimatedGifReader.read(ImageSource.of(...));
+    ImmutableImage firstFrame = gif.getFrame(0);
+    ImmutableImage lastFrame = gif.getFrame(gif.getFrameCount() - 1);
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    val gif = AnimatedGifReader.read(ImageSource.of(...))
+    val firstFrame = gif.frames().first()
+    val lastFrame = gif.frames().last()
+    ```
+
+=== "Scala"
+
+    ```scala
+    val gif = AnimatedGifReader.read(ImageSource.of(...))
+    val firstFrame = gif.frames.head
+    val lastFrame = gif.frames.last
+    ```
+
+
+## Writing
+
+Using the `StreamingGifWriter` class, first we create an instance of the writer, specifying the frame delay (delay
+between images) and if we should loop. Then we open a stream, specifying the output path, and the AWT image type.
 
 === "Java"
 
