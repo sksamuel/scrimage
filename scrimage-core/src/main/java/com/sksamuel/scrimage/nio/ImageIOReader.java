@@ -6,7 +6,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.stream.ImageInputStream;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -41,11 +41,12 @@ public class ImageIOReader implements ImageReader {
    @Override
    public ImmutableImage read(byte[] bytes, Rectangle rectangle) throws IOException {
       if (bytes == null)
-         throw new RuntimeException("bytes cannot be null");
+         throw new IOException("bytes cannot be null");
 
       ImageInputStream iis = ImageIO.createImageInputStream(new ByteArrayInputStream(bytes));
       if (iis == null)
-         throw new RuntimeException("iis was null from " + bytes);
+         throw new IOException("No ImageInputStream supported this image format");
+
       Iterator<javax.imageio.ImageReader> readers = ImageIO.getImageReaders(iis);
       while (readers.hasNext()) {
          Optional<ImmutableImage> image = tryLoad(readers.next(), iis, rectangle);
@@ -53,6 +54,6 @@ public class ImageIOReader implements ImageReader {
             return image.get();
       }
 
-      return null;
+      throw new IOException("No ImageInputStream supported this image format");
    }
 }

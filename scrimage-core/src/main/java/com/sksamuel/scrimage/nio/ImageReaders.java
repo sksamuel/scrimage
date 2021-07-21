@@ -7,7 +7,6 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -37,22 +36,21 @@ public class ImageReaders {
 
    public static ImmutableImage read(ImageSource source, Rectangle rectangle, List<ImageReader> readers) throws IOException {
       List<Throwable> errors = new ArrayList<>();
-      Optional<ImmutableImage> image = Optional.empty();
       for (ImageReader reader : readers) {
-         if (!image.isPresent()) {
-            try {
-               image = Optional.ofNullable(reader.read(source.read(), rectangle));
-            } catch (Exception e) {
-               errors.add(e);
+         try {
+            ImmutableImage image = reader.read(source.read(), rectangle);
+            if (image == null) {
+               errors.add(new IOException(reader + " failed"));
+            } else {
+               return image;
             }
+         } catch (Exception e) {
+            errors.add(new IOException(reader.toString() + " failed due to " + e.getMessage(), e));
          }
       }
-      return image.orElseThrow(() -> {
-         if (errors.isEmpty())
-            return new ImageParseException();
-         else
-            return new ImageParseException(errors);
-      });
+      if (errors.isEmpty())
+         throw new ImageParseException();
+      else
+         throw new ImageParseException(errors);
    }
 }
-
