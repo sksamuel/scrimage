@@ -9,7 +9,8 @@ public class InputStreamImageSource implements ImageSource {
 
    private final InputStream stream;
 
-   public InputStreamImageSource(InputStream stream) {
+   public InputStreamImageSource(InputStream stream) throws IOException {
+      if (stream == null) throw new IOException("Stream is null");
       this.stream = stream;
    }
 
