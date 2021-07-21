@@ -31,7 +31,7 @@ object Libs {
    }
 
    object Drewnoaks {
-      private const val Version = "2.14.0"
+      private const val Version = "2.16.0"
       const val metadataExtractor = "com.drewnoakes:metadata-extractor:$Version"
    }
 
