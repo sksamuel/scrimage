@@ -138,3 +138,14 @@ For example to save a JPEG with 50% compression:
     val writer = new JpegWriter().withCompression(50).withProgressive(true)
     image.output(writer, new File("/home/sam/spaghetti.png"))
     ```
+
+## Supported Writers
+
+The available writers along with supported options are:
+
+| Writer | Option | Description |
+| ------ | ------ | ----------- |
+| `JpegWriter` | compression | Set to between 0 (full lossy compression) and 100 (full quality / no compression) |
+|              | progressive | If true then data is compressed in multiple passes of progressively higher detail |
+| `PngWriter`  | compression | Set to a value between 0 (no compression) and 9 (max compression). Compression in PNG is lossless |
+| `GifWriter`  | progressive | If true then data is compressed in multiple passes of progressively higher detail |
