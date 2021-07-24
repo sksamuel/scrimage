@@ -2,12 +2,14 @@ Composites
 =========
 
 
-Scrimage comes with the usual composites built in. This grid shows the effect of compositing palm trees over a US
-mailbox. The first column is the composite with a value of 0.5f, and the second column with 1f. Note, if you reverse
-the order of the images then the effects would be reversed.
+Scrimage comes with several composites. A composite merges two images with each pixel composited together using the rule provided
+by the composite class.
+
+This grid shows the effect of compositing a palm tree image over a US mailbox image. The first column is the composite
+with a value of 0.5f, and the second column with 1f. Note, if you reverse the order of the images then the effects would
+be reversed.
 
 The code required to perform a composite is simple:
-
 
 === "Java"
 

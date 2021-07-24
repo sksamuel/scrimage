@@ -16,11 +16,6 @@ public class BackgroundGradient implements Transform {
    private final int width;
    private final int height;
 
-   /**
-    * Creates a filter that will output an image with the specified dimensions.
-    * The source image will be centred in the output image, so it is expected that the
-    * source image is pre-scaled to the required dimensions.
-    */
    public BackgroundGradient(int width, int height) {
       this.width = width;
       this.height = height;
