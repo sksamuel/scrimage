@@ -18,19 +18,19 @@ To apply a filter, we just use the `filter` method on an image, for example:
 === "Java"
 
     ```
-    ImmutableImage composed = image.filter(new DitherFilter())
+    ImmutableImage filtered = image.filter(new DitherFilter())
     ```
 
 === "Kotlin"
 
     ```
-    val composed = image.filter(DitherFilter())
+    val filtered = image.filter(DitherFilter())
     ```
 
 === "Scala"
 
     ```
-    val composed = image.composite(new DitherFilter())
+    val filtered = image.composite(new DitherFilter())
     ```
 
 
