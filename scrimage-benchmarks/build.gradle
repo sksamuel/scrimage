@@ -1,6 +1,6 @@
 plugins {
    id 'org.jetbrains.kotlin.jvm'
-   id("me.champeau.gradle.jmh") version "0.5.2"
+   id("me.champeau.gradle.jmh") version "0.5.3"
 }
 
 dependencies {
