@@ -8,6 +8,8 @@ import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.util.zip.Inflater
+import kotlin.math.floor
+import kotlin.math.roundToInt
 
 class PngReader {
 
@@ -34,6 +36,10 @@ class PngReader {
          ColorType.RGBATriple -> 4
       }
 
+      var k = 0
+      var x = 0
+      var y = 0
+
       while (true) {
          when (val chunk = readChunk(input)) {
             is DataChunk -> {
@@ -52,9 +58,6 @@ class PngReader {
                val result = output.toByteArray()
                println("result = " + result.size)
 
-               var k = 0
-               var x = 0
-               var y = 0
                var filterType: FilterType = FilterType.None
                while (k < result.size) {
                   // filter byte is always first byte of the scanline
@@ -63,9 +66,14 @@ class PngReader {
                         0 -> FilterType.None
                         1 -> FilterType.Sub
                         2 -> FilterType.Up
+                        3 -> FilterType.Average
+                        4 -> FilterType.Paeth
                         else -> error("Unsupported filter type $byte")
                      }
                      k++
+                  }
+                  if (k > 1920600 - 5) {
+                     println(k)
                   }
                   val argb = header.colorType.argb(k, header.width, result, filterType, bpp, awt, x, y)
                   awt.setRGB(x, y, argb)
@@ -101,10 +109,10 @@ class PngReader {
       val bitDepth = input.read().toByte()
       println("bitDepth $bitDepth")
 
-      val colorType = when (val byte = input.read()) {
+      val colorType = when (val c = input.read()) {
          2 -> ColorType.RGBTriple
-         6 -> ColorType.RGBTriple
-         else -> error("Unsupported colorType $byte")
+         6 -> ColorType.RGBATriple
+         else -> error("Unsupported colorType $c")
       }
       println("colorType $colorType")
 
@@ -278,7 +286,7 @@ sealed interface ColorType {
          y: Int
       ): Int {
          return PixelTools.argb(
-            filterType.sample(k + 4, width, bytes, bpp, awt, x, y, PixelTools::alpha),
+            filterType.sample(k + 3, width, bytes, bpp, awt, x, y, PixelTools::alpha),
             filterType.sample(k, width, bytes, bpp, awt, x, y, PixelTools::red),
             filterType.sample(k + 1, width, bytes, bpp, awt, x, y, PixelTools::green),
             filterType.sample(k + 2, width, bytes, bpp, awt, x, y, PixelTools::blue)
@@ -327,7 +335,7 @@ sealed interface FilterType {
       ): Int =
          when (x) {
             0 -> bytes[k].toInt()
-            else -> bytes[k] + band(awt.getRGB(x - 1, y))
+            else -> (bytes[k] + band(awt.getRGB(x - 1, y))) % 256
          }
    }
 
@@ -344,7 +352,42 @@ sealed interface FilterType {
       ): Int =
          when (y) {
             0 -> bytes[k].toInt()
-            else -> bytes[k] + band(awt.getRGB(x, y - 1))
+            else -> (bytes[k] + band(awt.getRGB(x, y - 1))) % 256
          }
+   }
+
+   object Average : FilterType {
+      override fun sample(
+         k: Int,
+         width: Int,
+         bytes: ByteArray,
+         bpp: Int,
+         awt: BufferedImage,
+         x: Int,
+         y: Int,
+         band: (Int) -> Int
+      ): Int {
+         val x2 = if (x == 0) 0 else band(awt.getRGB(x - 1, y))
+         val y2 = if (y == 0) 0 else band(awt.getRGB(x, y - 1))
+         return (bytes[k] + floor((x2 + y2) / 2.0).roundToInt()) % 256
+      }
+   }
+
+   object Paeth : FilterType {
+      override fun sample(
+         k: Int,
+         width: Int,
+         bytes: ByteArray,
+         bpp: Int,
+         awt: BufferedImage,
+         x: Int,
+         y: Int,
+         band: (Int) -> Int
+      ): Int {
+         val left = if (x == 0) 0 else band(awt.getRGB(x - 1, y))
+         val up = if (y == 0) 0 else band(awt.getRGB(x, y - 1))
+         val upleft = if (x == 0 || y == 0) 0 else band(awt.getRGB(x - 1, y - 1))
+         return (bytes[k] + PaethPredictor.predict(left, up, upleft)) % 256
+      }
    }
 }

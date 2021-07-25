@@ -15,9 +15,8 @@ class PngReaderTest : FunSpec({
 //   }
 
    test("load png pixels") {
-//      PngReader().read(javaClass.getResourceAsStream("/1.png")).forWriter(PngWriter.MaxCompression).write("scrimage1.png")
-      PngReader().read(javaClass.getResourceAsStream("/red.png")).forWriter(PngWriter.MaxCompression).write("red.png")
-      PngReader().read(javaClass.getResourceAsStream("/blue.png")).forWriter(PngWriter.MaxCompression).write("blue.png")
-//      PngReader().read(javaClass.getResourceAsStream("/1.png")).pixel(20, 20).argb shouldBe 8
+//      PngReader().read(javaClass.getResourceAsStream("/red.png")).forWriter(PngWriter.MaxCompression).write("red.png")
+//      PngReader().read(javaClass.getResourceAsStream("/blue.png")).forWriter(PngWriter.MaxCompression).write("blue.png")
+      PngReader().read(javaClass.getResourceAsStream("/1.png")).forWriter(PngWriter.MaxCompression).write("1.png")
    }
 })
