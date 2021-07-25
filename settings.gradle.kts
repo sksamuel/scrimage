@@ -1,5 +1,3 @@
-enableFeaturePreview("GRADLE_METADATA")
-
 include("scrimage-core")
 include("scrimage-tests")
 include("scrimage-filters")
@@ -9,3 +7,4 @@ include("scrimage-webp")
 include("scrimage-scala_2.12")
 include("scrimage-scala_2.13")
 include("scrimage-examples")
+include("scrimage-format-png")
