@@ -1,6 +1,6 @@
 object Libs {
 
-   const val kotlinVersion = "1.4.32"
+   const val kotlinVersion = "1.5.20"
 
    const val org = "com.sksamuel.scrimage"
    const val CommonsIoVersion   = "2.6"
@@ -24,7 +24,7 @@ object Libs {
    }
 
    object Kotest {
-      private const val version = "4.4.3"
+      private const val version = "4.6.1"
       const val assertions = "io.kotest:kotest-assertions-core-jvm:$version"
       const val api = "io.kotest:kotest-framework-api:$version"
       const val junit5 = "io.kotest:kotest-runner-junit5-jvm:$version"
