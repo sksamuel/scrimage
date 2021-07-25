@@ -23,5 +23,5 @@ jmh {
    warmup = '1s'
    warmupBatchSize = 5
    zip64 = true
-   duplicateClassesStrategy = DuplicatesStrategy.WARN
+   duplicateClassesStrategy = DuplicatesStrategy.EXCLUDE
 }
