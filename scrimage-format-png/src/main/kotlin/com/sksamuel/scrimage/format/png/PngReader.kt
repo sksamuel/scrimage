@@ -5,9 +5,7 @@ package com.sksamuel.scrimage.format.png
 import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.pixels.PixelTools
 import java.awt.image.BufferedImage
-import java.io.ByteArrayOutputStream
 import java.io.InputStream
-import java.util.zip.Inflater
 import kotlin.math.floor
 import kotlin.math.roundToInt
 
@@ -36,64 +34,59 @@ class PngReader {
          ColorType.RGBATriple -> 4
       }
 
+      val chunks = mutableListOf<Chunk>()
+      while (input.available() > 0) {
+         readChunk(input)?.apply { chunks.add(this) }
+      }
+
+      println("${chunks.size} chunks ${chunks.map { it::class }}")
+
+//      val iccp = chunks.filterIsInstance<ICCPChunk>().firstOrNull()
+//      println(iccp)
+
+      val idats = chunks.filterIsInstance<DataChunk>()
+      println("${idats.size} DataChunks")
+
+      val datastream: ByteArray = idats.map { it.data }.reduce { a, b -> a + b }
+      println("Starting data stream ${datastream.size}")
+
+      val decompressed = deflate(datastream)
+      println("result = " + decompressed.size)
+
       var k = 0
       var x = 0
       var y = 0
-
-      while (true) {
-         when (val chunk = readChunk(input)) {
-            is DataChunk -> {
-               println("Starting data chunk")
-               val output = ByteArrayOutputStream()
-               val buffer = ByteArray(1024)
-               val decompresser = Inflater()
-               decompresser.setInput(chunk.data)
-               while (!decompresser.finished()) {
-                  val count = decompresser.inflate(buffer)
-                  output.write(buffer, 0, count)
-               }
-               output.close()
-               decompresser.end()
-
-               val result = output.toByteArray()
-               println("result = " + result.size)
-
-               var filterType: FilterType = FilterType.None
-               while (k < result.size) {
-                  // filter byte is always first byte of the scanline
-                  if (x == 0) {
-                     filterType = when (val byte = result[k].toInt()) {
-                        0 -> FilterType.None
-                        1 -> FilterType.Sub
-                        2 -> FilterType.Up
-                        3 -> FilterType.Average
-                        4 -> FilterType.Paeth
-                        else -> error("Unsupported filter type $byte")
-                     }
-                     k++
-                  }
-                  if (k > 1920600 - 5) {
-                     println(k)
-                  }
-                  val argb = header.colorType.argb(k, header.width, result, filterType, bpp, awt, x, y)
-                  awt.setRGB(x, y, argb)
-                  x++
-                  if (x == header.width) {
-                     x = 0
-                     y++
-                  }
-                  k += when (header.colorType) {
-                     ColorType.RGBTriple -> 3
-                     ColorType.RGBATriple -> 4
-                  }
-               }
-               println("Finsihing data chunk")
+      var filterType: FilterType = FilterType.None
+      while (k < decompressed.size) {
+         // filter byte is always first byte of the scanline
+         if (x == 0) {
+            filterType = when (val byte = decompressed[k].toInt()) {
+               0 -> FilterType.None
+               1 -> FilterType.Sub
+               2 -> FilterType.Up
+               3 -> FilterType.Average
+               4 -> FilterType.Paeth
+               else -> error("Unsupported filter type $byte")
             }
-            is EndChunk -> return ImmutableImage.fromAwt(awt)
-            is HeaderChunk -> error("Invalid location of header chunk")
-            else -> println("Todo $chunk")
+            k++
+         }
+         val argb = header.colorType.argb(k, header.width, decompressed, filterType, bpp, awt, x, y)
+         awt.setRGB(x, y, argb)
+         x++
+         if (x == header.width) {
+            x = 0
+            y++
+         }
+         k += when (header.colorType) {
+            ColorType.RGBTriple -> 3
+            ColorType.RGBATriple -> 4
          }
       }
+      println("Finishing datastream")
+      return ImmutableImage.wrapAwt(awt)
+
+//      val cm = ColorModel.getRGBdefault()
+//      return ImmutableImage.fromAwt(BufferedImage(cm, awt.raster, cm.isAlphaPremultiplied, null))
    }
 
    private fun readHeaderChunk(input: InputStream): HeaderChunk {
@@ -285,8 +278,13 @@ sealed interface ColorType {
          x: Int,
          y: Int
       ): Int {
+
+         val alpha = filterType.sample(k + 3, width, bytes, bpp, awt, x, y, PixelTools::alpha)
+         // micro optimization - alpha 0 makes other values irrelevant
+//         if (alpha == 255) return 0
+
          return PixelTools.argb(
-            filterType.sample(k + 3, width, bytes, bpp, awt, x, y, PixelTools::alpha),
+            alpha,
             filterType.sample(k, width, bytes, bpp, awt, x, y, PixelTools::red),
             filterType.sample(k + 1, width, bytes, bpp, awt, x, y, PixelTools::green),
             filterType.sample(k + 2, width, bytes, bpp, awt, x, y, PixelTools::blue)
@@ -319,7 +317,7 @@ sealed interface FilterType {
          y: Int,
          band: (Int) -> Int
       ): Int =
-         bytes[k].toInt()
+         bytes[k].toInt().and(0xFF)
    }
 
    object Sub : FilterType {
@@ -332,11 +330,12 @@ sealed interface FilterType {
          x: Int,
          y: Int,
          band: (Int) -> Int
-      ): Int =
-         when (x) {
-            0 -> bytes[k].toInt()
-            else -> (bytes[k] + band(awt.getRGB(x - 1, y))) % 256
+      ): Int {
+         return when (x) {
+            0 -> bytes[k].toInt().and(0xFF)
+            else -> (bytes[k].toInt().and(0xFF) + band(awt.getRGB(x - 1, y)).and(0xFF)) % 256
          }
+      }
    }
 
    object Up : FilterType {
@@ -351,8 +350,8 @@ sealed interface FilterType {
          band: (Int) -> Int
       ): Int =
          when (y) {
-            0 -> bytes[k].toInt()
-            else -> (bytes[k] + band(awt.getRGB(x, y - 1))) % 256
+            0 -> bytes[k].toInt().and(0xFF)
+            else -> (bytes[k].toInt().and(0xFF) + band(awt.getRGB(x, y - 1))) % 256
          }
    }
 
@@ -369,7 +368,7 @@ sealed interface FilterType {
       ): Int {
          val x2 = if (x == 0) 0 else band(awt.getRGB(x - 1, y))
          val y2 = if (y == 0) 0 else band(awt.getRGB(x, y - 1))
-         return (bytes[k] + floor((x2 + y2) / 2.0).roundToInt()) % 256
+         return (bytes[k].toInt().and(0xFF) + floor((x2 + y2) / 2.0).roundToInt()) % 256
       }
    }
 
@@ -387,7 +386,7 @@ sealed interface FilterType {
          val left = if (x == 0) 0 else band(awt.getRGB(x - 1, y))
          val up = if (y == 0) 0 else band(awt.getRGB(x, y - 1))
          val upleft = if (x == 0 || y == 0) 0 else band(awt.getRGB(x - 1, y - 1))
-         return (bytes[k] + PaethPredictor.predict(left, up, upleft)) % 256
+         return (bytes[k].toInt().and(0xFF) + PaethPredictor.predict(left, up, upleft)) % 256
       }
    }
 }
