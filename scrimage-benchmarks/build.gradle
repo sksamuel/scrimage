@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
    jmh project(":scrimage-core")
+   jmh project(":scrimage-format-png")
    jmh "org.imgscalr:imgscalr-lib:4.2"
    jmh "net.coobird:thumbnailator:0.4.13"
 }
