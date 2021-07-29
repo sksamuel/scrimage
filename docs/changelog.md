@@ -3,6 +3,7 @@ Changelog
 
 #### 4.0.21
 
+* Added `AnimatedGifReader.read(inputstream)`, to allow reading each frame of an animated GIF as an `ImmutableImage`.
 * Bumped 12monkeys and commons-io versions.
 
 #### 4.0.20
@@ -20,7 +21,7 @@ Changelog
 
 #### 4.0.17
 
-* Added `withClassloader` option to ImmutableImageLoader to support discovery of `ImageReader` instances on arbitrary
+* Added `withClassloader` option to `ImmutableImageLoader` to support discovery of `ImageReader` instances on arbitrary
   classpaths.
 
 #### 4.0.16
