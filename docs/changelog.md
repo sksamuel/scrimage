@@ -1,10 +1,13 @@
 Changelog
 =========
 
+#### 4.0.22
+
+* Bumped 12monkeys and commons-io versions.
+
 #### 4.0.21
 
 * Added `AnimatedGifReader.read(inputstream)`, to allow reading each frame of an animated GIF as an `ImmutableImage`.
-* Bumped 12monkeys and commons-io versions.
 
 #### 4.0.20
 
