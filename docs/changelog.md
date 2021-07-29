@@ -1,6 +1,10 @@
 Changelog
 =========
 
+#### 4.0.21
+
+* Bumped 12monkeys and commons-io versions.
+
 #### 4.0.20
 
 * Autocrop now works on fully transparent pixels.
