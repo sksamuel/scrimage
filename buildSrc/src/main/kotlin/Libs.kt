@@ -3,7 +3,7 @@ object Libs {
    const val kotlinVersion = "1.5.20"
 
    const val org = "com.sksamuel.scrimage"
-   const val CommonsIoVersion   = "2.6"
+   const val CommonsIoVersion   = "2.11.0"
    const val CommonsLangVersion = "3.11"
 
    object TwelveMonkeys {
