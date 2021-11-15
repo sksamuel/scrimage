@@ -239,6 +239,19 @@ public class ImmutableImage extends MutableImage {
       BufferedImage target = new BufferedImage(width, height, type);
       return new ImmutableImage(target, ImageMetadata.empty);
    }
+   
+   /**
+    * Create a new ImmutableImage that is the given dimension with no initialization.
+    * This will usually result in a default black background (all pixel data defaulting to zeroes)
+    * but that is not guaranteed.
+    * The type of the image will be [ImmutableImage.DEFAULT_DATA_TYPE].
+    *
+    * @param dimension  the size of the new image
+    * @return the new Image with the given dimension
+    */
+   public static ImmutableImage create(Dimension dimension) {
+      return create(dimension.getX(), dimension.getY());
+   }
 
    /**
     * Return a new ImmutableImage with the given width and height, with all pixels set to the supplied colour.
