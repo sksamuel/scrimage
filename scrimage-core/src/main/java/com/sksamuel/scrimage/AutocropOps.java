@@ -18,11 +18,11 @@ public class AutocropOps {
          return scanright(color, height, width, col + 1, f, tolerance);
    }
 
-   public static int scanleft(Color color, int height, int width, int col, PixelsExtractor f, int tolerance) {
+   public static int scanleft(Color color, int height, int col, PixelsExtractor f, int tolerance) {
       if (col == 0 || !PixelTools.colorMatches(color, tolerance, f.apply(new Rectangle(col, 0, 1, height))))
          return col;
       else
-         return scanleft(color, height, width, col - 1, f, tolerance);
+         return scanleft(color, height,  col - 1, f, tolerance);
    }
 
    public static int scandown(Color color, int height, int width, int row, PixelsExtractor f, int tolerance) {
@@ -32,10 +32,10 @@ public class AutocropOps {
          return scandown(color, height, width, row + 1, f, tolerance);
    }
 
-   public static int scanup(Color color, int height, int width, int row, PixelsExtractor f, int tolerance) {
+   public static int scanup(Color color, int width, int row, PixelsExtractor f, int tolerance) {
       if (row == 0 || !PixelTools.colorMatches(color, tolerance, f.apply(new Rectangle(0, row, width, 1))))
          return row;
       else
-         return scanup(color, height, width, row - 1, f, tolerance);
+         return scanup(color, width, row - 1, f, tolerance);
    }
 }

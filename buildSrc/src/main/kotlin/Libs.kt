@@ -3,8 +3,7 @@ object Libs {
    const val kotlinVersion = "1.5.20"
 
    const val org = "com.sksamuel.scrimage"
-   const val CommonsIoVersion   = "2.11.0"
-   const val CommonsLangVersion = "3.11"
+
 
    object TwelveMonkeys {
       private const val Version = "3.7.0"
@@ -24,7 +23,7 @@ object Libs {
    }
 
    object Kotest {
-      private const val version = "4.6.1"
+      private const val version = "4.6.3"
       const val assertions = "io.kotest:kotest-assertions-core-jvm:$version"
       const val api = "io.kotest:kotest-framework-api:$version"
       const val junit5 = "io.kotest:kotest-runner-junit5-jvm:$version"
@@ -41,6 +40,8 @@ object Libs {
    }
 
    object Commons {
+      private const val CommonsIoVersion   = "2.11.0"
+      private const val CommonsLangVersion = "3.11"
       const val io   = "commons-io:commons-io:$CommonsIoVersion"
       const val lang = "org.apache.commons:commons-lang3:$CommonsLangVersion"
    }
