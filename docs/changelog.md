@@ -1,6 +1,10 @@
 Changelog
 =========
 
+#### 4.0.23
+
+* Fixed issue with autocrop when no changes are required.
+
 #### 4.0.22
 
 * Bumped 12monkeys and commons-io versions.
