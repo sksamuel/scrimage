@@ -9,15 +9,18 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
-import javax.imageio.stream.FileImageOutputStream;
+import javax.imageio.stream.ImageOutputStream;
+import javax.imageio.stream.MemoryCacheImageOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 
 /**
- * Baseed on work by Elliot Kroo on 2009-04-25 and adapted into Scala and rewritten.
+ * Baseed on work by Elliot Kroo on 2009-04-25 and adapted into Java and rewritten.
  * <p>
  * This work is licensed under the Creative Commons Attribution 3.0 Unported
  * License. To view a copy of this license, visit
@@ -94,6 +97,11 @@ public class StreamingGifWriter {
    }
 
    public GifStream prepareStream(File file, int imageType) throws IOException {
+      FileOutputStream output = new FileOutputStream(file);
+      return prepareStream(output, imageType);
+   }
+
+   public GifStream prepareStream(OutputStream output, int imageType) throws IOException {
 
       ImageWriter writer = ImageIO.getImageWritersBySuffix("gif").next();
       ImageWriteParam imageWriteParam = writer.getDefaultWriteParam();
@@ -131,9 +139,9 @@ public class StreamingGifWriter {
 
       imageMetaData.setFromTree(metaFormatName, root);
 
-      FileImageOutputStream fos = new FileImageOutputStream(file);
+      ImageOutputStream ios = new MemoryCacheImageOutputStream(output);
 
-      writer.setOutput(fos);
+      writer.setOutput(ios);
       writer.prepareWriteSequence(null);
 
       return new GifStream() {
@@ -160,7 +168,8 @@ public class StreamingGifWriter {
          public void close() throws IOException {
             writer.endWriteSequence();
             writer.dispose();
-            fos.close();
+            ios.close();
+            output.close();
          }
       };
    }
