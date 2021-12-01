@@ -1,6 +1,10 @@
 Changelog
 =========
 
+#### 4.0.24
+
+* Updated `StreamingGifWriter` to support writing to any `OutputStream` in addition to the existing file/path options.
+
 #### 4.0.23
 
 * Fixed issue with autocrop when no changes are required.
