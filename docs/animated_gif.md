@@ -39,7 +39,8 @@ frames, delay per frame and so on.
 ## Writing
 
 Using the `StreamingGifWriter` class, first we create an instance of the writer, specifying the frame delay (delay
-between images) and if we should loop. Then we open a stream, specifying the output path, and the AWT image type.
+between images) and if we should loop. Then we open a stream, specifying either an output path or an output stream,
+and the AWT image type we want the images to be created with.
 
 === "Java"
 
@@ -71,7 +72,7 @@ gif.writeFrame(image1);
 gif.writeFrame(imageN);
 ```
 
-Finally, we close the stream by invoking finish, and the GIF is persisted to disk.
+Finally, we close the stream by invoking finish, and the data is finalized to the output stream or path.
 
 ```
 gif.finish();
