@@ -17,3 +17,4 @@ The aim of this library is to provide a simple and concise way to do common imag
 It is easy to use from any language on the JVM.
 
 To begin, head over to the [microsite](https://sksamuel.github.io/scrimage).
+To see latest changes, view the [changelog](https://sksamuel.github.io/scrimage/changelog/).
