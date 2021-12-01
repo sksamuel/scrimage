@@ -17,7 +17,7 @@ abstract class AbstractGifWriter {
     * Returns an existing child node, or creates and returns a new child node (if
     * the requested node does not exist).
     *
-    * @param rootNode the <tt>IIOMetadataNode</tt> to search for the child node.
+    * @param rootNode the IIOMetadataNode to search for the child node.
     * @param nodeName the name of the child node.
     * @return the child node, if found or a new node created with the given name.
     */
