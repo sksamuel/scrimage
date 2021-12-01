@@ -19,7 +19,7 @@ import java.nio.file.Paths;
 import java.time.Duration;
 
 /**
- * Baseed on work by Elliot Kroo on 2009-04-25 and adapted into Scala and rewritten.
+ * Baseed on work by Elliot Kroo on 2009-04-25 and adapted rewritten.
  * <p>
  * This work is licensed under the Creative Commons Attribution 3.0 Unported
  * License. To view a copy of this license, visit
@@ -47,7 +47,6 @@ public class GifSequenceWriter extends AbstractGifWriter {
    public GifSequenceWriter withInfiniteLoop(boolean infiniteLoop) {
       return new GifSequenceWriter(frameDelayMillis, infiniteLoop);
    }
-
 
    public Path output(ImmutableImage[] images, Path path) throws IOException {
       return Files.write(path, bytes(images));
