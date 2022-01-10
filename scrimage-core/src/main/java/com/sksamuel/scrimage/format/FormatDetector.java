@@ -19,8 +19,8 @@ public class FormatDetector {
     private static byte[] webp2 = new byte[]{'W', 'E', 'B', 'P'};
 
     public static Optional<Format> detect(InputStream in) throws IOException {
-        byte[] bytes = new byte[8];
-        in.read(bytes, 0, 8);
+        byte[] bytes = new byte[12];
+        in.read(bytes, 0, 12);
         return detect(bytes);
     }
 
