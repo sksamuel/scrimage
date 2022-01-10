@@ -17,6 +17,9 @@ class FormatDetectorTest : WordSpec({
       "detect gif"  {
          FormatDetector.detect(javaClass.getResourceAsStream("/com/sksamuel/scrimage/io/bird_compressed.gif")).get() shouldBe Format.GIF
       }
+      "detect webp"  {
+         FormatDetector.detect(javaClass.getResourceAsStream("/com/sksamuel/scrimage/landscape.webp")).get() shouldBe Format.WEBP
+      }
    }
 
 })
