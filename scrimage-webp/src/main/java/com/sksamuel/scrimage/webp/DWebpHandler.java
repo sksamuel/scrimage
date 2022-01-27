@@ -67,13 +67,16 @@ public class DWebpHandler extends WebpHandler {
       Process process = builder.start();
       try {
          process.waitFor(5, TimeUnit.MINUTES);
-      } catch (InterruptedException e) {
+         int exitStatus = process.exitValue();
+         if (exitStatus != 0) {
+            List<String> error = Files.readAllLines(stdout);
+            throw new IOException(error.toString());
+         }
+      } catch (InterruptedException | IOException e) {
          throw new IOException(e);
+      } finally {
+         stdout.toFile().delete();
       }
-      int exitStatus = process.exitValue();
-      if (exitStatus != 0) {
-         List<String> error = Files.readAllLines(stdout);
-         throw new IOException(error.toString());
-      }
+
    }
 }
