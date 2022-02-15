@@ -8,6 +8,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
+import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
@@ -67,6 +68,8 @@ public class StreamingGifWriter extends AbstractGifWriter {
 
       GifStream writeFrame(ImmutableImage image, Duration delay) throws IOException;
 
+      GifStream writeFrame(ImmutableImage image, DisposeMethod disposeMethod) throws IOException;
+
       GifStream writeFrame(ImmutableImage image, Duration delay, DisposeMethod disposalMethod) throws IOException;
    }
 
@@ -114,29 +117,32 @@ public class StreamingGifWriter extends AbstractGifWriter {
 
          @Override
          public GifStream writeFrame(ImmutableImage image, Duration delay) throws IOException {
-            IIOMetadataNode rootOverride = (IIOMetadataNode) imageMetaData.getAsTree(metaFormatName);
-            IIOMetadataNode graphicsControlExtensionNodeOverride = getNode(rootOverride, "GraphicControlExtension");
-            graphicsControlExtensionNodeOverride.setAttribute("delayTime", (delay.toMillis() / 10L) + "");
-            imageMetaData.setFromTree(metaFormatName, rootOverride);
+            return writeFrame(image, delay, null);
+         }
 
-            writer.writeToSequence(new IIOImage(image.awt(), null, imageMetaData), imageWriteParam);
-
-            imageMetaData.setFromTree(metaFormatName, root);
-            return this;
+         @Override
+         public GifStream writeFrame(ImmutableImage image, DisposeMethod disposeMethod) throws IOException {
+            return writeFrame(image, null, disposeMethod);
          }
 
          @Override
          public GifStream writeFrame(ImmutableImage image, Duration delay, DisposeMethod disposalMethod) throws IOException {
+            setOverriddenGraphicControlExtensionAttributes(delay, disposalMethod);
+            writer.writeToSequence(new IIOImage(image.awt(), null, imageMetaData), imageWriteParam);
+            return this;
+         }
+
+         private void setOverriddenGraphicControlExtensionAttributes(Duration delay, DisposeMethod disposeMethod)
+            throws IIOInvalidTreeException {
             IIOMetadataNode rootOverride = (IIOMetadataNode) imageMetaData.getAsTree(metaFormatName);
             IIOMetadataNode graphicsControlExtensionNodeOverride = getNode(rootOverride, "GraphicControlExtension");
-            graphicsControlExtensionNodeOverride.setAttribute("disposalMethod", disposalMethod.getDisposeMethodValue());
-            graphicsControlExtensionNodeOverride.setAttribute("delayTime", (delay.toMillis() / 10L) + "");
+            if (delay != null) {
+               graphicsControlExtensionNodeOverride.setAttribute("delayTime", (delay.toMillis() / 10L) + "");
+            }
+            if (disposeMethod != null) {
+               graphicsControlExtensionNodeOverride.setAttribute("disposalMethod", disposeMethod.getDisposeMethodValue());
+            }
             imageMetaData.setFromTree(metaFormatName, rootOverride);
-
-            writer.writeToSequence(new IIOImage(image.awt(), null, imageMetaData), imageWriteParam);
-
-            imageMetaData.setFromTree(metaFormatName, root);
-            return this;
          }
 
          @Override
