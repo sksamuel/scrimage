@@ -6,6 +6,8 @@ import java.util.*;
 import java.awt.*;
 import java.awt.image.*;
 
+import com.sksamuel.scrimage.DisposeMethod;
+
 /**
  * Class GifDecoder - Decodes a GIF file into one or more frames.
  *
@@ -78,10 +80,10 @@ public class GifSequenceReader {
    protected byte[] block = new byte[256]; // current data block
    protected int blockSize = 0; // block size
 
+   protected int frameIndexWithLastDoNotDispose = 0;
    // last graphic control extension info
-   protected int dispose = 0;
    // 0=no action; 1=leave in place; 2=restore to bg; 3=restore to prev
-   protected int lastDispose = 0;
+   protected int dispose = 0;
    protected boolean transparency = false; // use transparent color
    protected int delay = 0; // delay in milliseconds
    protected int transIndex; // transparent color index
@@ -99,12 +101,14 @@ public class GifSequenceReader {
    protected int frameCount;
 
    static class GifFrame {
-      public GifFrame(BufferedImage im, int del) {
+      public GifFrame(BufferedImage im, int del, int disposeMethod) {
          image = im;
          delay = del;
+         this.disposeMethod = disposeMethod;
       }
       public BufferedImage image;
       public int delay;
+      public int disposeMethod;
    }
 
    /**
@@ -120,6 +124,21 @@ public class GifSequenceReader {
          delay = ((GifFrame) frames.get(n)).delay;
       }
       return delay;
+   }
+
+   /**
+    * Gets dispose method for specified frame.
+    *
+    * @param n int index of frame
+    * @return DisposeMethod enum for given frame
+    */
+   public DisposeMethod getDisposeMethod(int n) {
+      //
+      dispose = 0;
+      if ((n >= 0) && (n < frameCount)) {
+         dispose = ((GifFrame) frames.get(n)).disposeMethod;
+      }
+      return DisposeMethod.getDisposeMethodFromId(dispose);
    }
 
    /**
@@ -158,13 +177,12 @@ public class GifSequenceReader {
       int[] dest =
          ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 
-      // fill in starting image contents based on last image's dispose code
-      if (lastDispose > 0) {
-         if (lastDispose == 3) {
-            // use image before last
-            int n = frameCount - 2;
-            if (n > 0) {
-               lastImage = getFrame(n - 1);
+      // fill in starting image contents based on the current image's dispose code
+      if (dispose > 0) {
+         if (dispose == 3) {
+            // use the last image with a 'doNotDispose' code
+            if (frameIndexWithLastDoNotDispose > 0) {
+               lastImage = getFrame(frameIndexWithLastDoNotDispose);
             } else {
                lastImage = null;
             }
@@ -176,7 +194,7 @@ public class GifSequenceReader {
             System.arraycopy(prev, 0, dest, 0, width * height);
             // copy pixels
 
-            if (lastDispose == 2) {
+            if (dispose == 2) {
                // fill last image rect area with background color
                Graphics2D g = image.createGraphics();
                Color c = null;
@@ -700,11 +718,11 @@ public class GifSequenceReader {
 
       // create new image to receive frame data
       image =
-         new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB_PRE);
+         new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
       setPixels(); // transfer pixel data to image
 
-      frames.add(new GifFrame(image, delay)); // add image to frame list
+      frames.add(new GifFrame(image, delay, dispose)); // add image to frame list
 
       if (transparency) {
          act[transIndex] = save;
@@ -760,7 +778,9 @@ public class GifSequenceReader {
     * Resets frame state for reading next image.
     */
    protected void resetFrame() {
-      lastDispose = dispose;
+      if (dispose == 1) {
+         this.frameIndexWithLastDoNotDispose = frameCount-1;
+      }
       lastRect = new Rectangle(ix, iy, iw, ih);
       lastImage = image;
       lastBgColor = bgColor;

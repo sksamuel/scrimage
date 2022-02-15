@@ -1,5 +1,6 @@
 package com.sksamuel.scrimage.nio;
 
+import com.sksamuel.scrimage.DisposeMethod;
 import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.nio.internal.GifSequenceReader;
 
@@ -30,6 +31,10 @@ public class AnimatedGif {
 
    public Duration getDelay(int frame) {
       return Duration.ofMillis(reader.getDelay(frame));
+   }
+
+   public DisposeMethod getDisposeMethod(int frame) {
+      return reader.getDisposeMethod(frame);
    }
 
    public ImmutableImage getFrame(int n) {

@@ -1,5 +1,6 @@
 package com.sksamuel.scrimage.nio;
 
+import com.sksamuel.scrimage.DisposeMethod;
 import com.sksamuel.scrimage.ImmutableImage;
 
 import javax.imageio.IIOImage;
@@ -65,6 +66,8 @@ public class StreamingGifWriter extends AbstractGifWriter {
       GifStream writeFrame(ImmutableImage image) throws IOException;
 
       GifStream writeFrame(ImmutableImage image, Duration delay) throws IOException;
+
+      GifStream writeFrame(ImmutableImage image, Duration delay, DisposeMethod disposalMethod) throws IOException;
    }
 
    public GifStream prepareStream(String path, int imageType) throws IOException {
@@ -113,6 +116,20 @@ public class StreamingGifWriter extends AbstractGifWriter {
          public GifStream writeFrame(ImmutableImage image, Duration delay) throws IOException {
             IIOMetadataNode rootOverride = (IIOMetadataNode) imageMetaData.getAsTree(metaFormatName);
             IIOMetadataNode graphicsControlExtensionNodeOverride = getNode(rootOverride, "GraphicControlExtension");
+            graphicsControlExtensionNodeOverride.setAttribute("delayTime", (delay.toMillis() / 10L) + "");
+            imageMetaData.setFromTree(metaFormatName, rootOverride);
+
+            writer.writeToSequence(new IIOImage(image.awt(), null, imageMetaData), imageWriteParam);
+
+            imageMetaData.setFromTree(metaFormatName, root);
+            return this;
+         }
+
+         @Override
+         public GifStream writeFrame(ImmutableImage image, Duration delay, DisposeMethod disposalMethod) throws IOException {
+            IIOMetadataNode rootOverride = (IIOMetadataNode) imageMetaData.getAsTree(metaFormatName);
+            IIOMetadataNode graphicsControlExtensionNodeOverride = getNode(rootOverride, "GraphicControlExtension");
+            graphicsControlExtensionNodeOverride.setAttribute("disposalMethod", disposalMethod.getDisposeMethodValue());
             graphicsControlExtensionNodeOverride.setAttribute("delayTime", (delay.toMillis() / 10L) + "");
             imageMetaData.setFromTree(metaFormatName, rootOverride);
 
