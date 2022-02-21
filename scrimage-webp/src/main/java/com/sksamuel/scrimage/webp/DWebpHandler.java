@@ -75,6 +75,7 @@ public class DWebpHandler extends WebpHandler {
       } catch (InterruptedException | IOException e) {
          throw new IOException(e);
       } finally {
+         process.destroy();
          stdout.toFile().delete();
       }
 
