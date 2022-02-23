@@ -4,7 +4,7 @@ import com.sksamuel.scrimage.nio.ImageSource
 import com.sksamuel.scrimage.nio.ImmutableImageLoader
 import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.string.shouldMatch
+import io.kotest.matchers.string.shouldContain
 
 class MultipleImagaeLoaderExceptionErrorTest : FunSpec() {
    init {
@@ -13,10 +13,8 @@ class MultipleImagaeLoaderExceptionErrorTest : FunSpec() {
          val e = shouldThrowAny {
             ImmutableImageLoader.create().load(ImageSource.of(bytes))
          }
-         e.message shouldMatch """Image parsing failed. Tried the following ImageReader implementations:
-com.sksamuel.scrimage.nio.ImageIOReader@.*? failed due to No ImageInputStream supported this image format
-com.sksamuel.scrimage.nio.PngReader@.*? failed
-com.sksamuel.scrimage.nio.OpenGifReader@.*? failed due to Image is truncated.""".toRegex()
+         e.message shouldContain """Image parsing failed. Tried the following ImageReader implementations"""
+         e.message shouldContain """No ImageInputStream supported this image format"""
       }
    }
 }
