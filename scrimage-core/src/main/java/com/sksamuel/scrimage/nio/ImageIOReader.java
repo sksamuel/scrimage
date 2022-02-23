@@ -45,7 +45,6 @@ public class ImageIOReader implements ImageReader {
          BufferedImage bufferedImage = reader.read(0, params);
          return Optional.of(ImmutableImage.wrapAwt(bufferedImage));
       } catch (IOException | InvalidImageParameterException e) {
-         e.printStackTrace();
          return Optional.empty();
       }
    }
@@ -72,6 +71,6 @@ public class ImageIOReader implements ImageReader {
             return image.get();
       }
 
-      throw new IOException("No ImageInputStream supported this image format");
+      throw new IOException("No ImageInputStream supported this image format; tried " + readers.size() + " readers; which were " + readers);
    }
 }
