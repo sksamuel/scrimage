@@ -4,11 +4,13 @@ import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.metadata.ImageMetadata;
 import com.sksamuel.scrimage.metadata.OrientationTools;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.List;
 
 @SuppressWarnings("unused")
 public class ImmutableImageLoader {
@@ -18,6 +20,7 @@ public class ImmutableImageLoader {
    private int type = 0;
    private boolean metadata = true;
    private ClassLoader classloader = null;
+   private List<ImageReader> readers = Collections.emptyList();
 
    public static ImmutableImageLoader create() {
       return new ImmutableImageLoader();
@@ -61,6 +64,16 @@ public class ImmutableImageLoader {
       return this;
    }
 
+   /**
+    * Specifies the ImageReader's to use when trying to decode an image.
+    * If not specified, then Scrimage will default to detecting the image readers on the classpath,
+    * through the Java Service Loader API.
+    */
+   public ImmutableImageLoader withImageReaders(List<ImageReader> readers) {
+      this.readers = readers;
+      return this;
+   }
+
    public ImmutableImageLoader withClassLoader(ClassLoader classloader) {
       this.classloader = classloader;
       return this;
@@ -98,7 +111,11 @@ public class ImmutableImageLoader {
    public ImmutableImage load(ImageSource source) throws IOException {
 
       ImageSource cached = new CachedImageSource(source);
-      ImmutableImage image = ImageReaders.read(cached, rectangle, classloader);
+      ImmutableImage image;
+      if (readers.isEmpty())
+         image = ImageReaders.read(cached, rectangle, classloader);
+      else
+         image = ImageReaders.read(cached, rectangle, readers);
 
       if (type > 0 && type != image.getType()) {
          image = image.copy(type);
