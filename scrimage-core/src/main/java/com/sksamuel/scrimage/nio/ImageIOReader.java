@@ -10,10 +10,22 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
 public class ImageIOReader implements ImageReader {
+
+   private final List<javax.imageio.ImageReader> readers;
+
+   public ImageIOReader() {
+      readers = Collections.emptyList();
+   }
+
+   public ImageIOReader(List<javax.imageio.ImageReader> readers) {
+      this.readers = readers;
+   }
 
    private Optional<ImmutableImage> tryLoad(javax.imageio.ImageReader reader, ImageInputStream iis, Rectangle rectangle) {
       try {
@@ -40,6 +52,7 @@ public class ImageIOReader implements ImageReader {
 
    @Override
    public ImmutableImage read(byte[] bytes, Rectangle rectangle) throws IOException {
+
       if (bytes == null)
          throw new IOException("bytes cannot be null");
 
@@ -47,9 +60,14 @@ public class ImageIOReader implements ImageReader {
       if (iis == null)
          throw new IOException("No ImageInputStream supported this image format");
 
-      Iterator<javax.imageio.ImageReader> readers = ImageIO.getImageReaders(iis);
-      while (readers.hasNext()) {
-         Optional<ImmutableImage> image = tryLoad(readers.next(), iis, rectangle);
+      Iterator<javax.imageio.ImageReader> iter;
+      if (readers.isEmpty())
+         iter = ImageIO.getImageReaders(iis);
+      else
+         iter = readers.iterator();
+
+      while (iter.hasNext()) {
+         Optional<ImmutableImage> image = tryLoad(iter.next(), iis, rectangle);
          if (image.isPresent())
             return image.get();
       }
