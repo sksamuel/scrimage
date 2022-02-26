@@ -34,6 +34,13 @@ public class ImageReaders {
       return read(source, rectangle, classloader == null ? defaultReaders : detectReaders(classloader));
    }
 
+   /**
+    * Attempts to read an image from the given source, using the supplied image readers.
+    *
+    * @param source the image source
+    * @param rectangle an optional subset of the image to read.
+    * @param readers the readers that should be used to attempt to load this image.
+    */
    public static ImmutableImage read(ImageSource source, Rectangle rectangle, List<ImageReader> readers) throws IOException {
       List<Throwable> errors = new ArrayList<>();
       for (ImageReader reader : readers) {
