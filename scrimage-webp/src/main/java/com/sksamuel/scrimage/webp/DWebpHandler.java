@@ -33,22 +33,22 @@ public class DWebpHandler extends WebpHandler {
    }
 
    public byte[] convert(byte[] bytes) throws IOException {
-      Path path = Files.createTempFile("input", "webp").toAbsolutePath();
-      Files.write(path, bytes, StandardOpenOption.CREATE);
+      Path input = Files.createTempFile("input", "webp").toAbsolutePath();
+      Files.write(input, bytes, StandardOpenOption.CREATE);
       try {
-         return convert(path);
+         return convert(input);
       } finally {
-         path.toFile().delete();
+         input.toFile().delete();
       }
    }
 
    public byte[] convert(Path source) throws IOException {
-      Path target = Files.createTempFile("from_webp", "png").toAbsolutePath();
+      Path output = Files.createTempFile("from_webp", "png").toAbsolutePath();
       try {
-         convert(source, target);
-         return Files.readAllBytes(target);
+         convert(source, output);
+         return Files.readAllBytes(output);
       } finally {
-         target.toFile().delete();
+         output.toFile().delete();
       }
    }
 

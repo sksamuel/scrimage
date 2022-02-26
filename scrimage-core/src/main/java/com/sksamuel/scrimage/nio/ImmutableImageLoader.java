@@ -74,6 +74,23 @@ public class ImmutableImageLoader {
       return this;
    }
 
+   /**
+    * Specifies to use [javax.image.ImageReader] implementations only.
+    * The javax.image.ImageReader to use will be detected by the JDK based on the stream contents.
+    */
+   public ImmutableImageLoader withJavaxImageReaders() {
+      this.readers = Collections.singletonList(new ImageIOReader());
+      return this;
+   }
+
+   /**
+    * Specifies to use the given [javax.image.ImageReader] implementations only.
+    */
+   public ImmutableImageLoader withJavaxImageReaders(List<javax.imageio.ImageReader> readers) {
+      this.readers = Collections.singletonList(new ImageIOReader(readers));
+      return this;
+   }
+
    public ImmutableImageLoader withClassLoader(ClassLoader classloader) {
       this.classloader = classloader;
       return this;

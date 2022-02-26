@@ -39,13 +39,20 @@ public class CWebpHandler extends WebpHandler {
                          int z,
                          boolean lossless) throws IOException {
       Path input = Files.createTempFile("input", "webp").toAbsolutePath();
+      Path output = Files.createTempFile("to_webp", "webp").toAbsolutePath();
       try {
          Files.write(input, bytes, StandardOpenOption.CREATE);
-         Path target = Files.createTempFile("to_webp", "webp").toAbsolutePath();
-         convert(input, target, m, q, z, lossless);
-         return Files.readAllBytes(target);
+         convert(input, output, m, q, z, lossless);
+         return Files.readAllBytes(output);
       } finally {
-         input.toFile().delete();
+         try {
+            input.toFile().delete();
+         } catch (Exception e) {
+         }
+         try {
+            output.toFile().delete();
+         } catch (Exception e) {
+         }
       }
    }
 
@@ -85,13 +92,16 @@ public class CWebpHandler extends WebpHandler {
       Process process = builder.start();
       try {
          process.waitFor(5, TimeUnit.MINUTES);
+         int exitStatus = process.exitValue();
+         if (exitStatus != 0) {
+            List<String> error = Files.readAllLines(stdout);
+            throw new IOException(error.toString());
+         }
       } catch (InterruptedException e) {
          throw new IOException(e);
-      }
-      int exitStatus = process.exitValue();
-      if (exitStatus != 0) {
-         List<String> error = Files.readAllLines(stdout);
-         throw new IOException(error.toString());
+      } finally {
+         process.destroy();
+         stdout.toFile().delete();
       }
    }
 }

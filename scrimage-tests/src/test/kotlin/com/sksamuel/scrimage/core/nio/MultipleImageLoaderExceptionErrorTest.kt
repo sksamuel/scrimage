@@ -6,7 +6,7 @@ import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.string.shouldContain
 
-class MultipleImagaeLoaderExceptionErrorTest : FunSpec() {
+class MultipleImageLoaderExceptionErrorTest : FunSpec() {
    init {
       test("multiple image load failures should all be reported") {
          val bytes = byteArrayOf(1, 2, 3)
@@ -14,7 +14,9 @@ class MultipleImagaeLoaderExceptionErrorTest : FunSpec() {
             ImmutableImageLoader.create().load(ImageSource.of(bytes))
          }
          e.message shouldContain """Image parsing failed. Tried the following ImageReader implementations"""
-         e.message shouldContain """No ImageInputStream supported this image format"""
+         e.message shouldContain """com.sksamuel.scrimage.nio.ImageIOReader"""
+         e.message shouldContain """com.sksamuel.scrimage.nio.PngReader"""
+         e.message shouldContain """com.sksamuel.scrimage.nio.OpenGifReader"""
       }
    }
 }
