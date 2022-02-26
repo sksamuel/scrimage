@@ -24,13 +24,13 @@ Using this image as our input:
 image.scaleToWidth(400) // keeps aspect ratio
 ```
 
-![scale](images/scale_h200.jpg)
+![scale](images/scale_w400.jpg)
 
 ```kotlin
 image.scaleToHeight(200) // keeps aspect ratio
 ```
 
-![scale](images/scale_w400.jpg)
+![scale](images/scale_h200.jpg)
 
 ```kotlin
 image.scaleTo(400, 400)
