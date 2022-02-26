@@ -11,9 +11,7 @@ import com.sksamuel.scrimage.scaling.Scale;
 import com.sksamuel.scrimage.scaling.ScrimageNearestNeighbourScale;
 import com.sksamuel.scrimage.subpixel.LinearSubpixelInterpolator;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferInt;
@@ -31,7 +29,9 @@ import java.util.stream.Collectors;
 
 /**
  * Wraps an AWT BufferedImage with some basic helper functions related to sizes, pixels etc.
+ *
  * It also includes methods to write out the image.
+ *
  * None of the operations in this class will mutate the underlying awt buffer.
  */
 public class AwtImage {
@@ -562,8 +562,9 @@ public class AwtImage {
    /**
     * Returns true if this image supports transparency/alpha in its underlying data model.
     */
+   @Deprecated()
    public boolean hasTransparency() {
-      return awt().getColorModel().hasAlpha();
+      return hasAlpha();
    }
 
    /**
@@ -611,5 +612,17 @@ public class AwtImage {
    @Deprecated
    public ByteArrayInputStream stream(ImageWriter writer) throws IOException {
       return forWriter(writer).stream();
+   }
+
+   /**
+    * Returns a copy of this image with the backing image type set to the given value.
+    */
+   public AwtImage clone(int imageType) {
+      if (imageType <= 0) throw new IllegalArgumentException("Image type must be > 0");
+      BufferedImage target = new BufferedImage(awt.getWidth(null), awt.getHeight(null), imageType);
+      Graphics g2 = target.getGraphics();
+      g2.drawImage(awt, 0, 0, null);
+      g2.dispose();
+      return new AwtImage(target);
    }
 }

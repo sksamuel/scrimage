@@ -1,12 +1,12 @@
 object Libs {
 
-   const val kotlinVersion = "1.5.20"
+   const val kotlinVersion = "1.6.10"
 
    const val org = "com.sksamuel.scrimage"
 
 
    object TwelveMonkeys {
-      private const val Version = "3.7.0"
+      private const val Version = "3.8.2"
       const val imageIoCore = "com.twelvemonkeys.imageio:imageio-core:$Version"
       const val jpeg = "com.twelvemonkeys.imageio:imageio-jpeg:$Version"
       const val pcx = "com.twelvemonkeys.imageio:imageio-pcx:$Version"
@@ -23,10 +23,10 @@ object Libs {
    }
 
    object Kotest {
-      private const val version = "4.6.3"
-      const val assertions = "io.kotest:kotest-assertions-core-jvm:$version"
-      const val api = "io.kotest:kotest-framework-api:$version"
-      const val junit5 = "io.kotest:kotest-runner-junit5-jvm:$version"
+      private const val version = "5.1.0"
+      const val assertions = "io.kotest:kotest-assertions-core:$version"
+      const val datatest = "io.kotest:kotest-framework-datatest:$version"
+      const val junit5 = "io.kotest:kotest-runner-junit5:$version"
    }
 
    object Drewnoaks {

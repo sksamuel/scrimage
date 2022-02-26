@@ -1,8 +1,8 @@
 package com.sksamuel.scrimage.core
 
 import com.sksamuel.scrimage.angles.Degrees
-import io.kotest.core.datatest.forAll
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withData
 import io.kotest.matchers.doubles.plusOrMinus
 import io.kotest.matchers.shouldBe
 
@@ -12,7 +12,7 @@ class AnglesTest : FunSpec() {
       data class DegreeConversion(val input: Int, val output: Double)
 
       context("degrees to rads") {
-         forAll(
+         withData(
             DegreeConversion(45, 0.785398),
             DegreeConversion(180, 3.14159),
             DegreeConversion(360, 6.28319),

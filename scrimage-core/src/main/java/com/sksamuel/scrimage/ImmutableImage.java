@@ -130,11 +130,7 @@ public class ImmutableImage extends MutableImage {
       if (imageType == 0) {
          imageType = BufferedImage.TYPE_INT_ARGB;
       }
-      BufferedImage target = new BufferedImage(awt.getWidth(null), awt.getHeight(null), imageType);
-      Graphics g2 = target.getGraphics();
-      g2.drawImage(awt, 0, 0, null);
-      g2.dispose();
-      return new ImmutableImage(target, ImageMetadata.empty);
+      return wrapAwt(new AwtImage(awt).clone(imageType).awt());
    }
 
    /**
@@ -239,7 +235,7 @@ public class ImmutableImage extends MutableImage {
       BufferedImage target = new BufferedImage(width, height, type);
       return new ImmutableImage(target, ImageMetadata.empty);
    }
-   
+
    /**
     * Create a new ImmutableImage that is the given dimension with no initialization.
     * This will usually result in a default black background (all pixel data defaulting to zeroes)

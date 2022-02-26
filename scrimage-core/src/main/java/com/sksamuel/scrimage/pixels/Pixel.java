@@ -71,6 +71,51 @@ public class Pixel {
    }
 
    /**
+    * Returns a copy of this pixel, with the same red, green, blue values, but with alpha
+    * set to the given value.
+    */
+   public Pixel alpha(int a) {
+      return new Pixel(x, y, red(), green(), blue(), a);
+   }
+
+   /**
+    * Returns a copy of this pixel, with the same red, green, blue values, but with alpha
+    * set to fully opaque (255).
+    */
+   public Pixel noalpha() {
+      return alpha(255);
+   }
+
+   /**
+    * Returns a copy of this pixel, with the same red, green, blue values, but with alpha
+    * set to fully transparent (0).
+    */
+   public Pixel fullalpha() {
+      return alpha(0);
+   }
+
+   /**
+    * Returns a copy of this pixel with the red component set to the given value.
+    */
+   public Pixel red(int r) {
+      return new Pixel(x, y, r, green(), blue(), alpha());
+   }
+
+   /**
+    * Returns a copy of this pixel with the green component set to the given value.
+    */
+   public Pixel green(int g) {
+      return new Pixel(x, y, red(), g, blue(), alpha());
+   }
+
+   /**
+    * Returns a copy of this pixel with the blue component set to the given value.
+    */
+   public Pixel blue(int b) {
+      return new Pixel(x, y, red(), green(), b, alpha());
+   }
+
+   /**
     * Returns this pixel as an array of ARGB values.
     */
    public int[] toARGB() {
