@@ -13,7 +13,7 @@ dependencies {
    implementation(project(":scrimage-core"))
    testImplementation(kotlin("stdlib"))
    testImplementation(kotlin("stdlib-jdk8"))
-   testImplementation(Libs.Kotest.api)
+   testImplementation(Libs.Kotest.datatest)
    testImplementation(Libs.Kotest.junit5)
    testImplementation(Libs.Kotest.assertions)
 }
