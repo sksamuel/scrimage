@@ -119,6 +119,10 @@ public class ImmutableImageLoader {
       return fromStream(in);
    }
 
+   /**
+    * Configures this loader to read from the provided input stream.
+    * The stream should be closed by the caller after this method has returned.
+    */
    public ImmutableImage fromStream(InputStream in) throws IOException {
       if (in == null)
          throw new IOException("Input stream is null");
