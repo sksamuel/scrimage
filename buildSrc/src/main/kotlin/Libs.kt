@@ -1,9 +1,8 @@
 object Libs {
 
-   const val kotlinVersion = "1.6.10"
+   const val kotlinVersion = "1.6.21"
 
    const val org = "com.sksamuel.scrimage"
-
 
    object TwelveMonkeys {
       private const val Version = "3.8.2"
@@ -23,14 +22,14 @@ object Libs {
    }
 
    object Kotest {
-      private const val version = "5.1.0"
+      private const val version = "5.3.2"
       const val assertions = "io.kotest:kotest-assertions-core:$version"
       const val datatest = "io.kotest:kotest-framework-datatest:$version"
       const val junit5 = "io.kotest:kotest-runner-junit5:$version"
    }
 
    object Drewnoaks {
-      private const val Version = "2.16.0"
+      private const val Version = "2.18.0"
       const val metadataExtractor = "com.drewnoakes:metadata-extractor:$Version"
    }
 

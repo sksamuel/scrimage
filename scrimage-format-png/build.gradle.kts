@@ -4,7 +4,6 @@ plugins {
 }
 
 dependencies {
-   implementation(kotlin("stdlib-jdk8"))
    implementation(project(":scrimage-core"))
    testImplementation(Libs.Kotest.datatest)
    testImplementation(Libs.Kotest.junit5)
