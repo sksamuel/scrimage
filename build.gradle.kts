@@ -24,7 +24,6 @@ allprojects {
 
    repositories {
       mavenCentral()
-      jcenter()
       google()
       mavenLocal()
       maven {
