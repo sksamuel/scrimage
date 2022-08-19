@@ -1,12 +1,22 @@
 package com.sksamuel.scrimage.nio.internal;
 
-import java.net.*;
-import java.io.*;
-import java.util.*;
-import java.awt.*;
-import java.awt.image.*;
-
 import com.sksamuel.scrimage.DisposeMethod;
+import com.sksamuel.scrimage.ImmutableImage;
+import com.sksamuel.scrimage.nio.GifSequenceWriter;
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class GifDecoder - Decodes a GIF file into one or more frames.
@@ -97,7 +107,7 @@ public class GifSequenceReader {
    protected byte[] pixelStack;
    protected byte[] pixels;
 
-   protected ArrayList frames; // frames read from current file
+   protected List<GifFrame> frames; // frames read from current file
    protected int frameCount;
 
    static class GifFrame {
@@ -121,7 +131,7 @@ public class GifSequenceReader {
       //
       delay = -1;
       if ((n >= 0) && (n < frameCount)) {
-         delay = ((GifFrame) frames.get(n)).delay;
+         delay = frames.get(n).delay;
       }
       return delay;
    }
@@ -136,7 +146,7 @@ public class GifSequenceReader {
       //
       dispose = 0;
       if ((n >= 0) && (n < frameCount)) {
-         dispose = ((GifFrame) frames.get(n)).disposeMethod;
+         dispose = frames.get(n).disposeMethod;
       }
       return DisposeMethod.getDisposeMethodFromId(dispose);
    }
@@ -266,7 +276,7 @@ public class GifSequenceReader {
    public BufferedImage getFrame(int n) {
       BufferedImage im = null;
       if ((n >= 0) && (n < frameCount)) {
-         im = ((GifFrame) frames.get(n)).image;
+         im = frames.get(n).image;
       }
       return im;
    }
@@ -278,6 +288,22 @@ public class GifSequenceReader {
     */
    public Dimension getFrameSize() {
       return new Dimension(width, height);
+   }
+
+   /**
+    * Gets gif image bytes.
+    *
+    * @return GIF InputStream bytes
+    * @throws IOException
+    */
+   public byte[] bytes() throws IOException {
+      return new GifSequenceWriter()
+         .withFrameDelay(delay)
+         .withInfiniteLoop(loopCount == 0)
+         .bytes(frames.stream()
+            .map(frame -> frame.image)
+            .map(ImmutableImage::fromAwt)
+            .toArray(ImmutableImage[]::new));
    }
 
    /**
@@ -509,7 +535,7 @@ public class GifSequenceReader {
    protected void init() {
       status = STATUS_OK;
       frameCount = 0;
-      frames = new ArrayList();
+      frames = new ArrayList<>();
       gct = null;
       lct = null;
    }
