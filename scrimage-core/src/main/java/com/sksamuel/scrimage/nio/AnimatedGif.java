@@ -3,8 +3,11 @@ package com.sksamuel.scrimage.nio;
 import com.sksamuel.scrimage.DisposeMethod;
 import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.nio.internal.GifSequenceReader;
-
-import java.awt.*;
+import java.awt.Dimension;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,5 +50,29 @@ public class AnimatedGif {
          frames.add(getFrame(k));
       }
       return frames;
+   }
+
+   public byte[] getBytes() throws IOException {
+      return reader.bytes();
+   }
+
+   public Path output(AnimatedImageWriter writer, String path) throws IOException {
+      return forWriter(writer).write(Paths.get(path));
+   }
+
+   public File output(AnimatedImageWriter writer, File file) throws IOException {
+      return forWriter(writer).write(file);
+   }
+
+   public Path output(AnimatedImageWriter writer, Path path) throws IOException {
+      return forWriter(writer).write(path);
+   }
+
+   public byte[] bytes(AnimatedImageWriter writer) throws IOException {
+      return forWriter(writer).bytes();
+   }
+
+   public AnimatedWriteContext forWriter(AnimatedImageWriter writer) throws IOException {
+      return new AnimatedWriteContext(writer, this);
    }
 }

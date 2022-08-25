@@ -6,7 +6,6 @@ import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.metadata.Tag
 import com.sksamuel.scrimage.nio.JpegWriter
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.collections.printed
 import io.kotest.matchers.collections.shouldContainAll
 
 class JpegWriterTest : FunSpec({
@@ -27,10 +26,8 @@ class JpegWriterTest : FunSpec({
 
    test("!jpeg writer should write metadata") {
       val img = ImmutableImage.loader().fromResource("/vossen.jpg")
-      println(img.metadata.tags().toSet().printed().value)
       val file = img.output(JpegWriter.Default, "metadatatest.jpg")
       val tags = ImmutableImage.loader().fromPath(file).metadata.tags().toSet()
-      println(tags.printed().value)
       tags.shouldContainAll(
          Tag("a", -3, "0", "foo"),
          Tag("b", 0, "8", "boo")
