@@ -27,8 +27,11 @@ public class DWebpHandler extends WebpHandler {
     * <p>
     * Binaries can be downloaded here:
     * https://storage.googleapis.com/downloads.webmproject.org/releases/webp/index.html
+    *
+    * This method is executed automatically but can also be invoked manually to check
+    * for any installation errors.
     */
-   private static void installDWebp() throws IOException {
+   public static void installDWebp() throws IOException {
       installBinary(binary, getBinaryPath("dwebp"));
    }
 

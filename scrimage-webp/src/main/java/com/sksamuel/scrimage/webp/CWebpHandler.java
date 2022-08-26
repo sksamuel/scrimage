@@ -28,8 +28,11 @@ public class CWebpHandler extends WebpHandler {
     * <p>
     * Binaries can be downloaded here:
     * https://storage.googleapis.com/downloads.webmproject.org/releases/webp/index.html
+    *
+    * This method is executed automatically but can also be invoked manually to check
+    * for any installation errors.
     */
-   private static void installCWebp() throws IOException {
+   public static void installCWebp() throws IOException {
       installBinary(binary, getBinaryPath("cwebp"));
    }
 
