@@ -5,8 +5,10 @@ plugins {
 
 dependencies {
    api(project(":scrimage-core"))
-   testImplementation(kotlin("stdlib-jdk8"))
    implementation(Libs.Commons.lang)
+   implementation("org.slf4j:slf4j-api:1.7.36")
+
+   testImplementation(kotlin("stdlib-jdk8"))
    testImplementation(Libs.Kotest.junit5)
    testImplementation(Libs.Kotest.assertions)
 }
