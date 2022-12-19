@@ -1,10 +1,17 @@
-include("scrimage-core")
-include("scrimage-tests")
-include("scrimage-filters")
-include("scrimage-benchmarks")
-include("scrimage-formats-extra")
-include("scrimage-webp")
-include("scrimage-scala_2.12")
-include("scrimage-scala_2.13")
-include("scrimage-examples")
-include("scrimage-format-png")
+rootProject.name = "scrimage"
+
+include(
+   ":scrimage-app",
+   ":scrimage-benchmarks",
+   ":scrimage-core",
+   ":scrimage-examples",
+   ":scrimage-filters",
+   ":scrimage-formats-extra",
+   ":scrimage-format-png",
+   ":scrimage-scala_2.12",
+   ":scrimage-scala_2.13",
+   ":scrimage-tests",
+   ":scrimage-webp",
+)
+
+enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
