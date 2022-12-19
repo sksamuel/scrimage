@@ -17,7 +17,7 @@ public class ScaleBenchmarks {
    @BenchmarkMode(Mode.AverageTime)
    @OutputTimeUnit(TimeUnit.MILLISECONDS)
    public void testScaleBicubicScrimage(Blackhole blackhole) throws IOException {
-      BufferedImage resized = ImmutableImage.loader().fromResource("/colosseum.jpg")
+      BufferedImage resized = ImmutableImage.loader().fromResource("/bench_colosseum.jpg")
          .scaleTo(600, 400, ScaleMethod.Bicubic)
          .awt();
       blackhole.consume(resized);
@@ -27,7 +27,7 @@ public class ScaleBenchmarks {
    @BenchmarkMode(Mode.AverageTime)
    @OutputTimeUnit(TimeUnit.MILLISECONDS)
    public void testScaleProgressiveBilinearScrimage(Blackhole blackhole) throws IOException {
-      BufferedImage resized = ImmutableImage.loader().fromResource("/colosseum.jpg")
+      BufferedImage resized = ImmutableImage.loader().fromResource("/bench_colosseum.jpg")
          .scaleTo(600, 400, ScaleMethod.Progressive)
          .awt();
       blackhole.consume(resized);
@@ -37,7 +37,7 @@ public class ScaleBenchmarks {
    @BenchmarkMode(Mode.AverageTime)
    @OutputTimeUnit(TimeUnit.MILLISECONDS)
    public void testScaleProgressiveBilinearThumbnailator(Blackhole blackhole) throws IOException {
-      BufferedImage resized = Thumbnails.of(getClass().getResourceAsStream("/colosseum.jpg"))
+      BufferedImage resized = Thumbnails.of(getClass().getResourceAsStream("/bench_colosseum.jpg"))
          .size(600, 400)
          .keepAspectRatio(false)
          .asBufferedImage();

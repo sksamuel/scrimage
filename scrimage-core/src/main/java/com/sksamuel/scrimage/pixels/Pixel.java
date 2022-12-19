@@ -1,5 +1,6 @@
 package com.sksamuel.scrimage.pixels;
 
+import com.sksamuel.scrimage.color.Grayscale;
 import com.sksamuel.scrimage.color.RGBColor;
 
 import java.util.Objects;
@@ -63,8 +64,6 @@ public class Pixel {
 
    /**
     * Returns this pixel as a packed ARGB int.
-    *
-    * @return
     */
    public int toARGBInt() {
       return argb;
@@ -120,6 +119,15 @@ public class Pixel {
     */
    public int[] toARGB() {
       return new int[]{alpha(), red(), green(), blue()};
+   }
+
+   /**
+    * Returns a copy of this Pixel with the colour as grayscale using the average method.
+    * The Average method takes the average value of R, G, and B as the grayscale value.
+    */
+   public Pixel toAverageGrayscale() {
+      Grayscale grayscale = toColor().toGrayscale();
+      return new Pixel(x, y, grayscale.gray, grayscale.gray, grayscale.gray, grayscale.alpha);
    }
 
    /**

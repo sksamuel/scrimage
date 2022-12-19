@@ -29,12 +29,11 @@ public interface Color {
    }
 
    default Grayscale toGrayscale() {
-      RGBColor rgb = toRGB();
-      double red = 0.2126 * rgb.red;
-      double green = 0.7152 * rgb.green;
-      double blue = 0.0722 * rgb.blue;
-      double gray = red + green + blue;
-      return new Grayscale((int) Math.round(gray), rgb.alpha);
+      return new LumaGrayscale().toGrayscale(this);
+   }
+
+   default Grayscale toGrayscale(GrayscaleMethod method) {
+      return method.toGrayscale(this);
    }
 
    /**

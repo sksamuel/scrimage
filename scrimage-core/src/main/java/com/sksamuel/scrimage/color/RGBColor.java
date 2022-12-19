@@ -89,6 +89,10 @@ public class RGBColor implements Color {
       return new RGBColor(red, g, blue, alpha);
    }
 
+   public int average() {
+      return (red + green + blue) / 3;
+   }
+
    public int[] toArray() {
       return new int[]{alpha, red, green, blue};
    }

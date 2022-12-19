@@ -28,11 +28,7 @@ import com.sksamuel.scrimage.composite.Composite;
 import com.sksamuel.scrimage.filter.Filter;
 import com.sksamuel.scrimage.metadata.ImageMetadata;
 import com.sksamuel.scrimage.metadata.OrientationTools;
-import com.sksamuel.scrimage.nio.ByteArrayImageSource;
-import com.sksamuel.scrimage.nio.ImageReaders;
-import com.sksamuel.scrimage.nio.ImageWriter;
-import com.sksamuel.scrimage.nio.ImmutableImageLoader;
-import com.sksamuel.scrimage.nio.WriteContext;
+import com.sksamuel.scrimage.nio.*;
 import com.sksamuel.scrimage.pixels.Pixel;
 import com.sksamuel.scrimage.pixels.PixelTools;
 import com.sksamuel.scrimage.pixels.PixelsExtractor;
@@ -40,12 +36,7 @@ import com.sksamuel.scrimage.transform.Transform;
 import org.apache.commons.io.IOUtils;
 import thirdparty.colorthief.ColorThief;
 import thirdparty.colorthief.MMCQ;
-import thirdparty.mortennobel.BSplineFilter;
-import thirdparty.mortennobel.BiCubicFilter;
-import thirdparty.mortennobel.Lanczos3Filter;
-import thirdparty.mortennobel.ResampleFilters;
-import thirdparty.mortennobel.ResampleOp;
-import thirdparty.mortennobel.TriangleFilter;
+import thirdparty.mortennobel.*;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -242,7 +233,7 @@ public class ImmutableImage extends MutableImage {
     * but that is not guaranteed.
     * The type of the image will be [ImmutableImage.DEFAULT_DATA_TYPE].
     *
-    * @param dimension  the size of the new image
+    * @param dimension the size of the new image
     * @return the new Image with the given dimension
     */
    public static ImmutableImage create(Dimension dimension) {
@@ -1230,7 +1221,8 @@ public class ImmutableImage extends MutableImage {
             ImmutableImage s3 = op(new ResampleOp(t, targetWidth, targetHeight));
             return wrapAwt(s3.awt(), s3.awt().getType());
          case Progressive:
-            if (targetWidth >= width || targetHeight >= height) return scaleTo(targetWidth, targetHeight, ScaleMethod.Bicubic);
+            if (targetWidth >= width || targetHeight >= height)
+               return scaleTo(targetWidth, targetHeight, ScaleMethod.Bicubic);
             BufferedImage result = ProgressiveScale.scale(awt(), targetWidth, targetHeight, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
             return wrapAwt(result);
          case Bicubic:
@@ -1523,5 +1515,9 @@ public class ImmutableImage extends MutableImage {
 
    public ImmutableImage transform(Transform transform) throws IOException {
       return transform.apply(this);
+   }
+
+   public ImmutableImage toGrayscale() {
+      return map(pixel -> new Color(pixel.average(), pixel.average(), pixel.average()));
    }
 }

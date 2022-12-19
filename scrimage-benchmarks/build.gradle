@@ -26,3 +26,7 @@ jmh {
    zip64 = true
    duplicateClassesStrategy = DuplicatesStrategy.EXCLUDE
 }
+
+processJmhResources {
+   duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}

@@ -17,7 +17,7 @@ public class PngWriterBenchmarks {
    @BenchmarkMode(Mode.AverageTime)
    @OutputTimeUnit(TimeUnit.MILLISECONDS)
    public void testScrimagePngWriterNoCompression(Blackhole blackhole) throws IOException {
-      ImmutableImage image = ImmutableImage.loader().fromResource("/bird.jpg");
+      ImmutableImage image = ImmutableImage.loader().fromResource("/bench_bird.jpg");
       byte[] png = image.bytes(PngWriter.NoCompression);
       blackhole.consume(png);
    }

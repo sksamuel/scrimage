@@ -17,9 +17,9 @@ public class PngReaderBenchmarks {
    @BenchmarkMode(Mode.AverageTime)
    @OutputTimeUnit(TimeUnit.MILLISECONDS)
    public void testScrimagePngReads(Blackhole blackhole) throws IOException {
-      ImmutableImage image1 = new PngReader().read(this.getClass().getResourceAsStream("/1.png"));
-      ImmutableImage image2 = new PngReader().read(this.getClass().getResourceAsStream("/2.png"));
-      ImmutableImage image3 = new PngReader().read(this.getClass().getResourceAsStream("/3.png"));
+      ImmutableImage image1 = new PngReader().read(this.getClass().getResourceAsStream("/bench_1.png"));
+      ImmutableImage image2 = new PngReader().read(this.getClass().getResourceAsStream("/bench_2.png"));
+      ImmutableImage image3 = new PngReader().read(this.getClass().getResourceAsStream("/bench_3.png"));
       blackhole.consume(image1);
       blackhole.consume(image2);
       blackhole.consume(image3);
@@ -29,9 +29,9 @@ public class PngReaderBenchmarks {
    @BenchmarkMode(Mode.AverageTime)
    @OutputTimeUnit(TimeUnit.MILLISECONDS)
    public void testImageIOPngReads(Blackhole blackhole) throws IOException {
-      ImmutableImage image1 = ImmutableImage.loader().fromResource("/1.png");
-      ImmutableImage image2 = ImmutableImage.loader().fromResource("/2.png");
-      ImmutableImage image3 = ImmutableImage.loader().fromResource("/3.png");
+      ImmutableImage image1 = ImmutableImage.loader().fromResource("/bench_1.png");
+      ImmutableImage image2 = ImmutableImage.loader().fromResource("/bench_2.png");
+      ImmutableImage image3 = ImmutableImage.loader().fromResource("/bench_3.png");
       blackhole.consume(image1);
       blackhole.consume(image2);
       blackhole.consume(image3);
