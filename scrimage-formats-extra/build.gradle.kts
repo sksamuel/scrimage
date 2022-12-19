@@ -6,15 +6,16 @@ plugins {
 dependencies {
    api(project(":scrimage-core"))
    testImplementation(kotlin("stdlib-jdk8"))
-   implementation(Libs.TwelveMonkeys.bmp)
-   implementation(Libs.TwelveMonkeys.tga)
-   implementation(Libs.TwelveMonkeys.tiff)
-   implementation(Libs.TwelveMonkeys.pcx)
-   implementation(Libs.TwelveMonkeys.pnm)
-   implementation(Libs.TwelveMonkeys.iff)
-   implementation(Libs.TwelveMonkeys.sgi)
-   testImplementation(Libs.Kotest.junit5)
-   testImplementation(Libs.Kotest.assertions)
+   implementation("com.twelvemonkeys.imageio:imageio-pcx:3.8.2")
+   implementation("com.twelvemonkeys.imageio:imageio-pnm:3.8.2")
+   implementation("com.twelvemonkeys.imageio:imageio-tga:3.8.2")
+   implementation("com.twelvemonkeys.imageio:imageio-tiff:3.8.2")
+   implementation("com.twelvemonkeys.imageio:imageio-bmp:3.8.2")
+   implementation("com.twelvemonkeys.imageio:imageio-iff:3.8.2")
+   implementation("com.twelvemonkeys.imageio:imageio-sgi:3.8.2")
+
+   testImplementation("io.kotest:kotest-assertions-core:5.3.2")
+   testImplementation("io.kotest:kotest-runner-junit5:5.3.2")
 }
 
 java {

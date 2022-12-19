@@ -5,12 +5,12 @@ plugins {
 
 dependencies {
    testImplementation(kotlin("stdlib-jdk8"))
-   implementation(Libs.TwelveMonkeys.imageIoCore)
-   implementation(Libs.TwelveMonkeys.jpeg)
-   implementation(Libs.Drewnoaks.metadataExtractor)
-   implementation(Libs.Zh.opengif)
-   implementation(Libs.Commons.io)
-   implementation(Libs.Hjg.pngj)
+   implementation("com.twelvemonkeys.imageio:imageio-core:3.8.2")
+   implementation("com.twelvemonkeys.imageio:imageio-jpeg:3.8.2")
+   implementation("com.drewnoakes:metadata-extractor:2.18.0")
+   implementation("com.github.zh79325:open-gif:1.0.4")
+   implementation("commons-io:commons-io:2.11.0")
+   implementation("ar.com.hjg:pngj:2.1.0")
 }
 
 java {
