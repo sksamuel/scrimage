@@ -23,6 +23,7 @@ import com.sksamuel.scrimage.canvas.drawables.FilledRect;
 import com.sksamuel.scrimage.canvas.painters.LinearGradient;
 import com.sksamuel.scrimage.canvas.painters.Painter;
 import com.sksamuel.scrimage.color.Colors;
+import com.sksamuel.scrimage.color.GrayscaleMethod;
 import com.sksamuel.scrimage.color.RGBColor;
 import com.sksamuel.scrimage.composite.Composite;
 import com.sksamuel.scrimage.filter.Filter;
@@ -1517,7 +1518,7 @@ public class ImmutableImage extends MutableImage {
       return transform.apply(this);
    }
 
-   public ImmutableImage toGrayscale() {
-      return map(pixel -> new Color(pixel.average(), pixel.average(), pixel.average()));
+   public ImmutableImage toGrayscale(GrayscaleMethod method) {
+      return map(pixel -> pixel.toColor().toGrayscale(method).awt());
    }
 }
