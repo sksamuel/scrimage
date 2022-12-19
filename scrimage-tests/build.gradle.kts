@@ -4,8 +4,8 @@ plugins {
 }
 
 dependencies {
-   implementation("com.twelvemonkeys.imageio:imageio-core:3.8.2")
-   implementation("com.twelvemonkeys.imageio:imageio-jpeg:3.8.2")
+   implementation("com.twelvemonkeys.imageio:imageio-core:3.9.3")
+   implementation("com.twelvemonkeys.imageio:imageio-jpeg:3.9.3")
    implementation("com.drewnoakes:metadata-extractor:2.18.0")
    implementation("com.github.zh79325:open-gif:1.0.4")
    implementation("commons-io:commons-io:2.11.0")
@@ -13,9 +13,9 @@ dependencies {
    implementation(project(":scrimage-core"))
    testImplementation(kotlin("stdlib"))
    testImplementation(kotlin("stdlib-jdk8"))
-   testImplementation("io.kotest:kotest-framework-datatest:5.3.2")
-   testImplementation("io.kotest:kotest-runner-junit5:5.3.2")
-   testImplementation("io.kotest:kotest-assertions-core:5.3.2")
+   testImplementation("io.kotest:kotest-framework-datatest:5.5.4")
+   testImplementation("io.kotest:kotest-runner-junit5:5.5.4")
+   testImplementation("io.kotest:kotest-assertions-core:5.5.4")
 }
 
 java {
