@@ -29,9 +29,9 @@ import java.util.stream.Collectors;
 
 /**
  * Wraps an AWT BufferedImage with some basic helper functions related to sizes, pixels etc.
- *
+ * <p>
  * It also includes methods to write out the image.
- *
+ * <p>
  * None of the operations in this class will mutate the underlying awt buffer.
  */
 public class AwtImage {
@@ -257,7 +257,7 @@ public class AwtImage {
       Pixel[][] pixels = new Pixel[height][width];
       for (int y = 0; y < height; y++) {
          for (int x = 0; x < width; x++) {
-            pixels[y][x] = pixel(x,y);
+            pixels[y][x] = pixel(x, y);
          }
       }
       return pixels;
@@ -504,26 +504,21 @@ public class AwtImage {
    /**
     * Returns a new AWT Image rotated with the given angle (in radians)
     */
-   @SuppressWarnings("SuspiciousNameCombination")
-   protected BufferedImage rotateByRadians(Radians angle) {
-      BufferedImage target = new BufferedImage(height, width, awt.getType());
-      Graphics2D g2 = (Graphics2D) target.getGraphics();
-      final int offsetx, offsety;
-      if (angle.value < 0) {
-         offsetx = 0;
-         offsety = width;
-      } else if (angle.value > 0) {
-         offsetx = height;
-         offsety = 0;
-      } else {
-         offsetx = 0;
-         offsety = 0;
-      }
-      g2.translate(offsetx, offsety);
-      g2.rotate(angle.value);
-      g2.drawImage(awt, 0, 0, null);
-      g2.dispose();
-      return target;
+   protected BufferedImage rotateByRadians(Radians angle, Color bgcolor) {
+
+      double sin = Math.abs(Math.sin(angle.value)),
+         cos = Math.abs(Math.cos(angle.value));
+
+      int neww = (int) Math.floor(width * cos + height * sin),
+         newh = (int) Math.floor(height * cos + width * sin);
+
+      BufferedImage rotated = ImmutableImage.filled(neww, newh, bgcolor, getType()).awt();
+      Graphics2D graphic = rotated.createGraphics();
+      graphic.translate((neww - width) / 2.0, (newh - height) / 2.0);
+      graphic.rotate(angle.value, width / 2.0, height / 2.0);
+      graphic.drawRenderedImage(awt, null);
+      graphic.dispose();
+      return rotated;
    }
 
    /**

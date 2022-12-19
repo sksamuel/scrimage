@@ -938,11 +938,19 @@ public class ImmutableImage extends MutableImage {
    }
 
    public ImmutableImage rotate(Radians radians) {
-      return wrapAwt(super.rotateByRadians(radians), metadata);
+      return rotate(radians, Color.BLACK);
+   }
+
+   public ImmutableImage rotate(Radians radians, Color bgcolor) {
+      return wrapAwt(rotateByRadians(radians, bgcolor), metadata);
    }
 
    public ImmutableImage rotate(Degrees degrees) {
       return rotate(degrees.toRadians());
+   }
+
+   public ImmutableImage rotate(Degrees degrees, Color bgcolor) {
+      return rotate(degrees.toRadians(), bgcolor);
    }
 
    /**
