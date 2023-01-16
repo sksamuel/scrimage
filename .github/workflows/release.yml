@@ -1,19 +1,18 @@
 name: release
 
 on:
-   workflow_dispatch:
-      inputs:
-         version:
-            description: "The release version"
-            required: true
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "The release version"
+        required: true
 
 jobs:
   publish:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout the repo
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: deploy to sonatype snapshots
         run: ./gradlew publish
@@ -26,8 +25,8 @@ jobs:
 
       - name: tag release
         run: |
-           git tag v${{ github.event.inputs.version }}
-           git push --tags
+          git tag v${{ github.event.inputs.version }}
+          git push --tags
 
 env:
   GRADLE_OPTS: -Dorg.gradle.configureondemand=true -Dorg.gradle.parallel=false -Dorg.gradle.jvmargs="-Xmx3g -XX:MaxPermSize=2048m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8"
