@@ -1,17 +1,17 @@
 package com.sksamuel.scrimage.nio;
 
+import com.sksamuel.scrimage.AwtImage;
 import com.sksamuel.scrimage.DisposeMethod;
 import com.sksamuel.scrimage.ImmutableImage;
 
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
+import javax.imageio.*;
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -19,6 +19,8 @@ import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
+
+import static java.awt.image.BufferedImage.TYPE_INT_ARGB;
 
 /**
  * Baseed on work by Elliot Kroo on 2009-04-25 and adapted into Java and rewritten.
@@ -43,24 +45,30 @@ public class StreamingGifWriter extends AbstractGifWriter {
 
    private final Duration frameDelay;
    private final boolean infiniteLoop;
+   private final boolean compressed;
 
    public StreamingGifWriter() {
       this.frameDelay = Duration.ofSeconds(2);
       this.infiniteLoop = true;
+      this.compressed = false;
    }
 
-
-   public StreamingGifWriter(Duration frameDelay, boolean infiniteLoop) {
+   public StreamingGifWriter(Duration frameDelay, boolean infiniteLoop, boolean compressed) {
       this.frameDelay = frameDelay;
       this.infiniteLoop = infiniteLoop;
+      this.compressed = compressed;
    }
 
    public StreamingGifWriter withFrameDelay(Duration delay) {
-      return new StreamingGifWriter(delay, infiniteLoop);
+      return new StreamingGifWriter(delay, infiniteLoop, compressed);
    }
 
    public StreamingGifWriter withInfiniteLoop(boolean infiniteLoop) {
-      return new StreamingGifWriter(frameDelay, infiniteLoop);
+      return new StreamingGifWriter(frameDelay, infiniteLoop, compressed);
+   }
+
+   public StreamingGifWriter withCompression(boolean compressed) {
+      return new StreamingGifWriter(frameDelay, infiniteLoop, compressed);
    }
 
    public interface GifStream extends AutoCloseable {
@@ -109,9 +117,26 @@ public class StreamingGifWriter extends AbstractGifWriter {
       writer.prepareWriteSequence(null);
 
       return new GifStream() {
+
+         private ImmutableImage last = null;
+
          @Override
          public GifStream writeFrame(ImmutableImage image) throws IOException {
-            writer.writeToSequence(new IIOImage(image.awt(), null, imageMetaData), imageWriteParam);
+            if (compressed && last != null) {
+               DataBuffer inputBuffer = image.awt().getRaster().getDataBuffer();
+               DataBuffer lastBuffer = last.awt().getRaster().getDataBuffer();
+               // must copy the image before assigning it to last, because we will modify it in the next step
+               last = image.copy();
+               for (int i = 0; i < inputBuffer.getSize(); i++) {
+                  if (inputBuffer.getElem(i) == lastBuffer.getElem(i)) {
+                     inputBuffer.setElem(i, 0);
+                  }
+               }
+               writer.writeToSequence(new IIOImage(image.awt(), null, imageMetaData), imageWriteParam);
+            } else {
+               writer.writeToSequence(new IIOImage(image.awt(), null, imageMetaData), imageWriteParam);
+               last = image;
+            }
             return this;
          }
 

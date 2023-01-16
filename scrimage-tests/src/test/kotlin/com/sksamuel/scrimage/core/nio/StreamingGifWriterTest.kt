@@ -16,13 +16,14 @@ import java.time.Duration
 
 class StreamingGifWriterTest : WordSpec({
    // run dispose method tests
-   include(disposeMethodTests( "/com/sksamuel/scrimage/nio/animated_birds.gif")) // tests 'doNotDispose'
-   include(disposeMethodTests( "/com/sksamuel/scrimage/nio/bananaDance.gif")) // tests 'restoreToBackgroundColor'
-   include(disposeMethodTests( "/com/sksamuel/scrimage/nio/canvas_prev.gif")) // tests 'restoreToPrevious'
+   include(disposeMethodTests("/com/sksamuel/scrimage/nio/animated_birds.gif")) // tests 'doNotDispose'
+   include(disposeMethodTests("/com/sksamuel/scrimage/nio/bananaDance.gif")) // tests 'restoreToBackgroundColor'
+   include(disposeMethodTests("/com/sksamuel/scrimage/nio/canvas_prev.gif")) // tests 'restoreToPrevious'
 
    val bird = ImmutableImage.loader().fromResource("/bird_small.png")
+
    "StreamingGifWriter" should {
-      "write to memory"  {
+      "write to memory" {
          val writer = StreamingGifWriter().withFrameDelay(Duration.ofMillis(500))
          val output = ByteArrayOutputStream()
          val stream = writer.prepareStream(output, BufferedImage.TYPE_INT_ARGB)
@@ -34,6 +35,20 @@ class StreamingGifWriterTest : WordSpec({
          stream.close()
          val bytes = output.toByteArray()
          bytes shouldBe IOUtils.toByteArray(javaClass.getResourceAsStream("/com/sksamuel/scrimage/nio/streaming_gif_writer_output_test.gif"))
+      }
+
+      "use transparent pixels when compression is set" {
+         val writer = StreamingGifWriter().withCompression(true).withFrameDelay(Duration.ofMillis(100))
+         val input = AnimatedGifReader.read(ImageSource.of(javaClass.getResourceAsStream("/gif/fallingroof.gif")))
+         val output = ByteArrayOutputStream()
+         val stream = writer.prepareStream(output, BufferedImage.TYPE_INT_ARGB)
+         input.frames.forEach { frame ->
+            val scaled = frame.scaleTo(400, 280).copy(BufferedImage.TYPE_INT_ARGB)
+            stream.writeFrame(scaled)
+         }
+         stream.close()
+         val bytes = output.toByteArray()
+         bytes shouldBe IOUtils.toByteArray(javaClass.getResourceAsStream("/gif/fallingroof_scaled.gif"))
       }
    }
 
@@ -59,7 +74,7 @@ fun disposeMethodTests(resourcePath: String) = wordSpec {
 
       "contents from $resourcePath and output should be equal" {
          val outputGif = AnimatedGifReader.read(ImageSource.of(output.toByteArray()))
-         for((i, frame) in outputGif.frames.withIndex()) {
+         for ((i, frame) in outputGif.frames.withIndex()) {
             outputGif.getDisposeMethod(i) shouldBe originalGif.getDisposeMethod(i)
             outputGif.getDelay(i) shouldBe originalGif.getDelay(i)
             frame.pixels() shouldBe originalGif.getFrame(i).pixels()
