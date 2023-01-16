@@ -1,6 +1,14 @@
 Changelog
 =========
 
+#### 4.0.33
+
+* Add withCompression option to StreamingGifWriter #256
+* Fixed JpegWriter.NoCompression preset is misleading #255
+
+#### 4.0.32
+
+* Add convert animated gif to animated webp (#253)
 
 #### 4.0.31
 
