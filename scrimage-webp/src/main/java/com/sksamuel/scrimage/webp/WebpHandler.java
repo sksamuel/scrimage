@@ -23,10 +23,10 @@ abstract class WebpHandler {
    protected static void installBinary(Path output, String... sources) throws IOException {
       logger.info("Installing binary at " + output);
       for (String source : sources) {
-         logger.info("Trying source from " + source);
+         logger.debug("Trying source from " + source);
          InputStream in = WebpHandler.class.getResourceAsStream(source);
          if (in != null) {
-            logger.info("Source detected " + source);
+            logger.debug("Source detected " + source);
             Files.copy(in, output, StandardCopyOption.REPLACE_EXISTING);
             in.close();
 
