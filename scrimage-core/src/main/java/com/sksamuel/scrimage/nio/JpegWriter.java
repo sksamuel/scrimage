@@ -14,6 +14,7 @@ import java.io.OutputStream;
 public class JpegWriter implements ImageWriter {
 
    public static JpegWriter NoCompression = new JpegWriter(100, false);
+   public static JpegWriter CompressionFromMetaData = new JpegWriter(-1, false);
    public static JpegWriter Default = new JpegWriter(80, false);
 
    public static JpegWriter compression(int compression) {
@@ -45,10 +46,16 @@ public class JpegWriter implements ImageWriter {
 
       javax.imageio.ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
       ImageWriteParam params = writer.getDefaultWriteParam();
-      if (compression < 100) {
+
+      if (compression == 100) {
+         params.setCompressionMode(ImageWriteParam.MODE_DISABLED);
+      } else if (compression > -1 && compression < 100) {
          params.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
          params.setCompressionQuality(compression / 100f);
+      } else {
+         params.setCompressionMode(ImageWriteParam.MODE_COPY_FROM_METADATA);
       }
+
       if (params.canWriteProgressive()) {
          if (progressive) {
             params.setProgressiveMode(ImageWriteParam.MODE_DEFAULT);
