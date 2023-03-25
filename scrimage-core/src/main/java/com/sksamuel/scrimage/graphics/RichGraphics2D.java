@@ -468,12 +468,6 @@ public class RichGraphics2D extends Graphics2D {
    }
 
    @Override
-   public void finalize() {
-      super.finalize();
-      g2.finalize();
-   }
-
-   @Override
    public String toString() {
       return g2.toString();
    }
