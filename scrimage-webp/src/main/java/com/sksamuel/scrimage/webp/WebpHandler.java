@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 abstract class WebpHandler {
 
-   private static Logger logger = LoggerFactory.getLogger(WebpHandler.class);
+   private static final Logger logger = LoggerFactory.getLogger(WebpHandler.class);
 
    protected static Path createPlaceholder(String name) throws IOException {
       return Files.createTempFile(name, "binary");
@@ -40,20 +40,32 @@ abstract class WebpHandler {
       throw new IOException("Could not locate webp binary at " + Arrays.toString(sources));
    }
 
-   protected static String[] getBinaryPath(String binaryName) {
-      String os = "linux";
-
+   /**
+    * Returns the search paths to locate the webp binaries for the given binary.
+    * Looks inside
+    */
+   protected static String[] getBinaryPaths(String binaryName) {
       if (SystemUtils.IS_OS_WINDOWS) {
-         os = "window";
+         return new String[]{
+            "/webp_binaries/" + binaryName,
+            // typo from previous versions must be left in
+            "/webp_binaries/window/" + binaryName,
+            "/webp_binaries/windows/" + binaryName,
+            "/dist_webp_binaries/libwebp-1.3.0-windows-x64/bin/" + binaryName,
+         };
       } else if (SystemUtils.IS_OS_MAC) {
-         os = "mac";
+         return new String[]{
+            "/webp_binaries/" + binaryName,
+            "/webp_binaries/mac/" + binaryName,
+            "/dist_webp_binaries/libwebp-1.3.0-mac-x86-64/bin/" + binaryName,
+         };
+      } else {
+         return new String[]{
+            "/webp_binaries/" + binaryName,
+            "/webp_binaries/linux/" + binaryName,
+            "/dist_webp_binaries/libwebp-1.3.0-linux-x86-64/bin/" + binaryName,
+         };
       }
-
-      return new String[]{
-         "/webp_binaries/" + binaryName,
-         "/webp_binaries/" + os + "/" + binaryName,
-         "/dist_webp_binaries/" + os + "/" + binaryName,
-      };
    }
 
    private static boolean setExecutable(Path output) throws IOException {

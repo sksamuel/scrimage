@@ -30,7 +30,7 @@ public class Gif2WebpHandler extends WebpHandler {
     * https://storage.googleapis.com/downloads.webmproject.org/releases/webp/index.html
     */
    private static void installGif2Webp() throws IOException {
-      installBinary(binary, getBinaryPath("gif2webp"));
+      installBinary(binary, getBinaryPaths("gif2webp"));
    }
 
    public byte[] convert(byte[] bytes,
