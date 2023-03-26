@@ -33,7 +33,7 @@ public class CWebpHandler extends WebpHandler {
     * for any installation errors.
     */
    public static void installCWebp() throws IOException {
-      installBinary(binary, getBinaryPath("cwebp"));
+      installBinary(binary, getBinaryPaths("cwebp"));
    }
 
    public byte[] convert(byte[] bytes,

@@ -32,7 +32,7 @@ public class DWebpHandler extends WebpHandler {
     * for any installation errors.
     */
    public static void installDWebp() throws IOException {
-      installBinary(binary, getBinaryPath("dwebp"));
+      installBinary(binary, getBinaryPaths("dwebp"));
    }
 
    public byte[] convert(byte[] bytes) throws IOException {
