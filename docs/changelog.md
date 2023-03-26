@@ -1,6 +1,11 @@
 Changelog
 =========
 
+#### 4.0.34
+
+* Updated webp to 1.3.0
+* Removed deprecated use of finalizer
+
 #### 4.0.33
 
 * Add withCompression option to StreamingGifWriter #256
