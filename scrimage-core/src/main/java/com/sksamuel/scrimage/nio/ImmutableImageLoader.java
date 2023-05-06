@@ -6,6 +6,7 @@ import com.sksamuel.scrimage.metadata.OrientationTools;
 
 import java.awt.*;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -101,6 +102,7 @@ public class ImmutableImageLoader {
    }
 
    public ImmutableImage fromFile(File file) throws IOException {
+      if (!file.exists()) throw new FileNotFoundException(file.toString());
       return load(new FileImageSource(file));
    }
 
@@ -109,7 +111,7 @@ public class ImmutableImageLoader {
    }
 
    public ImmutableImage fromPath(Path path) throws IOException {
-      return load(new FileImageSource(path));
+      return fromFile(path.toFile());
    }
 
    public ImmutableImage fromResource(String resource) throws IOException {
