@@ -9,7 +9,6 @@ dependencies {
    implementation("com.drewnoakes:metadata-extractor:2.18.0")
    implementation("com.github.zh79325:open-gif:1.0.4")
    implementation("commons-io:commons-io:2.11.0")
-   implementation("ar.com.hjg:pngj:2.1.0")
    implementation(project(":scrimage-core"))
    testImplementation(kotlin("stdlib"))
    testImplementation(kotlin("stdlib-jdk8"))
