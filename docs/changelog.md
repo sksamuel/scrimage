@@ -1,6 +1,10 @@
 Changelog
 =========
 
+#### 4.0.36
+
+* Fixed webp support for windows that was broken in 4.0.34
+
 #### 4.0.35
 
 * Fixed bug stopping PNG compression from being applied to some types of images.
