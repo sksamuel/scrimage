@@ -1,6 +1,10 @@
 Changelog
 =========
 
+#### 4.0.35
+
+* Fixed bug stopping PNG compression from being applied to some types of images.
+
 #### 4.0.34
 
 * Updated webp to 1.3.0
