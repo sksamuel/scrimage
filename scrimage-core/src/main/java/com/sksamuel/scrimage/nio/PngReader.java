@@ -94,4 +94,9 @@ public class PngReader implements ImageReader {
       System.arraycopy(bytes, 0, actual, 0, 8);
       return Arrays.equals(expected, actual);
    }
+
+   @Override
+   public String toString() {
+      return "com.sksamuel.scrimage.nio.PngReader (delegates to ar.com.hjg.pngj)";
+   }
 }

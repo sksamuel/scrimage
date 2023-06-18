@@ -2,11 +2,14 @@ package com.sksamuel.scrimage.nio;
 
 import com.sksamuel.scrimage.ImageParseException;
 import com.sksamuel.scrimage.ImmutableImage;
+import com.sksamuel.scrimage.format.Format;
+import com.sksamuel.scrimage.format.FormatDetector;
 
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -37,15 +40,16 @@ public class ImageReaders {
    /**
     * Attempts to read an image from the given source, using the supplied image readers.
     *
-    * @param source the image source
+    * @param source    the image source
     * @param rectangle an optional subset of the image to read.
-    * @param readers the readers that should be used to attempt to load this image.
+    * @param readers   the readers that should be used to attempt to load this image.
     */
    public static ImmutableImage read(ImageSource source, Rectangle rectangle, List<ImageReader> readers) throws IOException {
       List<Throwable> errors = new ArrayList<>();
+      byte[] bytes = source.read();
       for (ImageReader reader : readers) {
          try {
-            ImmutableImage image = reader.read(source.read(), rectangle);
+            ImmutableImage image = reader.read(bytes, rectangle);
             if (image == null) {
                errors.add(new IOException(reader + " failed"));
             } else {
@@ -55,9 +59,10 @@ public class ImageReaders {
             errors.add(new IOException(reader.toString() + " failed due to " + e.getMessage(), e));
          }
       }
-      if (errors.isEmpty())
-         throw new ImageParseException();
-      else
+      Format format = FormatDetector.detect(bytes).orElse(null);
+      if (format == null)
          throw new ImageParseException(errors);
+      else
+         throw new ImageParseException(errors, format);
    }
 }

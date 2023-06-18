@@ -74,4 +74,9 @@ public class ImageIOReader implements ImageReader {
       else
          throw new IOException("No javax.imageio.ImageReader supported this image format; tried " + attempts.size() + " readers; errors=" + attempts);
    }
+
+   @Override
+   public String toString() {
+      return "com.sksamuel.scrimage.nio.ImageIOReader (delegates to the JDK javax.imageio readers)";
+   }
 }
