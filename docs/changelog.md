@@ -1,6 +1,10 @@
 Changelog
 =========
 
+#### 4.0.37
+
+* Better error message when image loading fails, to indicate the file type.
+
 #### 4.0.36
 
 * Fixed webp support for windows that was broken in 4.0.34
