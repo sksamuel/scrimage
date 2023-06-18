@@ -48,10 +48,14 @@ abstract class WebpHandler {
       if (SystemUtils.IS_OS_WINDOWS) {
          return new String[]{
             "/webp_binaries/" + binaryName,
+            "/webp_binaries/" + binaryName + ".exe",
             // typo from previous versions must be left in
             "/webp_binaries/window/" + binaryName,
+            "/webp_binaries/window/" + binaryName + ".exe",
             "/webp_binaries/windows/" + binaryName,
+            "/webp_binaries/windows/" + binaryName + ".exe",
             "/dist_webp_binaries/libwebp-1.3.0-windows-x64/bin/" + binaryName,
+            "/dist_webp_binaries/libwebp-1.3.0-windows-x64/bin/" + binaryName + ".exe",
          };
       } else if (SystemUtils.IS_OS_MAC) {
          return new String[]{

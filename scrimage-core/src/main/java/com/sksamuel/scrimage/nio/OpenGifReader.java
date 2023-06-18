@@ -32,4 +32,9 @@ public class OpenGifReader implements ImageReader {
       }
       return images;
    }
+
+   @Override
+   public String toString() {
+      return "com.sksamuel.scrimage.nio.OpenGifReader (delegates to at.dhyan.open_imaging)";
+   }
 }

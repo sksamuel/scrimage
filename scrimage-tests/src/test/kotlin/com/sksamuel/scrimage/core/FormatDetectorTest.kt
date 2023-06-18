@@ -2,8 +2,11 @@ package com.sksamuel.scrimage.core
 
 import com.sksamuel.scrimage.format.Format
 import com.sksamuel.scrimage.format.FormatDetector
+import com.sksamuel.scrimage.nio.ImmutableImageLoader
+import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
 
 class FormatDetectorTest : WordSpec({
 
@@ -19,6 +22,14 @@ class FormatDetectorTest : WordSpec({
       }
       "detect webp"  {
          FormatDetector.detect(javaClass.getResourceAsStream("/com/sksamuel/scrimage/landscape.webp")).get() shouldBe Format.WEBP
+      }
+   }
+
+   "image loader" should {
+      "output webp warning" {
+         shouldThrowAny {
+            ImmutableImageLoader.create().fromResource("/spacedock.webp")
+         }.message shouldContain "Image parsing failed for WEBP"
       }
    }
 
