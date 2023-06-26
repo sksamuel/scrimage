@@ -28,7 +28,7 @@ public class CWebpHandler extends WebpHandler {
     * <p>
     * Binaries can be downloaded here:
     * https://storage.googleapis.com/downloads.webmproject.org/releases/webp/index.html
-    *
+    * <p>
     * This method is executed automatically but can also be invoked manually to check
     * for any installation errors.
     */
@@ -40,12 +40,13 @@ public class CWebpHandler extends WebpHandler {
                          int m,
                          int q,
                          int z,
-                         boolean lossless) throws IOException {
+                         boolean lossless,
+                         boolean withoutAlpha) throws IOException {
       Path input = Files.createTempFile("input", "webp").toAbsolutePath();
       Path output = Files.createTempFile("to_webp", "webp").toAbsolutePath();
       try {
          Files.write(input, bytes, StandardOpenOption.CREATE);
-         convert(input, output, m, q, z, lossless);
+         convert(input, output, m, q, z, lossless, withoutAlpha);
          return Files.readAllBytes(output);
       } finally {
          try {
@@ -64,7 +65,8 @@ public class CWebpHandler extends WebpHandler {
                         int m,
                         int q,
                         int z,
-                        boolean lossless) throws IOException {
+                        boolean lossless,
+                        boolean withoutAlpha) throws IOException {
 
       Path stdout = Files.createTempFile("stdout", "webp");
       List<String> commands = new ArrayList<>();
@@ -83,6 +85,9 @@ public class CWebpHandler extends WebpHandler {
       }
       if (lossless) {
          commands.add("-lossless");
+      }
+      if (withoutAlpha) {
+         commands.add("-noalpha");
       }
       commands.add(input.toAbsolutePath().toString());
       commands.add("-o");
