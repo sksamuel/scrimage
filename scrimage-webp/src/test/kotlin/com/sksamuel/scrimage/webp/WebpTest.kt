@@ -23,6 +23,13 @@ class WebpTest : FunSpec() {
             javaClass.getResourceAsStream("/spacedock.webp").readBytes()
       }
 
+      test("no alpha") {
+         val webpWriter = WebpWriter.DEFAULT.withoutAlpha()
+         ImmutableImage.loader().fromResource("/alpha.png")
+            .bytes(webpWriter) shouldBe
+            javaClass.getResourceAsStream("/noAlpha.webp").readBytes()
+      }
+
       test("dwebp should capture error on failure") {
          val dwebpPath = WebpHandler.getBinaryPaths("dwebp")[2]
 
