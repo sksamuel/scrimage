@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
@@ -15,6 +16,21 @@ import java.util.concurrent.TimeUnit;
 abstract class WebpHandler {
 
    private static final Logger logger = LoggerFactory.getLogger(WebpHandler.class);
+
+   protected static Path getPathFromProperty(String name) {
+      try {
+         String binaryDir = System.getProperty("com.sksamuel.scrimage.webp.binary.dir");
+         if (binaryDir != null && !binaryDir.isEmpty()) {
+            Path path = Paths.get(binaryDir, name);
+            if (Files.isExecutable(path)) {
+               return path;
+            }
+         }
+         return null;
+      } catch (Exception ignored) {
+         return null;
+      }
+   }
 
    protected static Path createPlaceholder(String name) throws IOException {
       return Files.createTempFile(name, "binary");
