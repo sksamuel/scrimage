@@ -13,9 +13,15 @@ public class DWebpHandler extends WebpHandler {
 
    static {
       try {
-         // write out binary to a location we can execute it from
-         binary = createPlaceholder("dwebp");
-         installDWebp();
+         // try to get the binary path from the system property
+         Path pathFromProperty = getPathFromProperty("dwebp");
+         if (pathFromProperty != null) {
+            binary = pathFromProperty;
+         } else {
+            // write out binary to a location we can execute it from
+            binary = createPlaceholder("dwebp");
+            installDWebp();
+         }
       } catch (IOException e) {
          throw new RuntimeException(e);
       }
