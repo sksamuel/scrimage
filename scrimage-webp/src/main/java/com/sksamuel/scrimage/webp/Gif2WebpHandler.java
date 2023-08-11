@@ -14,9 +14,15 @@ public class Gif2WebpHandler extends WebpHandler {
 
    static {
       try {
-         // write out binary to a location we can execute it from
-         binary = createPlaceholder("gif2webp");
-         installGif2Webp();
+         // try to get the binary path from the system property
+         Path pathFromProperty = getPathFromProperty("gif2webp");
+         if (pathFromProperty != null) {
+            binary = pathFromProperty;
+         } else {
+            // write out binary to a location we can execute it from
+            binary = createPlaceholder("gif2webp");
+            installGif2Webp();
+         }
       } catch (IOException e) {
          throw new RuntimeException(e);
       }
