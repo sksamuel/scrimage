@@ -1,6 +1,10 @@
 Changelog
 =========
 
+#### 4.0.38
+
+* Added the system property "com.sksamuel.scrimage.webp.binary.dir" to configure the directory of the webp binaries.
+
 #### 4.0.37
 
 * Better error message when image loading fails, to indicate the file type.
