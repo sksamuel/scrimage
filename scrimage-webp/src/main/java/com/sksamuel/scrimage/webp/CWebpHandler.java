@@ -14,9 +14,15 @@ public class CWebpHandler extends WebpHandler {
 
    static {
       try {
-         // write out binary to a location we can execute it from
-         binary = createPlaceholder("cwebp");
-         installCWebp();
+         // try to get the binary path from the system property
+         Path pathFromProperty = getPathFromProperty("cwebp");
+         if (pathFromProperty != null) {
+            binary = pathFromProperty;
+         } else {
+            // write out binary to a location we can execute it from
+            binary = createPlaceholder("cwebp");
+            installCWebp();
+         }
       } catch (IOException e) {
          throw new RuntimeException(e);
       }
