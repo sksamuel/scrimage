@@ -1,9 +1,13 @@
 Changelog
 =========
 
+#### 4.0.39
+
+* Added the system property "com.sksamuel.scrimage.webp.binary.dir" to configure the directory of the webp binaries. (#274)
+
 #### 4.0.38
 
-* Added the system property "com.sksamuel.scrimage.webp.binary.dir" to configure the directory of the webp binaries.
+* Added the option to generate the webp file without alpha. (#270)
 
 #### 4.0.37
 
