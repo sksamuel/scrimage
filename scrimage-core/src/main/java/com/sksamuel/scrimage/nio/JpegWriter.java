@@ -13,7 +13,10 @@ import java.io.OutputStream;
 
 public class JpegWriter implements ImageWriter {
 
+   // This compression mode cannot be used with JPEG. Instead, use CompressionFromMetaData
+   @Deprecated
    public static JpegWriter NoCompression = new JpegWriter(100, false);
+
    public static JpegWriter CompressionFromMetaData = new JpegWriter(-1, false);
    public static JpegWriter Default = new JpegWriter(80, false);
 
