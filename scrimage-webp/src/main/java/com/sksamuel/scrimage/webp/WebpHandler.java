@@ -58,7 +58,6 @@ abstract class WebpHandler {
 
    /**
     * Returns the search paths to locate the webp binaries for the given binary.
-    * Looks inside
     */
    protected static String[] getBinaryPaths(String binaryName) {
       if (SystemUtils.IS_OS_WINDOWS) {
@@ -70,27 +69,33 @@ abstract class WebpHandler {
             "/webp_binaries/window/" + binaryName + ".exe",
             "/webp_binaries/windows/" + binaryName,
             "/webp_binaries/windows/" + binaryName + ".exe",
-            "/dist_webp_binaries/libwebp-1.3.0-windows-x64/bin/" + binaryName,
-            "/dist_webp_binaries/libwebp-1.3.0-windows-x64/bin/" + binaryName + ".exe",
+            "/dist_webp_binaries/libwebp-1.3.2-windows-x64/bin/" + binaryName,
+            "/dist_webp_binaries/libwebp-1.3.2-windows-x64/bin/" + binaryName + ".exe",
+         };
+      } else if ("mac_arm64".equals(System.getProperty("com.sksamuel.scrimage.webp.platform"))) {
+         return new String[]{
+            "/webp_binaries/" + binaryName,
+            "/webp_binaries/mac_arm64/" + binaryName,
+            "/dist_webp_binaries/libwebp-1.3.2-mac-arm64/bin/" + binaryName,
          };
       } else if (SystemUtils.IS_OS_MAC) {
          return new String[]{
             "/webp_binaries/" + binaryName,
             "/webp_binaries/mac/" + binaryName,
-            "/dist_webp_binaries/libwebp-1.3.0-mac-x86-64/bin/" + binaryName,
+            "/dist_webp_binaries/libwebp-1.3.2-mac-x86-64/bin/" + binaryName,
          };
       } else {
          return new String[]{
             "/webp_binaries/" + binaryName,
             "/webp_binaries/linux/" + binaryName,
-            "/dist_webp_binaries/libwebp-1.3.0-linux-x86-64/bin/" + binaryName,
+            "/dist_webp_binaries/libwebp-1.3.2-linux-x86-64/bin/" + binaryName,
          };
       }
    }
 
-   private static boolean setExecutable(Path output) throws IOException {
+   private static void setExecutable(Path output) throws IOException {
       try {
-         return new ProcessBuilder("chmod", "+x", output.toAbsolutePath().toString())
+         new ProcessBuilder("chmod", "+x", output.toAbsolutePath().toString())
             .start()
             .waitFor(30, TimeUnit.SECONDS);
       } catch (InterruptedException e) {
