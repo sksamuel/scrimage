@@ -107,7 +107,8 @@ public class StreamingGifWriter extends AbstractGifWriter {
       IIOMetadataNode root = (IIOMetadataNode) imageMetaData.getAsTree(metaFormatName);
       populateGraphicsControlNode(root, frameDelay);
       populateCommentsNode(root);
-      populateApplicationExtensions(root, infiniteLoop);
+      if (infiniteLoop)
+         populateApplicationExtensions(root, infiniteLoop);
 
       imageMetaData.setFromTree(metaFormatName, root);
 

@@ -73,7 +73,8 @@ public class GifSequenceWriter extends AbstractGifWriter {
       IIOMetadataNode root = (IIOMetadataNode) imageMetaData.getAsTree(metaFormatName);
       populateGraphicsControlNode(root, Duration.ofMillis(frameDelayMillis));
       populateCommentsNode(root);
-      populateApplicationExtensions(root, infiniteLoop);
+      if (infiniteLoop)
+         populateApplicationExtensions(root, infiniteLoop);
 
       imageMetaData.setFromTree(metaFormatName, root);
 
