@@ -21,10 +21,9 @@ import thirdparty.romainguy.BlendComposite;
 import thirdparty.romainguy.BlendingMode;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-public class SnowFilter implements Filter {
+public class SnowFilter implements IntFilter {
 
    private static final ImmutableImage snow;
 
@@ -38,18 +37,11 @@ public class SnowFilter implements Filter {
 
    @Override
    public void apply(ImmutableImage image) {
-      ImmutableImage scaled = ImmutableImage.wrapAwt(snow.scaleTo(image.width, image.height, ScaleMethod.Bicubic).awt(), BufferedImage.TYPE_INT_ARGB);
-
-      ImmutableImage copy;
-      if (image.getType() == BufferedImage.TYPE_INT_ARGB || image.getType() == BufferedImage.TYPE_INT_RGB) {
-         copy = image;
-      } else {
-         copy = image.copy(BufferedImage.TYPE_INT_ARGB);
-      }
-
-      Graphics2D g2 = (Graphics2D) copy.awt().getGraphics();
+      ImmutableImage scaled = ImmutableImage.wrapAwt(snow.scaleTo(image.width, image.height, ScaleMethod.Bicubic).awt(), image.getType());
+      Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
       g2.setComposite(new BlendComposite(BlendingMode.SCREEN, 1.0f));
       g2.drawImage(scaled.awt(), 0, 0, null);
+      System.out.println(System.currentTimeMillis());
       g2.dispose();
    }
 }

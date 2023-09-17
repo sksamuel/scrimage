@@ -51,7 +51,9 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * An immutable Image backed by an AWT BufferedImage.
@@ -619,7 +621,13 @@ public class ImmutableImage extends MutableImage {
     * @return A new image with the given filter applied.
     */
    public ImmutableImage filter(Filter filter) throws IOException {
-      ImmutableImage target = copy();
+      List<Integer> types = Arrays.stream(filter.types()).boxed().collect(Collectors.toList());
+      ImmutableImage target;
+      if (types.isEmpty() || types.contains(getType())) {
+         target = this;
+      } else {
+         target = copy(types.get(0));
+      }
       filter.apply(target);
       return target;
    }
