@@ -5,7 +5,9 @@
 Scrimage provides support for webp through the `scrimage-webp` module. To use webp, add this module to your build.
 
 This module uses the `dwebp`, `cwebp` and `gif2webp` binaries, created by Google. The `scrimage-webp` module comes with the
-linux_x64, window_x64, mac-10.15 binaries already included (see required [copyright notice](https://github.com/sksamuel/scrimage/blob/master/scrimage-webp/src/main/resources/dist_webp_binaries/LICENSE)).
+linux_x64, window_x64, mac-x64 and mac-arm64 binaries already included (see required [copyright notice](https://github.com/sksamuel/scrimage/blob/master/scrimage-webp/src/main/resources/dist_webp_binaries/LICENSE)).
+
+Note: If you are using mac-arm64 then you must specify the system-property: `com.sksamuel.scrimage.webp.platform=mac-arm64` because scrimage is unable to detect mac-x64 from mac-arm64, and defaults to the former.
 
 If you don't wish to use the embedded binaries, then you can [download other versions](https://developers.google.com/speed/webp)
 and use the system property "com.sksamuel.scrimage.webp.binary.dir" to configure the directory you placed the binaries:
@@ -15,6 +17,7 @@ java -Dcom.sksamuel.scrimage.webp.binary.dir="/tmp/webp" -jar myprogram.jar
 Or you can place them on your classpath at `/webp_binaries/{osName}/dwebp` or `/webp_binaries/{osName}/cwebp` or
 `/webp_binaries/{osName}/gif2webp`.
 The directory set by the system property is always searched first.
+
 
 `{osName}` must be one of `window`, `linux`, `mac`. ie `/webp_binaries/window/cwebp`.
 
