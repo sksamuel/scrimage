@@ -10,7 +10,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-public class OldPhotoFilter implements Filter {
+public class OldPhotoFilter implements IntFilter {
 
    private static final ImmutableImage film;
 
@@ -25,21 +25,14 @@ public class OldPhotoFilter implements Filter {
    @Override
    public void apply(ImmutableImage image) throws IOException {
 
-      ImmutableImage copy;
-      if (image.getType() == BufferedImage.TYPE_INT_ARGB || image.getType() == BufferedImage.TYPE_INT_RGB) {
-         copy = image;
-      } else {
-         copy = image.copy(BufferedImage.TYPE_INT_ARGB);
-      }
-
       DaisyFilter daisy = new DaisyFilter();
-      BufferedImage filtered = daisy.filter(copy.awt());
+      BufferedImage filtered = daisy.filter(image.awt());
 
-      Graphics2D g2 = (Graphics2D) copy.awt().getGraphics();
+      Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
       g2.drawImage(filtered, 0, 0, null);
 
-      BufferedImage filmSized = film.scaleTo(copy.width, copy.height, ScaleMethod.Bicubic).awt();
-      BufferedImage filmSizedSameType = ImmutableImage.fromAwt(filmSized, copy.awt().getType()).awt();
+      BufferedImage filmSized = film.scaleTo(image.width, image.height, ScaleMethod.Bicubic).awt();
+      BufferedImage filmSizedSameType = ImmutableImage.fromAwt(filmSized, image.awt().getType()).awt();
 
       g2.setComposite(BlendComposite.getInstance(BlendingMode.INVERSE_COLOR_DODGE, 0.30f));
       g2.drawImage(filmSizedSameType, 0, 0, null);

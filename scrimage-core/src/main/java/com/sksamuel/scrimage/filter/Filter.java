@@ -20,5 +20,13 @@ import com.sksamuel.scrimage.ImmutableImage;
 import java.io.IOException;
 
 public interface Filter {
-    void apply(ImmutableImage image) throws IOException;
+   void apply(ImmutableImage image) throws IOException;
+
+   /**
+    * Some filters only work for certain types.
+    * Override this method to return the supported types.
+    */
+   default int[] types() {
+      return new int[0];
+   }
 }
