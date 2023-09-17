@@ -1,6 +1,14 @@
 Changelog
 =========
 
+#### 4.0.41
+
+* Fixed withInfiniteLoop(false) on gif writers. #272
+
+#### 4.0.40
+
+* Added the system property `com.sksamuel.scrimage.webp.platform=mac-arm64` to specify to use webp-mac-arm64 binaries. #276
+
 #### 4.0.39
 
 * Added the system property "com.sksamuel.scrimage.webp.binary.dir" to configure the directory of the webp binaries. (#274)
