@@ -68,7 +68,7 @@ abstract class WebpHandler {
          return windows(binaryName);
       } else if ("mac_arm64".equals(System.getProperty("com.sksamuel.scrimage.webp.platform"))) {
          return macArm(binaryName);
-      } else if (SystemUtils.IS_OS_MAC && osArch.startsWith("arm")) {
+      } else if (SystemUtils.IS_OS_MAC && (osArch.startsWith("arm") || osArch.startsWith("aarch64"))) {
          return macArm(binaryName);
       } else if (SystemUtils.IS_OS_MAC) {
          return macIntel(binaryName);
