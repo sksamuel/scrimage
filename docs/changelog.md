@@ -1,6 +1,10 @@
 Changelog
 =========
 
+#### 4.1.0
+
+* Mac m1/m2 webp binaries are now autodetected.
+
 #### 4.0.41
 
 * Fixed withInfiniteLoop(false) on gif writers. #272
