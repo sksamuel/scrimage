@@ -60,37 +60,59 @@ abstract class WebpHandler {
     * Returns the search paths to locate the webp binaries for the given binary.
     */
    protected static String[] getBinaryPaths(String binaryName) {
+
+      String osArch = System.getProperty("os.arch");
+      if (osArch == null) osArch = "";
+
       if (SystemUtils.IS_OS_WINDOWS) {
-         return new String[]{
-            "/webp_binaries/" + binaryName,
-            "/webp_binaries/" + binaryName + ".exe",
-            // typo from previous versions must be left in
-            "/webp_binaries/window/" + binaryName,
-            "/webp_binaries/window/" + binaryName + ".exe",
-            "/webp_binaries/windows/" + binaryName,
-            "/webp_binaries/windows/" + binaryName + ".exe",
-            "/dist_webp_binaries/libwebp-1.3.2-windows-x64/bin/" + binaryName,
-            "/dist_webp_binaries/libwebp-1.3.2-windows-x64/bin/" + binaryName + ".exe",
-         };
+         return windows(binaryName);
       } else if ("mac_arm64".equals(System.getProperty("com.sksamuel.scrimage.webp.platform"))) {
-         return new String[]{
-            "/webp_binaries/" + binaryName,
-            "/webp_binaries/mac_arm64/" + binaryName,
-            "/dist_webp_binaries/libwebp-1.3.2-mac-arm64/bin/" + binaryName,
-         };
+         return macArm(binaryName);
+      } else if (SystemUtils.IS_OS_MAC && (osArch.startsWith("arm") || osArch.startsWith("aarch64"))) {
+         return macArm(binaryName);
       } else if (SystemUtils.IS_OS_MAC) {
-         return new String[]{
-            "/webp_binaries/" + binaryName,
-            "/webp_binaries/mac/" + binaryName,
-            "/dist_webp_binaries/libwebp-1.3.2-mac-x86-64/bin/" + binaryName,
-         };
+         return macIntel(binaryName);
       } else {
-         return new String[]{
-            "/webp_binaries/" + binaryName,
-            "/webp_binaries/linux/" + binaryName,
-            "/dist_webp_binaries/libwebp-1.3.2-linux-x86-64/bin/" + binaryName,
-         };
+         return linux(binaryName);
       }
+   }
+
+   private static String[] macIntel(String binaryName) {
+      return new String[]{
+         "/webp_binaries/" + binaryName,
+         "/webp_binaries/mac/" + binaryName,
+         "/dist_webp_binaries/libwebp-1.3.2-mac-x86-64/bin/" + binaryName,
+      };
+   }
+
+   private static String[] macArm(String binaryName) {
+      return new String[]{
+         "/webp_binaries/" + binaryName,
+         "/webp_binaries/mac_arm64/" + binaryName,
+         "/dist_webp_binaries/libwebp-1.3.2-mac-arm64/bin/" + binaryName,
+      };
+   }
+
+   private static String[] windows(String binaryName) {
+      return new String[]{
+         "/webp_binaries/" + binaryName,
+         "/webp_binaries/" + binaryName + ".exe",
+         // typo from previous versions must be left in
+         "/webp_binaries/window/" + binaryName,
+         "/webp_binaries/window/" + binaryName + ".exe",
+         "/webp_binaries/windows/" + binaryName,
+         "/webp_binaries/windows/" + binaryName + ".exe",
+         "/dist_webp_binaries/libwebp-1.3.2-windows-x64/bin/" + binaryName,
+         "/dist_webp_binaries/libwebp-1.3.2-windows-x64/bin/" + binaryName + ".exe",
+      };
+   }
+
+   private static String[] linux(String binaryName) {
+      return new String[]{
+         "/webp_binaries/" + binaryName,
+         "/webp_binaries/linux/" + binaryName,
+         "/dist_webp_binaries/libwebp-1.3.2-linux-x86-64/bin/" + binaryName,
+      };
    }
 
    private static void setExecutable(Path output) throws IOException {
