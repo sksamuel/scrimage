@@ -3,7 +3,7 @@ Changelog
 
 #### 4.1.0
 
-* Mac m1/m2 webp binaries are now autodetected.
+* Mac arm webp binaries are now autodetected.
 
 #### 4.0.41
 
