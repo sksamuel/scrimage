@@ -74,10 +74,10 @@ public interface Color {
    default RGBColor average(Color other) {
       RGBColor c1 = this.toRGB();
       RGBColor c2 = other.toRGB();
-      int r = (c1.red * c1.alpha / 255) + (c2.red * c1.blue * (255 - c1.alpha) / (255 * 255));
-      int g = (c1.green * c1.alpha / 255) + (c2.green * c1.blue * (255 - c1.alpha) / (255 * 255));
-      int b = (c1.blue * c1.alpha / 255) + (c2.blue * c1.blue * (255 - c1.alpha) / (255 * 255));
-      int a = c1.alpha + (c1.blue * (255 - c1.alpha) / 255);
+      int r = (c1.red * c1.alpha / 255) + (c2.red * c2.alpha * (255 - c1.alpha) / (255 * 255));
+      int g = (c1.green * c1.alpha / 255) + (c2.green * c2.alpha * (255 - c1.alpha) / (255 * 255));
+      int b = (c1.blue * c1.alpha / 255) + (c2.blue * c2.alpha * (255 - c1.alpha) / (255 * 255));
+      int a = c1.alpha + (c2.alpha * (255 - c1.alpha) / 255);
       return new RGBColor(r, g, b, a);
    }
 
