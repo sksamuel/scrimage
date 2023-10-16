@@ -1,6 +1,15 @@
 Changelog
 =========
 
+#### 4.1.1
+
+* Fixed RGB colour average calcuation #280
+
+#### 4.1.0
+
+* Default webp on macos to use ARM architecture#278
+* Fixed filters that require int data type #277
+
 #### 4.0.41
 
 * Fixed withInfiniteLoop(false) on gif writers. #272
