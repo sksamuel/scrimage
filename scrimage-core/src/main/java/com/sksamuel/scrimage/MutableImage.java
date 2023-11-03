@@ -39,9 +39,9 @@ public class MutableImage extends AwtImage {
    }
 
    public void replaceTransparencyInPlace(java.awt.Color color) {
-      Arrays.stream(pixels()).forEach(pixel -> {
-         Pixel withoutTrans = PixelTools.replaceTransparencyWithColor(pixel, color);
-         awt().setRGB(pixel.x, pixel.y, withoutTrans.toARGBInt());
+      forEach(p -> {
+         Pixel withoutTrans = PixelTools.replaceTransparencyWithColor(p, color);
+         awt().setRGB(withoutTrans.x, withoutTrans.y, withoutTrans.toARGBInt());
       });
    }
 

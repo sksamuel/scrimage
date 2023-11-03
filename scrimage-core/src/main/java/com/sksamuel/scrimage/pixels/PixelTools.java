@@ -164,4 +164,13 @@ public class PixelTools {
       int b = (p.blue() * p.alpha() + color.getBlue() * color.getAlpha() * (255 - p.alpha()) / 255) / 255;
       return new Pixel(p.x, p.y, r, g, b, 255);
    }
+
+   @FunctionalInterface
+   public interface PixelConsumer {
+
+      void consume(int x, int y, int argb);
+
+   }
+
+
 }
