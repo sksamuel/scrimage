@@ -26,7 +26,7 @@ jmh {
    warmupBatchSize.set(5)
    zip64.set(true)
    duplicateClassesStrategy.set(DuplicatesStrategy.EXCLUDE)
-   profilers.set(listOf("gc"))
+   profilers.set(listOf("jfr:dir=profile-results"))
    if (project.hasProperty("includes")) {
       includes.set(listOf(project.property("includes") as String))
    }

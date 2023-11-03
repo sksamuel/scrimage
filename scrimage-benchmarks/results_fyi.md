@@ -27,3 +27,13 @@ JpegWriterBenchmarks.Writing.testJpegWritingOfTransparentImage:·gc.alloc.rate.n
 JpegWriterBenchmarks.Writing.testJpegWritingOfTransparentImage:·gc.count            avgt    3       161.000              counts
 JpegWriterBenchmarks.Writing.testJpegWritingOfTransparentImage:·gc.time             avgt    3       102.000                  ms
 ```
+
+### Skip creation of Pixels, mass-read data from BufferedImage
+```
+Benchmark                                                                           Mode  Cnt         Score        Error   Units
+JpegWriterBenchmarks.Writing.testJpegWritingOfTransparentImage                      avgt    3        33.259 ±      1.448   ms/op
+JpegWriterBenchmarks.Writing.testJpegWritingOfTransparentImage:·gc.alloc.rate       avgt    3      1441.376 ±     65.097  MB/sec
+JpegWriterBenchmarks.Writing.testJpegWritingOfTransparentImage:·gc.alloc.rate.norm  avgt    3  50267161.066 ± 134433.518    B/op
+JpegWriterBenchmarks.Writing.testJpegWritingOfTransparentImage:·gc.count            avgt    3       128.000               counts
+JpegWriterBenchmarks.Writing.testJpegWritingOfTransparentImage:·gc.time             avgt    3        81.000                   ms
+```

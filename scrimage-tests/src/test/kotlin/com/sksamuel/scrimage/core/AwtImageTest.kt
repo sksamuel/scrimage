@@ -6,12 +6,14 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import java.awt.Color
 import java.awt.image.BufferedImage
 
-private val width = 1024
-private val height = 1536
+// Both non-base-of-two
+private const val width = (1024 + 7)
+private const val height = (1536 + 29)
 
 private val colorsUsed = listOf(
    Color.MAGENTA,
@@ -143,6 +145,19 @@ class AwtImageTest : FunSpec({
 
       image.forAll { it.x < width && it.y < height }.shouldBeTrue()
       image.forAll { it.x < width - 1 && it.y < height -1 }.shouldBeFalse()
+   }
+
+   test("forEachPixel") {
+      val image = ImmutableImage.fromAwt(baseImage)
+      val iter = image.iterator()
+
+      image.forEachPixel { x, y, argb ->
+         val refPixel = iter.next()
+         x.shouldBe(refPixel.x)
+         y.shouldBe(refPixel.y)
+         argb.shouldBe(refPixel.argb)
+      }
+      iter.hasNext().shouldBeFalse()
    }
 
 })
