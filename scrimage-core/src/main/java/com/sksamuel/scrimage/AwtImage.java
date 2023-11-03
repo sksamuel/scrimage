@@ -390,7 +390,7 @@ public class AwtImage {
     * Returns all the patches of a given size in the image, assuming pixel
     * alignment (no subpixel extraction).
     * <p>
-    * The patches are returned as an array of of pixel matrices arrays.
+    * The patches are returned as an array of pixel matrices arrays.
     */
    public Pixel[][] patches(int patchWidth, int patchHeight) {
       Pixel[][] patches = new Pixel[(height - patchHeight) * (width - patchWidth)][];

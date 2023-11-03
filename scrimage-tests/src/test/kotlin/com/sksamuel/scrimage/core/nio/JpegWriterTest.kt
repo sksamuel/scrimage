@@ -7,6 +7,7 @@ import com.sksamuel.scrimage.metadata.Tag
 import com.sksamuel.scrimage.nio.JpegWriter
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContainAll
+import io.kotest.matchers.shouldBe
 
 class JpegWriterTest : FunSpec({
 
@@ -33,4 +34,20 @@ class JpegWriterTest : FunSpec({
          Tag("b", 0, "8", "boo")
       )
    }
+
+   test("jpeg writer replaces transparent with white") {
+      val sourceImg = ImmutableImage.loader().fromResource("/transparent_chip.png")
+      val referenceImg = ImmutableImage.loader().fromResource("/transparent_chip_now_white_background.jpg")
+      val writtenImg = ImmutableImage.loader().fromBytes(sourceImg.bytes(JpegWriter.Default))
+
+      writtenImg.count().shouldBe(referenceImg.count())
+
+      var pixelIndex = 0
+      val writtenPixels = writtenImg.pixels()
+      referenceImg.forEach { pixel ->
+         writtenPixels[pixelIndex].shouldBe(pixel)
+         pixelIndex++
+      }
+   }
+
 })
