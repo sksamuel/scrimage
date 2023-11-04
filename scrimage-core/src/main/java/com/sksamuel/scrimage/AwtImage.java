@@ -15,6 +15,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferInt;
+import java.awt.image.Raster;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -178,27 +179,13 @@ public class AwtImage {
    }
 
    public void forEachPixel(PixelTools.PixelConsumer consumer) {
-      int[] tempBuf = new int[1024];
-      for (int y = 0; y < height; y++) {
-         int xOffset = 0;
-         boolean stop = false;
-         while (!stop) {
-            int leftToRead = width - xOffset;
-            int readLength = tempBuf.length;
-            if (leftToRead <= tempBuf.length) {
-               // If we have at most the buffer's size left to read, we're done with this y.
-               stop = true;
-               readLength = leftToRead;
-            }
-            awt.getRGB(xOffset, y, readLength, 1, tempBuf, 0, 1);
-            for (int i = 0; i < readLength; i++) {
-               int x = xOffset + i;
-               consumer.consume(x, y, tempBuf[i]);
-            }
-            xOffset += tempBuf.length;
-         }
+      for (int k = 0; k < AwtImage.this.count(); k++) {
+         Point point = PixelTools.offsetToPoint(k, width);
+         int rgb = awt.getRGB(point.x, point.y);
+         consumer.consume(point.x, point.y, rgb);
       }
    }
+
 
    // This tuple contains all the state that identifies this particular image.
    private ImageState imageState() {

@@ -8,6 +8,7 @@ import com.sksamuel.scrimage.nio.JpegWriter
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
+import java.io.FileOutputStream
 
 class JpegWriterTest : FunSpec({
 
@@ -44,8 +45,9 @@ class JpegWriterTest : FunSpec({
 
       var pixelIndex = 0
       val writtenPixels = writtenImg.pixels()
-      referenceImg.forEach { pixel ->
-         writtenPixels[pixelIndex].shouldBe(pixel)
+      referenceImg.forEach { expected ->
+         val actual = writtenPixels[pixelIndex]
+         actual.shouldBe(expected)
          pixelIndex++
       }
    }

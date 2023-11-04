@@ -46,8 +46,33 @@ public class JpegWriter implements ImageWriter {
 
    @Override
    public void write(AwtImage image, ImageMetadata metadata, OutputStream out) throws IOException {
+      javax.imageio.ImageWriter writer = null;
+      try {
+         writer = ImageIO.getImageWritersByFormatName("jpeg").next();
+         ImageWriteParam params = createImageWritingParams(writer);
 
-      javax.imageio.ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
+         // in openjdk, awt cannot write out jpegs that have a transparency bit, even if that is set to 255.
+         // see http://stackoverflow.com/questions/464825/converting-transparent-gif-png-to-jpeg-using-java
+         // so have to convert to a non alpha type
+         BufferedImage noAlpha;
+         if (image.awt().getColorModel().hasAlpha()) {
+            noAlpha = image.toImmutableImage().removeTransparency(java.awt.Color.WHITE).toNewBufferedImage(BufferedImage.TYPE_INT_RGB);
+         } else {
+            noAlpha = image.awt();
+         }
+
+         MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream(out);
+         writer.setOutput(output);
+         writer.write(null, new IIOImage(noAlpha, null, null), params);
+         output.close();
+      } finally {
+         if (writer != null) {
+            writer.dispose();
+         }
+      }
+   }
+
+   private ImageWriteParam createImageWritingParams(javax.imageio.ImageWriter writer) {
       ImageWriteParam params = writer.getDefaultWriteParam();
 
       if (compression == 100) {
@@ -66,22 +91,6 @@ public class JpegWriter implements ImageWriter {
             params.setProgressiveMode(ImageWriteParam.MODE_DISABLED);
          }
       }
-
-      // in openjdk, awt cannot write out jpegs that have a transparency bit, even if that is set to 255.
-      // see http://stackoverflow.com/questions/464825/converting-transparent-gif-png-to-jpeg-using-java
-      // so have to convert to a non alpha type
-      BufferedImage noAlpha;
-      if (image.awt().getColorModel().hasAlpha()) {
-         noAlpha = image.toImmutableImage().removeTransparency(java.awt.Color.WHITE).toNewBufferedImage(BufferedImage.TYPE_INT_RGB);
-      } else {
-         noAlpha = image.awt();
-      }
-
-      MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream(out);
-      writer.setOutput(output);
-      writer.write(null, new IIOImage(noAlpha, null, null), params);
-      output.close();
-      writer.dispose();
-//        IOUtils.closeQuietly(out);
+      return params;
    }
 }
