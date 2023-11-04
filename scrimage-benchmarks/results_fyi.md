@@ -12,7 +12,7 @@ OpenJDK 64-Bit Server VM Corretto-17.0.6.10.1 (build 17.0.6+10-LTS, mixed mode, 
 
 ## Results
 
-### Starting situation (After 0ac6e717eb1209931553641533a64c268bde87cd)
+### Starting situation (At 04faed43439004d1105b1b6783b6edf32df5af1d)
 ```
 Benchmark                                                                           Mode  Cnt         Score        Error   Units
 JpegWriterBenchmarks.Writing.testJpegWritingOfTransparentImage                      avgt    3        47.722 ±     16.861   ms/op
