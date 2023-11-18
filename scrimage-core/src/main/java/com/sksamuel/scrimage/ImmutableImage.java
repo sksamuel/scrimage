@@ -1096,16 +1096,12 @@ public class ImmutableImage extends MutableImage {
     * Returns a new ImmutableImage with transparency replaced with the given color.
     */
    public ImmutableImage removeTransparency(Color color) {
-      return removeTransparencyFast(color);
-   }
-
-   private ImmutableImage removeTransparencyFast(Color color) {
       if (awt().getColorModel().hasAlpha()) {
          BufferedImage newImage = new BufferedImage(awt().getWidth(), awt().getHeight(), BufferedImage.TYPE_INT_RGB);
          Graphics2D g = null;
          try {
             g = newImage.createGraphics();
-            g.setColor(Color.WHITE);
+            g.setColor(color);
             g.fillRect(0, 0, newImage.getWidth(), newImage.getHeight());
             g.drawImage(awt(), 0, 0, null);
          } finally {
