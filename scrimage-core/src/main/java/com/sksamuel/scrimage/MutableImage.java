@@ -37,6 +37,11 @@ public class MutableImage extends AwtImage {
       });
    }
 
+   /**
+    * This is very slow and you probably should not use it.
+    * @param color background color
+    */
+   @Deprecated
    public void replaceTransparencyInPlace(java.awt.Color color) {
       forEachPixel((x, y, currentArgb) -> {
          Pixel withoutTrans = PixelTools.replaceTransparencyWithColor(new Pixel(x, y, currentArgb), color);

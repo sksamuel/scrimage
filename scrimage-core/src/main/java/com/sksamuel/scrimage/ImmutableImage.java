@@ -1096,21 +1096,7 @@ public class ImmutableImage extends MutableImage {
     * Returns a new ImmutableImage with transparency replaced with the given color.
     */
    public ImmutableImage removeTransparency(Color color) {
-      return removeTransparency(color, true);
-   }
-
-   public ImmutableImage removeTransparency(Color color, boolean fast) {
-      if (fast) {
-         return removeTransparencyFast(color);
-      } else {
-         return removeTransparencySlow(color);
-      }
-   }
-
-   private ImmutableImage removeTransparencySlow(Color color) {
-      ImmutableImage target = copy();
-      target.replaceTransparencyInPlace(color);
-      return target;
+      return removeTransparencyFast(color);
    }
 
    private ImmutableImage removeTransparencyFast(Color color) {
