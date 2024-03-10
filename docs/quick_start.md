@@ -20,7 +20,7 @@ around the [TwelveMonkeys](https://github.com/haraldk/TwelveMonkeys) library.
 === "SBT"
 
     ```scala
-    libraryDependencies += "com.sksamuel.scrimage" % "scrimage-core" % "$version"
+    libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-core" % "$version"
     libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-scala" % "$version"
     ```
 
