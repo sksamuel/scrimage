@@ -40,7 +40,7 @@ around the [TwelveMonkeys](https://github.com/haraldk/TwelveMonkeys) library.
 ### Scala Helpers
 
 If you are using Scala and you have added the scala module, then add the import
-`import com.sksamuel.scrimage.scala._` to bring into scope some useful implicits.
+`import com.sksamuel.scrimage.implicits._` to bring into scope some useful implicits.
 
 Firstly, an implicit `PNGWriter` so you do not have to specify it when outputting images.
 Secondly, a conversion to / from
