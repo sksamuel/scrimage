@@ -47,12 +47,13 @@ public class CWebpHandler extends WebpHandler {
                          int q,
                          int z,
                          boolean lossless,
-                         boolean withoutAlpha) throws IOException {
+                         boolean withoutAlpha,
+                         boolean multiThread) throws IOException {
       Path input = Files.createTempFile("input", "webp").toAbsolutePath();
       Path output = Files.createTempFile("to_webp", "webp").toAbsolutePath();
       try {
          Files.write(input, bytes, StandardOpenOption.CREATE);
-         convert(input, output, m, q, z, lossless, withoutAlpha);
+         convert(input, output, m, q, z, lossless, withoutAlpha, multiThread);
          return Files.readAllBytes(output);
       } finally {
          try {
@@ -72,8 +73,8 @@ public class CWebpHandler extends WebpHandler {
                         int q,
                         int z,
                         boolean lossless,
-                        boolean withoutAlpha) throws IOException {
-
+                        boolean withoutAlpha,
+                        boolean multiThread) throws IOException {
       Path stdout = Files.createTempFile("stdout", "webp");
       List<String> commands = new ArrayList<>();
       commands.add(binary.toAbsolutePath().toString());
@@ -94,6 +95,9 @@ public class CWebpHandler extends WebpHandler {
       }
       if (withoutAlpha) {
          commands.add("-noalpha");
+      }
+      if (multiThread) {
+         commands.add("-mt");
       }
       commands.add(input.toAbsolutePath().toString());
       commands.add("-o");
