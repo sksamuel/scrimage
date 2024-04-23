@@ -72,6 +72,8 @@ abstract class WebpHandler {
          return macArm(binaryName);
       } else if (SystemUtils.IS_OS_MAC) {
          return macIntel(binaryName);
+      } else if (SystemUtils.IS_OS_LINUX && (osArch.startsWith("arm") || osArch.startsWith("aarch64"))) {
+         return linuxArm(binaryName);
       } else {
          return linux(binaryName);
       }
@@ -112,6 +114,14 @@ abstract class WebpHandler {
          "/webp_binaries/" + binaryName,
          "/webp_binaries/linux/" + binaryName,
          "/dist_webp_binaries/libwebp-1.3.2-linux-x86-64/bin/" + binaryName,
+      };
+   }
+
+   private static String[] linuxArm(String binaryName) {
+      return new String[]{
+         "/webp_binaries/" + binaryName,
+         "/webp_binaries/linux/" + binaryName,
+         "/dist_webp_binaries/libwebp-1.3.2-linux-aarch64/bin/" + binaryName,
       };
    }
 
