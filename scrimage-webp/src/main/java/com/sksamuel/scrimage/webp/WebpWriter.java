@@ -20,6 +20,7 @@ public class WebpWriter implements ImageWriter {
    private final int m;
    private final boolean lossless;
    private final boolean noAlpha;
+   private final boolean multiThread;
 
    public WebpWriter() {
       z = -1;
@@ -27,6 +28,7 @@ public class WebpWriter implements ImageWriter {
       m = -1;
       lossless = false;
       noAlpha = false;
+      multiThread = false;
    }
 
    public WebpWriter(int z, int q, int m, boolean lossless) {
@@ -35,6 +37,7 @@ public class WebpWriter implements ImageWriter {
       this.m = m;
       this.lossless = lossless;
       this.noAlpha = false;
+      this.multiThread = false;
    }
 
    public WebpWriter(int z, int q, int m, boolean lossless, boolean noAlpha) {
@@ -43,6 +46,16 @@ public class WebpWriter implements ImageWriter {
       this.m = m;
       this.lossless = lossless;
       this.noAlpha = noAlpha;
+      this.multiThread = false;
+   }
+
+   public WebpWriter(int z, int q, int m, boolean lossless, boolean noAlpha, boolean multiThread) {
+      this.z = z;
+      this.q = q;
+      this.m = m;
+      this.lossless = lossless;
+      this.noAlpha = noAlpha;
+      this.multiThread = multiThread;
    }
 
    public WebpWriter withLossless() {
@@ -51,6 +64,10 @@ public class WebpWriter implements ImageWriter {
 
    public WebpWriter withoutAlpha() {
       return new WebpWriter(z, q, m, lossless, true);
+   }
+
+   public WebpWriter withMultiThread() {
+      return new WebpWriter(z, q, m, lossless, noAlpha, multiThread);
    }
 
    public WebpWriter withQ(int q) {
@@ -73,7 +90,7 @@ public class WebpWriter implements ImageWriter {
 
    @Override
    public void write(AwtImage image, ImageMetadata metadata, OutputStream out) throws IOException {
-      byte[] bytes = handler.convert(image.bytes(PngWriter.NoCompression), m, q, z, lossless, noAlpha);
+      byte[] bytes = handler.convert(image.bytes(PngWriter.NoCompression), m, q, z, lossless, noAlpha, multiThread);
       out.write(bytes);
    }
 }

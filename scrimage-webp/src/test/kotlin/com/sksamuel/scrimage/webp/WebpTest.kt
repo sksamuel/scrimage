@@ -30,6 +30,13 @@ class WebpTest : FunSpec() {
             javaClass.getResourceAsStream("/noAlpha.webp").readBytes()
       }
 
+      test("render with multi thread") {
+         val webpWriter = WebpWriter.MAX_LOSSLESS_COMPRESSION.withMultiThread()
+         ImmutableImage.loader().fromResource("/spacedock.jpg").scale(0.5)
+            .bytes(webpWriter) shouldBe
+            javaClass.getResourceAsStream("/spacedock.webp").readBytes()
+      }
+
       test("dwebp should capture error on failure") {
          val dwebpPath = WebpHandler.getBinaryPaths("dwebp")[2]
 
