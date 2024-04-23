@@ -1,6 +1,11 @@
 Changelog
 =========
 
+#### 4.1.2
+
+* Added the option to use multithreading when encoding webp (#287)
+* Support webp in linux os with aarch64 architecture (#286)
+
 #### 4.1.1
 
 * Fixed RGB colour average calcuation #280
