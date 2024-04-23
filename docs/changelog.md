@@ -1,7 +1,7 @@
 Changelog
 =========
 
-#### 4.1.2
+#### 4.1.2 (April 2024)
 
 * Added the option to use multithreading when encoding webp (#287)
 * Support webp in linux os with aarch64 architecture (#286)
