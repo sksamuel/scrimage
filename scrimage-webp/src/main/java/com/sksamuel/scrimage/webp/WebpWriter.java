@@ -67,7 +67,7 @@ public class WebpWriter implements ImageWriter {
    }
 
    public WebpWriter withMultiThread() {
-      return new WebpWriter(z, q, m, lossless, noAlpha, multiThread);
+      return new WebpWriter(z, q, m, lossless, noAlpha, true);
    }
 
    public WebpWriter withQ(int q) {
