@@ -1,6 +1,10 @@
 Changelog
 =========
 
+#### 4.1.3 (April 2024)
+
+* Fixed for multithread builder method (#290)
+
 #### 4.1.2 (April 2024)
 
 * Added the option to use multithreading when encoding webp (#287)
