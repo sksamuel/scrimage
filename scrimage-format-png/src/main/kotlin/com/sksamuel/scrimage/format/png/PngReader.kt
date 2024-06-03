@@ -129,7 +129,6 @@ class PngReader {
 
       fun typeString(type: ByteArray) = type.map { it.toInt().toChar() }.toCharArray().concatToString()
       println("Type=" + typeString(type))
-      val b = "00010000".toByte(2)
 
       return when {
          type.contentEquals(IDAT) -> readDataChunk(input, len)
