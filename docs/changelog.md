@@ -1,6 +1,10 @@
 Changelog
 =========
 
+#### 4.2.0 (August 2024)
+
+* Removed open-gif library which is no longer maintained. #292
+
 #### 4.1.3 (April 2024)
 
 * Fixed for multithread builder method (#290)
