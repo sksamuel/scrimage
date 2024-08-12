@@ -42,9 +42,7 @@ import thirdparty.mortennobel.*;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImageOp;
+import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -1098,9 +1096,25 @@ public class ImmutableImage extends MutableImage {
     * Returns a new ImmutableImage with transparency replaced with the given color.
     */
    public ImmutableImage removeTransparency(Color color) {
-      ImmutableImage target = copy();
-      target.replaceTransparencyInPlace(color);
-      return target;
+      if (awt().getColorModel().hasAlpha()) {
+         BufferedImage newImage = new BufferedImage(awt().getWidth(), awt().getHeight(), BufferedImage.TYPE_INT_RGB);
+         Graphics2D g = null;
+         try {
+            g = newImage.createGraphics();
+            g.setColor(color);
+            g.fillRect(0, 0, newImage.getWidth(), newImage.getHeight());
+            g.drawImage(awt(), 0, 0, null);
+         } finally {
+            if (g != null) {
+               g.dispose();
+            }
+         }
+
+         return ImmutableImage.wrapAwt(newImage);
+      } else {
+         return this;
+      }
+
    }
 
    /**
