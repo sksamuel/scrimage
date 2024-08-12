@@ -1,3 +1,2 @@
 com.sksamuel.scrimage.nio.ImageIOReader
 com.sksamuel.scrimage.nio.PngReader
-com.sksamuel.scrimage.nio.OpenGifReader
