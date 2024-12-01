@@ -37,17 +37,17 @@ abstract class WebpHandler {
    }
 
    protected static void installBinary(Path output, String... sources) throws IOException {
-      logger.info("Installing binary at " + output);
+      logger.info("Installing binary at {}", output);
       for (String source : sources) {
-         logger.debug("Trying source from " + source);
+         logger.debug("Trying source from {}", source);
          InputStream in = WebpHandler.class.getResourceAsStream(source);
          if (in != null) {
-            logger.debug("Source detected " + source);
+            logger.debug("Source detected {}", source);
             Files.copy(in, output, StandardCopyOption.REPLACE_EXISTING);
             in.close();
 
             if (!SystemUtils.IS_OS_WINDOWS) {
-               logger.info("Setting executable " + output);
+               logger.info("Setting executable {}", output);
                setExecutable(output);
             }
             return;
@@ -83,7 +83,7 @@ abstract class WebpHandler {
       return new String[]{
          "/webp_binaries/" + binaryName,
          "/webp_binaries/mac/" + binaryName,
-         "/dist_webp_binaries/libwebp-1.3.2-mac-x86-64/bin/" + binaryName,
+         "/dist_webp_binaries/libwebp-1.4.0-mac-x86-64/bin/" + binaryName,
       };
    }
 
@@ -91,7 +91,7 @@ abstract class WebpHandler {
       return new String[]{
          "/webp_binaries/" + binaryName,
          "/webp_binaries/mac_arm64/" + binaryName,
-         "/dist_webp_binaries/libwebp-1.3.2-mac-arm64/bin/" + binaryName,
+         "/dist_webp_binaries/libwebp-1.4.0-mac-arm64/bin/" + binaryName,
       };
    }
 
@@ -104,8 +104,8 @@ abstract class WebpHandler {
          "/webp_binaries/window/" + binaryName + ".exe",
          "/webp_binaries/windows/" + binaryName,
          "/webp_binaries/windows/" + binaryName + ".exe",
-         "/dist_webp_binaries/libwebp-1.3.2-windows-x64/bin/" + binaryName,
-         "/dist_webp_binaries/libwebp-1.3.2-windows-x64/bin/" + binaryName + ".exe",
+         "/dist_webp_binaries/libwebp-1.4.0-windows-x64/bin/" + binaryName,
+         "/dist_webp_binaries/libwebp-1.4.0-windows-x64/bin/" + binaryName + ".exe",
       };
    }
 
@@ -113,7 +113,7 @@ abstract class WebpHandler {
       return new String[]{
          "/webp_binaries/" + binaryName,
          "/webp_binaries/linux/" + binaryName,
-         "/dist_webp_binaries/libwebp-1.3.2-linux-x86-64/bin/" + binaryName,
+         "/dist_webp_binaries/libwebp-1.4.0-linux-x86-64/bin/" + binaryName,
       };
    }
 
@@ -121,7 +121,7 @@ abstract class WebpHandler {
       return new String[]{
          "/webp_binaries/" + binaryName,
          "/webp_binaries/linux/" + binaryName,
-         "/dist_webp_binaries/libwebp-1.3.2-linux-aarch64/bin/" + binaryName,
+         "/dist_webp_binaries/libwebp-1.4.0-linux-aarch64/bin/" + binaryName,
       };
    }
 
