@@ -1,6 +1,10 @@
 Changelog
 =========
 
+#### 4.3.0 (December 2024)
+
+* Updated to use webp 1.4.0
+
 #### 4.2.0 (August 2024)
 
 * Removed open-gif library which is no longer maintained. #292
