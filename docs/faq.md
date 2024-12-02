@@ -18,6 +18,6 @@ mechanism is based on the `META-INF/services` directory in the JAR file. When yo
 all `META-INF/services` directories are merged, otherwise the `ServiceLoader` mechanism will not work as expected.
 
 For instance, if you are using the gradle shadow plugin, you can read
-instructions [here](https://gradleup.com/shadow/configuration/merging/#merging-service-descriptor-files/). If you are using SBT
+instructions [here](https://gradleup.com/shadow/configuration/merging/#merging-service-descriptor-files). If you are using SBT
 assembly, instructions are [here](https://github.com/sbt/sbt-assembly?tab=readme-ov-file#merge-strategy).
 Other fat jar plugins should have similar instructions.
