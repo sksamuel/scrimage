@@ -5,8 +5,7 @@ import com.sksamuel.scrimage.pixels.Pixel;
 import com.sksamuel.scrimage.pixels.PixelTools;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.awt.image.RescaleOp;
+import java.awt.image.*;
 import java.util.Arrays;
 import java.util.function.Function;
 
@@ -38,10 +37,15 @@ public class MutableImage extends AwtImage {
       });
    }
 
+   /**
+    * This is very slow and you probably should not use it.
+    * @param color background color
+    */
+   @Deprecated
    public void replaceTransparencyInPlace(java.awt.Color color) {
-      Arrays.stream(pixels()).forEach(pixel -> {
-         Pixel withoutTrans = PixelTools.replaceTransparencyWithColor(pixel, color);
-         awt().setRGB(pixel.x, pixel.y, withoutTrans.toARGBInt());
+      forEachPixel((x, y, currentArgb) -> {
+         Pixel withoutTrans = PixelTools.replaceTransparencyWithColor(new Pixel(x, y, currentArgb), color);
+         awt().setRGB(withoutTrans.x, withoutTrans.y, withoutTrans.toARGBInt());
       });
    }
 

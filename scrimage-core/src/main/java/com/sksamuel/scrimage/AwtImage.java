@@ -15,17 +15,18 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferInt;
+import java.awt.image.Raster;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Wraps an AWT BufferedImage with some basic helper functions related to sizes, pixels etc.
@@ -103,7 +104,7 @@ public class AwtImage {
     * Returns the colors of this image represented as an array of RGBColor.
     */
    public RGBColor[] colors() {
-      return Arrays.stream(pixels()).map(Pixel::toColor).toArray(RGBColor[]::new);
+      return asPixelStream().map(Pixel::toColor).toArray(RGBColor[]::new);
    }
 
    /**
@@ -177,6 +178,15 @@ public class AwtImage {
       };
    }
 
+   public void forEachPixel(PixelTools.PixelConsumer consumer) {
+      for (int k = 0; k < AwtImage.this.count(); k++) {
+         Point point = PixelTools.offsetToPoint(k, width);
+         int rgb = awt.getRGB(point.x, point.y);
+         consumer.consume(point.x, point.y, rgb);
+      }
+   }
+
+
    // This tuple contains all the state that identifies this particular image.
    private ImageState imageState() {
       return new ImageState(width, height, pixels());
@@ -240,7 +250,7 @@ public class AwtImage {
     * @param fn a function that accepts a pixel
     */
    public void forEach(Consumer<Pixel> fn) {
-      Arrays.stream(points()).forEach(p -> fn.accept(pixel(p)));
+      iterator().forEachRemaining(fn);
    }
 
    /**
@@ -287,7 +297,17 @@ public class AwtImage {
     * @return true if p holds for at least one pixel
     */
    public boolean exists(Predicate<Pixel> p) {
-      return Arrays.stream(pixels()).anyMatch(p);
+      return asPixelStream().anyMatch(p);
+   }
+
+   private Stream<Pixel> asPixelStream() {
+      long size = count();
+      return StreamSupport.stream(
+         Spliterators.spliterator(
+            iterator(),
+            size,
+            Spliterator.SIZED
+         ), false);
    }
 
    /**
@@ -413,7 +433,7 @@ public class AwtImage {
     * @return the set of distinct Colors
     */
    public Set<RGBColor> colours() {
-      return Arrays.stream(pixels()).map(Pixel::toColor).collect(Collectors.toSet());
+      return asPixelStream().map(Pixel::toColor).collect(Collectors.toSet());
    }
 
    /**
@@ -423,7 +443,8 @@ public class AwtImage {
     * @return the number of pixels that matched the colour of the given pixel
     */
    public long count(Color color) {
-      return count(p -> p.toColor().equals(RGBColor.fromAwt(color)));
+      RGBColor needle = RGBColor.fromAwt(color);
+      return count(p -> p.toColor().equals(needle));
    }
 
    /**
@@ -433,7 +454,7 @@ public class AwtImage {
     * @return the number of pixels that evaluated true
     */
    public long count(Predicate<Pixel> p) {
-      return Arrays.stream(pixels()).filter(p).count();
+      return asPixelStream().filter(p).count();
    }
 
    /**
@@ -525,7 +546,7 @@ public class AwtImage {
     * Returns true if the given predicate holds for all pixels in the image.
     */
    public boolean forAll(Predicate<Pixel> predicate) {
-      return Arrays.stream(pixels()).allMatch(predicate);
+      return asPixelStream().allMatch(predicate);
    }
 
    /**
@@ -566,7 +587,7 @@ public class AwtImage {
     * Returns the average colour of all pixels in this image
     */
    public RGBColor average() {
-      return Arrays.stream(pixels()).map(Pixel::toColor).reduce(com.sksamuel.scrimage.color.Color::average).get();
+      return asPixelStream().map(Pixel::toColor).reduce(com.sksamuel.scrimage.color.Color::average).get();
    }
 
    /**
