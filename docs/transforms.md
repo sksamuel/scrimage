@@ -40,6 +40,7 @@ Produces a linear gradient copy of the image for the two most dominent colours o
 === "Java"
 
     ```
+    ```
     ImmutableImage transformed = image1.transform(new DominantGradient())
     ```
 
