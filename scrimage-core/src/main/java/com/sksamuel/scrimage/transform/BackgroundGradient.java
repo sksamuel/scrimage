@@ -22,13 +22,13 @@ public class BackgroundGradient implements Transform {
    }
 
    @Override
-   public ImmutableImage apply(ImmutableImage image) throws IOException {
+   public ImmutableImage apply(ImmutableImage input) throws IOException {
       // get the dominant colours
-      RGBColor[] dominant = image.quantize(2);
+      RGBColor[] dominant = input.quantize(2);
       // create the linear gradient
       ImmutableImage bg = ImmutableImage.create(width, height)
          .fill(LinearGradient.horizontal(dominant[0].awt(), dominant[1].awt()));
       // write the input over
-      return bg.overlay(image, Position.Center);
+      return bg.overlay(input, Position.Center);
    }
 }
