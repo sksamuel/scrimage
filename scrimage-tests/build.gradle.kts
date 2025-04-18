@@ -4,11 +4,12 @@ plugins {
 }
 
 dependencies {
+   implementation(project(":scrimage-core"))
+   implementation(project(":scrimage-filters"))
    implementation("com.twelvemonkeys.imageio:imageio-core:3.9.4")
    implementation("com.twelvemonkeys.imageio:imageio-jpeg:3.9.4")
    implementation("com.drewnoakes:metadata-extractor:2.18.0")
    implementation("commons-io:commons-io:2.11.0")
-   implementation(project(":scrimage-core"))
    testImplementation(kotlin("stdlib"))
    testImplementation(kotlin("stdlib-jdk8"))
    testImplementation("io.kotest:kotest-framework-datatest:5.5.5")
