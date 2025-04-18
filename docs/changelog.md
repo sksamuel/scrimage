@@ -1,6 +1,10 @@
 Changelog
 =========
 
+#### 4.3.1 (April 2025)
+
+* Added DominantGradient transform
+
 #### 4.3.0 (December 2024)
 
 * Updated to use webp 1.4.0
