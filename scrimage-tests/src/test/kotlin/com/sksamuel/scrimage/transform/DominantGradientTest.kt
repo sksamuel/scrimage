@@ -1,7 +1,6 @@
 package com.sksamuel.scrimage.transform
 
 import com.sksamuel.scrimage.ImmutableImage
-import com.sksamuel.scrimage.nio.PngWriter
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 
