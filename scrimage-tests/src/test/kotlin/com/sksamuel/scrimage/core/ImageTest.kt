@@ -5,6 +5,8 @@ package com.sksamuel.scrimage.core
 import com.sksamuel.scrimage.Dimension
 import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.color.RGBColor
+import com.sksamuel.scrimage.nio.ImageWriter
+import com.sksamuel.scrimage.nio.PngWriter
 import java.awt.Color
 import java.awt.image.BufferedImage
 import io.kotest.core.spec.style.FunSpec
