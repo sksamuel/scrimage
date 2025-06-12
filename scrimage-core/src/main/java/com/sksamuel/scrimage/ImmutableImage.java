@@ -522,7 +522,7 @@ public class ImmutableImage extends MutableImage {
     */
    public ImmutableImage cover(int targetWidth,
                                int targetHeight) {
-      return cover(targetWidth, targetHeight, ScaleMethod.Bicubic, Position.Center);
+      return cover(targetWidth, targetHeight, ScaleMethod.Bicubic, Position.Center, DEFAULT_DATA_TYPE);
    }
 
    /**
@@ -531,7 +531,7 @@ public class ImmutableImage extends MutableImage {
    public ImmutableImage cover(int targetWidth,
                                int targetHeight,
                                Position position) {
-      return cover(targetWidth, targetHeight, ScaleMethod.Bicubic, position);
+      return cover(targetWidth, targetHeight, ScaleMethod.Bicubic, position, DEFAULT_DATA_TYPE);
    }
 
    /**
@@ -556,10 +556,37 @@ public class ImmutableImage extends MutableImage {
                                int targetHeight,
                                ScaleMethod scaleMethod,
                                Position position) {
+      return cover(targetWidth, targetHeight, scaleMethod, position, DEFAULT_DATA_TYPE);
+   }
+
+   /**
+    * Returns an image with the given dimensions where this image has been scaled to
+    * completely cover the new dimensions whilst retaining the original aspect ratio.
+    * <p>
+    * If the given dimensions have a different aspect ratio than this image
+    * then the image will be cropped so that it still covers the new area
+    * without leaving any background.
+    * <p>
+    * In other words, the image "covers" the target dimensions with the potential loss of some of the image if
+    * the aspect ratio change. Similar to taking a 16:9 movie and resizing it for a 4:3 screen. You can either
+    * lose part of the image (this operation) or resize it so there is empty space on two sides (the fit operation).
+    *
+    * @param targetWidth  the target width
+    * @param targetHeight the target height
+    * @param scaleMethod  the type of scaling method to use. Defaults to Bicubic
+    * @param position     where to position the image inside the new canvas
+    * @param imageType    the AWT image type to create. See BufferedImage.TYPE_*
+    * @return a new Image with the original image scaled to cover the new dimensions
+    */
+   public ImmutableImage cover(int targetWidth,
+                               int targetHeight,
+                               ScaleMethod scaleMethod,
+                               Position position,
+                               int imageType) {
       Dimension coveredDimensions = DimensionTools.dimensionsToCover(new Dimension(targetWidth, targetHeight), new Dimension(width, height));
       ImmutableImage scaled = scaleTo(coveredDimensions.getX(), coveredDimensions.getY(), scaleMethod);
       Dimension dim = position.calculateXY(targetWidth, targetHeight, coveredDimensions.getX(), coveredDimensions.getY());
-      ImmutableImage result = create(targetWidth, targetHeight);
+      ImmutableImage result = create(targetWidth, targetHeight, imageType);
       result.overlayInPlace(scaled.awt(), dim.getX(), dim.getY());
       return result;
    }
@@ -638,26 +665,26 @@ public class ImmutableImage extends MutableImage {
     */
    public ImmutableImage fit(int canvasWidth,
                              int canvasHeight) {
-      return fit(canvasWidth, canvasHeight, Colors.Transparent.toAWT(), ScaleMethod.Bicubic, Position.Center);
+      return fit(canvasWidth, canvasHeight, Colors.Transparent.toAWT(), ScaleMethod.Bicubic, Position.Center, DEFAULT_DATA_TYPE);
    }
 
    public ImmutableImage fit(int canvasWidth,
                              int canvasHeight,
                              ScaleMethod scaleMethod) {
-      return fit(canvasWidth, canvasHeight, Colors.Transparent.awt(), scaleMethod, Position.Center);
+      return fit(canvasWidth, canvasHeight, Colors.Transparent.awt(), scaleMethod, Position.Center, DEFAULT_DATA_TYPE);
    }
 
    public ImmutableImage fit(int canvasWidth,
                              int canvasHeight,
                              Color color) {
-      return fit(canvasWidth, canvasHeight, color, ScaleMethod.Bicubic, Position.Center);
+      return fit(canvasWidth, canvasHeight, color, ScaleMethod.Bicubic, Position.Center, DEFAULT_DATA_TYPE);
    }
 
    public ImmutableImage fit(int canvasWidth,
                              int canvasHeight,
                              Color color,
                              Position position) {
-      return fit(canvasWidth, canvasHeight, color, ScaleMethod.Bicubic, position);
+      return fit(canvasWidth, canvasHeight, color, ScaleMethod.Bicubic, position, DEFAULT_DATA_TYPE);
    }
 
    /**
@@ -681,10 +708,36 @@ public class ImmutableImage extends MutableImage {
                              Color color,
                              ScaleMethod scaleMethod,
                              Position position) {
+      return fit(canvasWidth, canvasHeight, color, scaleMethod, position, DEFAULT_DATA_TYPE);
+   }
+
+   /**
+    * Returns a copy of this image with the given dimensions
+    * where the original image has been scaled to fit completely
+    * inside the new dimensions whilst retaining the original aspect ratio.
+    * <p>
+    * In other words, the image "fits" the target dimensions without losing any of the image if
+    * the aspect ratio change. Similar to taking a 16:9 movie and resizing it for a 4:3 screen. You can either
+    * lose part of the image (cover operation) or resize it so there is empty space on two sides (this operation).
+    *
+    * @param canvasWidth  the target width
+    * @param canvasHeight the target height
+    * @param scaleMethod  the algorithm to use for the scaling operation. See ScaleMethod.
+    * @param color        the color to use as the "padding" colour should the scaled original not fit exactly inside the new dimensions
+    * @param position     where to position the image inside the new canvas
+    * @param imageType    the AWT image type to create. See BufferedImage.TYPE_*
+    * @return a new Image with the original image scaled to fit inside
+    */
+   public ImmutableImage fit(int canvasWidth,
+                             int canvasHeight,
+                             Color color,
+                             ScaleMethod scaleMethod,
+                             Position position,
+                             int imageType) {
       Dimension wh = DimensionTools.dimensionsToFit(new Dimension(canvasWidth, canvasHeight), new Dimension(width, height));
       Dimension dim = position.calculateXY(canvasWidth, canvasHeight, wh.getX(), wh.getY());
       ImmutableImage scaled = scaleTo(wh.getX(), wh.getY(), scaleMethod);
-      ImmutableImage result = ImmutableImage.filled(canvasWidth, canvasHeight, color);
+      ImmutableImage result = ImmutableImage.filled(canvasWidth, canvasHeight, color, imageType);
       result.overlayInPlace(scaled.awt(), dim.getX(), dim.getY());
       return result;
    }
@@ -789,15 +842,15 @@ public class ImmutableImage extends MutableImage {
    }
 
    public ImmutableImage resize(double scaleFactor) {
-      return resize(scaleFactor, Position.Center, Colors.Transparent.awt());
+      return resize(scaleFactor, Position.Center, Colors.Transparent.awt(), DEFAULT_DATA_TYPE);
    }
 
    public ImmutableImage resize(double scaleFactor, Position position) {
-      return resize(scaleFactor, position, Colors.Transparent.awt());
+      return resize(scaleFactor, position, Colors.Transparent.awt(), DEFAULT_DATA_TYPE);
    }
 
    public ImmutableImage resize(double scaleFactor, Color background) {
-      return resize(scaleFactor, Position.Center, background);
+      return resize(scaleFactor, Position.Center, background, DEFAULT_DATA_TYPE);
    }
 
    /**
@@ -810,24 +863,38 @@ public class ImmutableImage extends MutableImage {
     * @return a new Image that is the result of resizing the canvas.
     */
    public ImmutableImage resize(double scaleFactor, Position position, Color background) {
-      return resizeTo((int) (width * scaleFactor), (int) (height * scaleFactor), position, background);
+      return resize(scaleFactor, position, background, DEFAULT_DATA_TYPE);
+   }
+
+   /**
+    * Resize will resize the canvas, it will not scale the image.
+    * This is like a "canvas resize" in Photoshop.
+    *
+    * @param scaleFactor the scaleFactor. 1 retains original size. 0.5 is half. 2 double. etc
+    * @param position    where to position the original image after the canvas size change. Defaults to centre.
+    * @param background  the color to use for expande background areas.
+    * @param imageType   the AWT image type to create. See BufferedImage.TYPE_*
+    * @return a new Image that is the result of resizing the canvas.
+    */
+   public ImmutableImage resize(double scaleFactor, Position position, Color background, int imageType) {
+      return resizeTo((int) (width * scaleFactor), (int) (height * scaleFactor), position, background, imageType);
    }
 
    public ImmutableImage resizeTo(int targetWidth,
                                   int targetHeight) {
-      return resizeTo(targetWidth, targetHeight, Position.Center, Colors.Transparent.awt());
+      return resizeTo(targetWidth, targetHeight, Position.Center, Colors.Transparent.awt(), DEFAULT_DATA_TYPE);
    }
 
    public ImmutableImage resizeTo(int targetWidth,
                                   int targetHeight,
                                   Position position) {
-      return resizeTo(targetWidth, targetHeight, position, Colors.Transparent.awt());
+      return resizeTo(targetWidth, targetHeight, position, Colors.Transparent.awt(), DEFAULT_DATA_TYPE);
    }
 
    public ImmutableImage resizeTo(int targetWidth,
                                   int targetHeight,
                                   Color color) {
-      return resizeTo(targetWidth, targetHeight, Position.Center, color);
+      return resizeTo(targetWidth, targetHeight, Position.Center, color, DEFAULT_DATA_TYPE);
    }
 
    /**
@@ -850,15 +917,42 @@ public class ImmutableImage extends MutableImage {
                                   int targetHeight,
                                   Position position,
                                   Color background) {
+      return resizeTo(targetWidth, targetHeight, position, background, DEFAULT_DATA_TYPE);
+   }
+
+   /**
+    * Resize will resize the canvas, it will not scale the image.
+    * This is like a "canvas resize" in Photoshop.
+    * <p>
+    * If the dimensions are smaller than the current canvas size
+    * then the image will be cropped.
+    * <p>
+    * The position parameter determines how the original image will be positioned on the new
+    * canvas.
+    *
+    * @param targetWidth  the target width
+    * @param targetHeight the target height
+    * @param position     where to position the original image after the canvas size change
+    * @param background   the background color if the canvas was enlarged
+    * @param imageType    the type of the image to create. See BufferedImage.TYPE_*
+    * @return a new Image that is the result of resizing the canvas.
+    */
+   public ImmutableImage resizeTo(int targetWidth,
+                                  int targetHeight,
+                                  Position position,
+                                  Color background,
+                                  int imageType) {
       if (targetWidth == width && targetHeight == height) return this;
       else {
          Dimension dim = position.calculateXY(targetWidth, targetHeight, width, height);
-         return filled(targetWidth, targetHeight, background).overlay(this, dim.getX(), dim.getY());
+         ImmutableImage result = filled(targetWidth, targetHeight, background, imageType);
+         result.overlayInPlace(awt(), dim.getX(), dim.getY());
+         return result;
       }
    }
 
    public ImmutableImage resizeToRatio(double targetRatio) {
-      return resizeToRatio(targetRatio, Position.Center, Colors.Transparent.awt());
+      return resizeToRatio(targetRatio, Position.Center, Colors.Transparent.awt(), DEFAULT_DATA_TYPE);
    }
 
    /**
@@ -876,14 +970,33 @@ public class ImmutableImage extends MutableImage {
     * @return a new Image that is the result of resizing the canvas.
     */
    public ImmutableImage resizeToRatio(double targetRatio, Position position, Color background) {
+      return resizeToRatio(targetRatio, position, background, DEFAULT_DATA_TYPE);
+   }
+
+   /**
+    * Resize will resize the canvas, it will not scale the image.
+    * This is like a "canvas resize" in Photoshop.
+    * <p>
+    * Depending on ratio will increase either width or height.
+    * <p>
+    * The position parameter determines how the original image will be positioned on the new
+    * canvas.
+    *
+    * @param targetRatio width divided by height
+    * @param position    where to position the original image after the canvas size change
+    * @param background  the background color if the canvas was enlarged
+    * @param imageType   the AWT image type to create. See BufferedImage.TYPE_*
+    * @return a new Image that is the result of resizing the canvas.
+    */
+   public ImmutableImage resizeToRatio(double targetRatio, Position position, Color background, int imageType) {
       double currRatio = ratio();
       if (currRatio == targetRatio) return this;
       else if (currRatio > targetRatio) {
          int targetHeight = (int) (width / targetRatio); // cannot be zero because it's larger than currRatio
-         return resizeTo(width, targetHeight, position, background);
+         return resizeTo(width, targetHeight, position, background, imageType);
       } else {
          int targetWidth = (int) (height * targetRatio);
-         return resizeTo(targetWidth, height, position, background);
+         return resizeTo(targetWidth, height, position, background, imageType);
       }
    }
 
@@ -894,7 +1007,7 @@ public class ImmutableImage extends MutableImage {
     * @return a new Image that is the result of resizing the canvas.
     */
    public ImmutableImage resizeToHeight(int targetHeight) {
-      return resizeToHeight(targetHeight, Position.Center, Colors.Transparent.toAWT());
+      return resizeToHeight(targetHeight, Position.Center, Colors.Transparent.toAWT(), DEFAULT_DATA_TYPE);
    }
 
    /**
@@ -905,7 +1018,19 @@ public class ImmutableImage extends MutableImage {
     * @return a new Image that is the result of resizing the canvas.
     */
    public ImmutableImage resizeToHeight(int targetHeight, Position position, Color background) {
-      return resizeTo((int) (targetHeight / (double) height * width), targetHeight, position, background);
+      return resizeToHeight(targetHeight, position, background, DEFAULT_DATA_TYPE);
+   }
+
+   /**
+    * Resize will resize the canvas, it will not scale the image.
+    * This is like a "canvas resize" in Photoshop.
+    *
+    * @param position  where to position the original image after the canvas size change
+    * @param imageType the AWT image type to create. See BufferedImage.TYPE_*
+    * @return a new Image that is the result of resizing the canvas.
+    */
+   public ImmutableImage resizeToHeight(int targetHeight, Position position, Color background, int imageType) {
+      return resizeTo((int) (targetHeight / (double) height * width), targetHeight, position, background, imageType);
    }
 
    /**
@@ -915,7 +1040,7 @@ public class ImmutableImage extends MutableImage {
     * @return a new Image that is the result of resizing the canvas.
     */
    public ImmutableImage resizeToWidth(int targetWidth) {
-      return resizeToWidth(targetWidth, Position.Center, Colors.Transparent.toAWT());
+      return resizeToWidth(targetWidth, Position.Center, Colors.Transparent.toAWT(), DEFAULT_DATA_TYPE);
    }
 
    /**
@@ -926,7 +1051,19 @@ public class ImmutableImage extends MutableImage {
     * @return a new Image that is the result of resizing the canvas.
     */
    public ImmutableImage resizeToWidth(int targetWidth, Position position, Color background) {
-      return resizeTo(targetWidth, (int) (targetWidth / (double) width * height), position, background);
+      return resizeToWidth(targetWidth, position, background, DEFAULT_DATA_TYPE);
+   }
+
+   /**
+    * Resize will resize the canvas, it will not scale the image.
+    * This is like a "canvas resize" in Photoshop.
+    *
+    * @param position  where to position the original image after the canvas size change
+    * @param imageType the AWT image type to create. See BufferedImage.TYPE_*
+    * @return a new Image that is the result of resizing the canvas.
+    */
+   public ImmutableImage resizeToWidth(int targetWidth, Position position, Color background, int imageType) {
+      return resizeTo(targetWidth, (int) (targetWidth / (double) width * height), position, background, imageType);
    }
 
    /**
