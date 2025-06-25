@@ -7,6 +7,7 @@ import com.sksamuel.scrimage.pixels.PixelTools;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
+import java.awt.image.WritableRaster;
 import java.util.Arrays;
 import java.util.function.Function;
 
@@ -49,7 +50,9 @@ public class MutableImage extends AwtImage {
     * Fills all pixels the given color on the existing image.
     */
    public void fillInPlace(Color color) {
-      Arrays.stream(points()).forEach(point -> awt().setRGB(point.x, point.y, RGBColor.fromAwt(color).toARGBInt()));
+      WritableRaster raster = awt().getRaster();
+      Object colorElements = awt().getColorModel().getDataElements(RGBColor.fromAwt(color).toARGBInt(), null);
+      Arrays.stream(points()).forEach(point -> raster.setDataElements(point.x, point.y, colorElements));
    }
 
    /**

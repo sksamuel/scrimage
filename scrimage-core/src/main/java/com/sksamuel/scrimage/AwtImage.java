@@ -575,7 +575,8 @@ public class AwtImage {
     * @param color the color to test pixels against
     */
    public boolean isFilled(Color color) {
-      return forAll(p -> p.argb == RGBColor.fromAwt(color).toARGBInt());
+      int argbColor = RGBColor.fromAwt(color).toARGBInt();
+      return forAll(p -> p.argb == argbColor);
    }
 
    public Path output(ImageWriter writer, String path) throws IOException {

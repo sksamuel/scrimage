@@ -45,6 +45,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -267,9 +268,11 @@ public class ImmutableImage extends MutableImage {
     */
    public static ImmutableImage filled(int width, int height, Color color, int type) {
       ImmutableImage target = create(width, height, type);
+      WritableRaster targetRaster = target.awt().getRaster();
+      Object colorElements = target.awt().getColorModel().getDataElements(RGBColor.fromAwt(color).toARGBInt(), null);
       for (int w = 0; w < width; w++) {
          for (int h = 0; h < height; h++) {
-            target.awt().setRGB(w, h, RGBColor.fromAwt(color).toARGBInt());
+            targetRaster.setDataElements(w, h, colorElements);
          }
       }
       return target;
