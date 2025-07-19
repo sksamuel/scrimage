@@ -11,12 +11,12 @@ mavenPublishing {
    pom {
       name.set("Scrimage")
       description.set("JVM Image Library")
-      url.set("httsp://www.github.com/sksamuel/scrimage")
+      url.set("https://www.github.com/sksamuel/scrimage")
 
       scm {
          connection.set("scm:git:https://www.github.com/sksamuel/scrimage/")
          developerConnection.set("scm:git:https://github.com/sksamuel/")
-         url.set("http://www.github.com/sksamuel/scrimage/")
+         url.set("https://www.github.com/sksamuel/scrimage/")
       }
 
       licenses {
