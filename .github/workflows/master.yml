@@ -30,7 +30,7 @@ jobs:
           name: error-report
           path: build-reports.zip
 
-  deploy-linux-and-common:
+  deploy-snapshots:
     needs: build
     runs-on: ubuntu-latest
 

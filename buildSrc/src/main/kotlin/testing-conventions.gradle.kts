@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
@@ -30,9 +32,9 @@ tasks.named<Test>("test") {
       showExceptions = true
       showStandardStreams = true
       events = setOf(
-         org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED,
-         org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
+         TestLogEvent.FAILED,
+         TestLogEvent.PASSED
       )
-      exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+      exceptionFormat = TestExceptionFormat.FULL
    }
 }
