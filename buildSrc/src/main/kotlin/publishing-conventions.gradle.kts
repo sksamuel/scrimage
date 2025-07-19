@@ -2,8 +2,8 @@ plugins {
    id("com.vanniktech.maven.publish")
 }
 
-//group = "com.sksamuel.scrimage"
-//version = Ci.version
+group = "com.sksamuel.scrimage"
+version = Ci.version
 
 mavenPublishing {
    publishToMavenCentral()
