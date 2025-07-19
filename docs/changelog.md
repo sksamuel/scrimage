@@ -1,6 +1,14 @@
 Changelog
 =========
 
+#### 4.3.3 (July 2025)
+
+* Add ImageLoader.fromUrl
+
+#### 4.3.2 (June 2025)
+
+* Optimize single-color fill methods (#304)
+
 #### 4.3.1 (April 2025)
 
 * Added DominantGradient transform
