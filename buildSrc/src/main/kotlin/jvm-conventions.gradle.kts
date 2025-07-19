@@ -13,6 +13,10 @@ java {
    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
+dependencies {
+   testImplementation("org.jetbrains.kotlin:kotlin-stdlib:2.1.21")
+}
+
 kotlin {
    compilerOptions {
       jvmTarget.set(JvmTarget.JVM_1_8)
