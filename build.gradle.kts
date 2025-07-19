@@ -18,6 +18,11 @@ plugins {
    id("com.vanniktech.maven.publish") version "0.34.0"
 }
 
+java {
+   withJavadocJar()
+   withSourcesJar()
+}
+
 mavenPublishing {
    publishToMavenCentral()
    signAllPublications()
@@ -28,8 +33,8 @@ mavenPublishing {
       url.set("httsp://www.github.com/sksamuel/scrimage")
 
       scm {
-         connection.set("scm:git:http://www.github.com/sksamuel/scrimage/")
-         developerConnection.set("scm:git:http://github.com/sksamuel/")
+         connection.set("scm:git:https://www.github.com/sksamuel/scrimage/")
+         developerConnection.set("scm:git:https://github.com/sksamuel/")
          url.set("http://www.github.com/sksamuel/scrimage/")
       }
 
