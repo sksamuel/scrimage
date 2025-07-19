@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
@@ -119,6 +121,15 @@ public class ImmutableImageLoader {
       if (in == null)
          throw new IOException("Could not locate resource: " + resource);
       return fromStream(in);
+   }
+
+   public ImmutableImage fromUrl(URL url) throws IOException {
+      URLConnection connection = url.openConnection();
+      connection.setConnectTimeout(5000);
+      connection.setReadTimeout(5000);
+      try (InputStream input = connection.getInputStream()) {
+         return fromStream(input);
+      }
    }
 
    /**
