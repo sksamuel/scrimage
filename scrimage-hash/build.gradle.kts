@@ -1,5 +1,6 @@
 plugins {
    id("jvm-conventions")
+   id("kotlin-conventions")
    id("testing-conventions")
    id("publishing-conventions")
 }
