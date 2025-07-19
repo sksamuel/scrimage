@@ -1,10 +1,10 @@
 plugins {
+   id("jvm-conventions")
+   id("publishing-conventions")
    scala
 }
 
 dependencies {
-   implementation("org.scala-lang:scala-library:2.13.10")
    implementation(project(":scrimage-core"))
+   implementation("org.scala-lang:scala-library:2.13.10")
 }
-
-apply("../publish.gradle.kts")

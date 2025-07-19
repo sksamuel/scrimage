@@ -1,5 +1,12 @@
 rootProject.name = "scrimage"
 
+pluginManagement {
+   repositories {
+      mavenCentral()
+      gradlePluginPortal()
+   }
+}
+
 include(
    ":scrimage-app",
    ":scrimage-benchmarks",
@@ -16,3 +23,13 @@ include(
 )
 
 enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
+
+dependencyResolutionManagement {
+   repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
+   repositories {
+      mavenCentral()
+      mavenLocal()
+      maven("https://oss.sonatype.org/content/repositories/snapshots")
+      maven("https://s01.oss.sonatype.org/content/repositories/snapshots")
+   }
+}

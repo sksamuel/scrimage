@@ -1,27 +1,9 @@
-buildscript {
-
-   repositories {
-      mavenCentral()
-      mavenLocal()
-   }
-
-   repositories {
-      mavenCentral()
-   }
-}
-
 plugins {
-   java
-   `java-library`
-   id("com.adarshr.test-logger") version "2.0.0"
-   kotlin("jvm").apply(false).version("1.6.21")
-   id("com.vanniktech.maven.publish") version "0.34.0"
+   id("com.vanniktech.maven.publish")
 }
 
-java {
-   withJavadocJar()
-   withSourcesJar()
-}
+//group = "com.sksamuel.scrimage"
+//version = Ci.version
 
 mavenPublishing {
    publishToMavenCentral()
@@ -53,19 +35,4 @@ mavenPublishing {
          }
       }
    }
-}
-
-subprojects {
-
-   repositories {
-      mavenCentral()
-      google()
-      mavenLocal()
-      maven {
-         url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-      }
-   }
-
-   group = "com.sksamuel.scrimage"
-   version = Ci.version
 }
