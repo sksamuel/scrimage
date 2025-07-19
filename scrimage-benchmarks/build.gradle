@@ -1,5 +1,5 @@
 plugins {
-   id("jvm-conventions")
+   id("java-conventions")
    id("testing-conventions")
    id("me.champeau.jmh") version "0.7.3"
 }

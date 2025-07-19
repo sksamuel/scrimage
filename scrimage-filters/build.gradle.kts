@@ -1,5 +1,5 @@
 plugins {
-   id("jvm-conventions")
+   id("java-conventions")
    id("testing-conventions")
    id("publishing-conventions")
 }
