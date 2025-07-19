@@ -8,7 +8,6 @@ version = Ci.version
 mavenPublishing {
    publishToMavenCentral(automaticRelease = true)
    signAllPublications()
-   coordinates("com.sksamuel.scrimage", project.name, Ci.version)
    pom {
       name.set("Scrimage")
       description.set("JVM Image Library")
