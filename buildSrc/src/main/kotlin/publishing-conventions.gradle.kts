@@ -6,7 +6,7 @@ group = "com.sksamuel.scrimage"
 version = Ci.version
 
 mavenPublishing {
-   publishToMavenCentral()
+   publishToMavenCentral(automaticRelease = true)
    signAllPublications()
 
    pom {
