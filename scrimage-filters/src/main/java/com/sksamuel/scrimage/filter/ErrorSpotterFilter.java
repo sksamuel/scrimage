@@ -34,7 +34,7 @@ public class ErrorSpotterFilter implements Filter {
         delta = rgb1.alpha - rgb2.alpha;
         if (delta > 0) red += delta;
         else blue -= delta;
-        return new RGBColor(Math.min(ratio * red, 255), 0, Math.min(ratio * blue, 255), 255).toInt();
+        return new RGBColor(Math.min(ratio * red, 255), 0, Math.min(ratio * blue, 255), 255).toARGBInt();
     }
 
     @Override
