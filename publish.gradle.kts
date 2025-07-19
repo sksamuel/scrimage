@@ -46,7 +46,7 @@ publishing {
          name = "deploy"
          url = if (Ci.isRelease) releasesRepoUrl else snapshotsRepoUrl
          credentials {
-            username = System.getenv("OSSRH_USERNAME") ?: ""
+            username = System.getenv("") ?: ""
             password = System.getenv("OSSRH_PASSWORD") ?: ""
          }
       }
@@ -55,32 +55,7 @@ publishing {
    publications {
       register("mavenJava", MavenPublication::class) {
          from(components["java"])
-         pom {
-            name.set("Scrimage")
-            description.set("JVM Image Library")
-            url.set("http://www.github.com/sksamuel/scrimage")
 
-            scm {
-               connection.set("scm:git:http://www.github.com/sksamuel/scrimage/")
-               developerConnection.set("scm:git:http://github.com/sksamuel/")
-               url.set("http://www.github.com/sksamuel/scrimage/")
-            }
-
-            licenses {
-               license {
-                  name.set("The Apache 2.0 License")
-                  url.set("https://opensource.org/licenses/Apache-2.0")
-               }
-            }
-
-            developers {
-               developer {
-                  id.set("sksamuel")
-                  name.set("Stephen Samuel")
-                  email.set("sam@sksamuel.com")
-               }
-            }
-         }
 
       }
    }
