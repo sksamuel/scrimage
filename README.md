@@ -3,7 +3,8 @@
 
 ![build_test](https://github.com/sksamuel/scrimage/workflows/build_test/badge.svg)
 [<img src="https://img.shields.io/maven-central/v/com.sksamuel.scrimage/scrimage-core.svg?label=latest%20release"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22scrimage-core)
-[<img src="https://img.shields.io/nexus/s/https/s01.oss.sonatype.org/com.sksamuel.scrimage/scrimage-core.svg?label=latest%20snapshot"/>](https://central.sonatype.com/repository/maven-snapshots/com/sksamuel/scrimage)
+[<img src="https://img.shields.io/nexus/s/https/s01.oss.sonatype.org/com.sksamuel.scrimage/scrimage-core.svg?label=latest%20snapshot"/>]
+![Maven metadata URL](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fcentral.sonatype.com%2Frepository%2Fmaven-snapshots%2Fcom%2Fsksamuel%2Fscrimage%2Fscrimage-core%2Fmaven-metadata.xml&strategy=highestVersion&label=latest-snapshot)(https://central.sonatype.com/repository/maven-snapshots/com/sksamuel/scrimage)
 [![scrimage @ kotlinlang.slack.com](https://img.shields.io/static/v1?label=slack&message=scrimage&color=yellow&logo=slack)](https://kotlinlang.slack.com/archives/C01CEL2JCQJ)
 
 
