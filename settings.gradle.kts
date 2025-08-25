@@ -28,7 +28,5 @@ dependencyResolutionManagement {
    repositories {
       mavenCentral()
       mavenLocal()
-      maven("https://oss.sonatype.org/content/repositories/snapshots")
-      maven("https://s01.oss.sonatype.org/content/repositories/snapshots")
    }
 }
