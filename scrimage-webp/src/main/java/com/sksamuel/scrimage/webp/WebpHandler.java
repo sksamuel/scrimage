@@ -1,17 +1,19 @@
 package com.sksamuel.scrimage.webp;
 
-import org.apache.commons.lang3.SystemUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.commons.lang3.SystemUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 abstract class WebpHandler {
 
@@ -126,12 +128,13 @@ abstract class WebpHandler {
    }
 
    private static void setExecutable(Path output) throws IOException {
-      try {
-         new ProcessBuilder("chmod", "+x", output.toAbsolutePath().toString())
-            .start()
-            .waitFor(30, TimeUnit.SECONDS);
-      } catch (InterruptedException e) {
-         throw new IOException(e);
+      Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(output);
+      Set<PosixFilePermission> newPermissions = new HashSet<>(permissions);
+      newPermissions.add(PosixFilePermission.OWNER_EXECUTE);
+      newPermissions.add(PosixFilePermission.GROUP_EXECUTE);
+      newPermissions.add(PosixFilePermission.OTHERS_EXECUTE);
+      if (!permissions.equals(newPermissions)) {
+         Files.setPosixFilePermissions(output, newPermissions);
       }
    }
 }
