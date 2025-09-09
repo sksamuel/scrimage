@@ -7,13 +7,13 @@ plugins {
 }
 
 dependencies {
-   implementation("org.jetbrains.kotlin:kotlin-stdlib:2.1.21")
+   implementation("org.jetbrains.kotlin:kotlin-stdlib:2.2.10")
 }
 
 kotlin {
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_1_8)
-        apiVersion.set(KotlinVersion.KOTLIN_2_1)
-        languageVersion.set(KotlinVersion.KOTLIN_2_1)
+        apiVersion.set(KotlinVersion.KOTLIN_2_2)
+        languageVersion.set(KotlinVersion.KOTLIN_2_2)
     }
 }
