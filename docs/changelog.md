@@ -1,6 +1,10 @@
 Changelog
 =========
 
+#### 4.3.5 (Sept 2025)
+
+* Use java.nio to make file executable by @torstenkuhnhenne in #317
+
 #### 4.3.3 (July 2025)
 
 * Add ImageLoader.fromUrl
