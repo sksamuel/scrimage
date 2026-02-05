@@ -59,6 +59,10 @@ public class PngWriter implements ImageWriter {
 
    @Override
    public void write(AwtImage image, ImageMetadata metadata, OutputStream out) throws IOException {
+   
+      if (compressionLevel < 0 && compressionLevel >= 10) {
+         throw new IOException("Compression level must be between 0 (none) and 9 (max)");
+      }
 
       ImageTypeSpecifier type = ImageTypeSpecifier.createFromBufferedImageType(image.getType());
       javax.imageio.ImageWriter writer = ImageIO.getImageWriters(type, "png").next();
@@ -66,19 +70,13 @@ public class PngWriter implements ImageWriter {
 
       if (param.canWriteCompressed()) {
          switch (compressionLevel) {
-            case 9: // max
-               param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-               param.setCompressionQuality(0.0f);
-               break;
-            case 1: // min
-               param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-               param.setCompressionQuality(1.0f);
-               break;
             case 0: // none
                param.setCompressionMode(ImageWriteParam.MODE_DISABLED);
+               break;
             default:
                param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-               param.setCompressionQuality(compressionLevel / 10f);
+               param.setCompressionQuality((9-compressionLevel)/8.0f); // 9=0.0 (same as previously), 8=0.125, ... 2=0.875, 1=1.0 (same as previously)
+               break;
          }
       }
 
