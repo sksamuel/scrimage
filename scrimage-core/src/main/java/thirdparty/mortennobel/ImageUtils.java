@@ -79,6 +79,12 @@ public class ImageUtils {
             img.getRGB(x, y, w, h, temp, 0, w);
             ints2bytes(temp, array, 2, 1, 0, 3);  // argb -->  abgr
             break;
+         case BufferedImage.TYPE_USHORT_GRAY:
+            img.getRGB(x, y, w, h, temp, 0, w);
+            for (int i = 0; i < w; i++) {
+               array[i] = (byte) (temp[i] & 0xFF);  // extract gray (R=G=B for gray images)
+            }
+            break;
          default:
             img.getRGB(x, y, w, h, temp, 0, w);
             ints2bytes(temp, array, 2, 1, 0);  // rgb -->  bgr
@@ -101,6 +107,13 @@ public class ImageUtils {
          imageType == BufferedImage.TYPE_4BYTE_ABGR_PRE ||
          imageType == BufferedImage.TYPE_BYTE_GRAY) {
          raster.setDataElements(x, y, w, h, bgrPixels);
+      } else if (imageType == BufferedImage.TYPE_USHORT_GRAY) {
+         // bgrPixels contains 8-bit gray values; scale to 16-bit for USHORT_GRAY
+         short[] shortPixels = new short[w * h];
+         for (int i = 0; i < shortPixels.length; i++) {
+            shortPixels[i] = (short) ((bgrPixels[i] & 0xFF) * 257); // scale 0-255 to 0-65535
+         }
+         raster.setDataElements(x, y, w, h, shortPixels);
       } else {
          int[] pixels;
          if (imageType == BufferedImage.TYPE_INT_BGR) {
