@@ -2,6 +2,7 @@ package com.sksamuel.scrimage.webp;
 
 import com.sksamuel.scrimage.nio.AnimatedGif;
 import com.sksamuel.scrimage.nio.AnimatedImageWriter;
+
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -27,10 +28,18 @@ public class Gif2WebpWriter implements AnimatedImageWriter {
       this.lossy = lossy;
    }
 
+   /**
+    * Forces the tool to use lossy compression for the output WebP file.
+    */
    public Gif2WebpWriter withLossy() {
       return new Gif2WebpWriter(q, m, true);
    }
 
+   /**
+    * Specifies the compression factor for RGB channels between 0 and 100.
+    * A lower value produces a smaller file with lower quality, while 100 produces the best quality.
+    * The default value is 75.
+    */
    public Gif2WebpWriter withQ(int q) {
       if (q < 0) {
          throw new IllegalArgumentException("q must be between 0 and 100");
@@ -41,6 +50,9 @@ public class Gif2WebpWriter implements AnimatedImageWriter {
       return new Gif2WebpWriter(q, m, lossy);
    }
 
+   /**
+    * Controls the trade-off between encoding speed and quality/file size. The value ranges from 0 to 6.
+    */
    public Gif2WebpWriter withM(int m) {
       if (m < 0) {
          throw new IllegalArgumentException("m must be between 0 and 6");
