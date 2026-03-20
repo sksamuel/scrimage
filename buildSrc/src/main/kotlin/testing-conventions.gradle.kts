@@ -13,7 +13,6 @@ dependencies {
    val kotest = "6.1.7"
    testImplementation("io.kotest:kotest-runner-junit5:$kotest")
    testImplementation("io.kotest:kotest-assertions-core:$kotest")
-   testImplementation("io.kotest:kotest-framework-datatest:$kotest")
 }
 
 kotlin {
