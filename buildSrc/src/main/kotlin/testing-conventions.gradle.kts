@@ -10,9 +10,10 @@ plugins {
 
 dependencies {
    testImplementation("org.jetbrains.kotlin:kotlin-stdlib:2.2.10")
-   testImplementation("io.kotest:kotest-runner-junit5:5.9.1")
-   testImplementation("io.kotest:kotest-assertions-core:5.9.1")
-   testImplementation("io.kotest:kotest-framework-datatest:5.9.1")
+   val kotest = "6.1.7"
+   testImplementation("io.kotest:kotest-runner-junit5:$kotest")
+   testImplementation("io.kotest:kotest-assertions-core:$kotest")
+   testImplementation("io.kotest:kotest-framework-datatest:$kotest")
 }
 
 kotlin {
