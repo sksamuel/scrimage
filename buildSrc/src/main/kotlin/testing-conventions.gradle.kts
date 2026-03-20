@@ -17,7 +17,7 @@ dependencies {
 
 kotlin {
    compilerOptions {
-      jvmTarget.set(JvmTarget.JVM_1_8)
+      jvmTarget.set(JvmTarget.JVM_11)
       apiVersion.set(KotlinVersion.KOTLIN_2_2)
       languageVersion.set(KotlinVersion.KOTLIN_2_2)
    }
