@@ -44,6 +44,15 @@ public class ImageIOReader implements ImageReader {
          BufferedImage bufferedImage = reader.read(0, params);
          return ImmutableImage.wrapAwt(bufferedImage);
       } finally {
+         // javax.imageio.ImageReader is a thin Java wrapper around a native decoder. When you read a JPEG,
+         // the JDK loads libjavajpeg.so and allocates native structs (Huffman tables, coefficient buffers, SOF data)
+         // using malloc. When you read a WebP, the luciad
+         // webp-imageio plugin calls WebPEncoderOptions_createConfig which does a calloc in native code.
+         // These allocations live outside the Java heap — the GC has no visibility into them.
+         //
+         //  The contract for javax.imageio.ImageReader is that you must call reader.dispose() when done.
+         //  That method triggers the JNI dispose call which runs the corresponding free() on those native structs.
+         //  Without it, the memory is permanently leaked for the lifetime of the JVM process.
          reader.dispose();
       }
    }
