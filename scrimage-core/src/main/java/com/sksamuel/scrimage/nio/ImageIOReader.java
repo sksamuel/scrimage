@@ -28,20 +28,24 @@ public class ImageIOReader implements ImageReader {
    }
 
    private ImmutableImage tryLoad(javax.imageio.ImageReader reader, ImageInputStream iis, Rectangle rectangle) throws IOException {
-      reader.setInput(iis);
+      try {
+         reader.setInput(iis);
 
-      ImageReadParam params = reader.getDefaultReadParam();
-      Iterator<ImageTypeSpecifier> imageTypes = reader.getImageTypes(0);
-      if (imageTypes.hasNext()) {
-         ImageTypeSpecifier imageTypeSpecifier = imageTypes.next();
-         params.setDestinationType(imageTypeSpecifier);
-      }
-      if (rectangle != null) {
-         params.setSourceRegion(rectangle);
-      }
+         ImageReadParam params = reader.getDefaultReadParam();
+         Iterator<ImageTypeSpecifier> imageTypes = reader.getImageTypes(0);
+         if (imageTypes.hasNext()) {
+            ImageTypeSpecifier imageTypeSpecifier = imageTypes.next();
+            params.setDestinationType(imageTypeSpecifier);
+         }
+         if (rectangle != null) {
+            params.setSourceRegion(rectangle);
+         }
 
-      BufferedImage bufferedImage = reader.read(0, params);
-      return ImmutableImage.wrapAwt(bufferedImage);
+         BufferedImage bufferedImage = reader.read(0, params);
+         return ImmutableImage.wrapAwt(bufferedImage);
+      } finally {
+         reader.dispose();
+      }
    }
 
    @Override
@@ -54,25 +58,29 @@ public class ImageIOReader implements ImageReader {
       if (iis == null)
          throw new IOException("No ImageInputStream supported this image format");
 
-      Iterator<javax.imageio.ImageReader> iter;
-      if (readers.isEmpty())
-         iter = ImageIO.getImageReaders(iis);
-      else
-         iter = readers.iterator();
+      try {
+         Iterator<javax.imageio.ImageReader> iter;
+         if (readers.isEmpty())
+            iter = ImageIO.getImageReaders(iis);
+         else
+            iter = readers.iterator();
 
-      List<String> attempts = new ArrayList<>();
-      while (iter.hasNext()) {
-         try {
-            return tryLoad(iter.next(), iis, rectangle);
-         } catch (Exception e) {
-            attempts.add(e.getMessage());
+         List<String> attempts = new ArrayList<>();
+         while (iter.hasNext()) {
+            try {
+               return tryLoad(iter.next(), iis, rectangle);
+            } catch (Exception e) {
+               attempts.add(e.getMessage());
+            }
          }
-      }
 
-      if (attempts.isEmpty())
-         throw new IOException("No javax.imageio.ImageReader supported this image format");
-      else
-         throw new IOException("No javax.imageio.ImageReader supported this image format; tried " + attempts.size() + " readers; errors=" + attempts);
+         if (attempts.isEmpty())
+            throw new IOException("No javax.imageio.ImageReader supported this image format");
+         else
+            throw new IOException("No javax.imageio.ImageReader supported this image format; tried " + attempts.size() + " readers; errors=" + attempts);
+      } finally {
+         iis.close();
+      }
    }
 
    @Override
