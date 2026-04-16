@@ -146,7 +146,7 @@ public class RGBColor implements Color {
          h = f / 6;
       }
 
-      return new HSVColor(h * 360f, s, max, 1f);
+      return new HSVColor(h * 360f, s, max, alpha / 255f);
    }
 
    // credit to https://github.com/mjackson/mjijackson.github.com/blob/master/2008/02/rgb-to-hsl-and-rgb-to-hsv-color-model-conversion-algorithms-in-javascript.txt
@@ -183,7 +183,7 @@ public class RGBColor implements Color {
          h = f / 6;
       }
 
-      return new HSLColor(h * 360f, s, l, 1f);
+      return new HSLColor(h * 360f, s, l, alpha / 255f);
    }
 
    @Override
