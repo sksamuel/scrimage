@@ -23,7 +23,7 @@ public class ScrimageNearestNeighbourScale implements Scale {
                 k = k + xr;
                 n = n + 1;
             }
-            k = ow * (int) (y * yr);
+            k = ow * (int) ((y + 1) * yr);
         }
         return out;
   }
