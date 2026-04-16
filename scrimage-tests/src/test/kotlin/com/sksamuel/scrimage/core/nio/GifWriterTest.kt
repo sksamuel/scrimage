@@ -27,4 +27,10 @@ class GifWriterTest : FunSpec({
       expected shouldBe actual
    }
 
+   test("GifWriter write does not leak resources on repeated writes") {
+      repeat(100) {
+         original.bytes(GifWriter.Default)
+      }
+   }
+
 })

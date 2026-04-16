@@ -77,11 +77,11 @@ public class JpegWriter implements ImageWriter {
          noAlpha = image.awt();
       }
 
-      MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream(out);
-      writer.setOutput(output);
-      writer.write(null, new IIOImage(noAlpha, null, null), params);
-      output.close();
-      writer.dispose();
-//        IOUtils.closeQuietly(out);
+      try (MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream(out)) {
+         writer.setOutput(output);
+         writer.write(null, new IIOImage(noAlpha, null, null), params);
+      } finally {
+         writer.dispose();
+      }
    }
 }
