@@ -1,5 +1,6 @@
 package com.sksamuel.scrimage.core.color
 
+import com.sksamuel.scrimage.color.HSLColor
 import com.sksamuel.scrimage.color.HSVColor
 import com.sksamuel.scrimage.color.RGBColor
 import io.kotest.core.spec.style.StringSpec
@@ -48,6 +49,18 @@ class RGBColorTest : StringSpec({
          this.value shouldBe (0.498F plusOrMinus 0.01F)
       }
       RGBColor(255, 255, 255).toHSV() shouldBe HSVColor(0F, 0F, 1F, 1F)
+   }
+
+   "toHSV preserves alpha from RGB" {
+      RGBColor(59, 68, 127, 128).toHSV().alpha shouldBe (128 / 255f plusOrMinus 0.001f)
+      RGBColor(59, 68, 127, 0).toHSV().alpha shouldBe 0f
+      RGBColor(59, 68, 127, 255).toHSV().alpha shouldBe 1f
+   }
+
+   "toHSL preserves alpha from RGB" {
+      RGBColor(59, 68, 127, 128).toHSL().alpha shouldBe (128 / 255f plusOrMinus 0.001f)
+      RGBColor(59, 68, 127, 0).toHSL().alpha shouldBe 0f
+      RGBColor(59, 68, 127, 255).toHSL().alpha shouldBe 1f
    }
 
    "convert to HSV and back to RGB" {

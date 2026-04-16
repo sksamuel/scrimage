@@ -5,6 +5,7 @@ import com.sksamuel.scrimage.metadata.ImageMetadata;
 import com.sksamuel.scrimage.metadata.OrientationTools;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -140,6 +141,95 @@ public class ImmutableImageLoader {
       if (in == null)
          throw new IOException("Input stream is null");
       return load(new InputStreamImageSource(in));
+   }
+
+   /**
+    * Creates an {@link ImmutableImage} from a PyTorch-style tensor stored as a flat int array.
+    *
+    * <p>The tensor must be in CHW (channel, height, width) order with pixel values in the range
+    * 0–255. Supported channel counts are 1 (grayscale), 3 (RGB), and 4 (RGBA).
+    *
+    * <p>The resulting image type is {@link BufferedImage#TYPE_INT_ARGB} for 4-channel tensors,
+    * {@link BufferedImage#TYPE_INT_RGB} for 1- or 3-channel tensors, unless overridden via
+    * {@link #type(int)}.
+    *
+    * @param data   flat tensor data in CHW order, values 0–255
+    * @param width  image width (W dimension)
+    * @param height image height (H dimension)
+    * @return a new {@link ImmutableImage}
+    * @throws IllegalArgumentException if the channel count is not 1, 3, or 4, or if the data
+    *                                  length does not match width × height × channels
+    */
+   public ImmutableImage fromTorchTensor(int[] data, int width, int height) {
+      int numPixels = width * height;
+      if (numPixels == 0)
+         throw new IllegalArgumentException("width and height must both be greater than zero");
+      if (data.length % numPixels != 0)
+         throw new IllegalArgumentException(
+            "Data length " + data.length + " is not divisible by width × height (" + numPixels + ")");
+      int channels = data.length / numPixels;
+      if (channels != 1 && channels != 3 && channels != 4)
+         throw new IllegalArgumentException(
+            "Tensor must have 1, 3, or 4 channels but has " + channels);
+
+      int defaultType = channels == 4 ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
+      int imageType = type > 0 ? type : defaultType;
+      BufferedImage buffered = new BufferedImage(width, height, imageType);
+
+      for (int y = 0; y < height; y++) {
+         for (int x = 0; x < width; x++) {
+            int idx = y * width + x;
+            int argb;
+            if (channels == 1) {
+               int v = clamp(data[idx]);
+               argb = (255 << 24) | (v << 16) | (v << 8) | v;
+            } else if (channels == 3) {
+               int r = clamp(data[idx]);
+               int g = clamp(data[numPixels + idx]);
+               int b = clamp(data[2 * numPixels + idx]);
+               argb = (255 << 24) | (r << 16) | (g << 8) | b;
+            } else {
+               int r = clamp(data[idx]);
+               int g = clamp(data[numPixels + idx]);
+               int b = clamp(data[2 * numPixels + idx]);
+               int a = clamp(data[3 * numPixels + idx]);
+               argb = (a << 24) | (r << 16) | (g << 8) | b;
+            }
+            buffered.setRGB(x, y, argb);
+         }
+      }
+
+      return ImmutableImage.wrapAwt(buffered);
+   }
+
+   /**
+    * Creates an {@link ImmutableImage} from a PyTorch-style tensor stored as a flat float array.
+    *
+    * <p>The tensor must be in CHW (channel, height, width) order with pixel values in the range
+    * 0.0–1.0. Values outside this range are clamped. Supported channel counts are 1 (grayscale),
+    * 3 (RGB), and 4 (RGBA).
+    *
+    * <p>The resulting image type is {@link BufferedImage#TYPE_INT_ARGB} for 4-channel tensors,
+    * {@link BufferedImage#TYPE_INT_RGB} for 1- or 3-channel tensors, unless overridden via
+    * {@link #type(int)}.
+    *
+    * @param data   flat tensor data in CHW order, values 0.0–1.0
+    * @param width  image width (W dimension)
+    * @param height image height (H dimension)
+    * @return a new {@link ImmutableImage}
+    * @throws IllegalArgumentException if the channel count is not 1, 3, or 4, or if the data
+    *                                  length does not match width × height × channels
+    */
+   public ImmutableImage fromTorchTensor(float[] data, int width, int height) {
+      int[] intData = new int[data.length];
+      for (int i = 0; i < data.length; i++) {
+         intData[i] = Math.round(data[i] * 255f);
+      }
+      return fromTorchTensor(intData, width, height);
+   }
+
+   private static int clamp(int value) {
+      return Math.max(0, Math.min(255, value));
    }
 
    public ImmutableImage load(ImageSource source) throws IOException {
