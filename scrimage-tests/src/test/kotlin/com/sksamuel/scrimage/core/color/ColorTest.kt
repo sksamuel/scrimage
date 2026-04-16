@@ -161,4 +161,59 @@ class ColorTest : WordSpec({
       }
    }
 
+   // Regression tests: Color.average() was returning premultiplied-alpha RGB values
+   // stored as straight-alpha, making partially-transparent blends too dark.
+   "Color.average" should {
+      "source-over opaque colors returns this color" {
+         // Porter-Duff source-over: fully opaque source occludes destination entirely
+         val c1 = RGBColor(200, 100, 50, 255)
+         val c2 = RGBColor(100, 200, 150, 255)
+         val avg = c1.average(c2)
+         avg.red shouldBe 200
+         avg.green shouldBe 100
+         avg.blue shouldBe 50
+         avg.alpha shouldBe 255
+      }
+      "both fully transparent returns transparent black" {
+         val c1 = RGBColor(255, 0, 0, 0)
+         val c2 = RGBColor(0, 255, 0, 0)
+         val avg = c1.average(c2)
+         avg shouldBe RGBColor(0, 0, 0, 0)
+      }
+      "transparent source over opaque destination yields destination" {
+         val c1 = RGBColor(255, 0, 0, 0)    // invisible red
+         val c2 = RGBColor(0, 0, 255, 255)  // opaque blue
+         val avg = c1.average(c2)
+         avg.red shouldBe 0
+         avg.green shouldBe 0
+         avg.blue shouldBe 255
+         avg.alpha shouldBe 255
+      }
+      "opaque source over transparent destination yields source" {
+         val c1 = RGBColor(255, 0, 0, 255)  // opaque red
+         val c2 = RGBColor(0, 0, 255, 0)    // invisible blue
+         val avg = c1.average(c2)
+         avg.red shouldBe 255
+         avg.green shouldBe 0
+         avg.blue shouldBe 0
+         avg.alpha shouldBe 255
+      }
+      "semi-transparent blend normalizes RGB by output alpha" {
+         // c1 = semi-transparent red (128 alpha), c2 = semi-transparent blue (128 alpha)
+         // a1 = a2 = 128/255 ≈ 0.502
+         // aOut = 0.502 + 0.502 * (1 - 0.502) ≈ 0.752  →  a = round(0.752 * 255) = 192
+         // r_premult = 255 * 0.502 ≈ 128 — old (buggy) code returned 128
+         // r_straight = 128 / 0.752 ≈ 170           — fixed code returns 170
+         // b_premult = 255 * 0.502 * 0.498 ≈ 64     — old code returned 64
+         // b_straight = 64 / 0.752 ≈ 85             — fixed code returns 85
+         val c1 = RGBColor(255, 0, 0, 128)
+         val c2 = RGBColor(0, 0, 255, 128)
+         val avg = c1.average(c2)
+         avg.red shouldBe 170
+         avg.green shouldBe 0
+         avg.blue shouldBe 85
+         avg.alpha shouldBe 192
+      }
+   }
+
 })
