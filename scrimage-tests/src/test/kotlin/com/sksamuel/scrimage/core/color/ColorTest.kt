@@ -55,6 +55,13 @@ class ColorTest : WordSpec({
          rgb.blue shouldBe 38
          rgb.alpha shouldBe 255
       }
+      // Regression: HSVColor.toRGB() was calling RGBColor.fromRGBInt() which discards
+      // the packed alpha (always 0xFF from HSBtoRGB) and defaults to 255, losing the
+      // HSVColor's own alpha field.
+      "hsv to rgb preserves alpha" {
+         val rgb = HSVColor(150f, 0.2f, 0.3f, 0.5f).toRGB()
+         rgb.alpha shouldBe Math.round(0.5f * 255)
+      }
       "convert hsv to rgb correctly 1" {
          val rgb = HSVColor(150f, 0.2f, 0.3f, 1f).toRGB()
          rgb.red shouldBe 61

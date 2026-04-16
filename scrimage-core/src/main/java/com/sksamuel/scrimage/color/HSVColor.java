@@ -35,7 +35,8 @@ public class HSVColor implements Color {
 
    public RGBColor toRGB() {
       int rgb = java.awt.Color.HSBtoRGB(hue / 360f, saturation, value);
-      return RGBColor.fromRGBInt(rgb);
+      RGBColor noAlpha = RGBColor.fromRGBInt(rgb);
+      return new RGBColor(noAlpha.red, noAlpha.green, noAlpha.blue, Math.round(alpha * 255));
    }
 
    @Override
