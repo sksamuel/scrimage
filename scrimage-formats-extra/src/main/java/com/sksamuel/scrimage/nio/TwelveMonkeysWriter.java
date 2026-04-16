@@ -17,11 +17,12 @@ abstract class TwelveMonkeysWriter implements ImageWriter {
     @Override
     public void write(AwtImage image, ImageMetadata metadata, OutputStream out) throws IOException {
         javax.imageio.ImageWriter writer = ImageIO.getImageWritersByFormatName(format()).next();
-        ImageOutputStream ios = ImageIO.createImageOutputStream(out);
-        ImageWriteParam params = writer.getDefaultWriteParam();
-        writer.setOutput(ios);
-        writer.write(null, new IIOImage(image.awt(), null, null), params);
-        ios.close();
-        writer.dispose();
+        try (ImageOutputStream ios = ImageIO.createImageOutputStream(out)) {
+            ImageWriteParam params = writer.getDefaultWriteParam();
+            writer.setOutput(ios);
+            writer.write(null, new IIOImage(image.awt(), null, null), params);
+        } finally {
+            writer.dispose();
+        }
     }
 }
