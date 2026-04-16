@@ -654,7 +654,7 @@ public class ImmutableImage extends MutableImage {
       List<Integer> types = Arrays.stream(filter.types()).boxed().collect(Collectors.toList());
       ImmutableImage target;
       if (types.isEmpty() || types.contains(getType())) {
-         target = this;
+         target = copy();
       } else {
          target = copy(types.get(0));
       }

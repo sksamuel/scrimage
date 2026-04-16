@@ -16,4 +16,14 @@ class BrightnessFilterTest : FunSpec({
       original.filter(BrightnessFilter(1.4f)) shouldBe expected
    }
 
+   // Regression: filter() set target = this when the image type matched the filter's
+   // required types (or types() returned empty, the common case). BufferedOpFilter
+   // applies the op in-place via op().filter(image.awt(), image.awt()), so the
+   // "immutable" original was silently mutated.
+   test("filter does not mutate the original image") {
+      val snapshot = original.copy()
+      original.filter(BrightnessFilter(1.4f))
+      original shouldBe snapshot
+   }
+
 })
