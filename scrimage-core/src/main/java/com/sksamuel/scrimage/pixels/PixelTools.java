@@ -104,23 +104,16 @@ public class PixelTools {
     */
    public static boolean approx(Color color, int tolerance, Pixel[] pixels) {
 
-      RGBColor refColor = RGBColor.fromAwt(color);
+      RGBColor ref = RGBColor.fromAwt(color);
+      int minR = Math.max(ref.red - tolerance, 0),   maxR = Math.min(ref.red + tolerance, 255);
+      int minG = Math.max(ref.green - tolerance, 0), maxG = Math.min(ref.green + tolerance, 255);
+      int minB = Math.max(ref.blue - tolerance, 0),  maxB = Math.min(ref.blue + tolerance, 255);
 
-      RGBColor minColor = new RGBColor(
-         Math.max(refColor.red - tolerance, 0),
-         Math.max(refColor.green - tolerance, 0),
-         Math.max(refColor.blue - tolerance, 0),
-         refColor.alpha
+      return Arrays.stream(pixels).allMatch(p ->
+         p.red()   >= minR && p.red()   <= maxR &&
+         p.green() >= minG && p.green() <= maxG &&
+         p.blue()  >= minB && p.blue()  <= maxB
       );
-
-      RGBColor maxColor = new RGBColor(
-         Math.min(refColor.red + tolerance, 255),
-         Math.min(refColor.green + tolerance, 255),
-         Math.min(refColor.blue + tolerance, 255),
-         refColor.alpha
-      );
-
-      return Arrays.stream(pixels).allMatch(p -> p.toARGBInt() >= minColor.toARGBInt() && p.toARGBInt() <= maxColor.toARGBInt());
    }
 
    /**
