@@ -142,7 +142,7 @@ public class Pixel {
    }
 
    public Pixel mapByComponent(Function<Integer, Integer> f) {
-      return new Pixel(x, y, f.apply(red()), f.apply(blue()), f.apply(green()), f.apply(alpha()));
+      return new Pixel(x, y, f.apply(red()), f.apply(green()), f.apply(blue()), f.apply(alpha()));
    }
 
    @Override
