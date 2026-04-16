@@ -4,6 +4,7 @@ package com.sksamuel.scrimage.core.ops
 
 import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.ScaleMethod
+import com.sksamuel.scrimage.pixels.Pixel
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.doubles.shouldBeLessThan
 import io.kotest.matchers.shouldBe
@@ -53,6 +54,43 @@ class ScaleTest : FunSpec({
       val scaled = image.scaleToHeight(400)
       scaled.height shouldBe 400
       scaled.ratio() - image.ratio() shouldBeLessThan 0.01
+   }
+
+   // Regression test for https://github.com/sksamuel/scrimage/pull/353
+   // ScrimageNearestNeighbourScale reset k to the wrong row after each output row,
+   // causing every row after the first to sample from the wrong source row.
+   test("FastScale samples correct source rows when scaling down") {
+      // Build a 4x4 TYPE_INT_ARGB image with four distinctly coloured rows.
+      val pixels = Array(16) { i ->
+         val x = i % 4
+         val y = i / 4
+         when (y) {
+            0 -> Pixel(x, y, 255, 0, 0, 255)   // row 0: red
+            1 -> Pixel(x, y, 0, 255, 0, 255)   // row 1: green
+            2 -> Pixel(x, y, 0, 0, 255, 255)   // row 2: blue
+            else -> Pixel(x, y, 255, 255, 255, 255) // row 3: white
+         }
+      }
+      val src = ImmutableImage.create(4, 4, pixels)
+
+      // FastScale uses ScrimageNearestNeighbourScale when both dimensions shrink
+      // and the image type is TYPE_INT_ARGB (the default).
+      // With yr = 4/2 = 2.0: output row 0 → source row 0 (red),
+      //                       output row 1 → source row 2 (blue).
+      val scaled = src.scaleTo(2, 2, ScaleMethod.FastScale)
+
+      scaled.width shouldBe 2
+      scaled.height shouldBe 2
+
+      // output row 0 must be red (source row 0)
+      scaled.pixel(0, 0).red() shouldBe 255
+      scaled.pixel(0, 0).green() shouldBe 0
+      scaled.pixel(0, 0).blue() shouldBe 0
+
+      // output row 1 must be blue (source row 2), not red (source row 0)
+      scaled.pixel(0, 1).red() shouldBe 0
+      scaled.pixel(0, 1).green() shouldBe 0
+      scaled.pixel(0, 1).blue() shouldBe 255
    }
 
 })
