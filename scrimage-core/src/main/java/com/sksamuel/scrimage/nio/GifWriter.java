@@ -58,6 +58,7 @@ public class GifWriter implements ImageWriter {
         try (MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream(out)) {
             writer.setOutput(output);
             writer.write(null, new IIOImage(image.awt(), null, null), params);
+        } finally {
             writer.dispose();
         }
     }

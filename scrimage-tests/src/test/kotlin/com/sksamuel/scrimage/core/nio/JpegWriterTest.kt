@@ -24,6 +24,12 @@ class JpegWriterTest : FunSpec({
       img.bytes(w) // was throwing with bug
    }
 
+   test("JpegWriter write does not leak resources on repeated writes") {
+      repeat(100) {
+         original.bytes(JpegWriter.Default)
+      }
+   }
+
    test("!jpeg writer should write metadata") {
       val img = ImmutableImage.loader().fromResource("/vossen.jpg")
       val file = img.output(JpegWriter.Default, "metadatatest.jpg")
