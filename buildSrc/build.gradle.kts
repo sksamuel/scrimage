@@ -7,6 +7,6 @@ plugins {
 }
 
 dependencies {
-   implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:2.2.10")
+   implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:2.3.20")
    implementation("com.vanniktech.maven.publish:com.vanniktech.maven.publish.gradle.plugin:0.35.0")
 }
