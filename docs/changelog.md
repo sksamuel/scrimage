@@ -1,6 +1,8 @@
 Changelog
 =========
 
+## Changelog updates have moved to the [releases](https://github.com/sksamuel/scrimage/releases) page.
+
 #### 4.3.5 (Sept 2025)
 
 * Use java.nio to make file executable by @torstenkuhnhenne in #317
