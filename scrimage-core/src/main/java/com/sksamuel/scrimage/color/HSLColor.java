@@ -69,7 +69,7 @@ public class HSLColor implements Color {
             float r = hue2rgb(p, q, h + 1f / 3f);
             float g = hue2rgb(p, q, h);
             float b = hue2rgb(p, q, h - 1f / 3f);
-            return new RGBColor(Math.round(r * 255), Math.round(g * 255), Math.round(b * 255), 255);
+            return new RGBColor(Math.round(r * 255), Math.round(g * 255), Math.round(b * 255), Math.round(alpha * 255));
         }
     }
 
