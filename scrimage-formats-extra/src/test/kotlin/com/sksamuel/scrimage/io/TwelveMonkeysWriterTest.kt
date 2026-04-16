@@ -2,7 +2,7 @@ package com.sksamuel.scrimage.io
 
 import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.nio.BmpWriter
-import com.sksamuel.scrimage.nio.SgiWriter
+import com.sksamuel.scrimage.nio.TgaWriter
 import com.sksamuel.scrimage.nio.TiffWriter
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -27,8 +27,8 @@ class TwelveMonkeysWriterTest : FunSpec({
       actual.height shouldBe original.height
    }
 
-   test("SgiWriter round-trips image dimensions") {
-      val bytes = original.bytes(SgiWriter())
+   test("TgaWriter round-trips image dimensions") {
+      val bytes = original.bytes(TgaWriter())
       val actual = ImmutableImage.loader().fromBytes(bytes)
       actual.width shouldBe original.width
       actual.height shouldBe original.height
