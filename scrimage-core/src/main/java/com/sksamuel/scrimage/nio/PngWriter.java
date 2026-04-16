@@ -60,30 +60,31 @@ public class PngWriter implements ImageWriter {
    @Override
    public void write(AwtImage image, ImageMetadata metadata, OutputStream out) throws IOException {
    
-      if (compressionLevel < 0 && compressionLevel >= 10) {
+      if (compressionLevel < 0 || compressionLevel >= 10) {
          throw new IOException("Compression level must be between 0 (none) and 9 (max)");
       }
 
       ImageTypeSpecifier type = ImageTypeSpecifier.createFromBufferedImageType(image.getType());
       javax.imageio.ImageWriter writer = ImageIO.getImageWriters(type, "png").next();
-      ImageWriteParam param = writer.getDefaultWriteParam();
+      try (ImageOutputStream ios = ImageIO.createImageOutputStream(out)) {
+         ImageWriteParam param = writer.getDefaultWriteParam();
 
-      if (param.canWriteCompressed()) {
-         switch (compressionLevel) {
-            case 0: // none
-               param.setCompressionMode(ImageWriteParam.MODE_DISABLED);
-               break;
-            default:
-               param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-               param.setCompressionQuality((9-compressionLevel)/8.0f); // 9=0.0 (same as previously), 8=0.125, ... 2=0.875, 1=1.0 (same as previously)
-               break;
+         if (param.canWriteCompressed()) {
+            switch (compressionLevel) {
+               case 0: // none
+                  param.setCompressionMode(ImageWriteParam.MODE_DISABLED);
+                  break;
+               default:
+                  param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                  param.setCompressionQuality((9 - compressionLevel) / 8.0f);
+                  break;
+            }
          }
-      }
 
-      ImageOutputStream ios = ImageIO.createImageOutputStream(out);
-      writer.setOutput(ios);
-      writer.write(null, new IIOImage(image.awt(), null, null), param);
-      writer.dispose();
-      ios.close();
+         writer.setOutput(ios);
+         writer.write(null, new IIOImage(image.awt(), null, null), param);
+      } finally {
+         writer.dispose();
+      }
    }
 }
