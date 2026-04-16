@@ -46,18 +46,19 @@ public class TiffWriter extends TwelveMonkeysWriter {
    @Override
    public void write(AwtImage image, ImageMetadata metadata, OutputStream out) throws IOException {
       javax.imageio.ImageWriter writer = ImageIO.getImageWritersByFormatName(format()).next();
-      ImageOutputStream ios = ImageIO.createImageOutputStream(out);
-      ImageWriteParam params = writer.getDefaultWriteParam();
+      try (ImageOutputStream ios = ImageIO.createImageOutputStream(out)) {
+         ImageWriteParam params = writer.getDefaultWriteParam();
 
-      if (compressionType != null) {
-         params.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-         params.setCompressionType(compressionType);
+         if (compressionType != null) {
+            params.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            params.setCompressionType(compressionType);
+         }
+
+         writer.setOutput(ios);
+         writer.write(null, new IIOImage(image.awt(), null, null), params);
+      } finally {
+         writer.dispose();
       }
-
-      writer.setOutput(ios);
-      writer.write(null, new IIOImage(image.awt(), null, null), params);
-      ios.close();
-      writer.dispose();
    }
 }
 

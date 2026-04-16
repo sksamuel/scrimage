@@ -39,4 +39,12 @@ class TwelveMonkeysWriterTest : FunSpec({
          original.bytes(BmpWriter())
       }
    }
+
+   // Regression test: TiffWriter.write() overrides TwelveMonkeysWriter.write() and had the
+   // same resource-leak pattern: ios and writer were not closed in a try/finally.
+   test("TiffWriter write does not leak resources on repeated writes") {
+      repeat(100) {
+         original.bytes(TiffWriter())
+      }
+   }
 })
