@@ -398,6 +398,7 @@ public class AwtImage {
       for (int row = 0; row < height - patchHeight; row++) {
          for (int col = 0; col < width - patchWidth; col++) {
             patches[k] = patch(col, row, patchWidth, patchHeight);
+            k++;
          }
       }
       return patches;
