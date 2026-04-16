@@ -365,8 +365,8 @@ public class AwtImage {
    public Pixel[] patch(int x, int y, int patchWidth, int patchHeight) {
       Pixel[] px = pixels();
       Pixel[] patch = new Pixel[patchWidth * patchHeight];
-      for (int i = y; i < y + patchHeight; y++) {
-         System.arraycopy(px, offset(x, y), patch, offset(0, y), patchWidth);
+      for (int i = 0; i < patchHeight; i++) {
+         System.arraycopy(px, offset(x, y + i), patch, offset(0, i), patchWidth);
       }
       return patch;
    }
