@@ -8,7 +8,7 @@ public class Grayscale implements Color {
     public final int alpha;
 
     public Grayscale(int gray) {
-        this(gray, 0);
+        this(gray, 255);
     }
 
     public Grayscale(int gray, int alpha) {

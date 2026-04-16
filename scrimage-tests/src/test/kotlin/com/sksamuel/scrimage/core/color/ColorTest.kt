@@ -90,6 +90,13 @@ class ColorTest : WordSpec({
          rgb.blue shouldBe 100
          rgb.alpha shouldBe 128
       }
+      // Regression: Grayscale(int) defaulted alpha to 0 (fully transparent) while
+      // RGBColor(int,int,int) defaults to 255 (fully opaque). Inconsistent and
+      // almost always wrong for a no-args-given opaque gray.
+      "Grayscale single-arg constructor defaults to opaque" {
+         Grayscale(100).alpha shouldBe 255
+         Grayscale(100).toRGB().alpha shouldBe 255
+      }
       "be symmetric in rgb" {
          val rgb = RGBColor(1, 2, 3)
          rgb.toCMYK().toRGB() shouldBe rgb
