@@ -8,7 +8,6 @@ pluginManagement {
 }
 
 include(
-   ":scrimage-app",
    ":scrimage-benchmarks",
    ":scrimage-core",
    ":scrimage-examples",
