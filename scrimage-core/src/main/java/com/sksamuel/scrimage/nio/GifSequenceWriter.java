@@ -80,7 +80,6 @@ public class GifSequenceWriter extends AbstractGifWriter {
 
       try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
          try (MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream(baos)) {
-
             writer.setOutput(output);
             writer.prepareWriteSequence(null);
 
@@ -92,6 +91,8 @@ public class GifSequenceWriter extends AbstractGifWriter {
             output.flush();
             return baos.toByteArray();
          }
+      } finally {
+         writer.dispose();
       }
    }
 }

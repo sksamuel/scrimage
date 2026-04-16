@@ -18,6 +18,12 @@ class GifSequenceWriterTest : WordSpec({
          val actual = GifSequenceWriter().withFrameDelay(500).bytes(frames.toTypedArray())
          actual shouldBe IOUtils.toByteArray(javaClass.getResourceAsStream("/com/sksamuel/scrimage/nio/animated_birds.gif"))
       }
+      "not leak ImageWriter on repeated calls" {
+         val frames = arrayOf(bird)
+         repeat(100) {
+            GifSequenceWriter().bytes(frames)
+         }
+      }
    }
 
 })
