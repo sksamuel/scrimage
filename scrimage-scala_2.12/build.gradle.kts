@@ -6,5 +6,5 @@ plugins {
 
 dependencies {
    implementation(project(":scrimage-core"))
-   implementation("org.scala-lang:scala-library:2.13.18")
+   implementation("org.scala-lang:scala-library:3.8.3")
 }
