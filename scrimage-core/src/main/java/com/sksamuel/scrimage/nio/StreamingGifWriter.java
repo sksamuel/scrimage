@@ -91,7 +91,16 @@ public class StreamingGifWriter extends AbstractGifWriter {
 
    public GifStream prepareStream(File file, int imageType) throws IOException {
       FileOutputStream output = new FileOutputStream(file);
-      return prepareStream(output, imageType);
+      try {
+         return prepareStream(output, imageType);
+      } catch (IOException | RuntimeException e) {
+         try {
+            output.close();
+         } catch (IOException suppressed) {
+            e.addSuppressed(suppressed);
+         }
+         throw e;
+      }
    }
 
    public GifStream prepareStream(OutputStream output, int imageType) throws IOException {
@@ -175,10 +184,19 @@ public class StreamingGifWriter extends AbstractGifWriter {
 
          @Override
          public void close() throws IOException {
-            writer.endWriteSequence();
-            writer.dispose();
-            ios.close();
-            output.close();
+            try {
+               writer.endWriteSequence();
+            } finally {
+               try {
+                  writer.dispose();
+               } finally {
+                  try {
+                     ios.close();
+                  } finally {
+                     output.close();
+                  }
+               }
+            }
          }
       };
    }
