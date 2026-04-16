@@ -128,12 +128,6 @@ public class AwtImage {
                pixels[index] = new Pixel(point.x, point.y, data[index]);
                index++;
             }
-         } else if (awt().getType() == BufferedImage.TYPE_4BYTE_ABGR) {
-            while (index < data.length) {
-               Point point = PixelTools.offsetToPoint(index, width);
-               pixels[index / 4] = new Pixel(point.x, point.y, data[index / 4]);
-               index = index + 4;
-            }
          } else {
             throw new RuntimeException("Unsupported image type " + awt().getType());
          }

@@ -2,6 +2,7 @@ package com.sksamuel.scrimage.core
 
 import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.pixels.Pixel
+import java.awt.image.BufferedImage
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -63,5 +64,35 @@ class AwtImageTest : FunSpec({
          java.awt.Point(4, 3),
          java.awt.Point(5, 3)
       )
+   }
+
+   test("pixels() returns correct non-null array for TYPE_4BYTE_ABGR image") {
+      // A BufferedImage with TYPE_4BYTE_ABGR uses a DataBufferByte, so pixels()
+      // falls through to the getRGB per-pixel path. This test locks in that
+      // contract: correct length, no nulls, coordinates in row-major order,
+      // and ARGB values preserved.
+      val bi = BufferedImage(2, 2, BufferedImage.TYPE_4BYTE_ABGR)
+      bi.setRGB(0, 0, 0xFFFF0000.toInt()) // opaque red
+      bi.setRGB(1, 0, 0xFF00FF00.toInt()) // opaque green
+      bi.setRGB(0, 1, 0xFF0000FF.toInt()) // opaque blue
+      bi.setRGB(1, 1, 0xFFFFFFFF.toInt()) // opaque white
+
+      val image = ImmutableImage.wrapAwt(bi)
+      val pixels = image.pixels()
+
+      pixels.size shouldBe 4
+      pixels.forEach { it shouldNotBe null }
+
+      pixels[0].x shouldBe 0; pixels[0].y shouldBe 0
+      pixels[0].argb shouldBe 0xFFFF0000.toInt()
+
+      pixels[1].x shouldBe 1; pixels[1].y shouldBe 0
+      pixels[1].argb shouldBe 0xFF00FF00.toInt()
+
+      pixels[2].x shouldBe 0; pixels[2].y shouldBe 1
+      pixels[2].argb shouldBe 0xFF0000FF.toInt()
+
+      pixels[3].x shouldBe 1; pixels[3].y shouldBe 1
+      pixels[3].argb shouldBe 0xFFFFFFFF.toInt()
    }
 })
