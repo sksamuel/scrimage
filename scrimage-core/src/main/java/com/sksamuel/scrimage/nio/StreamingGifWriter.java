@@ -124,19 +124,21 @@ public class StreamingGifWriter extends AbstractGifWriter {
          @Override
          public GifStream writeFrame(ImmutableImage image) throws IOException {
             if (compressed && last != null) {
-               DataBuffer inputBuffer = image.awt().getRaster().getDataBuffer();
+               // Copy the input so we don't mutate the caller's image when zero-filling
+               // pixels that match the previous frame (the diff step below).
+               ImmutableImage work = image.copy();
+               DataBuffer workBuffer = work.awt().getRaster().getDataBuffer();
                DataBuffer lastBuffer = last.awt().getRaster().getDataBuffer();
-               // must copy the image before assigning it to last, because we will modify it in the next step
-               last = image.copy();
-               for (int i = 0; i < inputBuffer.getSize(); i++) {
-                  if (inputBuffer.getElem(i) == lastBuffer.getElem(i)) {
-                     inputBuffer.setElem(i, 0);
+               for (int i = 0; i < workBuffer.getSize(); i++) {
+                  if (workBuffer.getElem(i) == lastBuffer.getElem(i)) {
+                     workBuffer.setElem(i, 0);
                   }
                }
-               writer.writeToSequence(new IIOImage(image.awt(), null, imageMetaData), imageWriteParam);
+               last = image.copy();
+               writer.writeToSequence(new IIOImage(work.awt(), null, imageMetaData), imageWriteParam);
             } else {
                writer.writeToSequence(new IIOImage(image.awt(), null, imageMetaData), imageWriteParam);
-               last = image;
+               last = image.copy();
             }
             return this;
          }

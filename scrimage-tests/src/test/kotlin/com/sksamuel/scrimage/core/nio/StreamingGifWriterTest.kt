@@ -3,6 +3,7 @@
 package com.sksamuel.scrimage.core.nio
 
 import com.sksamuel.scrimage.ImmutableImage
+import com.sksamuel.scrimage.color.RGBColor
 import com.sksamuel.scrimage.nio.AnimatedGifReader
 import com.sksamuel.scrimage.nio.ImageSource
 import com.sksamuel.scrimage.nio.StreamingGifWriter
@@ -49,6 +50,35 @@ class StreamingGifWriterTest : WordSpec({
          stream.close()
          val bytes = output.toByteArray()
          bytes shouldBe IOUtils.toByteArray(javaClass.getResourceAsStream("/gif/fallingroof_scaled.gif"))
+      }
+
+      "not mutate caller's ImmutableImage in compressed mode" {
+         // Two 8x8 images where most pixels match, so the compressed diff path
+         // will attempt to zero-fill matching cells.
+         val image1 = ImmutableImage.create(8, 8, BufferedImage.TYPE_INT_ARGB)
+         val image2 = ImmutableImage.create(8, 8, BufferedImage.TYPE_INT_ARGB)
+         for (y in 0 until 8) {
+            for (x in 0 until 8) {
+               val color = RGBColor(x * 30, y * 30, 128, 255)
+               image1.setColor(x, y, color)
+               image2.setColor(x, y, color)
+            }
+         }
+         // Differ on exactly one pixel so image2 is distinguishable
+         image2.setColor(3, 3, RGBColor(255, 0, 0, 255))
+
+         val snap1: IntArray = image1.pixels().map { it.argb }.toIntArray()
+         val snap2: IntArray = image2.pixels().map { it.argb }.toIntArray()
+
+         val writer = StreamingGifWriter().withCompression(true).withFrameDelay(Duration.ofMillis(100))
+         val output = ByteArrayOutputStream()
+         val stream = writer.prepareStream(output, BufferedImage.TYPE_INT_ARGB)
+         stream.writeFrame(image1)
+         stream.writeFrame(image2)
+         stream.close()
+
+         image1.pixels().map { it.argb }.toIntArray().toList() shouldBe snap1.toList()
+         image2.pixels().map { it.argb }.toIntArray().toList() shouldBe snap2.toList()
       }
    }
 
