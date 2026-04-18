@@ -1,5 +1,6 @@
 package com.sksamuel.scrimage.core
 
+import com.sksamuel.scrimage.AwtImage
 import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.pixels.Pixel
 import java.awt.image.BufferedImage
@@ -34,6 +35,22 @@ class AwtImageTest : FunSpec({
       patches[1][0].red() shouldBe 1
       // patch 3 → col=0, row=1 → pixel index 4 → red=4
       patches[3][0].red() shouldBe 4
+   }
+
+   // Regression: AwtImage.pixels() fast path for TYPE_INT_RGB read data[index] directly,
+   // but TYPE_INT_RGB stores 0x00RRGGBB (alpha bits are 0), so every pixel came back with
+   // alpha=0 (fully transparent) instead of alpha=255 (opaque).
+   test("pixels() on TYPE_INT_RGB image returns opaque pixels") {
+      val buf = java.awt.image.BufferedImage(2, 2, java.awt.image.BufferedImage.TYPE_INT_RGB)
+      buf.setRGB(0, 0, 0x00FF0000) // red
+      buf.setRGB(1, 0, 0x0000FF00) // green
+      buf.setRGB(0, 1, 0x000000FF) // blue
+      buf.setRGB(1, 1, 0x00FFFFFF) // white
+      val image = AwtImage(buf)
+      image.pixels().forEach { p -> p.alpha() shouldBe 255 }
+      image.pixels()[0].red() shouldBe 255
+      image.pixels()[1].green() shouldBe 255
+      image.pixels()[2].blue() shouldBe 255
    }
 
    test("AwtImage.points return array of points") {
