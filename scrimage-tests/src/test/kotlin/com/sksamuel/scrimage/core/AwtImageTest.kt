@@ -6,7 +6,6 @@ import com.sksamuel.scrimage.pixels.Pixel
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import java.awt.image.BufferedImage
 
 class AwtImageTest : FunSpec({
 
@@ -41,7 +40,7 @@ class AwtImageTest : FunSpec({
    // but TYPE_INT_RGB stores 0x00RRGGBB (alpha bits are 0), so every pixel came back with
    // alpha=0 (fully transparent) instead of alpha=255 (opaque).
    test("pixels() on TYPE_INT_RGB image returns opaque pixels") {
-      val buf = BufferedImage(2, 2, BufferedImage.TYPE_INT_RGB)
+      val buf = java.awt.image.BufferedImage(2, 2, java.awt.image.BufferedImage.TYPE_INT_RGB)
       buf.setRGB(0, 0, 0x00FF0000) // red
       buf.setRGB(1, 0, 0x0000FF00) // green
       buf.setRGB(0, 1, 0x000000FF) // blue
