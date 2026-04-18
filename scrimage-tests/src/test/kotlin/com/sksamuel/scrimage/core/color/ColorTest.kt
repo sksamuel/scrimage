@@ -48,6 +48,17 @@ class ColorTest : WordSpec({
          rgb.blue shouldBe 107
          rgb.alpha shouldBe 255
       }
+      // Regression: CMYKColor.toRGB() hardcoded alpha=255, silently dropping the alpha
+      // of any semi-transparent colour round-tripped through CMYK.
+      "cmyk to rgb preserves alpha" {
+         val rgb = CMYKColor(0.1f, 0.2f, 0.3f, 0.4f, 0.5f).toRGB()
+         rgb.alpha shouldBe Math.round(0.5f * 255)
+      }
+      "rgb to cmyk preserves alpha" {
+         val cmyk = RGBColor(100, 150, 200, 128).toCMYK()
+         cmyk.alpha shouldBe (128 / 255f plusOrMinus 0.001f)
+         cmyk.toRGB().alpha shouldBe 128
+      }
       "convert hsl to rgb correctly" {
          val rgb = HSLColor(100f, 0.5f, 0.3f, 1f).toRGB()
          rgb.red shouldBe 64

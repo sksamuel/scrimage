@@ -104,10 +104,11 @@ public class RGBColor implements Color {
    public CMYKColor toCMYK() {
       float max = Math.max(Math.max(red, green), blue) / 255f;
       float k = 1.0f - max;
+      float a = alpha / 255f;
       if (max > 0.0f) {
-         return new CMYKColor(1.0f - (red / 255f) / max, 1.0f - (green / 255f) / max, 1.0f - (blue / 255f) / max, k);
+         return new CMYKColor(1.0f - (red / 255f) / max, 1.0f - (green / 255f) / max, 1.0f - (blue / 255f) / max, k, a);
       } else {
-         return new CMYKColor(0, 0, 0, k);
+         return new CMYKColor(0, 0, 0, k, a);
       }
    }
 
