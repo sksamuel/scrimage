@@ -67,4 +67,28 @@ class RGBColorTest : StringSpec({
       val rgb = RGBColor(255, 255, 255)
       rgb.toHSV().toRGB() shouldBe rgb
    }
+
+   // Regression: Color.paint() used new java.awt.Color(toARGBInt()) which calls the
+   // single-int constructor that forces alpha=0xFF, silently dropping the color's alpha.
+   // Fix: pass hasAlpha=true so the constructor reads alpha from bits 24-31.
+   "paint() preserves alpha for semi-transparent color" {
+      val halfTransparentRed = RGBColor(255, 0, 0, 128)
+      val paint = halfTransparentRed.paint() as java.awt.Color
+      paint.alpha shouldBe 128
+      paint.red shouldBe 255
+      paint.green shouldBe 0
+      paint.blue shouldBe 0
+   }
+
+   "paint() preserves alpha for fully transparent color" {
+      val transparent = RGBColor(0, 255, 0, 0)
+      val paint = transparent.paint() as java.awt.Color
+      paint.alpha shouldBe 0
+   }
+
+   "paint() preserves alpha for fully opaque color" {
+      val opaque = RGBColor(0, 0, 255, 255)
+      val paint = opaque.paint() as java.awt.Color
+      paint.alpha shouldBe 255
+   }
 })

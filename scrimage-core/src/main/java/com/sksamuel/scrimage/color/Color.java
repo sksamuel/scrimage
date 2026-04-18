@@ -89,6 +89,6 @@ public interface Color {
     * Returns this colour as an AWT Paint.
     */
    default Paint paint() {
-      return new java.awt.Color(toRGB().toARGBInt());
+      return new java.awt.Color(toRGB().toARGBInt(), true);
    }
 }
