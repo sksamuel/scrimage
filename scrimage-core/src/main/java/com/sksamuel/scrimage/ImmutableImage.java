@@ -425,7 +425,7 @@ public class ImmutableImage extends MutableImage {
       int y1 = AutocropOps.scandown(color, height, width, 0, pixelExtractor(), colorTolerance);
       int y2 = AutocropOps.scanup(color, width, height - 1, pixelExtractor(), colorTolerance);
       if (x1 == 0 && y1 == 0 && x2 == width - 1 && y2 == height - 1) return this;
-      return subimage(x1, y1, x2 - x1, y2 - y1);
+      return subimage(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
    }
 
    /**
