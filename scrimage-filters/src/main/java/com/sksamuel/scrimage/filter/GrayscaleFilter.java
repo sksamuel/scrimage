@@ -22,10 +22,7 @@ public class GrayscaleFilter implements Filter {
 
    public void apply(ImmutableImage image) {
       image.mapInPlace((p) -> {
-         double red = 0.21 * p.red();
-         double green = 0.71 * p.green();
-         double blue = 0.07 * p.blue();
-         int gray = (int) (red + green + blue);
+         int gray = (int) Math.round(0.2126 * p.red() + 0.7152 * p.green() + 0.0722 * p.blue());
          return new RGBColor(gray, gray, gray, p.alpha()).awt();
       });
    }
