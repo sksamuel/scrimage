@@ -8,6 +8,6 @@ dependencies {
    implementation("com.twelvemonkeys.imageio:imageio-core:3.13.1")
    implementation("com.twelvemonkeys.imageio:imageio-jpeg:3.13.1")
    implementation("com.drewnoakes:metadata-extractor:2.20.0")
-   implementation("commons-io:commons-io:2.21.0")
+   implementation("commons-io:commons-io:2.22.0")
    implementation("ar.com.hjg:pngj:2.1.0")
 }
