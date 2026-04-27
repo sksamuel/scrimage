@@ -176,28 +176,34 @@ public class ImmutableImageLoader {
       int imageType = type > 0 ? type : defaultType;
       BufferedImage buffered = new BufferedImage(width, height, imageType);
 
-      for (int y = 0; y < height; y++) {
-         for (int x = 0; x < width; x++) {
-            int idx = y * width + x;
-            int argb;
-            if (channels == 1) {
-               int v = clamp(data[idx]);
-               argb = (255 << 24) | (v << 16) | (v << 8) | v;
-            } else if (channels == 3) {
-               int r = clamp(data[idx]);
-               int g = clamp(data[numPixels + idx]);
-               int b = clamp(data[2 * numPixels + idx]);
-               argb = (255 << 24) | (r << 16) | (g << 8) | b;
-            } else {
-               int r = clamp(data[idx]);
-               int g = clamp(data[numPixels + idx]);
-               int b = clamp(data[2 * numPixels + idx]);
-               int a = clamp(data[3 * numPixels + idx]);
-               argb = (a << 24) | (r << 16) | (g << 8) | b;
-            }
-            buffered.setRGB(x, y, argb);
+      int[] argb = new int[numPixels];
+      if (channels == 1) {
+         for (int i = 0; i < numPixels; i++) {
+            int v = clamp(data[i]);
+            argb[i] = (255 << 24) | (v << 16) | (v << 8) | v;
+         }
+      } else if (channels == 3) {
+         int gOffset = numPixels;
+         int bOffset = 2 * numPixels;
+         for (int i = 0; i < numPixels; i++) {
+            int r = clamp(data[i]);
+            int g = clamp(data[gOffset + i]);
+            int b = clamp(data[bOffset + i]);
+            argb[i] = (255 << 24) | (r << 16) | (g << 8) | b;
+         }
+      } else {
+         int gOffset = numPixels;
+         int bOffset = 2 * numPixels;
+         int aOffset = 3 * numPixels;
+         for (int i = 0; i < numPixels; i++) {
+            int r = clamp(data[i]);
+            int g = clamp(data[gOffset + i]);
+            int b = clamp(data[bOffset + i]);
+            int a = clamp(data[aOffset + i]);
+            argb[i] = (a << 24) | (r << 16) | (g << 8) | b;
          }
       }
+      buffered.setRGB(0, 0, width, height, argb, 0, width);
 
       return ImmutableImage.wrapAwt(buffered);
    }
