@@ -319,7 +319,13 @@ public class AwtImage {
     * @return an array containing an array for each ARGB components in that order.
     */
    public int[][] argb() {
-      return Arrays.stream(points()).map(p -> argb(p.x, p.y)).toArray(int[][]::new);
+      int[] packed = awt().getRGB(0, 0, width, height, null, 0, width);
+      int[][] out = new int[packed.length][];
+      for (int i = 0; i < packed.length; i++) {
+         int p = packed[i];
+         out[i] = new int[]{PixelTools.alpha(p), PixelTools.red(p), PixelTools.green(p), PixelTools.blue(p)};
+      }
+      return out;
    }
 
    /**
@@ -328,7 +334,7 @@ public class AwtImage {
     * @return an array containing the packed ARGB int for each pixel.
     */
    public int[] argbints() {
-      return Arrays.stream(points()).mapToInt(p -> color(p.x, p.y).toARGBInt()).toArray();
+      return awt().getRGB(0, 0, width, height, null, 0, width);
    }
 
    public int[] rgb(int x, int y) {
@@ -337,7 +343,13 @@ public class AwtImage {
    }
 
    public int[][] rgb() {
-      return Arrays.stream(points()).map(p -> rgb(p.x, p.y)).toArray(int[][]::new);
+      int[] packed = awt().getRGB(0, 0, width, height, null, 0, width);
+      int[][] out = new int[packed.length][];
+      for (int i = 0; i < packed.length; i++) {
+         int p = packed[i];
+         out[i] = new int[]{PixelTools.red(p), PixelTools.green(p), PixelTools.blue(p)};
+      }
+      return out;
    }
 
    /**
