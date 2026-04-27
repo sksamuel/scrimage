@@ -357,10 +357,13 @@ public class AwtImage {
    }
 
    public Pixel[] patch(int x, int y, int patchWidth, int patchHeight) {
-      Pixel[] px = pixels();
+      return patchFrom(pixels(), x, y, patchWidth, patchHeight);
+   }
+
+   private Pixel[] patchFrom(Pixel[] source, int x, int y, int patchWidth, int patchHeight) {
       Pixel[] patch = new Pixel[patchWidth * patchHeight];
       for (int i = 0; i < patchHeight; i++) {
-         System.arraycopy(px, offset(x, y + i), patch, i * patchWidth, patchWidth);
+         System.arraycopy(source, offset(x, y + i), patch, i * patchWidth, patchWidth);
       }
       return patch;
    }
@@ -388,10 +391,11 @@ public class AwtImage {
     */
    public Pixel[][] patches(int patchWidth, int patchHeight) {
       Pixel[][] patches = new Pixel[(height - patchHeight) * (width - patchWidth)][];
+      Pixel[] source = pixels();
       int k = 0;
       for (int row = 0; row < height - patchHeight; row++) {
          for (int col = 0; col < width - patchWidth; col++) {
-            patches[k] = patch(col, row, patchWidth, patchHeight);
+            patches[k] = patchFrom(source, col, row, patchWidth, patchHeight);
             k++;
          }
       }
