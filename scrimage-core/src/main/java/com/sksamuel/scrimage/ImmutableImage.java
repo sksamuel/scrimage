@@ -45,6 +45,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferInt;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
@@ -270,8 +272,15 @@ public class ImmutableImage extends MutableImage {
       ImmutableImage target = create(width, height, type);
       WritableRaster targetRaster = target.awt().getRaster();
       Object colorElements = target.awt().getColorModel().getDataElements(RGBColor.fromAwt(color).toARGBInt(), null);
-      for (int w = 0; w < width; w++) {
-         for (int h = 0; h < height; h++) {
+      DataBuffer buffer = targetRaster.getDataBuffer();
+      if (buffer instanceof DataBufferInt
+         && colorElements instanceof int[]
+         && ((int[]) colorElements).length == 1) {
+         Arrays.fill(((DataBufferInt) buffer).getData(), ((int[]) colorElements)[0]);
+         return target;
+      }
+      for (int h = 0; h < height; h++) {
+         for (int w = 0; w < width; w++) {
             targetRaster.setDataElements(w, h, colorElements);
          }
       }

@@ -6,6 +6,8 @@ import com.sksamuel.scrimage.pixels.PixelTools;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferInt;
 import java.awt.image.RescaleOp;
 import java.awt.image.WritableRaster;
 import java.util.Arrays;
@@ -52,7 +54,18 @@ public class MutableImage extends AwtImage {
    public void fillInPlace(Color color) {
       WritableRaster raster = awt().getRaster();
       Object colorElements = awt().getColorModel().getDataElements(RGBColor.fromAwt(color).toARGBInt(), null);
-      Arrays.stream(points()).forEach(point -> raster.setDataElements(point.x, point.y, colorElements));
+      DataBuffer buffer = raster.getDataBuffer();
+      if (buffer instanceof DataBufferInt
+         && colorElements instanceof int[]
+         && ((int[]) colorElements).length == 1) {
+         Arrays.fill(((DataBufferInt) buffer).getData(), ((int[]) colorElements)[0]);
+         return;
+      }
+      for (int y = 0; y < height; y++) {
+         for (int x = 0; x < width; x++) {
+            raster.setDataElements(x, y, colorElements);
+         }
+      }
    }
 
    /**
