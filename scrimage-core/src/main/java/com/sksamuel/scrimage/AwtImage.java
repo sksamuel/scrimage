@@ -234,7 +234,13 @@ public class AwtImage {
     * @param fn a function that accepts a pixel
     */
    public void forEach(Consumer<Pixel> fn) {
-      Arrays.stream(points()).forEach(p -> fn.accept(pixel(p)));
+      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      int i = 0;
+      for (int y = 0; y < height; y++) {
+         for (int x = 0; x < width; x++) {
+            fn.accept(new Pixel(x, y, argb[i++]));
+         }
+      }
    }
 
    /**
@@ -248,10 +254,12 @@ public class AwtImage {
     * Returns an array of rows, where each row is itself an array of pixels in that row.
     */
    public Pixel[][] rows() {
+      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
       Pixel[][] pixels = new Pixel[height][width];
+      int i = 0;
       for (int y = 0; y < height; y++) {
          for (int x = 0; x < width; x++) {
-            pixels[y][x] = pixel(x, y);
+            pixels[y][x] = new Pixel(x, y, argb[i++]);
          }
       }
       return pixels;
@@ -346,11 +354,13 @@ public class AwtImage {
     * @return an Array of pixels for the region
     */
    public Pixel[] pixels(int x, int y, int w, int h) {
+      int[] argb = awt().getRGB(x, y, w, h, null, 0, w);
       Pixel[] pixels = new Pixel[w * h];
       int k = 0;
-      for (int y1 = y; y1 < y + h; y1++) {
-         for (int x1 = x; x1 < x + w; x1++) {
-            pixels[k++] = pixel(x1, y1);
+      for (int dy = 0; dy < h; dy++) {
+         for (int dx = 0; dx < w; dx++) {
+            pixels[k] = new Pixel(x + dx, y + dy, argb[k]);
+            k++;
          }
       }
       return pixels;
