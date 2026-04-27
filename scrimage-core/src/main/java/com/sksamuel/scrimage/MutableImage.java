@@ -100,13 +100,15 @@ public class MutableImage extends AwtImage {
    }
 
    public void contrastInPlace(double factor) {
-      Arrays.stream(points()).forEach(p -> {
-         Pixel pixel = pixel(p.x, p.y);
-         int r = PixelTools.truncate((factor * (pixel.red() - 128)) + 128);
-         int g = PixelTools.truncate((factor * (pixel.green() - 128)) + 128);
-         int b = PixelTools.truncate((factor * (pixel.blue() - 128)) + 128);
-         Pixel pixel2 = new Pixel(pixel.x, pixel.y, r, g, b, pixel.alpha());
-         setPixel(pixel2);
-      });
+      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      for (int i = 0; i < argb.length; i++) {
+         int packed = argb[i];
+         int a = PixelTools.alpha(packed);
+         int r = PixelTools.truncate((factor * (PixelTools.red(packed) - 128)) + 128);
+         int g = PixelTools.truncate((factor * (PixelTools.green(packed) - 128)) + 128);
+         int b = PixelTools.truncate((factor * (PixelTools.blue(packed) - 128)) + 128);
+         argb[i] = PixelTools.argb(a, r, g, b);
+      }
+      awt().setRGB(0, 0, width, height, argb, 0, width);
    }
 }
