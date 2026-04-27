@@ -147,8 +147,8 @@ public class AwtImage {
    /**
     * Returns the pixels of the image as an iterator.
     * <p>
-    * The iterator is the most efficient way to lazily iterator over the pixels as the pixels will only
-    * be fetched from the raster as needed.
+    * The iterator fetches the full pixel grid in a single bulk getRGB call on the first
+    * call to next() and then walks the buffer.
     *
     * @return the iterator
     */
@@ -156,6 +156,7 @@ public class AwtImage {
       return new Iterator<Pixel>() {
 
          private int k = 0;
+         private int[] argb;
 
          @Override
          public boolean hasNext() {
@@ -164,9 +165,12 @@ public class AwtImage {
 
          @Override
          public Pixel next() {
-            Point point = PixelTools.offsetToPoint(k++, width);
-            int rgb = awt.getRGB(point.x, point.y);
-            return new Pixel(point.x, point.y, rgb);
+            if (argb == null) {
+               argb = awt.getRGB(0, 0, width, height, null, 0, width);
+            }
+            int x = k % width;
+            int y = k / width;
+            return new Pixel(x, y, argb[k++]);
          }
       };
    }
