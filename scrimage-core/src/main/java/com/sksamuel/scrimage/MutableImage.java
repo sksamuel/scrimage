@@ -42,10 +42,16 @@ public class MutableImage extends AwtImage {
    }
 
    public void replaceTransparencyInPlace(java.awt.Color color) {
-      Arrays.stream(pixels()).forEach(pixel -> {
-         Pixel withoutTrans = PixelTools.replaceTransparencyWithColor(pixel, color);
-         awt().setRGB(pixel.x, pixel.y, withoutTrans.toARGBInt());
-      });
+      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      int i = 0;
+      for (int y = 0; y < height; y++) {
+         for (int x = 0; x < width; x++) {
+            Pixel withoutTrans = PixelTools.replaceTransparencyWithColor(new Pixel(x, y, argb[i]), color);
+            argb[i] = withoutTrans.toARGBInt();
+            i++;
+         }
+      }
+      awt().setRGB(0, 0, width, height, argb, 0, width);
    }
 
    /**
@@ -100,13 +106,18 @@ public class MutableImage extends AwtImage {
    }
 
    public void contrastInPlace(double factor) {
-      Arrays.stream(points()).forEach(p -> {
-         Pixel pixel = pixel(p.x, p.y);
-         int r = PixelTools.truncate((factor * (pixel.red() - 128)) + 128);
-         int g = PixelTools.truncate((factor * (pixel.green() - 128)) + 128);
-         int b = PixelTools.truncate((factor * (pixel.blue() - 128)) + 128);
-         Pixel pixel2 = new Pixel(pixel.x, pixel.y, r, g, b, pixel.alpha());
-         setPixel(pixel2);
-      });
+      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      int i = 0;
+      for (int y = 0; y < height; y++) {
+         for (int x = 0; x < width; x++) {
+            Pixel pixel = new Pixel(x, y, argb[i]);
+            int r = PixelTools.truncate((factor * (pixel.red() - 128)) + 128);
+            int g = PixelTools.truncate((factor * (pixel.green() - 128)) + 128);
+            int b = PixelTools.truncate((factor * (pixel.blue() - 128)) + 128);
+            argb[i] = new Pixel(x, y, r, g, b, pixel.alpha()).toARGBInt();
+            i++;
+         }
+      }
+      awt().setRGB(0, 0, width, height, argb, 0, width);
    }
 }
