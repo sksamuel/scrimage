@@ -117,32 +117,33 @@ public class AwtImage {
    public Pixel[] pixels() {
       DataBuffer buffer = awt().getRaster().getDataBuffer();
       if (buffer instanceof DataBufferInt) {
-         DataBufferInt intbuffer = (DataBufferInt) buffer;
-         int[] data = intbuffer.getData();
-         int index = 0;
+         int[] data = ((DataBufferInt) buffer).getData();
          Pixel[] pixels = new Pixel[data.length];
-         if (awt().getType() == BufferedImage.TYPE_INT_ARGB) {
-            while (index < data.length) {
-               Point point = PixelTools.offsetToPoint(index, width);
-               pixels[index] = new Pixel(point.x, point.y, data[index]);
-               index++;
-            }
-         } else if (awt().getType() == BufferedImage.TYPE_INT_RGB) {
-            while (index < data.length) {
-               Point point = PixelTools.offsetToPoint(index, width);
-               pixels[index] = new Pixel(point.x, point.y, data[index] | 0xFF000000);
-               index++;
-            }
+         int type = awt().getType();
+         int alphaMask;
+         if (type == BufferedImage.TYPE_INT_ARGB) {
+            alphaMask = 0;
+         } else if (type == BufferedImage.TYPE_INT_RGB) {
+            alphaMask = 0xFF000000;
          } else {
-            throw new RuntimeException("Unsupported image type " + awt().getType());
+            throw new RuntimeException("Unsupported image type " + type);
          }
-         return pixels;
-      } else {
-         Pixel[] pixels = new Pixel[count()];
          int index = 0;
          for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-               pixels[index++] = new Pixel(x, y, awt().getRGB(x, y));
+               pixels[index] = new Pixel(x, y, data[index] | alphaMask);
+               index++;
+            }
+         }
+         return pixels;
+      } else {
+         int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+         Pixel[] pixels = new Pixel[argb.length];
+         int index = 0;
+         for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+               pixels[index] = new Pixel(x, y, argb[index]);
+               index++;
             }
          }
          return pixels;
