@@ -1,9 +1,6 @@
 package com.sksamuel.scrimage.filter;
 
 import com.sksamuel.scrimage.ImmutableImage;
-import com.sksamuel.scrimage.color.RGBColor;
-
-import java.io.IOException;
 
 /**
  * Returns a new ImmutableImage with the given alpha mask applied to this image.
@@ -28,29 +25,30 @@ public class AlphaMaskFilter implements Filter {
    @Override
    public void apply(ImmutableImage image) {
 
-      RGBColor[] imageColors = image.colors();
-      RGBColor[] maskColors = mask.colors();
+      int w = image.width;
+      int h = image.height;
+      int[] imagePixels = image.awt().getRGB(0, 0, w, h, null, 0, w);
+      int[] maskPixels = mask.awt().getRGB(0, 0, w, h, null, 0, w);
 
-      int count = image.count();
-      for (int i = 0; i < count; i++) {
-         int color = imageColors[i].toARGBInt() & 0x00ffffff; // Mask preexisting alpha
+      for (int i = 0; i < imagePixels.length; i++) {
+         int color = imagePixels[i] & 0x00ffffff; // Mask preexisting alpha
          int alpha;
          switch (channel) {
             case 1:
-               alpha = (maskColors[i].toARGBInt() & 0x00FF0000) << 8; // Shift red to alpha
+               alpha = (maskPixels[i] & 0x00FF0000) << 8; // Shift red to alpha
                break;
             case 2:
-               alpha = (maskColors[i].toARGBInt() & 0x0000FF00) << 16; // Shift green to alpha
+               alpha = (maskPixels[i] & 0x0000FF00) << 16; // Shift green to alpha
                break;
             case 3:
-               alpha = (maskColors[i].toARGBInt() & 0x000000FF) << 24; // Shift blue to alpha
+               alpha = (maskPixels[i] & 0x000000FF) << 24; // Shift blue to alpha
                break;
             default:
-               alpha = (maskColors[i].toARGBInt() & 0xFF000000); // use alpha channel
+               alpha = (maskPixels[i] & 0xFF000000); // use alpha channel
                break;
          }
-         int masked = color | alpha;
-         image.setColor(i, RGBColor.fromARGBInt(masked));
+         imagePixels[i] = color | alpha;
       }
+      image.awt().setRGB(0, 0, w, h, imagePixels, 0, w);
    }
 }
