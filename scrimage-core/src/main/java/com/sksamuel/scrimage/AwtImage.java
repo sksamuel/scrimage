@@ -103,7 +103,12 @@ public class AwtImage {
     * Returns the colors of this image represented as an array of RGBColor.
     */
    public RGBColor[] colors() {
-      return Arrays.stream(pixels()).map(Pixel::toColor).toArray(RGBColor[]::new);
+      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      RGBColor[] colors = new RGBColor[argb.length];
+      for (int i = 0; i < argb.length; i++) {
+         colors[i] = RGBColor.fromARGBInt(argb[i]);
+      }
+      return colors;
    }
 
    /**
