@@ -426,7 +426,8 @@ public class AwtImage {
     * @return the set of distinct Colors
     */
    public Set<RGBColor> colours() {
-      return Arrays.stream(pixels()).map(Pixel::toColor).collect(Collectors.toSet());
+      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      return Arrays.stream(argb).distinct().mapToObj(RGBColor::fromARGBInt).collect(Collectors.toSet());
    }
 
    /**
