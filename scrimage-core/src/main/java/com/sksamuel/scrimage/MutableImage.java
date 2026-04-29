@@ -35,10 +35,15 @@ public class MutableImage extends AwtImage {
     * @param mapper the function to transform pixel x,y with existing value p into new pixel value p' (p prime)
     */
    public void mapInPlace(Function<Pixel, Color> mapper) {
-      Arrays.stream(points()).forEach(point -> {
-         Color c = mapper.apply(pixel(point.x, point.y));
-         awt().setRGB(point.x, point.y, c.getRGB());
-      });
+      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      int i = 0;
+      for (int y = 0; y < height; y++) {
+         for (int x = 0; x < width; x++) {
+            argb[i] = mapper.apply(new Pixel(x, y, argb[i])).getRGB();
+            i++;
+         }
+      }
+      awt().setRGB(0, 0, width, height, argb, 0, width);
    }
 
    public void replaceTransparencyInPlace(java.awt.Color color) {
