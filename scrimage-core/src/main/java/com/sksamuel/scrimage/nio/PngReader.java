@@ -3,8 +3,8 @@ package com.sksamuel.scrimage.nio;
 import ar.com.hjg.pngj.ImageLineHelper;
 import ar.com.hjg.pngj.ImageLineInt;
 import com.sksamuel.scrimage.ImmutableImage;
-import com.sksamuel.scrimage.color.RGBColor;
 import com.sksamuel.scrimage.metadata.ImageMetadata;
+import com.sksamuel.scrimage.pixels.PixelTools;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -33,41 +33,45 @@ public class PngReader implements ImageReader {
       int[] matrix = new int[w * h];
 
       if (pngr.imgInfo.indexed) {
+         int[] pixels = null;
          for (int row = 0; row < h; row++) {
             ImageLineInt scanline = (ImageLineInt) pngr.readRow();
             if (bitDepth < 8)
                ImageLineHelper.scaleUp(scanline);
-            int[] pixels = ImageLineHelper.palette2rgb(scanline, pngr.getMetadata().getPLTE(), null, null);
-            int j = 0;
-            int[] mapped = new int[pixels.length / 3];
-            for (int k = 0; k < pixels.length; k = k + 3) {
-               mapped[j++] = new RGBColor(pixels[k], pixels[k + 1], pixels[k + 2], 255).toARGBInt();
+            pixels = ImageLineHelper.palette2rgb(scanline, pngr.getMetadata().getPLTE(), null, pixels);
+            int rowOffset = row * w;
+            for (int x = 0, k = 0; x < w; x++, k += 3) {
+               matrix[rowOffset + x] = PixelTools.argb(255, pixels[k], pixels[k + 1], pixels[k + 2]);
             }
-            System.arraycopy(mapped, 0, matrix, row * w, w);
          }
       } else {
          for (int row = 0; row < h; row++) {
             int[] scanline = ((ImageLineInt) pngr.readRow()).getScanline();
-            int j = 0;
-            int[] mapped = new int[scanline.length / channels];
-            for (int k = 0; k < scanline.length; k = k + channels) {
-
-               switch (channels) {
-                  case 1:
-                     mapped[j++] = new RGBColor(scanline[k], scanline[k], scanline[k], 255).toARGBInt(); // greyscale no alpha
-                     break;
-                  case 2:
-                     mapped[j++] = new RGBColor(scanline[k], scanline[k], scanline[k], scanline[k + 1]).toARGBInt();
-                     break;
-                  case 3:
-                     mapped[j++] = new RGBColor(scanline[k], scanline[k + 1], scanline[k + 2], 255).toARGBInt(); // if no alpha then 255 is full opacity
-                     break;
-                  case 4:
-                     mapped[j++] = new RGBColor(scanline[k], scanline[k + 1], scanline[k + 2], scanline[k + 3]).toARGBInt(); // note: the png reader is n RGBA
-                     break;
-               }
+            int rowOffset = row * w;
+            switch (channels) {
+               case 1:
+                  for (int x = 0, k = 0; x < w; x++, k += channels) {
+                     int v = scanline[k];
+                     matrix[rowOffset + x] = PixelTools.argb(255, v, v, v); // greyscale no alpha
+                  }
+                  break;
+               case 2:
+                  for (int x = 0, k = 0; x < w; x++, k += channels) {
+                     int v = scanline[k];
+                     matrix[rowOffset + x] = PixelTools.argb(scanline[k + 1], v, v, v);
+                  }
+                  break;
+               case 3:
+                  for (int x = 0, k = 0; x < w; x++, k += channels) {
+                     matrix[rowOffset + x] = PixelTools.argb(255, scanline[k], scanline[k + 1], scanline[k + 2]); // if no alpha then 255 is full opacity
+                  }
+                  break;
+               case 4:
+                  for (int x = 0, k = 0; x < w; x++, k += channels) {
+                     matrix[rowOffset + x] = PixelTools.argb(scanline[k + 3], scanline[k], scanline[k + 1], scanline[k + 2]); // note: the png reader is in RGBA
+                  }
+                  break;
             }
-            System.arraycopy(mapped, 0, matrix, row * w, w);
          }
       }
       pngr.end();
