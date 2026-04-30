@@ -1,7 +1,5 @@
 package com.sksamuel.scrimage.color;
 
-import java.util.Objects;
-
 public class Grayscale implements Color {
 
     public final int gray;
@@ -31,6 +29,6 @@ public class Grayscale implements Color {
 
     @Override
     public int hashCode() {
-        return Objects.hash(gray, alpha);
+        return 31 * gray + alpha;
     }
 }
