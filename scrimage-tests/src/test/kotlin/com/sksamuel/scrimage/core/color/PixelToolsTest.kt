@@ -85,4 +85,27 @@ class PixelToolsTest : FunSpec({
       PixelTools.approx(ref, 10, arrayOf(pixel)) shouldBe false
    }
 
+   // Test the new int overload of replaceTransparencyWithColor against the
+   // existing Pixel-based version to confirm bit-identical output.
+   test("replaceTransparencyWithColor int overload matches Pixel overload") {
+      val bg = Color(255, 200, 100, 255)
+      val cases = listOf(
+         Pixel(0, 0, 0, 0, 0, 0),         // fully transparent
+         Pixel(0, 0, 100, 50, 25, 128),   // semi-transparent
+         Pixel(0, 0, 200, 100, 50, 255),  // fully opaque
+         Pixel(0, 0, 1, 2, 3, 5)          // low values
+      )
+      cases.forEach { p ->
+         val viaPixel = PixelTools.replaceTransparencyWithColor(p, bg).toARGBInt()
+         val viaInt = PixelTools.replaceTransparencyWithColor(p.argb, bg)
+         viaInt shouldBe viaPixel
+      }
+   }
+
+   // The new primitive-double truncate overload must agree with the boxed
+   // Double overload at all classification boundaries.
+   test("truncate(double) matches truncate(Double)") {
+      val cases = listOf(-100.5, -0.5, 0.0, 0.4, 127.7, 254.9, 255.0, 256.7, 999.0)
+      cases.forEach { v -> PixelTools.truncate(v) shouldBe PixelTools.truncate(v as Double?) }
+   }
 })
