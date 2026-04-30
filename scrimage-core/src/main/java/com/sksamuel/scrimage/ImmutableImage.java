@@ -433,10 +433,11 @@ public class ImmutableImage extends MutableImage {
     *                       the color matches the reference color [0..255]
     */
    public ImmutableImage autocrop(Color color, int colorTolerance) {
-      int x1 = AutocropOps.scanright(color, height, width, 0, pixelExtractor(), colorTolerance);
-      int x2 = AutocropOps.scanleft(color, height, width - 1, pixelExtractor(), colorTolerance);
-      int y1 = AutocropOps.scandown(color, height, width, 0, pixelExtractor(), colorTolerance);
-      int y2 = AutocropOps.scanup(color, width, height - 1, pixelExtractor(), colorTolerance);
+      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      int x1 = AutocropOps.scanright(color, width, height, 0, argb, colorTolerance);
+      int x2 = AutocropOps.scanleft(color, width, height, width - 1, argb, colorTolerance);
+      int y1 = AutocropOps.scandown(color, width, height, 0, argb, colorTolerance);
+      int y2 = AutocropOps.scanup(color, width, height, height - 1, argb, colorTolerance);
       if (x1 == 0 && y1 == 0 && x2 == width - 1 && y2 == height - 1) return this;
       return subimage(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
    }
