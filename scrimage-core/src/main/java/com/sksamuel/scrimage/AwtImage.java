@@ -288,7 +288,12 @@ public class AwtImage {
     * @return true if there exists at least one pixel that has the given pixels color
     */
    public boolean contains(Color color) {
-      return exists(p -> p.toARGBInt() == RGBColor.fromAwt(color).toARGBInt());
+      int target = color.getRGB();
+      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      for (int v : argb) {
+         if (v == target) return true;
+      }
+      return false;
    }
 
    /**
@@ -453,7 +458,13 @@ public class AwtImage {
     * @return the number of pixels that matched the colour of the given pixel
     */
    public long count(Color color) {
-      return count(p -> p.toColor().equals(RGBColor.fromAwt(color)));
+      int target = color.getRGB();
+      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      long n = 0;
+      for (int v : argb) {
+         if (v == target) n++;
+      }
+      return n;
    }
 
    /**
@@ -595,8 +606,12 @@ public class AwtImage {
     * @param color the color to test pixels against
     */
    public boolean isFilled(Color color) {
-      int argbColor = RGBColor.fromAwt(color).toARGBInt();
-      return forAll(p -> p.argb == argbColor);
+      int target = color.getRGB();
+      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      for (int v : argb) {
+         if (v != target) return false;
+      }
+      return true;
    }
 
    public Path output(ImageWriter writer, String path) throws IOException {
