@@ -78,6 +78,16 @@ public class PixelTools {
    }
 
    /**
+    * Primitive-double variant of {@link #truncate(Double)} that avoids autoboxing
+    * when called in tight per-pixel loops.
+    */
+   public static int truncate(double value) {
+      if (value < 0) return 0;
+      else if (value > 255) return 255;
+      else return (int) value;
+   }
+
+   /**
     * Returns true if all pixels in the array have the same color, or both are fully transparent.
     */
    public static boolean uniform(Color color, Pixel[] pixels) {
@@ -156,5 +166,21 @@ public class PixelTools {
       int g = (p.green() * p.alpha() + color.getGreen() * color.getAlpha() * (255 - p.alpha()) / 255) / 255;
       int b = (p.blue() * p.alpha() + color.getBlue() * color.getAlpha() * (255 - p.alpha()) / 255) / 255;
       return new Pixel(p.x, p.y, r, g, b, 255);
+   }
+
+   /**
+    * Same arithmetic as {@link #replaceTransparencyWithColor(Pixel, Color)} but on a packed
+    * ARGB int rather than a Pixel. Returns the resulting packed ARGB int.
+    */
+   public static int replaceTransparencyWithColor(int srcArgb, Color color) {
+      int sa = (srcArgb >>> 24) & 0xFF;
+      int sr = (srcArgb >> 16) & 0xFF;
+      int sg = (srcArgb >> 8) & 0xFF;
+      int sb = srcArgb & 0xFF;
+      int cr = color.getRed(), cg = color.getGreen(), cb = color.getBlue(), ca = color.getAlpha();
+      int r = (sr * sa + cr * ca * (255 - sa) / 255) / 255;
+      int g = (sg * sa + cg * ca * (255 - sa) / 255) / 255;
+      int b = (sb * sa + cb * ca * (255 - sa) / 255) / 255;
+      return argb(255, r, g, b);
    }
 }
