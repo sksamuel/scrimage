@@ -495,23 +495,13 @@ public class AwtImage {
       return imageState().hashCode();
    }
 
-   private <T> boolean sameElements(Iterator<T> a, Iterator<T> b) {
-      boolean same = true;
-      while (a.hasNext()) {
-         if (!a.next().equals(b.next())) {
-            same = false;
-            break;
-         }
-      }
-      return same;
-   }
-
    public boolean equals(Object other) {
       if (other instanceof AwtImage) {
          AwtImage that = (AwtImage) other;
-         return this.width == that.width &&
-            this.height == that.height &&
-            sameElements(iterator(), ((AwtImage) other).iterator());
+         if (this.width != that.width || this.height != that.height) return false;
+         int[] a = this.awt().getRGB(0, 0, width, height, null, 0, width);
+         int[] b = that.awt().getRGB(0, 0, that.width, that.height, null, 0, that.width);
+         return Arrays.equals(a, b);
       }
       return false;
    }
