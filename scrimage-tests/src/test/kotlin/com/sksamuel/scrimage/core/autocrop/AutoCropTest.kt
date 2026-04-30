@@ -45,5 +45,31 @@ class AutoCropTest : FunSpec() {
             p.blue() shouldBe 0
          }
       }
+
+      // Direct tests for the new int[]-based AutocropOps overloads added in
+      // this PR. autocrop() does one bulk getRGB up front and hands the same
+      // int[] to all four scan directions; these tests pin that contract.
+      test("AutocropOps int[] overloads find content boundaries with tolerance=0") {
+         // 5x5 image: white border, 3x3 red center
+         val w = 5; val h = 5
+         val argb = IntArray(w * h)
+         for (y in 0 until h) for (x in 0 until w) {
+            val isCenter = x in 1..3 && y in 1..3
+            argb[y * w + x] = if (isCenter) 0xFFFF0000.toInt() else 0xFFFFFFFF.toInt()
+         }
+         com.sksamuel.scrimage.AutocropOps.scanright(Color.WHITE, w, h, 0, argb, 0) shouldBe 1
+         com.sksamuel.scrimage.AutocropOps.scanleft(Color.WHITE, w, h, w - 1, argb, 0) shouldBe 3
+         com.sksamuel.scrimage.AutocropOps.scandown(Color.WHITE, w, h, 0, argb, 0) shouldBe 1
+         com.sksamuel.scrimage.AutocropOps.scanup(Color.WHITE, w, h, h - 1, argb, 0) shouldBe 3
+      }
+
+      test("AutocropOps int[] overloads honour tolerance") {
+         // 3x1 image with shades of near-white: 250, 255, 255
+         val argb = intArrayOf(0xFFFAFAFA.toInt(), 0xFFFFFFFF.toInt(), 0xFFFFFFFF.toInt())
+         // tolerance 0: only exact white matches → first non-white at col 0
+         com.sksamuel.scrimage.AutocropOps.scanright(Color.WHITE, 3, 1, 0, argb, 0) shouldBe 0
+         // tolerance 10: 250 is within tolerance → all match → returns width
+         com.sksamuel.scrimage.AutocropOps.scanright(Color.WHITE, 3, 1, 0, argb, 10) shouldBe 3
+      }
    }
 }
