@@ -3,7 +3,6 @@ package com.sksamuel.scrimage.pixels;
 import com.sksamuel.scrimage.color.Grayscale;
 import com.sksamuel.scrimage.color.RGBColor;
 
-import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -157,7 +156,10 @@ public class Pixel {
 
    @Override
    public int hashCode() {
-      return Objects.hash(argb, x, y);
+      int result = argb;
+      result = 31 * result + x;
+      result = 31 * result + y;
+      return result;
    }
 
    @Override
