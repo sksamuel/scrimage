@@ -664,13 +664,19 @@ public class ImmutableImage extends MutableImage {
     * @return A new image with the given filter applied.
     */
    public ImmutableImage filter(Filter filter) throws IOException {
-      List<Integer> types = Arrays.stream(filter.types()).boxed().collect(Collectors.toList());
-      ImmutableImage target;
-      if (types.isEmpty() || types.contains(getType())) {
-         target = copy();
-      } else {
-         target = copy(types.get(0));
+      int[] types = filter.types();
+      // Empty types[] means "any type works"; otherwise copy in our current
+      // type if it's listed, else convert to types[0]. The previous
+      // implementation boxed every int into Integer and built an ArrayList
+      // just to call .contains() with another autoboxed lookup.
+      int currentType = getType();
+      boolean canUseCurrent = types.length == 0;
+      if (!canUseCurrent) {
+         for (int t : types) {
+            if (t == currentType) { canUseCurrent = true; break; }
+         }
       }
+      ImmutableImage target = canUseCurrent ? copy() : copy(types[0]);
       filter.apply(target);
       return target;
    }
