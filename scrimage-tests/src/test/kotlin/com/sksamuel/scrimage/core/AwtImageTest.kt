@@ -112,4 +112,29 @@ class AwtImageTest : FunSpec({
       pixels[3].x shouldBe 1; pixels[3].y shouldBe 1
       pixels[3].argb shouldBe 0xFFFFFFFF.toInt()
    }
+
+   // Regression: pixels() previously called PixelTools.offsetToPoint(index, w)
+   // inside the DataBufferInt fast-path loop, allocating one Point per pixel
+   // just to derive (x, y). The optimisation replaced that with running x/y
+   // counters. These tests pin the row-major (x, y) ordering for the
+   // TYPE_INT_ARGB fast path so a future regression that mis-derives
+   // coordinates would be caught.
+   test("pixels() on TYPE_INT_ARGB carries correct row-major (x, y) coordinates") {
+      val w = 4; val h = 3
+      val buf = java.awt.image.BufferedImage(w, h, java.awt.image.BufferedImage.TYPE_INT_ARGB)
+      // distinct ARGB per pixel so every Pixel is unique
+      for (y in 0 until h) for (x in 0 until w) {
+         buf.setRGB(x, y, 0xFF000000.toInt() or (((y * w + x) and 0xFF) shl 16))
+      }
+      val image = AwtImage(buf)
+      val pixels = image.pixels()
+      pixels.size shouldBe w * h
+      var i = 0
+      for (y in 0 until h) for (x in 0 until w) {
+         pixels[i].x shouldBe x
+         pixels[i].y shouldBe y
+         pixels[i].argb shouldBe (0xFF000000.toInt() or ((i and 0xFF) shl 16))
+         i++
+      }
+   }
 })
