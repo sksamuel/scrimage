@@ -89,8 +89,9 @@ public class MutableImage extends AwtImage {
    }
 
    public void setColor(int offset, com.sksamuel.scrimage.color.Color color) {
-      Point point = PixelTools.offsetToPoint(offset, width);
-      awt().setRGB(point.x, point.y, color.toRGB().toARGBInt());
+      int x = offset % width;
+      int y = offset / width;
+      awt().setRGB(x, y, color.toRGB().toARGBInt());
    }
 
    public void setColor(int x, int y, com.sksamuel.scrimage.color.Color color) {
