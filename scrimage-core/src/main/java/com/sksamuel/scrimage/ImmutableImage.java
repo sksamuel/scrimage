@@ -1416,14 +1416,21 @@ public class ImmutableImage extends MutableImage {
       assert y >= 0;
       assert y + subHeight < height;
 
-      Pixel[] matrix = new Pixel[subWidth * subHeight];
-      // Simply copy the pixels over, one by one.
+      // Walk the output grid and write each interpolated ARGB int directly
+      // into a row-major buffer. The previous implementation allocated a
+      // Pixel per output cell and routed through wrapPixels → create(Pixel[]),
+      // which itself re-extracted the argb from each Pixel — a wasted round
+      // trip now that subpixel() already returns a packed ARGB int.
+      int[] argb = new int[subWidth * subHeight];
+      int k = 0;
       for (int yIndex = 0; yIndex < subHeight; yIndex++) {
          for (int xIndex = 0; xIndex < subWidth; xIndex++) {
-            matrix[PixelTools.coordsToOffset(xIndex, yIndex, subWidth)] = new Pixel(xIndex, yIndex, subpixel(xIndex + x, yIndex + y));
+            argb[k++] = subpixel(xIndex + x, yIndex + y);
          }
       }
-      return wrapPixels(subWidth, subHeight, matrix, metadata);
+      ImmutableImage result = ImmutableImage.create(subWidth, subHeight, DEFAULT_DATA_TYPE);
+      result.awt().setRGB(0, 0, subWidth, subHeight, argb, 0, subWidth);
+      return result.associateMetadata(metadata);
    }
 
    /**
