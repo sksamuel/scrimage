@@ -112,4 +112,44 @@ class AwtImageTest : FunSpec({
       pixels[3].x shouldBe 1; pixels[3].y shouldBe 1
       pixels[3].argb shouldBe 0xFFFFFFFF.toInt()
    }
+
+   // average() reduces pixels via Color.average's SrcOver-style alpha-aware
+   // blend (not an arithmetic mean). The following three tests lock in that
+   // semantic so future rewrites don't drift.
+   test("average() of a uniform image returns that color") {
+      val pixels = Array(16) { Pixel(it % 4, it / 4, 0xFFAA55BB.toInt()) }
+      val image = ImmutableImage.create(4, 4, pixels)
+      val avg = image.average()
+      avg.alpha shouldBe 0xFF
+      avg.red shouldBe 0xAA
+      avg.green shouldBe 0x55
+      avg.blue shouldBe 0xBB
+   }
+
+   test("average() with all fully transparent pixels returns transparent black") {
+      val pixels = Array(4) { Pixel(it % 2, it / 2, 0x00FFFFFF) }
+      val image = ImmutableImage.create(2, 2, pixels)
+      val avg = image.average()
+      avg.alpha shouldBe 0
+      avg.red shouldBe 0
+      avg.green shouldBe 0
+      avg.blue shouldBe 0
+   }
+
+   test("average() of all-opaque pixels collapses to the first pixel (SrcOver)") {
+      // SrcOver(opaque, opaque) = the first; reducing opaque pixels in
+      // sequence therefore leaves the very first pixel as the winner.
+      val pixels = arrayOf(
+         Pixel(0, 0, 0xFFAA0000.toInt()),
+         Pixel(1, 0, 0xFF00BB00.toInt()),
+         Pixel(0, 1, 0xFF0000CC.toInt()),
+         Pixel(1, 1, 0xFFFFFFFF.toInt())
+      )
+      val image = ImmutableImage.create(2, 2, pixels)
+      val avg = image.average()
+      avg.alpha shouldBe 255
+      avg.red shouldBe 0xAA
+      avg.green shouldBe 0
+      avg.blue shouldBe 0
+   }
 })
