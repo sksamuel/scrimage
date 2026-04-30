@@ -359,7 +359,11 @@ public class ImmutableImage extends MutableImage {
    public static ImmutableImage create(int w, int h, Pixel[] pixels, int type) {
       assert w * h == pixels.length;
       ImmutableImage image = ImmutableImage.create(w, h, type);
-      image.mapInPlace((pixel) -> pixels[PixelTools.coordsToOffset(pixel.x, pixel.y, w)].toColor().awt());
+      int[] argb = new int[pixels.length];
+      for (int i = 0; i < pixels.length; i++) {
+         argb[i] = pixels[i].toARGBInt();
+      }
+      image.awt().setRGB(0, 0, w, h, argb, 0, w);
       return image;
    }
 
