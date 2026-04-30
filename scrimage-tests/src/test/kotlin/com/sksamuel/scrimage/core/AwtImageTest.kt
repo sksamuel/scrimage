@@ -112,4 +112,30 @@ class AwtImageTest : FunSpec({
       pixels[3].x shouldBe 1; pixels[3].y shouldBe 1
       pixels[3].argb shouldBe 0xFFFFFFFF.toInt()
    }
+
+   // hashCode is now derived directly from a bulk getRGB int[] rather than
+   // a materialised Pixel[w*h]. The contract — equal images produce equal
+   // hash codes — must still hold. These tests pin that, plus a couple of
+   // useful invariants.
+   test("hashCode is consistent with equals for two structurally equal images") {
+      val pixels = Array(16) { i -> Pixel(i % 4, i / 4, 0xFF000000.toInt() or (i shl 8)) }
+      val a = ImmutableImage.create(4, 4, pixels)
+      val b = ImmutableImage.create(4, 4, pixels.copyOf())
+      a shouldBe b
+      a.hashCode() shouldBe b.hashCode()
+   }
+
+   test("hashCode distinguishes images with different dimensions") {
+      val a = ImmutableImage.create(4, 4)
+      val b = ImmutableImage.create(2, 8)
+      a.hashCode() shouldNotBe b.hashCode()
+   }
+
+   test("hashCode is stable across repeated calls") {
+      val pixels = Array(4) { i -> Pixel(i % 2, i / 2, 0xFF000000.toInt() or i) }
+      val image = ImmutableImage.create(2, 2, pixels)
+      val h = image.hashCode()
+      image.hashCode() shouldBe h
+      image.hashCode() shouldBe h
+   }
 })
