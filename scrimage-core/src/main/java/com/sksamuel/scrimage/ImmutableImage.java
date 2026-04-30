@@ -23,6 +23,7 @@ import com.sksamuel.scrimage.canvas.drawables.FilledRect;
 import com.sksamuel.scrimage.canvas.painters.LinearGradient;
 import com.sksamuel.scrimage.canvas.painters.Painter;
 import com.sksamuel.scrimage.color.Colors;
+import com.sksamuel.scrimage.color.Grayscale;
 import com.sksamuel.scrimage.color.GrayscaleMethod;
 import com.sksamuel.scrimage.color.RGBColor;
 import com.sksamuel.scrimage.composite.Composite;
@@ -1688,6 +1689,26 @@ public class ImmutableImage extends MutableImage {
    }
 
    public ImmutableImage toGrayscale(GrayscaleMethod method) {
-      return map(pixel -> pixel.toColor().toGrayscale(method).awt());
+      // The previous map((Pixel) -> Color) routed through mapInPlace and
+      // allocated three objects per pixel: an RGBColor (toColor), a Grayscale
+      // (method.toGrayscale), and a java.awt.Color (.awt()) — plus a Pixel
+      // wrapper inside mapInPlace. Inline a bulk get/setRGB and only the
+      // RGBColor + Grayscale allocations remain (GrayscaleMethod's interface
+      // requires a Color in / Grayscale out).
+      ImmutableImage target = copy();
+      int w = target.width;
+      int h = target.height;
+      int[] argb = target.awt().getRGB(0, 0, w, h, null, 0, w);
+      for (int i = 0; i < argb.length; i++) {
+         int p = argb[i];
+         int r = (p >> 16) & 0xFF;
+         int g = (p >> 8) & 0xFF;
+         int b = p & 0xFF;
+         int a = (p >>> 24) & 0xFF;
+         Grayscale gray = method.toGrayscale(new RGBColor(r, g, b, a));
+         argb[i] = (gray.alpha << 24) | (gray.gray << 16) | (gray.gray << 8) | gray.gray;
+      }
+      target.awt().setRGB(0, 0, w, h, argb, 0, w);
+      return target;
    }
 }
