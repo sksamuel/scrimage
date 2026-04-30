@@ -180,7 +180,8 @@ public class AwtImage {
       };
    }
 
-   // This tuple contains all the state that identifies this particular image.
+   // Retained for source compatibility with anything outside the project that
+   // might construct an ImageState; not used by hashCode any more.
    private ImageState imageState() {
       return new ImageState(width, height, pixels());
    }
@@ -488,11 +489,16 @@ public class AwtImage {
       return new AwtImage(new BufferedImage(width, height, awt.getType()));
    }
 
-   // See this Stack Overflow question to see why this is implemented this way.
-   // http://stackoverflow.com/questions/7370925/what-is-the-standard-idiom-for-implementing-equals-and-hashcode-in-scala
    @Override
    public int hashCode() {
-      return imageState().hashCode();
+      // Hash from a single bulk getRGB int[] rather than materialising a
+      // Pixel[w*h] (which the old imageState() route allocated and then
+      // hashed object-by-object). Consistent with equals() which compares
+      // the same bulk getRGB int[]s — equal images still produce equal
+      // hash codes.
+      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      int result = 31 * width + height;
+      return 31 * result + Arrays.hashCode(argb);
    }
 
    public boolean equals(Object other) {
