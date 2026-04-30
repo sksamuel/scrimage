@@ -91,4 +91,33 @@ class RGBColorTest : StringSpec({
       val paint = opaque.paint() as java.awt.Color
       paint.alpha shouldBe 255
    }
+
+   // hashCode contract: equal objects must produce equal hash codes.
+   // The optimised hand-coded hashCode replaces Objects.hash(varargs...)
+   // to avoid per-call Integer[] allocation; the contract must still hold.
+   "hashCode is consistent with equals" {
+      val a = RGBColor(10, 20, 30, 40)
+      val b = RGBColor(10, 20, 30, 40)
+      a shouldBe b
+      a.hashCode() shouldBe b.hashCode()
+   }
+
+   "hashCode distinguishes colors that differ in any channel" {
+      val base = RGBColor(10, 20, 30, 40)
+      // Not a strict requirement of the contract, but the 31*hash+field
+      // pattern over four small ints does produce distinct values here.
+      val differR = RGBColor(11, 20, 30, 40)
+      val differG = RGBColor(10, 21, 30, 40)
+      val differB = RGBColor(10, 20, 31, 40)
+      val differA = RGBColor(10, 20, 30, 41)
+      val all = setOf(base.hashCode(), differR.hashCode(), differG.hashCode(), differB.hashCode(), differA.hashCode())
+      all.size shouldBe 5
+   }
+
+   "hashCode is stable across repeated calls" {
+      val c = RGBColor(123, 45, 67, 89)
+      val h = c.hashCode()
+      c.hashCode() shouldBe h
+      c.hashCode() shouldBe h
+   }
 })
