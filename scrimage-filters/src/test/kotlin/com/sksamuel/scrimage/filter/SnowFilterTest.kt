@@ -5,6 +5,8 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import java.awt.image.BufferedImage
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
 
 class SnowFilterTest : FunSpec() {
    init {
@@ -34,6 +36,21 @@ class SnowFilterTest : FunSpec() {
          image.copy(BufferedImage.TYPE_4BYTE_ABGR)
          image.filter(filter).width shouldBe 388
          image.filter(filter).pixel(0, 0) shouldNotBe image.pixel(0, 0)
+      }
+
+      // Regression: apply() ended with `System.out.println(System.currentTimeMillis())` —
+      // leftover debug code that printed a timestamp on every filter application.
+      test("apply does not print to stdout") {
+         val image = ImmutableImage.create(64, 64, BufferedImage.TYPE_INT_ARGB)
+         val originalOut = System.out
+         val captured = ByteArrayOutputStream()
+         try {
+            System.setOut(PrintStream(captured))
+            filter.apply(image)
+         } finally {
+            System.setOut(originalOut)
+         }
+         captured.toByteArray().size shouldBe 0
       }
    }
 }
