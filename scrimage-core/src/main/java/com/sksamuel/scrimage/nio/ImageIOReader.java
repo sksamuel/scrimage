@@ -4,7 +4,6 @@ import com.sksamuel.scrimage.ImmutableImage;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
-import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -31,17 +30,21 @@ public class ImageIOReader implements ImageReader {
       try {
          reader.setInput(iis);
 
-         ImageReadParam params = reader.getDefaultReadParam();
-         Iterator<ImageTypeSpecifier> imageTypes = reader.getImageTypes(0);
-         if (imageTypes.hasNext()) {
-            ImageTypeSpecifier imageTypeSpecifier = imageTypes.next();
-            params.setDestinationType(imageTypeSpecifier);
-         }
-         if (rectangle != null) {
+         // Skip a redundant header pass: setDestinationType(imageTypes.next())
+         // is equivalent to leaving destinationType=null (per ImageReadParam
+         // docs, null means "use the first compatible type" — exactly what
+         // imageTypes.next() returns). The previous code triggered an
+         // additional reader.getImageTypes(0) call which forces the reader
+         // to parse the source header just to enumerate types it would
+         // otherwise pick on demand.
+         BufferedImage bufferedImage;
+         if (rectangle == null) {
+            bufferedImage = reader.read(0);
+         } else {
+            ImageReadParam params = reader.getDefaultReadParam();
             params.setSourceRegion(rectangle);
+            bufferedImage = reader.read(0, params);
          }
-
-         BufferedImage bufferedImage = reader.read(0, params);
          return ImmutableImage.wrapAwt(bufferedImage);
       } finally {
          // javax.imageio.ImageReader is a thin Java wrapper around a native decoder. When you read a JPEG,
