@@ -447,11 +447,17 @@ public class ImmutableImage extends MutableImage {
     * the same dimensions.
     * <p>
     * The underlying pixels will not be initialized.
+    * <p>
+    * If the source has BufferedImage.TYPE_CUSTOM (type 0) — which can't be
+    * fed into a BufferedImage(width, height, type) constructor — falls back
+    * to DEFAULT_DATA_TYPE, matching fromAwt's policy.
     *
     * @return a new Image that is a clone of this image but with uninitialized data
     */
    public ImmutableImage blank() {
-      return create(width, height, getType());
+      int type = getType();
+      if (type == 0) type = DEFAULT_DATA_TYPE;
+      return create(width, height, type);
    }
 
    /**
