@@ -42,17 +42,21 @@ abstract class WebpHandler {
       logger.info("Installing binary at {}", output);
       for (String source : sources) {
          logger.debug("Trying source from {}", source);
-         InputStream in = WebpHandler.class.getResourceAsStream(source);
-         if (in != null) {
-            logger.debug("Source detected {}", source);
-            Files.copy(in, output, StandardCopyOption.REPLACE_EXISTING);
-            in.close();
+         // Use try-with-resources so the InputStream is closed even if
+         // Files.copy throws — the previous code closed `in` after the
+         // copy on the success path only, leaking the stream on any IO
+         // error mid-copy.
+         try (InputStream in = WebpHandler.class.getResourceAsStream(source)) {
+            if (in != null) {
+               logger.debug("Source detected {}", source);
+               Files.copy(in, output, StandardCopyOption.REPLACE_EXISTING);
 
-            if (!SystemUtils.IS_OS_WINDOWS) {
-               logger.info("Setting executable {}", output);
-               setExecutable(output);
+               if (!SystemUtils.IS_OS_WINDOWS) {
+                  logger.info("Setting executable {}", output);
+                  setExecutable(output);
+               }
+               return;
             }
-            return;
          }
       }
       throw new IOException("Could not locate webp binary at " + Arrays.toString(sources));
