@@ -27,6 +27,17 @@ public class AlphaMaskFilter implements Filter {
 
       int w = image.width;
       int h = image.height;
+      // The previous code passed (w, h) as the region for mask.awt().getRGB
+      // even when the mask had different dimensions. If the mask was
+      // smaller this throws ArrayIndexOutOfBoundsException deep inside
+      // BufferedImage.getRGB; if it was larger it silently sampled only
+      // the top-left corner. Require explicit dimension match so callers
+      // know up front.
+      if (mask.width != w || mask.height != h) {
+         throw new IllegalArgumentException(
+            "AlphaMaskFilter mask must match the image dimensions: mask is "
+               + mask.width + "x" + mask.height + ", image is " + w + "x" + h);
+      }
       int[] imagePixels = image.awt().getRGB(0, 0, w, h, null, 0, w);
       int[] maskPixels = mask.awt().getRGB(0, 0, w, h, null, 0, w);
 
