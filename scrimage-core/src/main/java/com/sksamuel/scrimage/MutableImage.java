@@ -84,8 +84,11 @@ public class MutableImage extends AwtImage {
     */
    public void overlayInPlace(BufferedImage overlay, int x, int y) {
       Graphics2D g2 = (Graphics2D) awt().getGraphics();
-      g2.drawImage(overlay, x, y, null);
-      g2.dispose();
+      try {
+         g2.drawImage(overlay, x, y, null);
+      } finally {
+         g2.dispose();
+      }
    }
 
    public void setColor(int offset, com.sksamuel.scrimage.color.Color color) {
