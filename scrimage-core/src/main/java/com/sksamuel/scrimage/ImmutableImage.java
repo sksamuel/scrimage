@@ -1559,7 +1559,13 @@ public class ImmutableImage extends MutableImage {
     * @return a new Image with the dimensions width-trim*2, height-trim*2
     */
    public ImmutableImage trim(int left, int top, int right, int bottom) {
-      return create(width - left - right, height - bottom - top).overlay(this, -left, -top);
+      // Use subimage(...) — exact pixel copy that preserves alpha precision
+      // and metadata. The previous create(...).overlay(this, -left, -top)
+      // route went through Graphics2D.drawImage which composites via SrcOver
+      // (premultiplies alpha and rounds away ±1 from each colour channel
+      // for non-255 alpha — same root cause as #414/#416), and dropped
+      // the source's metadata.
+      return subimage(left, top, width - left - right, height - bottom - top);
    }
 
    /**
