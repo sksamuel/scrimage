@@ -474,9 +474,18 @@ public class AwtImage {
     */
    public BufferedImage toNewBufferedImage(int type) {
       BufferedImage target = new BufferedImage(width, height, type);
-      Graphics2D g2 = (Graphics2D) target.getGraphics();
-      g2.drawImage(awt, 0, 0, null);
-      g2.dispose();
+      if (awt.getType() == type) {
+         // Same type — copy the raster data directly. Going through
+         // Graphics2D.drawImage would composite via SrcOver, which
+         // premultiplies alpha and rounds away ±1 from each colour channel
+         // when alpha doesn't divide 255 cleanly.
+         awt.copyData(target.getRaster());
+      } else {
+         // Type conversion — Graphics2D handles the colour-space conversion.
+         Graphics2D g2 = (Graphics2D) target.getGraphics();
+         g2.drawImage(awt, 0, 0, null);
+         g2.dispose();
+      }
       return target;
    }
 
