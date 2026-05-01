@@ -170,6 +170,7 @@ public class AwtImage {
 
          @Override
          public Pixel next() {
+            if (!hasNext()) throw new java.util.NoSuchElementException();
             if (argb == null) {
                argb = awt.getRGB(0, 0, width, height, null, 0, width);
             }
