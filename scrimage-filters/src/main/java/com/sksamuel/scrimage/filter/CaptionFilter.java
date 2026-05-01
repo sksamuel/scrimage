@@ -62,11 +62,22 @@ public class CaptionFilter implements Filter {
     @Override
     public void apply(ImmutableImage image) {
 
+        // Graphics2D is only used here to compute font metrics. The actual
+        // drawing is done via Canvas below. Wrap in try/finally so the
+        // Graphics2D context is always released — without dispose() it
+        // leaks on every filter application.
         Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
-        g2.setFont(font);
-
-        Rectangle2D bounds = g2.getFontMetrics().getStringBounds(text, g2);
-        int descent = g2.getFontMetrics().getDescent();
+        Rectangle2D bounds;
+        int descent;
+        int fontHeight;
+        try {
+            g2.setFont(font);
+            bounds = g2.getFontMetrics().getStringBounds(text, g2);
+            descent = g2.getFontMetrics().getDescent();
+            fontHeight = g2.getFontMetrics().getHeight();
+        } finally {
+            g2.dispose();
+        }
 
         int captionWidth;
         if (fullWidth) {
@@ -103,7 +114,7 @@ public class CaptionFilter implements Filter {
         Text string = new Text(
                 text,
                 captionX + padding.left,
-                captionY + padding.top + g2.getFontMetrics().getHeight() - descent,
+                captionY + padding.top + fontHeight - descent,
                 g -> {
                     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) textAlpha));
                     g.setColor(textColor);
