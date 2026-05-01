@@ -43,19 +43,26 @@ public class Gif2WebpHandler extends WebpHandler {
                          int m,
                          int q,
                          boolean lossy) throws IOException {
+      // Use nested try/finally so if the second createTempFile throws
+      // (disk full between the two calls), the first temp file is still
+      // cleaned up. Previously both creates lived outside the try and a
+      // mid-creation failure leaked the first one.
       Path input = Files.createTempFile("input", "gif").toAbsolutePath();
-      Path output = Files.createTempFile("to_webp", "webp").toAbsolutePath();
       try {
-         Files.write(input, bytes, StandardOpenOption.CREATE);
-         convert(input, output, m, q, lossy);
-         return Files.readAllBytes(output);
+         Path output = Files.createTempFile("to_webp", "webp").toAbsolutePath();
+         try {
+            Files.write(input, bytes, StandardOpenOption.CREATE);
+            convert(input, output, m, q, lossy);
+            return Files.readAllBytes(output);
+         } finally {
+            try {
+               output.toFile().delete();
+            } catch (Exception e) {
+            }
+         }
       } finally {
          try {
             input.toFile().delete();
-         } catch (Exception e) {
-         }
-         try {
-            output.toFile().delete();
          } catch (Exception e) {
          }
       }

@@ -43,8 +43,10 @@ public class DWebpHandler extends WebpHandler {
 
    public byte[] convert(byte[] bytes) throws IOException {
       Path input = Files.createTempFile("input", "webp").toAbsolutePath();
-      Files.write(input, bytes, StandardOpenOption.CREATE);
       try {
+         // Files.write was previously called BEFORE the try block; if it
+         // threw (disk full, permissions, ...) the temp file leaked.
+         Files.write(input, bytes, StandardOpenOption.CREATE);
          return convert(input);
       } finally {
          input.toFile().delete();
