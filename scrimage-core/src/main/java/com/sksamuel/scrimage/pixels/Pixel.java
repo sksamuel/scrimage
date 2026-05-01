@@ -126,8 +126,8 @@ public class Pixel {
     * The Average method takes the average value of R, G, and B as the grayscale value.
     */
    public Pixel toAverageGrayscale() {
-      Grayscale grayscale = toColor().toGrayscale();
-      return new Pixel(x, y, grayscale.gray, grayscale.gray, grayscale.gray, grayscale.alpha);
+      int gray = (red() + green() + blue()) / 3;
+      return new Pixel(x, y, gray, gray, gray, alpha());
    }
 
    /**
