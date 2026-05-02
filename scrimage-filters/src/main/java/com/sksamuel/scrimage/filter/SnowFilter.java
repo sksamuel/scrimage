@@ -41,7 +41,6 @@ public class SnowFilter implements IntFilter {
       Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
       g2.setComposite(new BlendComposite(BlendingMode.SCREEN, 1.0f));
       g2.drawImage(scaled.awt(), 0, 0, null);
-      System.out.println(System.currentTimeMillis());
       g2.dispose();
    }
 }
