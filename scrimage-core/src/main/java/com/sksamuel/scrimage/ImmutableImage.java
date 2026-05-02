@@ -611,7 +611,7 @@ public class ImmutableImage extends MutableImage {
       Dimension dim = position.calculateXY(targetWidth, targetHeight, coveredDimensions.getX(), coveredDimensions.getY());
       ImmutableImage result = create(targetWidth, targetHeight, imageType);
       result.overlayInPlace(scaled.awt(), dim.getX(), dim.getY());
-      return result;
+      return result.associateMetadata(metadata);
    }
 
    /**
@@ -623,7 +623,7 @@ public class ImmutableImage extends MutableImage {
    public ImmutableImage fill(Color color) {
       ImmutableImage target = blank();
       target.fillInPlace(color);
-      return target;
+      return target.associateMetadata(metadata);
    }
 
    /**
@@ -645,7 +645,7 @@ public class ImmutableImage extends MutableImage {
       }
       Painter finalTemp = temp;
       target.toCanvas().drawInPlace(new FilledRect(0, 0, width, height, g2 -> g2.setPainter(finalTemp)));
-      return target;
+      return target.associateMetadata(metadata);
    }
 
    /**
@@ -768,7 +768,7 @@ public class ImmutableImage extends MutableImage {
       ImmutableImage scaled = scaleTo(wh.getX(), wh.getY(), scaleMethod);
       ImmutableImage result = ImmutableImage.filled(canvasWidth, canvasHeight, color, imageType);
       result.overlayInPlace(scaled.awt(), dim.getX(), dim.getY());
-      return result;
+      return result.associateMetadata(metadata);
    }
 
    /**
@@ -976,7 +976,7 @@ public class ImmutableImage extends MutableImage {
          Dimension dim = position.calculateXY(targetWidth, targetHeight, width, height);
          ImmutableImage result = filled(targetWidth, targetHeight, background, imageType);
          result.overlayInPlace(awt(), dim.getX(), dim.getY());
-         return result;
+         return result.associateMetadata(metadata);
       }
    }
 
@@ -1187,7 +1187,7 @@ public class ImmutableImage extends MutableImage {
    public ImmutableImage padWith(int left, int top, int right, int bottom, Color color) {
       int w = width + left + right;
       int h = height + top + bottom;
-      return filled(w, h, color).overlay(this, left, top);
+      return filled(w, h, color).overlay(this, left, top).associateMetadata(metadata);
    }
 
    /**
@@ -1542,7 +1542,7 @@ public class ImmutableImage extends MutableImage {
     * @return a new Image with this image translated.
     */
    public ImmutableImage translate(int x, int y, Color bg) {
-      return fill(bg).overlay(this, x, y);
+      return fill(bg).overlay(this, x, y).associateMetadata(metadata);
    }
 
    /**
@@ -1630,7 +1630,7 @@ public class ImmutableImage extends MutableImage {
       ImmutableImage target = this.blank();
       target.overlayInPlace(underlayImage.awt(), x, y);
       target.overlayInPlace(awt(), x, y);
-      return target;
+      return target.associateMetadata(metadata);
    }
 
    /**
@@ -1665,7 +1665,7 @@ public class ImmutableImage extends MutableImage {
     * @return the zoomed image
     */
    public ImmutableImage zoom(double factor, ScaleMethod method) {
-      return scale(factor, method).resizeTo(width, height, Position.Center, Color.WHITE);
+      return scale(factor, method).resizeTo(width, height, Position.Center, Color.WHITE).associateMetadata(metadata);
    }
 
    /**
