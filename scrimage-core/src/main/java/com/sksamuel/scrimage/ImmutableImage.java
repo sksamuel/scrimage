@@ -1424,10 +1424,15 @@ public class ImmutableImage extends MutableImage {
                                           double y,
                                           int subWidth,
                                           int subHeight) {
+      // The loop reads subpixel(xIndex + x) for xIndex in [0, subWidth),
+      // so the maximum sub-pixel x argument is (subWidth - 1) + x. The
+      // subpixel() contract requires arg < width, hence x + subWidth ≤ width.
+      // Same applies to y / subHeight / height. The previous bounds used
+      // strict < and rejected valid full-width / full-height extractions.
       assert x >= 0;
-      assert x + subWidth < width;
+      assert x + subWidth <= width;
       assert y >= 0;
-      assert y + subHeight < height;
+      assert y + subHeight <= height;
 
       // Walk the output grid and write each interpolated ARGB int directly
       // into a row-major buffer. The previous implementation allocated a
