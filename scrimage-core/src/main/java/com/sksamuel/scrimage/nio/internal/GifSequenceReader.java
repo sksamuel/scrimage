@@ -810,9 +810,14 @@ public class GifSequenceReader {
       lastRect = new Rectangle(ix, iy, iw, ih);
       lastImage = image;
       lastBgColor = bgColor;
-      int dispose = 0;
-      boolean transparency = false;
-      int delay = 0;
+      // These three were previously declared as locals, shadowing the
+      // instance fields. The intent is to reset the frame state ready for
+      // the next image: per the GIF spec, the graphics control extension
+      // is optional, so when a frame omits one the parser must fall back
+      // to defaults rather than inheriting the previous frame's values.
+      this.dispose = 0;
+      this.transparency = false;
+      this.delay = 0;
       lct = null;
    }
 
