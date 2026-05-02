@@ -42,24 +42,26 @@ public class WatermarkCoverFilter implements Filter {
     @Override
     public void apply(ImmutableImage image) {
         Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
-        setupGraphics(g2);
+        try {
+            setupGraphics(g2);
 
-        FontMetrics fontMetrics = g2.getFontMetrics();
-        Rectangle2D bounds = fontMetrics.getStringBounds(text + " ", g2);
+            FontMetrics fontMetrics = g2.getFontMetrics();
+            Rectangle2D bounds = fontMetrics.getStringBounds(text + " ", g2);
 
-        int x = 0;
-        int xstart = 0;
-        int y = (int) bounds.getY();
-        while (y < image.height + bounds.getHeight()) {
-            while (x < image.width + bounds.getWidth()) {
-                g2.drawString(text, x, y);
-                x = (int) (x + bounds.getWidth());
+            int x = 0;
+            int xstart = 0;
+            int y = (int) bounds.getY();
+            while (y < image.height + bounds.getHeight()) {
+                while (x < image.width + bounds.getWidth()) {
+                    g2.drawString(text, x, y);
+                    x = (int) (x + bounds.getWidth());
+                }
+                y = (int) (y + (bounds.getHeight() + bounds.getHeight() * 0.2));
+                xstart = (int) (xstart - bounds.getWidth() * 0.2f);
+                x = xstart;
             }
-            y = (int) (y + (bounds.getHeight() + bounds.getHeight() * 0.2));
-            xstart = (int) (xstart - bounds.getWidth() * 0.2f);
-            x = xstart;
+        } finally {
+            g2.dispose();
         }
-
-        g2.dispose();
     }
 }

@@ -57,26 +57,29 @@ public class WatermarkStampFilter implements Filter {
     public void apply(ImmutableImage image) {
 
         Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
-        setupGraphics(g2);
+        try {
+            setupGraphics(g2);
 
-        FontMetrics fontMetrics = g2.getFontMetrics();
-        Rectangle2D bounds = fontMetrics.getStringBounds(text, g2);
+            FontMetrics fontMetrics = g2.getFontMetrics();
+            Rectangle2D bounds = fontMetrics.getStringBounds(text, g2);
 
-        g2.translate(image.width / 2.0, image.height / 2.0);
+            g2.translate(image.width / 2.0, image.height / 2.0);
 
-        AffineTransform rotation = new AffineTransform();
-        double opad = image.height / (double) image.width;
-        double angle = Math.toDegrees(Math.atan(opad));
-        double idegrees = -1 * angle;
-        double theta = (2 * Math.PI * idegrees) / 360;
-        rotation.rotate(theta);
-        g2.transform(rotation);
+            AffineTransform rotation = new AffineTransform();
+            double opad = image.height / (double) image.width;
+            double angle = Math.toDegrees(Math.atan(opad));
+            double idegrees = -1 * angle;
+            double theta = (2 * Math.PI * idegrees) / 360;
+            rotation.rotate(theta);
+            g2.transform(rotation);
 
-        double x1 = bounds.getWidth() / 2.0f * -1;
-        double y1 = bounds.getHeight() / 2.0f;
-        g2.translate(x1, y1);
+            double x1 = bounds.getWidth() / 2.0f * -1;
+            double y1 = bounds.getHeight() / 2.0f;
+            g2.translate(x1, y1);
 
-        g2.drawString(text, 0.0f, 0.0f);
-        g2.dispose();
+            g2.drawString(text, 0.0f, 0.0f);
+        } finally {
+            g2.dispose();
+        }
     }
 }
