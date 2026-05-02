@@ -31,7 +31,7 @@ public class SwimFilter extends BufferedOpFilter {
     }
 
     public SwimFilter(Random random) {
-        this(new Random(), 6f, 2f);
+        this(random, 6f, 2f);
     }
 
     public SwimFilter(float amount, float stretch) {
