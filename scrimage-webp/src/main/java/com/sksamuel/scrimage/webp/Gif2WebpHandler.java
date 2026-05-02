@@ -98,13 +98,23 @@ public class Gif2WebpHandler extends WebpHandler {
 
       Process process = builder.start();
       try {
-         process.waitFor(5, TimeUnit.MINUTES);
+         // waitFor(timeout, unit) returns false if the process is still
+         // running when the timeout expires. The previous code ignored
+         // that return and called exitValue() unconditionally, which
+         // throws IllegalThreadStateException if the process hadn't
+         // exited — masking the real failure (a hang) with a confusing
+         // unrelated exception.
+         boolean finished = process.waitFor(5, TimeUnit.MINUTES);
+         if (!finished) {
+            throw new IOException("gif2webp timed out after 5 minutes");
+         }
          int exitStatus = process.exitValue();
          if (exitStatus != 0) {
             List<String> error = Files.readAllLines(stdout);
             throw new IOException(error.toString());
          }
       } catch (InterruptedException e) {
+         Thread.currentThread().interrupt();
          throw new IOException(e);
       } finally {
          process.destroy();
