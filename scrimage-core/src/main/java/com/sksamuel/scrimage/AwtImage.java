@@ -596,7 +596,35 @@ public class AwtImage {
     * Returns the average colour of all pixels in this image
     */
    public RGBColor average() {
-      return Arrays.stream(pixels()).map(Pixel::toColor).reduce(com.sksamuel.scrimage.color.Color::average).get();
+      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      // Sequential SrcOver-blend reduce, mirroring Color.average(Color other).
+      // We carry running int channel values through the loop, avoiding an
+      // RGBColor allocation per pixel that the previous Stream-based reduce
+      // had to make.
+      int p0 = argb[0];
+      int accA = (p0 >>> 24) & 0xFF;
+      int accR = (p0 >> 16) & 0xFF;
+      int accG = (p0 >> 8) & 0xFF;
+      int accB = p0 & 0xFF;
+      for (int i = 1; i < argb.length; i++) {
+         int p = argb[i];
+         int pa = (p >>> 24) & 0xFF;
+         int pr = (p >> 16) & 0xFF;
+         int pg = (p >> 8) & 0xFF;
+         int pb = p & 0xFF;
+         double a1 = accA / 255.0;
+         double a2 = pa / 255.0;
+         double aOut = a1 + a2 * (1.0 - a1);
+         if (aOut == 0.0) {
+            accA = 0; accR = 0; accG = 0; accB = 0;
+         } else {
+            accR = (int) Math.round((accR * a1 + pr * a2 * (1.0 - a1)) / aOut);
+            accG = (int) Math.round((accG * a1 + pg * a2 * (1.0 - a1)) / aOut);
+            accB = (int) Math.round((accB * a1 + pb * a2 * (1.0 - a1)) / aOut);
+            accA = (int) Math.round(aOut * 255);
+         }
+      }
+      return new RGBColor(accR, accG, accB, accA);
    }
 
    /**
