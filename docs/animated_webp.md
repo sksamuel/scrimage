@@ -1,15 +1,66 @@
 Animated WebP
 ===============
 
-Scrimage supports writing animated WebPs from a sequence of `ImmutableImage` frames,
-using libwebp's `img2webp` tool under the hood. The required binary ships with the
-`scrimage-webp` module for Linux (x86-64, aarch64), macOS (x86-64, arm64) and
-Windows (x64); see the [Webp page](webp.md) for how to override the bundled binary.
+Scrimage supports both reading and writing animated WebPs, using the libwebp
+toolchain under the hood:
+
+| Operation | Tool wrapped | Scrimage class |
+|---|---|---|
+| Decompose into frames + metadata | `anim_dump` + `webpmux` | `AnimatedWebpReader` → `AnimatedWebp` |
+| Compose from a sequence of frames | `img2webp` | `StreamingWebpWriter` |
+
+All required binaries ship with the `scrimage-webp` module for Linux (x86-64,
+aarch64), macOS (x86-64, arm64) and Windows (x64); see the
+[Webp page](webp.md) for how to override the bundled binaries.
+
+## Reading
+
+We read an instance of an `AnimatedWebp` by using `AnimatedWebpReader.read`,
+passing in an `ImageSource`. The image source can be constructed from files,
+bytes, input streams and so on.
+
+Once we have the `AnimatedWebp`, we can inspect it to retrieve an
+`ImmutableImage` per frame, the total number of frames, the per-frame display
+delay, the canvas dimensions, and the loop count (`0` means loop forever).
+
+=== "Java"
+
+    ```java
+    AnimatedWebp webp = AnimatedWebpReader.read(ImageSource.of(new File("animated.webp")));
+    int frameCount        = webp.getFrameCount();
+    ImmutableImage first  = webp.getFrame(0);
+    ImmutableImage last   = webp.getFrame(frameCount - 1);
+    Duration firstDelay   = webp.getDelay(0);
+    Dimension canvas      = webp.getDimensions();
+    int loopCount         = webp.getLoopCount();   // 0 = forever
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    val webp = AnimatedWebpReader.read(ImageSource.of(File("animated.webp")))
+    val firstFrame = webp.frames.first()
+    val lastFrame  = webp.frames.last()
+    val firstDelay = webp.getDelay(0)
+    ```
+
+=== "Scala"
+
+    ```scala
+    val webp = AnimatedWebpReader.read(ImageSource.of(new File("animated.webp")))
+    val firstFrame = webp.getFrames.get(0)
+    val lastFrame  = webp.getFrames.get(webp.getFrameCount - 1)
+    ```
 
 !!! note
-    Reading existing animated WebPs back into a scrimage object is not currently
-    supported. If you need a round-trip, convert through GIF using
-    `AnimatedGifReader` and `Gif2WebpWriter` (covered on the [Webp page](webp.md)).
+    Each frame returned by `getFrame(n)` is the **fully composed** image for
+    that point in the animation — `anim_dump` applies inter-frame disposal and
+    blending for you. You don't need to manually composite earlier frames to
+    reproduce the on-screen result.
+
+The reader also preserves the original WebP bytes, accessible via
+`getBytes()`, in case you need to forward the file unchanged after inspecting
+its metadata.
 
 ## Writing
 
