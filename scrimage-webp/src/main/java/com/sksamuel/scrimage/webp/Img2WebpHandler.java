@@ -100,12 +100,8 @@ public class Img2WebpHandler extends WebpHandler {
    }
 
    /**
-    * Encode the given frame files into an animated WebP at {@code target}.
-    *
-    * <p>Per the img2webp CLI, per-frame options ({@code -d}, {@code -lossy} /
-    * {@code -lossless}, {@code -q}, {@code -m}) are emitted before each frame.
-    * They stick across frames, but emitting them every time keeps the call
-    * unambiguous regardless of the number of frames.
+    * Encode the given frame files into an animated WebP at {@code target},
+    * using a single uniform delay for every frame.
     */
    public void convert(List<Path> inputs,
                        Path target,
@@ -114,6 +110,51 @@ public class Img2WebpHandler extends WebpHandler {
                        int q,
                        int m,
                        boolean lossless) throws IOException {
+      int[] delays = new int[inputs.size()];
+      for (int i = 0; i < delays.length; i++) delays[i] = frameDelayMs;
+      convert(inputs, delays, target, loopCount, q, m, lossless);
+   }
+
+   /**
+    * Encode the given frame files into an animated WebP at {@code target},
+    * with a per-frame delay supplied alongside each input.
+    *
+    * <p>Per the img2webp CLI, per-frame options ({@code -d}, {@code -lossy} /
+    * {@code -lossless}, {@code -q}, {@code -m}) are emitted before each frame.
+    * The settings are sticky across frames, but emitting them every time keeps
+    * the call unambiguous regardless of frame count and lets each frame have
+    * its own delay.
+    *
+    * @param inputs         the frame files in playback order
+    * @param frameDelaysMs  one entry per input giving that frame's display
+    *                       duration in milliseconds, or {@code -1} to leave
+    *                       img2webp's default of 100 ms for that frame
+    * @param target         the output webp path
+    * @param loopCount      number of times the animation should loop, or
+    *                       {@code -1} to leave img2webp's default of 0
+    *                       (loop forever)
+    * @param q              RGB quality factor 0..100, or {@code -1} for default
+    * @param m              encoding method 0..6, or {@code -1} for default
+    * @param lossless       if {@code true} emits {@code -lossless}; otherwise
+    *                       {@code -lossy}
+    */
+   public void convert(List<Path> inputs,
+                       int[] frameDelaysMs,
+                       Path target,
+                       int loopCount,
+                       int q,
+                       int m,
+                       boolean lossless) throws IOException {
+
+      if (inputs == null || inputs.isEmpty()) {
+         throw new IllegalArgumentException("At least one frame is required");
+      }
+      if (frameDelaysMs == null || frameDelaysMs.length != inputs.size()) {
+         throw new IllegalArgumentException(
+            "frameDelaysMs must have one entry per input frame; got "
+               + (frameDelaysMs == null ? "null" : Integer.toString(frameDelaysMs.length))
+               + " for " + inputs.size() + " frames");
+      }
 
       Path stdout = Files.createTempFile("img2webp_stdout_", ".log");
       try {
@@ -123,10 +164,11 @@ public class Img2WebpHandler extends WebpHandler {
             commands.add("-loop");
             commands.add(Integer.toString(loopCount));
          }
-         for (Path input : inputs) {
-            if (frameDelayMs >= 0) {
+         for (int i = 0; i < inputs.size(); i++) {
+            int delay = frameDelaysMs[i];
+            if (delay >= 0) {
                commands.add("-d");
-               commands.add(Integer.toString(frameDelayMs));
+               commands.add(Integer.toString(delay));
             }
             commands.add(lossless ? "-lossless" : "-lossy");
             if (q >= 0) {
@@ -137,7 +179,7 @@ public class Img2WebpHandler extends WebpHandler {
                commands.add("-m");
                commands.add(Integer.toString(m));
             }
-            commands.add(input.toAbsolutePath().toString());
+            commands.add(inputs.get(i).toAbsolutePath().toString());
          }
          commands.add("-o");
          commands.add(target.toAbsolutePath().toString());
