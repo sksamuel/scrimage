@@ -499,8 +499,11 @@ public class AwtImage {
       } else {
          // Type conversion — Graphics2D handles the colour-space conversion.
          Graphics2D g2 = (Graphics2D) target.getGraphics();
-         g2.drawImage(awt, 0, 0, null);
-         g2.dispose();
+         try {
+            g2.drawImage(awt, 0, 0, null);
+         } finally {
+            g2.dispose();
+         }
       }
       return target;
    }
@@ -565,10 +568,13 @@ public class AwtImage {
 
       BufferedImage rotated = ImmutableImage.filled(neww, newh, bgcolor, getType()).awt();
       Graphics2D graphic = rotated.createGraphics();
-      graphic.translate((neww - width) / 2.0, (newh - height) / 2.0);
-      graphic.rotate(angle.value, width / 2.0, height / 2.0);
-      graphic.drawRenderedImage(awt, null);
-      graphic.dispose();
+      try {
+         graphic.translate((neww - width) / 2.0, (newh - height) / 2.0);
+         graphic.rotate(angle.value, width / 2.0, height / 2.0);
+         graphic.drawRenderedImage(awt, null);
+      } finally {
+         graphic.dispose();
+      }
       return rotated;
    }
 
@@ -683,8 +689,11 @@ public class AwtImage {
       } else {
          // Type conversion — Graphics2D handles the colour-space conversion.
          Graphics g2 = target.getGraphics();
-         g2.drawImage(awt, 0, 0, null);
-         g2.dispose();
+         try {
+            g2.drawImage(awt, 0, 0, null);
+         } finally {
+            g2.dispose();
+         }
       }
       return new AwtImage(target);
    }
