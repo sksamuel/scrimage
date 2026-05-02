@@ -42,6 +42,25 @@ public class AnimDumpHandler extends WebpHandler {
    }
 
    /**
+    * Extract the integer frame index from an anim_dump output filename like
+    * {@code dump_0001.png} or {@code dump_12345.png}. Used to sort dumped
+    * frames into playback order.
+    */
+   static int frameIndex(Path path) {
+      String name = path.getFileName().toString();
+      int start = name.indexOf('_') + 1;
+      int end = name.lastIndexOf('.');
+      if (start <= 0 || end <= start) return Integer.MAX_VALUE;
+      try {
+         return Integer.parseInt(name.substring(start, end));
+      } catch (NumberFormatException e) {
+         // Anything we don't recognise sorts to the end so the recognisable
+         // frames stay in their natural order.
+         return Integer.MAX_VALUE;
+      }
+   }
+
+   /**
     * Renders each frame of the given animated WebP and returns the per-frame
     * PNG bytes in playback order.
     */
@@ -57,9 +76,12 @@ public class AnimDumpHandler extends WebpHandler {
             dumped = new ArrayList<>();
             stream.forEach(dumped::add);
          }
-         // anim_dump names files like dump_0000.png, dump_0001.png, ...; sort
-         // lexicographically to recover playback order.
-         dumped.sort(Comparator.comparing(p -> p.getFileName().toString()));
+         // anim_dump names files like dump_0000.png, dump_0001.png, ... and
+         // overflows to dump_10000.png at frame 10000. Sort by the parsed
+         // numeric portion rather than lexicographically — under a string
+         // sort dump_10000.png comes BEFORE dump_2.png, which would scramble
+         // playback order for animations with 10000+ frames.
+         dumped.sort(Comparator.comparingInt(AnimDumpHandler::frameIndex));
 
          List<byte[]> frames = new ArrayList<>(dumped.size());
          for (Path p : dumped) {
