@@ -299,7 +299,14 @@ public class AwtImage {
     * @return true if p holds for at least one pixel
     */
    public boolean exists(Predicate<Pixel> p) {
-      return Arrays.stream(pixels()).anyMatch(p);
+      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      int i = 0;
+      for (int y = 0; y < height; y++) {
+         for (int x = 0; x < width; x++) {
+            if (p.test(new Pixel(x, y, argb[i++]))) return true;
+         }
+      }
+      return false;
    }
 
    /**
@@ -464,7 +471,15 @@ public class AwtImage {
     * @return the number of pixels that evaluated true
     */
    public long count(Predicate<Pixel> p) {
-      return Arrays.stream(pixels()).filter(p).count();
+      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      long n = 0;
+      int i = 0;
+      for (int y = 0; y < height; y++) {
+         for (int x = 0; x < width; x++) {
+            if (p.test(new Pixel(x, y, argb[i++]))) n++;
+         }
+      }
+      return n;
    }
 
    /**
@@ -555,7 +570,14 @@ public class AwtImage {
     * Returns true if the given predicate holds for all pixels in the image.
     */
    public boolean forAll(Predicate<Pixel> predicate) {
-      return Arrays.stream(pixels()).allMatch(predicate);
+      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      int i = 0;
+      for (int y = 0; y < height; y++) {
+         for (int x = 0; x < width; x++) {
+            if (!predicate.test(new Pixel(x, y, argb[i++]))) return false;
+         }
+      }
+      return true;
    }
 
    /**

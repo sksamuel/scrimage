@@ -112,4 +112,51 @@ class AwtImageTest : FunSpec({
       pixels[3].x shouldBe 1; pixels[3].y shouldBe 1
       pixels[3].argb shouldBe 0xFFFFFFFF.toInt()
    }
+
+   // Regression tests for the short-circuiting predicate methods (exists,
+   // forAll, count). Verifies both correctness and that the predicate
+   // short-circuits — i.e. exists() stops calling the predicate after the
+   // first match, and forAll() stops after the first non-match.
+   test("exists() returns true and short-circuits at first match") {
+      val pixels = Array(100) { i -> Pixel(i % 10, i / 10, if (i == 3) 0xFFFF0000.toInt() else 0xFF000000.toInt()) }
+      val image = ImmutableImage.create(10, 10, pixels)
+      var calls = 0
+      val matched = image.exists { p ->
+         calls++
+         p.red() == 255
+      }
+      matched shouldBe true
+      calls shouldBe 4 // pixels 0..3 examined, then short-circuit
+   }
+
+   test("exists() returns false when no pixel matches") {
+      val pixels = Array(4) { i -> Pixel(i % 2, i / 2, 0xFF000000.toInt()) }
+      val image = ImmutableImage.create(2, 2, pixels)
+      image.exists { p -> p.red() == 255 } shouldBe false
+   }
+
+   test("forAll() returns false and short-circuits at first non-match") {
+      val pixels = Array(100) { i -> Pixel(i % 10, i / 10, if (i == 5) 0xFF000000.toInt() else 0xFFFF0000.toInt()) }
+      val image = ImmutableImage.create(10, 10, pixels)
+      var calls = 0
+      val all = image.forAll { p ->
+         calls++
+         p.red() == 255
+      }
+      all shouldBe false
+      calls shouldBe 6 // pixels 0..5 examined, then short-circuit
+   }
+
+   test("forAll() returns true when every pixel matches") {
+      val pixels = Array(4) { i -> Pixel(i % 2, i / 2, 0xFFFF0000.toInt()) }
+      val image = ImmutableImage.create(2, 2, pixels)
+      image.forAll { p -> p.red() == 255 } shouldBe true
+   }
+
+   test("count(Predicate) returns the number of matching pixels") {
+      val pixels = Array(10) { i -> Pixel(i, 0, if (i % 3 == 0) 0xFFFF0000.toInt() else 0xFF000000.toInt()) }
+      val image = ImmutableImage.create(10, 1, pixels)
+      // matches at i=0,3,6,9 → 4 pixels
+      image.count { p -> p.red() == 255 } shouldBe 4L
+   }
 })
