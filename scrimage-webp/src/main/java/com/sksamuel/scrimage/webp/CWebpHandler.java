@@ -49,19 +49,26 @@ public class CWebpHandler extends WebpHandler {
                          boolean lossless,
                          boolean withoutAlpha,
                          boolean multiThread) throws IOException {
+      // Use nested try/finally so if the second createTempFile throws
+      // (disk full between the two calls), the first temp file is still
+      // cleaned up. Previously both creates lived outside the try and a
+      // mid-creation failure leaked the first one.
       Path input = Files.createTempFile("input", "webp").toAbsolutePath();
-      Path output = Files.createTempFile("to_webp", "webp").toAbsolutePath();
       try {
-         Files.write(input, bytes, StandardOpenOption.CREATE);
-         convert(input, output, m, q, z, lossless, withoutAlpha, multiThread);
-         return Files.readAllBytes(output);
+         Path output = Files.createTempFile("to_webp", "webp").toAbsolutePath();
+         try {
+            Files.write(input, bytes, StandardOpenOption.CREATE);
+            convert(input, output, m, q, z, lossless, withoutAlpha, multiThread);
+            return Files.readAllBytes(output);
+         } finally {
+            try {
+               output.toFile().delete();
+            } catch (Exception e) {
+            }
+         }
       } finally {
          try {
             input.toFile().delete();
-         } catch (Exception e) {
-         }
-         try {
-            output.toFile().delete();
          } catch (Exception e) {
          }
       }
