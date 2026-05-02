@@ -1393,25 +1393,24 @@ public class ImmutableImage extends MutableImage {
                return wrapAwt(fastScaleAwt(targetWidth, targetHeight), metadata);
          case Lanczos3:
             Lanczos3Filter lan = ResampleFilters.lanczos3Filter;
-            ImmutableImage s1 = op(new ResampleOp(lan, targetWidth, targetHeight));
-            return wrapAwt(s1.awt(), s1.awt().getType());
+            // op() preserves metadata; the previous code re-wrapped via
+            // wrapAwt(awt, type) which uses ImageMetadata.empty and silently
+            // dropped EXIF/etc. on every scale.
+            return op(new ResampleOp(lan, targetWidth, targetHeight));
          case BSpline:
             BSplineFilter bs = ResampleFilters.bSplineFilter;
-            ImmutableImage s2 = op(new ResampleOp(bs, targetWidth, targetHeight));
-            return wrapAwt(s2.awt(), s2.awt().getType());
+            return op(new ResampleOp(bs, targetWidth, targetHeight));
          case Bilinear:
             TriangleFilter t = ResampleFilters.triangleFilter;
-            ImmutableImage s3 = op(new ResampleOp(t, targetWidth, targetHeight));
-            return wrapAwt(s3.awt(), s3.awt().getType());
+            return op(new ResampleOp(t, targetWidth, targetHeight));
          case Progressive:
             if (targetWidth >= width || targetHeight >= height)
                return scaleTo(targetWidth, targetHeight, ScaleMethod.Bicubic);
             BufferedImage result = ProgressiveScale.scale(awt(), targetWidth, targetHeight, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-            return wrapAwt(result);
+            return wrapAwt(result, metadata);
          case Bicubic:
             BiCubicFilter b = ResampleFilters.biCubicFilter;
-            ImmutableImage s4 = op(new ResampleOp(b, targetWidth, targetHeight));
-            return wrapAwt(s4.awt());
+            return op(new ResampleOp(b, targetWidth, targetHeight));
          default:
             throw new UnsupportedOperationException();
       }
