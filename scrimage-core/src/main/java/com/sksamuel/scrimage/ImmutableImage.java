@@ -508,7 +508,12 @@ public class ImmutableImage extends MutableImage {
     * @return A copy of this image.
     */
    public ImmutableImage copy() {
-      return fromAwt(awt());
+      // fromAwt(BufferedImage) intentionally uses ImageMetadata.empty
+      // because it doesn't know the source's metadata association — but
+      // copy() does, so re-attach it. Without this, every method that
+      // routes through copy() (map, filter, contrast, brightness,
+      // removeTransparency, composite, overlay, ...) silently strips EXIF.
+      return fromAwt(awt()).associateMetadata(metadata);
    }
 
    /**
@@ -516,7 +521,7 @@ public class ImmutableImage extends MutableImage {
     * The type value is one of the AWT standard image types, taken from BufferedImage.
     */
    public ImmutableImage copy(int type) {
-      return fromAwt(awt(), type);
+      return fromAwt(awt(), type).associateMetadata(metadata);
    }
 
    /**
