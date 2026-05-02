@@ -422,11 +422,19 @@ public class AwtImage {
     * The patches are returned as an array of of pixel matrices arrays.
     */
    public Pixel[][] patches(int patchWidth, int patchHeight) {
-      Pixel[][] patches = new Pixel[(height - patchHeight) * (width - patchWidth)][];
+      // Sliding-window enumeration: a patch starting at (col, row) is valid
+      // when col + patchWidth <= width and row + patchHeight <= height,
+      // giving (width - patchWidth + 1) * (height - patchHeight + 1) patches.
+      // The previous formula dropped the rightmost column and bottom row of
+      // patch starts (e.g. patches(1, 1) on a 4x4 image returned 9 patches
+      // instead of 16).
+      int rows = height - patchHeight + 1;
+      int cols = width - patchWidth + 1;
+      Pixel[][] patches = new Pixel[rows * cols][];
       Pixel[] source = pixels();
       int k = 0;
-      for (int row = 0; row < height - patchHeight; row++) {
-         for (int col = 0; col < width - patchWidth; col++) {
+      for (int row = 0; row < rows; row++) {
+         for (int col = 0; col < cols; col++) {
             patches[k] = patchFrom(source, col, row, patchWidth, patchHeight);
             k++;
          }
