@@ -1587,6 +1587,21 @@ public class ImmutableImage extends MutableImage {
     * @return a new Image with the dimensions width-trim*2, height-trim*2
     */
    public ImmutableImage trim(int left, int top, int right, int bottom) {
+      // Validate up front so the caller gets a useful diagnostic (which
+      // arguments + the source dimensions) rather than the bare
+      // "Width cannot be <= 0" / "Height cannot be <= 0" subimage throws
+      // on negative or zero remaining dimensions.
+      if (left < 0 || top < 0 || right < 0 || bottom < 0) {
+         throw new IllegalArgumentException(
+            "trim amounts must be non-negative; got "
+               + "left=" + left + ", top=" + top + ", right=" + right + ", bottom=" + bottom);
+      }
+      if (left + right >= width || top + bottom >= height) {
+         throw new IllegalArgumentException(
+            "trim amounts leave no remaining image: "
+               + "left+right=" + (left + right) + " (width=" + width + "), "
+               + "top+bottom=" + (top + bottom) + " (height=" + height + ")");
+      }
       // Use subimage(...) — exact pixel copy that preserves alpha precision
       // and metadata. The previous create(...).overlay(this, -left, -top)
       // route went through Graphics2D.drawImage which composites via SrcOver
