@@ -9,8 +9,8 @@
 
 Scrimage is an immutable, functional, and performant JVM library for manipulation of images.
 
-The aim of this library is to provide a simple and concise way to do common image operations, such as resizing to fit
- a required width and height, converting between formats, applying filters and so on.
+The aim of this library is to provide a simple and concise way to do common image operations, such as creating thumbnails, converting between image formats,
+resizing to fit a required width and height, applying filters, cropping, and so on.
 
 It is easy to use from any language on the JVM.
 
