@@ -1489,7 +1489,14 @@ public class ImmutableImage extends MutableImage {
    public ImmutableImage subimage(int x, int y, int w, int h) {
       if (w <= 0) throw new RuntimeException("Width cannot be <= 0");
       if (h <= 0) throw new RuntimeException("Height cannot be <= 0");
-      return wrapPixels(w, h, pixels(x, y, w, h), metadata);
+      // Pull the region directly into an ARGB int[] and bulk setRGB it into
+      // a fresh image. The previous implementation called pixels(x, y, w, h)
+      // to materialise a Pixel[w*h] just so wrapPixels → create(Pixel[])
+      // could re-extract argb from each Pixel.
+      int[] argb = awt().getRGB(x, y, w, h, null, 0, w);
+      ImmutableImage result = ImmutableImage.create(w, h, DEFAULT_DATA_TYPE);
+      result.awt().setRGB(0, 0, w, h, argb, 0, w);
+      return result.associateMetadata(metadata);
    }
 
    public ImmutableImage subimage(Rectangle rectangle) {
