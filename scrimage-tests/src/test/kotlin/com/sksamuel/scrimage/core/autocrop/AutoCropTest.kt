@@ -24,6 +24,15 @@ class AutoCropTest : FunSpec() {
          image.autocrop(Color.ORANGE).shouldBeSameInstanceAs(image)
       }
 
+      // Regression: when an image is entirely filled with the crop colour,
+      // scanright returns width and scanleft returns 0, so subimage was being
+      // called with a negative width and threw "Width cannot be <= 0" instead
+      // of returning a sensible result.
+      test("autocrop on an image entirely matching the crop colour returns the original image") {
+         val image = ImmutableImage.filled(20, 10, Color.WHITE)
+         image.autocrop(Color.WHITE).shouldBeSameInstanceAs(image)
+      }
+
       // Regression: autocrop used subimage(x1, y1, x2-x1, y2-y1) which is off by one —
       // the rightmost non-background column (x2) and bottom row (y2) were excluded.
       // Fix: subimage(x1, y1, x2-x1+1, y2-y1+1).
