@@ -99,9 +99,15 @@ public class CaptionFilter implements Filter {
             captionY = y;
         }
 
+        // The caption background must be drawn at the same y as the text;
+        // previously it was hard-coded to (image.height - captionHeight),
+        // which placed the background at the bottom of the image regardless
+        // of the configured Position or explicit y. The bug was masked because
+        // every existing test happens to use Position.BottomLeft, where
+        // captionY == image.height - captionHeight.
         FilledRect bg = new FilledRect(
                 captionX,
-                image.height - captionHeight,
+                captionY,
                 captionWidth,
                 captionHeight,
                 g -> {
