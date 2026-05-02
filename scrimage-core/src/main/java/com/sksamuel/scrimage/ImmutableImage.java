@@ -438,7 +438,13 @@ public class ImmutableImage extends MutableImage {
       int x2 = AutocropOps.scanleft(color, height, width - 1, pixelExtractor(), colorTolerance);
       int y1 = AutocropOps.scandown(color, height, width, 0, pixelExtractor(), colorTolerance);
       int y2 = AutocropOps.scanup(color, width, height - 1, pixelExtractor(), colorTolerance);
+      // If every column matches the crop colour, scanright walks all the way
+      // to width and scanleft all the way to 0 (and likewise for rows). The
+      // "nothing to crop" subimage(x1, y1, x2-x1+1, ...) call would then have
+      // a negative width/height. Treat an all-matching image as "nothing to
+      // keep but also nothing to crop" and return the original.
       if (x1 == 0 && y1 == 0 && x2 == width - 1 && y2 == height - 1) return this;
+      if (x1 > x2 || y1 > y2) return this;
       return subimage(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
    }
 
