@@ -34,4 +34,19 @@ class BorderFilterTest : FunSpec({
          ImmutableImage.fromResource("/com/sksamuel/scrimage/filters/border/love_border_red.png")
    }
 
+   // Regression: BorderFilter.apply did not call g2.dispose() on the
+   // Graphics2D it obtained — leaking the native graphics context on
+   // every call. Run a tight loop to verify the filter does not exhaust
+   // native resources after many applications.
+   test("repeated apply does not leak native graphics resources") {
+      // 500 applications of the filter against a fresh small image. Without
+      // the dispose() fix this would steadily leak Graphics2D instances
+      // (each one ties up native AWT structures); with the fix it should
+      // complete without trouble.
+      repeat(500) {
+         val target = ImmutableImage.create(64, 64)
+         BorderFilter(2, Color.RED).apply(target)
+      }
+   }
+
 })
