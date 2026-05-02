@@ -508,9 +508,15 @@ public class AwtImage {
    /**
     * Returns a new AWTImage with the same dimensions and same AWT type.
     * The data is uninitialized.
+    * <p>
+    * If the source has BufferedImage.TYPE_CUSTOM (type 0) — which can't be
+    * fed back into the BufferedImage(width, height, type) constructor —
+    * falls back to TYPE_INT_ARGB, matching ImmutableImage.fromAwt's policy.
     */
    public AwtImage empty() {
-      return new AwtImage(new BufferedImage(width, height, awt.getType()));
+      int type = awt.getType();
+      if (type == 0) type = BufferedImage.TYPE_INT_ARGB;
+      return new AwtImage(new BufferedImage(width, height, type));
    }
 
    // See this Stack Overflow question to see why this is implemented this way.
