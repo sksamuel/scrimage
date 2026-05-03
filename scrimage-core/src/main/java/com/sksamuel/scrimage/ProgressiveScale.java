@@ -40,9 +40,12 @@ public class ProgressiveScale {
 
          BufferedImage tmp = new BufferedImage(w, h, type);
          Graphics2D g2 = tmp.createGraphics();
-         g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, interpolation);
-         g2.drawImage(temp, 0, 0, w, h, null);
-         g2.dispose();
+         try {
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, interpolation);
+            g2.drawImage(temp, 0, 0, w, h, null);
+         } finally {
+            g2.dispose();
+         }
 
          temp = tmp;
       } while (w != targetWidth || h != targetHeight);
