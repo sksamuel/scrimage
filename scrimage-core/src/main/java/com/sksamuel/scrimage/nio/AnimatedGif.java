@@ -33,15 +33,40 @@ public class AnimatedGif {
    }
 
    public Duration getDelay(int frame) {
+      checkFrameIndex(frame);
       return Duration.ofMillis(reader.getDelay(frame));
    }
 
    public DisposeMethod getDisposeMethod(int frame) {
+      checkFrameIndex(frame);
       return reader.getDisposeMethod(frame);
    }
 
    public ImmutableImage getFrame(int n) {
+      checkFrameIndex(n);
       return ImmutableImage.wrapAwt(reader.getFrame(n));
+   }
+
+   /**
+    * Validates a frame index up front so callers get a clear
+    * IndexOutOfBoundsException naming the bad index and the available
+    * frame count. Without this check:
+    *   - getFrame returned an ImmutableImage wrapping a null BufferedImage,
+    *     which then NPE'd on the next pixel access (AwtImage's `assert
+    *     awt != null` is a no-op in production)
+    *   - getDelay returned Duration.ofMillis(-1) — a negative Duration
+    *     with no indication that the index was bad
+    *   - getDisposeMethod silently returned NONE
+    *
+    * Matches the IndexOutOfBoundsException that AnimatedWebp's List.get
+    * already throws.
+    */
+   private void checkFrameIndex(int frame) {
+      int count = reader.getFrameCount();
+      if (frame < 0 || frame >= count) {
+         throw new IndexOutOfBoundsException(
+            "frame " + frame + " out of bounds for animated gif with " + count + " frames");
+      }
    }
 
    public List<ImmutableImage> getFrames() {
