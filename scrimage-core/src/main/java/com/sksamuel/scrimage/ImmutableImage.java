@@ -1670,8 +1670,14 @@ public class ImmutableImage extends MutableImage {
     * @return a new Image with the given image overlaid.
     */
    public ImmutableImage underlay(ImmutableImage underlayImage, int x, int y) {
+      // Per the doc: the underlay sits at the back, this sits on top, and
+      // (x, y) is where the (0, 0) of the top layer (this) gets placed.
+      // Previously both calls used (x, y), so the underlay was offset to
+      // the same position as the top layer instead of being painted at
+      // the canvas origin first. The zero-arg overload masked the bug
+      // because both reduce to (0, 0).
       ImmutableImage target = this.blank();
-      target.overlayInPlace(underlayImage.awt(), x, y);
+      target.overlayInPlace(underlayImage.awt(), 0, 0);
       target.overlayInPlace(awt(), x, y);
       return target.associateMetadata(metadata);
    }
