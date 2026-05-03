@@ -31,10 +31,18 @@ public class VignetteFilter implements Filter {
     private final Color color;
 
     public VignetteFilter(float start, float end, float blur, Color color) {
-        assert start >= 0;
-        assert start <= 1;
-        assert blur >= 0;
-        assert blur <= 1;
+        // Asserts are disabled by default in production JVMs, so the
+        // previous assert-based range checks were no-ops. Out-of-range
+        // start surfaced as a cryptic IllegalArgumentException out of
+        // RadialGradientPaint about gradient fractions; out-of-range
+        // blur was passed to GaussianBlurFilter as a negative radius.
+        // Validate explicitly with a useful diagnostic.
+        if (!(start >= 0 && start <= 1)) {
+            throw new IllegalArgumentException("start must be in [0, 1]; got " + start);
+        }
+        if (!(blur >= 0 && blur <= 1)) {
+            throw new IllegalArgumentException("blur must be in [0, 1]; got " + blur);
+        }
         this.start = start;
         this.end = end;
         this.blur = blur;
