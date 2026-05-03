@@ -17,7 +17,14 @@ public class AlphaMaskFilter implements Filter {
    }
 
    public AlphaMaskFilter(ImmutableImage mask, int channel) {
-      assert (channel >= 0 && channel <= 3);
+      // Asserts are disabled by default in production JVMs, so a channel
+      // outside [0, 3] used to silently fall through to the apply()
+      // switch's default branch (alpha channel). Validate explicitly with
+      // a useful diagnostic.
+      if (channel < 0 || channel > 3) {
+         throw new IllegalArgumentException(
+            "channel must be in [0, 3] (0=alpha, 1=red, 2=green, 3=blue); got " + channel);
+      }
       this.mask = mask;
       this.channel = channel;
    }

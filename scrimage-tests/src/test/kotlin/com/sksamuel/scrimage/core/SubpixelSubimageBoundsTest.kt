@@ -5,20 +5,24 @@ import com.sksamuel.scrimage.pixels.Pixel
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
 
 /**
- * Regression test for ImmutableImage.subpixelSubimage's boundary
- * assertions. The previous implementation asserted strict inequality:
+ * Regression tests for ImmutableImage.subpixelSubimage's boundary checks.
+ *
+ * The original implementation asserted strict inequality:
  *
  *   assert x + subWidth < width;
  *
  * but the loop reads subpixel(xIndex + x) for xIndex in [0, subWidth),
- * giving a maximum x argument of (subWidth - 1) + x. Subpixel only
- * requires arg < width, so the actual constraint is x + subWidth ≤ width
- * — the strict inequality rejected legitimate full-width extractions.
+ * giving a maximum x argument of (subWidth - 1) + x. Subpixel only requires
+ * arg < width, so the actual constraint is x + subWidth ≤ width — strict
+ * inequality rejected legitimate full-width extractions.
  *
- * Concrete pre-fix: subpixelSubimage(0.0, 0.0, width, height) on any
- * image throws AssertionError when run under -ea (Gradle's default).
+ * The validation was via `assert`, which is disabled by default in production
+ * JVMs. Out-of-range arguments then surfaced as a bare
+ * ArrayIndexOutOfBoundsException from getRGB deep inside the apply loop.
+ * The check is now an upfront IllegalArgumentException.
  */
 class SubpixelSubimageBoundsTest : FunSpec({
 
@@ -40,17 +44,28 @@ class SubpixelSubimageBoundsTest : FunSpec({
       sub.height shouldBe 3
    }
 
-   test("subpixelSubimage with x + subWidth > width still asserts") {
+   test("subpixelSubimage with x + subWidth > width throws IllegalArgumentException") {
       val image = ImmutableImage.create(4, 4)
-      shouldThrow<AssertionError> {
+      val ex = shouldThrow<IllegalArgumentException> {
          image.subpixelSubimage(0.0, 0.0, 5, 4)
       }
+      ex.message!!.shouldContain("subpixelSubimage region")
+      ex.message!!.shouldContain("4x4")
    }
 
-   test("subpixelSubimage with negative x still asserts") {
+   test("subpixelSubimage with negative x throws IllegalArgumentException") {
       val image = ImmutableImage.create(4, 4)
-      shouldThrow<AssertionError> {
+      val ex = shouldThrow<IllegalArgumentException> {
          image.subpixelSubimage(-0.1, 0.0, 2, 2)
       }
+      ex.message!!.shouldContain("x=-0.1")
+   }
+
+   test("subpixelSubimage with subimage extending past bottom edge throws") {
+      val image = ImmutableImage.create(4, 4)
+      val ex = shouldThrow<IllegalArgumentException> {
+         image.subpixelSubimage(0.0, 3.0, 2, 2)
+      }
+      ex.message!!.shouldContain("subHeight=2")
    }
 })
