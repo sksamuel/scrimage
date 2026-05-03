@@ -11,7 +11,16 @@ public class BlackThresholdFilter implements Filter {
    private final double thresholdPercentage;
 
    public BlackThresholdFilter(double thresholdPercentage) {
-      assert (thresholdPercentage >= 0.0 && thresholdPercentage <= 100.0);
+      // Asserts are disabled by default in production JVMs, so the previous
+      // `assert` here was a no-op and out-of-range values produced silently
+      // wrong output: pct > 100 made every pixel fall below the threshold
+      // (so the whole image was blackened), pct < 0 made no pixel match
+      // (so the filter was a no-op), and NaN propagated as 0 with the same
+      // no-op result.
+      if (!(thresholdPercentage >= 0.0 && thresholdPercentage <= 100.0)) {
+         throw new IllegalArgumentException(
+            "thresholdPercentage must be in [0, 100]; got " + thresholdPercentage);
+      }
       this.thresholdPercentage = thresholdPercentage;
    }
 
