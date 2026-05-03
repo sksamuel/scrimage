@@ -20,8 +20,14 @@ public class FormatDetector {
     private static byte[] webp2 = new byte[]{'W', 'E', 'B', 'P'};
 
     public static Optional<Format> detect(InputStream in) throws IOException {
-        byte[] bytes = new byte[12];
-        in.read(bytes, 0, 12);
+        // InputStream.read(byte[], int, int) is documented as "an attempt is
+        // made to read up to len bytes" — it MAY return fewer. For slow
+        // streams (network, decompressed) a single read commonly returns
+        // less than 12 bytes, leaving the tail of `bytes` zero-filled. WEBP
+        // signatures live at offset 8 ("WEBP" after RIFF + length) so a
+        // partial read silently breaks WEBP detection. readNBytes blocks
+        // until it has all the bytes (or EOF).
+        byte[] bytes = in.readNBytes(12);
         return detect(bytes);
     }
 
