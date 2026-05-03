@@ -39,8 +39,18 @@ public class ErrorSpotterFilter implements Filter {
 
     @Override
     public void apply(ImmutableImage src) {
-        assert (src.width == base.width);
-        assert (src.height == base.height);
+        // Asserts are disabled by default in production JVMs, so the
+        // previous `assert src.width == base.width` checks were no-ops
+        // in practice and a dimension mismatch surfaced as a cryptic
+        // ArrayIndexOutOfBoundsException from base.awt().getRGB(x, y)
+        // deep inside the loop. Validate explicitly with a useful
+        // diagnostic.
+        if (src.width != base.width || src.height != base.height) {
+            throw new IllegalArgumentException(
+                "ErrorSpotterFilter requires src and base to have the same dimensions; "
+                    + "src=" + src.width + "x" + src.height
+                    + ", base=" + base.width + "x" + base.height);
+        }
         for (int x = 0; x < src.width; x++) {
             for (int y = 0; y < src.height; y++) {
                 int delta = error(RGBColor.fromARGBInt(base.awt().getRGB(x, y)), RGBColor.fromARGBInt(src.awt().getRGB(x, y)));
