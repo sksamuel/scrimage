@@ -331,12 +331,15 @@ public class GifSequenceReader {
                status = STATUS_FORMAT_ERROR;
             }
          }
+         // Only close if we actually had a stream — the null branch
+         // sets STATUS_OPEN_ERROR and used to fall through to is.close()
+         // which then NPE'd, defeating the null check.
+         try {
+            is.close();
+         } catch (IOException e) {
+         }
       } else {
          status = STATUS_OPEN_ERROR;
-      }
-      try {
-         is.close();
-      } catch (IOException e) {
       }
       return status;
    }
@@ -360,12 +363,13 @@ public class GifSequenceReader {
                status = STATUS_FORMAT_ERROR;
             }
          }
+         // Only close if we actually had a stream — see read(BufferedInputStream).
+         try {
+            is.close();
+         } catch (IOException e) {
+         }
       } else {
          status = STATUS_OPEN_ERROR;
-      }
-      try {
-         is.close();
-      } catch (IOException e) {
       }
       return status;
    }
