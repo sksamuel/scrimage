@@ -29,14 +29,17 @@ public class OldPhotoFilter implements IntFilter {
       BufferedImage filtered = daisy.filter(image.awt());
 
       Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
-      g2.drawImage(filtered, 0, 0, null);
+      try {
+         g2.drawImage(filtered, 0, 0, null);
 
-      BufferedImage filmSized = film.scaleTo(image.width, image.height, ScaleMethod.Bicubic).awt();
-      BufferedImage filmSizedSameType = ImmutableImage.fromAwt(filmSized, image.awt().getType()).awt();
+         BufferedImage filmSized = film.scaleTo(image.width, image.height, ScaleMethod.Bicubic).awt();
+         BufferedImage filmSizedSameType = ImmutableImage.fromAwt(filmSized, image.awt().getType()).awt();
 
-      g2.setComposite(BlendComposite.getInstance(BlendingMode.INVERSE_COLOR_DODGE, 0.30f));
-      g2.drawImage(filmSizedSameType, 0, 0, null);
-      g2.dispose();
+         g2.setComposite(BlendComposite.getInstance(BlendingMode.INVERSE_COLOR_DODGE, 0.30f));
+         g2.drawImage(filmSizedSameType, 0, 0, null);
+      } finally {
+         g2.dispose();
+      }
    }
 }
 

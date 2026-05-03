@@ -39,8 +39,11 @@ public class SnowFilter implements IntFilter {
    public void apply(ImmutableImage image) {
       ImmutableImage scaled = ImmutableImage.wrapAwt(snow.scaleTo(image.width, image.height, ScaleMethod.Bicubic).awt(), image.getType());
       Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
-      g2.setComposite(new BlendComposite(BlendingMode.SCREEN, 1.0f));
-      g2.drawImage(scaled.awt(), 0, 0, null);
-      g2.dispose();
+      try {
+         g2.setComposite(new BlendComposite(BlendingMode.SCREEN, 1.0f));
+         g2.drawImage(scaled.awt(), 0, 0, null);
+      } finally {
+         g2.dispose();
+      }
    }
 }

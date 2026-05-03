@@ -47,9 +47,12 @@ public class SummerFilter implements IntFilter {
    public void apply(ImmutableImage image) throws IOException {
       ImmutableImage scaled = ImmutableImage.wrapAwt(summer.scaleTo(image.width, image.height, ScaleMethod.Bicubic).awt(), image.getType());
       Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
-      g2.setComposite(BlendComposite.getInstance(BlendingMode.INVERSE_COLOR_BURN, 0.5f));
-      g2.drawImage(scaled.awt(), 0, 0, null);
-      g2.dispose();
+      try {
+         g2.setComposite(BlendComposite.getInstance(BlendingMode.INVERSE_COLOR_BURN, 0.5f));
+         g2.drawImage(scaled.awt(), 0, 0, null);
+      } finally {
+         g2.dispose();
+      }
       if (vignette) new VignetteFilter(0.92f, 0.98f, 0.3f, Color.BLACK).apply(image);
    }
 }
