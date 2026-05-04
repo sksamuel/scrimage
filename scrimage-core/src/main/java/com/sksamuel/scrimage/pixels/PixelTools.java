@@ -91,11 +91,21 @@ public class PixelTools {
     * Scales the brightness of a pixel.
     */
    public static int scale(Double factor, int pixel) {
+      // Clamp each channel to [0, 255]. Without clamping, a factor > 1 (or
+      // < 0) yielded an out-of-range channel value that argb() then masked
+      // with & 0xFF, wrapping the channel around — so a "brightening" call
+      // could silently produce a darker pixel.
       return rgb(
-         (int) Math.round(factor * red(pixel)),
-         (int) Math.round(factor * green(pixel)),
-         (int) Math.round(factor * blue(pixel))
+         clampChannel((int) Math.round(factor * red(pixel))),
+         clampChannel((int) Math.round(factor * green(pixel))),
+         clampChannel((int) Math.round(factor * blue(pixel)))
       );
+   }
+
+   private static int clampChannel(int value) {
+      if (value < 0) return 0;
+      if (value > 255) return 255;
+      return value;
    }
 
    /**

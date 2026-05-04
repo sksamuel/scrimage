@@ -17,18 +17,25 @@ public class PipelineFilter implements Filter {
       this.filters = filters;
    }
 
+   /**
+    * The pipeline only operates correctly on TYPE_INT_ARGB / TYPE_INT_RGB
+    * images. Declare that here so {@link ImmutableImage#filter(Filter)}
+    * converts the image before delegating to {@link #apply(ImmutableImage)}.
+    *
+    * Previously the conversion was done inside apply() — but it conditionally
+    * created a *new* ImmutableImage and discarded it after the filters ran,
+    * so for any non-INT-ARGB/RGB source the entire pipeline silently became
+    * a no-op (NashvilleFilter on TYPE_4BYTE_ABGR did nothing).
+    */
+   @Override
+   public int[] types() {
+      return new int[]{BufferedImage.TYPE_INT_ARGB, BufferedImage.TYPE_INT_RGB};
+   }
+
    @Override
    public void apply(ImmutableImage image) throws IOException {
-
-      ImmutableImage copy;
-      if (image.getType() == BufferedImage.TYPE_INT_ARGB || image.getType() == BufferedImage.TYPE_INT_RGB) {
-         copy = image;
-      } else {
-         copy = image.copy(BufferedImage.TYPE_INT_ARGB);
-      }
-
       for (Filter filter : filters) {
-         filter.apply(copy);
+         filter.apply(image);
       }
    }
 }

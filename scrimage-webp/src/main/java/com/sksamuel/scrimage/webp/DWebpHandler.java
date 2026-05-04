@@ -43,8 +43,10 @@ public class DWebpHandler extends WebpHandler {
 
    public byte[] convert(byte[] bytes) throws IOException {
       Path input = Files.createTempFile("input", "webp").toAbsolutePath();
-      Files.write(input, bytes, StandardOpenOption.CREATE);
       try {
+         // Files.write was previously called BEFORE the try block; if it
+         // threw (disk full, permissions, ...) the temp file leaked.
+         Files.write(input, bytes, StandardOpenOption.CREATE);
          return convert(input);
       } finally {
          input.toFile().delete();
@@ -75,13 +77,22 @@ public class DWebpHandler extends WebpHandler {
 
       Process process = builder.start();
       try {
-         process.waitFor(5, TimeUnit.MINUTES);
+         // waitFor(timeout, unit) returns false if the process is still
+         // running when the timeout expires. The previous code ignored
+         // the return value and called exitValue() unconditionally,
+         // which throws IllegalThreadStateException if the process
+         // hadn't exited — masking the real failure (a hang).
+         boolean finished = process.waitFor(5, TimeUnit.MINUTES);
+         if (!finished) {
+            throw new IOException("dwebp timed out after 5 minutes");
+         }
          int exitStatus = process.exitValue();
          if (exitStatus != 0) {
             List<String> error = Files.readAllLines(stdout);
             throw new IOException(error.toString());
          }
-      } catch (InterruptedException | IOException e) {
+      } catch (InterruptedException e) {
+         Thread.currentThread().interrupt();
          throw new IOException(e);
       } finally {
          process.destroy();

@@ -63,20 +63,23 @@ public class MutableImage extends AwtImage {
     * Fills all pixels the given color on the existing image.
     */
    public void fillInPlace(Color color) {
+      int target = RGBColor.fromAwt(color).toARGBInt();
       WritableRaster raster = awt().getRaster();
-      Object colorElements = awt().getColorModel().getDataElements(RGBColor.fromAwt(color).toARGBInt(), null);
       DataBuffer buffer = raster.getDataBuffer();
-      if (buffer instanceof DataBufferInt
-         && colorElements instanceof int[]
-         && ((int[]) colorElements).length == 1) {
-         Arrays.fill(((DataBufferInt) buffer).getData(), ((int[]) colorElements)[0]);
-         return;
-      }
-      for (int y = 0; y < height; y++) {
-         for (int x = 0; x < width; x++) {
-            raster.setDataElements(x, y, colorElements);
+      if (buffer instanceof DataBufferInt) {
+         Object colorElements = awt().getColorModel().getDataElements(target, null);
+         if (colorElements instanceof int[] && ((int[]) colorElements).length == 1) {
+            Arrays.fill(((DataBufferInt) buffer).getData(), ((int[]) colorElements)[0]);
+            return;
          }
       }
+      // Generic fallback: build the packed-ARGB row once and bulk setRGB it.
+      // setRGB goes through the color model so it works for any image type
+      // (DataBufferByte, indexed, custom rasters, ...). Far cheaper than
+      // raster.setDataElements per pixel.
+      int[] argb = new int[width * height];
+      Arrays.fill(argb, target);
+      awt().setRGB(0, 0, width, height, argb, 0, width);
    }
 
    /**
@@ -84,8 +87,11 @@ public class MutableImage extends AwtImage {
     */
    public void overlayInPlace(BufferedImage overlay, int x, int y) {
       Graphics2D g2 = (Graphics2D) awt().getGraphics();
-      g2.drawImage(overlay, x, y, null);
-      g2.dispose();
+      try {
+         g2.drawImage(overlay, x, y, null);
+      } finally {
+         g2.dispose();
+      }
    }
 
    public void setColor(int offset, com.sksamuel.scrimage.color.Color color) {

@@ -23,6 +23,7 @@ import com.sksamuel.scrimage.canvas.drawables.FilledRect;
 import com.sksamuel.scrimage.canvas.painters.LinearGradient;
 import com.sksamuel.scrimage.canvas.painters.Painter;
 import com.sksamuel.scrimage.color.Colors;
+import com.sksamuel.scrimage.color.Grayscale;
 import com.sksamuel.scrimage.color.GrayscaleMethod;
 import com.sksamuel.scrimage.color.RGBColor;
 import com.sksamuel.scrimage.composite.Composite;
@@ -359,7 +360,11 @@ public class ImmutableImage extends MutableImage {
    public static ImmutableImage create(int w, int h, Pixel[] pixels, int type) {
       assert w * h == pixels.length;
       ImmutableImage image = ImmutableImage.create(w, h, type);
-      image.mapInPlace((pixel) -> pixels[PixelTools.coordsToOffset(pixel.x, pixel.y, w)].toColor().awt());
+      int[] argb = new int[pixels.length];
+      for (int i = 0; i < pixels.length; i++) {
+         argb[i] = pixels[i].toARGBInt();
+      }
+      image.awt().setRGB(0, 0, w, h, argb, 0, w);
       return image;
    }
 
@@ -433,7 +438,13 @@ public class ImmutableImage extends MutableImage {
       int x2 = AutocropOps.scanleft(color, height, width - 1, pixelExtractor(), colorTolerance);
       int y1 = AutocropOps.scandown(color, height, width, 0, pixelExtractor(), colorTolerance);
       int y2 = AutocropOps.scanup(color, width, height - 1, pixelExtractor(), colorTolerance);
+      // If every column matches the crop colour, scanright walks all the way
+      // to width and scanleft all the way to 0 (and likewise for rows). The
+      // "nothing to crop" subimage(x1, y1, x2-x1+1, ...) call would then have
+      // a negative width/height. Treat an all-matching image as "nothing to
+      // keep but also nothing to crop" and return the original.
       if (x1 == 0 && y1 == 0 && x2 == width - 1 && y2 == height - 1) return this;
+      if (x1 > x2 || y1 > y2) return this;
       return subimage(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
    }
 
@@ -442,11 +453,17 @@ public class ImmutableImage extends MutableImage {
     * the same dimensions.
     * <p>
     * The underlying pixels will not be initialized.
+    * <p>
+    * If the source has BufferedImage.TYPE_CUSTOM (type 0) — which can't be
+    * fed into a BufferedImage(width, height, type) constructor — falls back
+    * to DEFAULT_DATA_TYPE, matching fromAwt's policy.
     *
     * @return a new Image that is a clone of this image but with uninitialized data
     */
    public ImmutableImage blank() {
-      return create(width, height, getType());
+      int type = getType();
+      if (type == 0) type = DEFAULT_DATA_TYPE;
+      return create(width, height, type);
    }
 
    /**
@@ -491,7 +508,12 @@ public class ImmutableImage extends MutableImage {
     * @return A copy of this image.
     */
    public ImmutableImage copy() {
-      return fromAwt(awt());
+      // fromAwt(BufferedImage) intentionally uses ImageMetadata.empty
+      // because it doesn't know the source's metadata association — but
+      // copy() does, so re-attach it. Without this, every method that
+      // routes through copy() (map, filter, contrast, brightness,
+      // removeTransparency, composite, overlay, ...) silently strips EXIF.
+      return fromAwt(awt()).associateMetadata(metadata);
    }
 
    /**
@@ -499,7 +521,7 @@ public class ImmutableImage extends MutableImage {
     * The type value is one of the AWT standard image types, taken from BufferedImage.
     */
    public ImmutableImage copy(int type) {
-      return fromAwt(awt(), type);
+      return fromAwt(awt(), type).associateMetadata(metadata);
    }
 
    /**
@@ -600,7 +622,7 @@ public class ImmutableImage extends MutableImage {
       Dimension dim = position.calculateXY(targetWidth, targetHeight, coveredDimensions.getX(), coveredDimensions.getY());
       ImmutableImage result = create(targetWidth, targetHeight, imageType);
       result.overlayInPlace(scaled.awt(), dim.getX(), dim.getY());
-      return result;
+      return result.associateMetadata(metadata);
    }
 
    /**
@@ -612,7 +634,7 @@ public class ImmutableImage extends MutableImage {
    public ImmutableImage fill(Color color) {
       ImmutableImage target = blank();
       target.fillInPlace(color);
-      return target;
+      return target.associateMetadata(metadata);
    }
 
    /**
@@ -634,7 +656,7 @@ public class ImmutableImage extends MutableImage {
       }
       Painter finalTemp = temp;
       target.toCanvas().drawInPlace(new FilledRect(0, 0, width, height, g2 -> g2.setPainter(finalTemp)));
-      return target;
+      return target.associateMetadata(metadata);
    }
 
    /**
@@ -660,13 +682,19 @@ public class ImmutableImage extends MutableImage {
     * @return A new image with the given filter applied.
     */
    public ImmutableImage filter(Filter filter) throws IOException {
-      List<Integer> types = Arrays.stream(filter.types()).boxed().collect(Collectors.toList());
-      ImmutableImage target;
-      if (types.isEmpty() || types.contains(getType())) {
-         target = copy();
-      } else {
-         target = copy(types.get(0));
+      int[] types = filter.types();
+      // Empty types[] means "any type works"; otherwise copy in our current
+      // type if it's listed, else convert to types[0]. The previous
+      // implementation boxed every int into Integer and built an ArrayList
+      // just to call .contains() with another autoboxed lookup.
+      int currentType = getType();
+      boolean canUseCurrent = types.length == 0;
+      if (!canUseCurrent) {
+         for (int t : types) {
+            if (t == currentType) { canUseCurrent = true; break; }
+         }
       }
+      ImmutableImage target = canUseCurrent ? copy() : copy(types[0]);
       filter.apply(target);
       return target;
    }
@@ -751,7 +779,7 @@ public class ImmutableImage extends MutableImage {
       ImmutableImage scaled = scaleTo(wh.getX(), wh.getY(), scaleMethod);
       ImmutableImage result = ImmutableImage.filled(canvasWidth, canvasHeight, color, imageType);
       result.overlayInPlace(scaled.awt(), dim.getX(), dim.getY());
-      return result;
+      return result.associateMetadata(metadata);
    }
 
    /**
@@ -959,7 +987,7 @@ public class ImmutableImage extends MutableImage {
          Dimension dim = position.calculateXY(targetWidth, targetHeight, width, height);
          ImmutableImage result = filled(targetWidth, targetHeight, background, imageType);
          result.overlayInPlace(awt(), dim.getX(), dim.getY());
-         return result;
+         return result.associateMetadata(metadata);
       }
    }
 
@@ -1170,7 +1198,7 @@ public class ImmutableImage extends MutableImage {
    public ImmutableImage padWith(int left, int top, int right, int bottom, Color color) {
       int w = width + left + right;
       int h = height + top + bottom;
-      return filled(w, h, color).overlay(this, left, top);
+      return filled(w, h, color).overlay(this, left, top).associateMetadata(metadata);
    }
 
    /**
@@ -1376,25 +1404,24 @@ public class ImmutableImage extends MutableImage {
                return wrapAwt(fastScaleAwt(targetWidth, targetHeight), metadata);
          case Lanczos3:
             Lanczos3Filter lan = ResampleFilters.lanczos3Filter;
-            ImmutableImage s1 = op(new ResampleOp(lan, targetWidth, targetHeight));
-            return wrapAwt(s1.awt(), s1.awt().getType());
+            // op() preserves metadata; the previous code re-wrapped via
+            // wrapAwt(awt, type) which uses ImageMetadata.empty and silently
+            // dropped EXIF/etc. on every scale.
+            return op(new ResampleOp(lan, targetWidth, targetHeight));
          case BSpline:
             BSplineFilter bs = ResampleFilters.bSplineFilter;
-            ImmutableImage s2 = op(new ResampleOp(bs, targetWidth, targetHeight));
-            return wrapAwt(s2.awt(), s2.awt().getType());
+            return op(new ResampleOp(bs, targetWidth, targetHeight));
          case Bilinear:
             TriangleFilter t = ResampleFilters.triangleFilter;
-            ImmutableImage s3 = op(new ResampleOp(t, targetWidth, targetHeight));
-            return wrapAwt(s3.awt(), s3.awt().getType());
+            return op(new ResampleOp(t, targetWidth, targetHeight));
          case Progressive:
             if (targetWidth >= width || targetHeight >= height)
                return scaleTo(targetWidth, targetHeight, ScaleMethod.Bicubic);
             BufferedImage result = ProgressiveScale.scale(awt(), targetWidth, targetHeight, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-            return wrapAwt(result);
+            return wrapAwt(result, metadata);
          case Bicubic:
             BiCubicFilter b = ResampleFilters.biCubicFilter;
-            ImmutableImage s4 = op(new ResampleOp(b, targetWidth, targetHeight));
-            return wrapAwt(s4.awt());
+            return op(new ResampleOp(b, targetWidth, targetHeight));
          default:
             throw new UnsupportedOperationException();
       }
@@ -1407,19 +1434,31 @@ public class ImmutableImage extends MutableImage {
                                           double y,
                                           int subWidth,
                                           int subHeight) {
+      // The loop reads subpixel(xIndex + x) for xIndex in [0, subWidth),
+      // so the maximum sub-pixel x argument is (subWidth - 1) + x. The
+      // subpixel() contract requires arg < width, hence x + subWidth ≤ width.
+      // Same applies to y / subHeight / height. The previous bounds used
+      // strict < and rejected valid full-width / full-height extractions.
       assert x >= 0;
-      assert x + subWidth < width;
+      assert x + subWidth <= width;
       assert y >= 0;
-      assert y + subHeight < height;
+      assert y + subHeight <= height;
 
-      Pixel[] matrix = new Pixel[subWidth * subHeight];
-      // Simply copy the pixels over, one by one.
+      // Walk the output grid and write each interpolated ARGB int directly
+      // into a row-major buffer. The previous implementation allocated a
+      // Pixel per output cell and routed through wrapPixels → create(Pixel[]),
+      // which itself re-extracted the argb from each Pixel — a wasted round
+      // trip now that subpixel() already returns a packed ARGB int.
+      int[] argb = new int[subWidth * subHeight];
+      int k = 0;
       for (int yIndex = 0; yIndex < subHeight; yIndex++) {
          for (int xIndex = 0; xIndex < subWidth; xIndex++) {
-            matrix[PixelTools.coordsToOffset(xIndex, yIndex, subWidth)] = new Pixel(xIndex, yIndex, subpixel(xIndex + x, yIndex + y));
+            argb[k++] = subpixel(xIndex + x, yIndex + y);
          }
       }
-      return wrapPixels(subWidth, subHeight, matrix, metadata);
+      ImmutableImage result = ImmutableImage.create(subWidth, subHeight, DEFAULT_DATA_TYPE);
+      result.awt().setRGB(0, 0, subWidth, subHeight, argb, 0, subWidth);
+      return result.associateMetadata(metadata);
    }
 
    /**
@@ -1455,7 +1494,14 @@ public class ImmutableImage extends MutableImage {
    public ImmutableImage subimage(int x, int y, int w, int h) {
       if (w <= 0) throw new RuntimeException("Width cannot be <= 0");
       if (h <= 0) throw new RuntimeException("Height cannot be <= 0");
-      return wrapPixels(w, h, pixels(x, y, w, h), metadata);
+      // Pull the region directly into an ARGB int[] and bulk setRGB it into
+      // a fresh image. The previous implementation called pixels(x, y, w, h)
+      // to materialise a Pixel[w*h] just so wrapPixels → create(Pixel[])
+      // could re-extract argb from each Pixel.
+      int[] argb = awt().getRGB(x, y, w, h, null, 0, w);
+      ImmutableImage result = ImmutableImage.create(w, h, DEFAULT_DATA_TYPE);
+      result.awt().setRGB(0, 0, w, h, argb, 0, w);
+      return result.associateMetadata(metadata);
    }
 
    public ImmutableImage subimage(Rectangle rectangle) {
@@ -1518,7 +1564,7 @@ public class ImmutableImage extends MutableImage {
     * @return a new Image with this image translated.
     */
    public ImmutableImage translate(int x, int y, Color bg) {
-      return fill(bg).overlay(this, x, y);
+      return fill(bg).overlay(this, x, y).associateMetadata(metadata);
    }
 
    /**
@@ -1541,7 +1587,28 @@ public class ImmutableImage extends MutableImage {
     * @return a new Image with the dimensions width-trim*2, height-trim*2
     */
    public ImmutableImage trim(int left, int top, int right, int bottom) {
-      return create(width - left - right, height - bottom - top).overlay(this, -left, -top);
+      // Validate up front so the caller gets a useful diagnostic (which
+      // arguments + the source dimensions) rather than the bare
+      // "Width cannot be <= 0" / "Height cannot be <= 0" subimage throws
+      // on negative or zero remaining dimensions.
+      if (left < 0 || top < 0 || right < 0 || bottom < 0) {
+         throw new IllegalArgumentException(
+            "trim amounts must be non-negative; got "
+               + "left=" + left + ", top=" + top + ", right=" + right + ", bottom=" + bottom);
+      }
+      if (left + right >= width || top + bottom >= height) {
+         throw new IllegalArgumentException(
+            "trim amounts leave no remaining image: "
+               + "left+right=" + (left + right) + " (width=" + width + "), "
+               + "top+bottom=" + (top + bottom) + " (height=" + height + ")");
+      }
+      // Use subimage(...) — exact pixel copy that preserves alpha precision
+      // and metadata. The previous create(...).overlay(this, -left, -top)
+      // route went through Graphics2D.drawImage which composites via SrcOver
+      // (premultiplies alpha and rounds away ±1 from each colour channel
+      // for non-255 alpha — same root cause as #414/#416), and dropped
+      // the source's metadata.
+      return subimage(left, top, width - left - right, height - bottom - top);
    }
 
    /**
@@ -1606,7 +1673,7 @@ public class ImmutableImage extends MutableImage {
       ImmutableImage target = this.blank();
       target.overlayInPlace(underlayImage.awt(), x, y);
       target.overlayInPlace(awt(), x, y);
-      return target;
+      return target.associateMetadata(metadata);
    }
 
    /**
@@ -1641,7 +1708,7 @@ public class ImmutableImage extends MutableImage {
     * @return the zoomed image
     */
    public ImmutableImage zoom(double factor, ScaleMethod method) {
-      return scale(factor, method).resizeTo(width, height, Position.Center, Color.WHITE);
+      return scale(factor, method).resizeTo(width, height, Position.Center, Color.WHITE).associateMetadata(metadata);
    }
 
    /**
@@ -1684,6 +1751,26 @@ public class ImmutableImage extends MutableImage {
    }
 
    public ImmutableImage toGrayscale(GrayscaleMethod method) {
-      return map(pixel -> pixel.toColor().toGrayscale(method).awt());
+      // The previous map((Pixel) -> Color) routed through mapInPlace and
+      // allocated three objects per pixel: an RGBColor (toColor), a Grayscale
+      // (method.toGrayscale), and a java.awt.Color (.awt()) — plus a Pixel
+      // wrapper inside mapInPlace. Inline a bulk get/setRGB and only the
+      // RGBColor + Grayscale allocations remain (GrayscaleMethod's interface
+      // requires a Color in / Grayscale out).
+      ImmutableImage target = copy();
+      int w = target.width;
+      int h = target.height;
+      int[] argb = target.awt().getRGB(0, 0, w, h, null, 0, w);
+      for (int i = 0; i < argb.length; i++) {
+         int p = argb[i];
+         int r = (p >> 16) & 0xFF;
+         int g = (p >> 8) & 0xFF;
+         int b = p & 0xFF;
+         int a = (p >>> 24) & 0xFF;
+         Grayscale gray = method.toGrayscale(new RGBColor(r, g, b, a));
+         argb[i] = (gray.alpha << 24) | (gray.gray << 16) | (gray.gray << 8) | gray.gray;
+      }
+      target.awt().setRGB(0, 0, w, h, argb, 0, w);
+      return target;
    }
 }

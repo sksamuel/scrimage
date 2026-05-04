@@ -76,4 +76,19 @@ class LinearSubpixelInterpolatorTest : FunSpec({
       ((argb ushr 8) and 0xFF) shouldBe 64
       (argb and 0xFF) shouldBe 64
    }
+
+   // The int[]-direct rewrite of subpixelSubimage must produce the same
+   // pixel grid as the Pixel[]-roundtrip implementation. Pin it to the
+   // existing happy-path subpixel values for an extracted region.
+   test("subpixelSubimage at integer offsets returns the expected pixels") {
+      // Same image and same coordinates as 'subpixel happy path', so the
+      // output of the (1, 1) pixel of subpixelSubimage(2.0, 3.0, 3, 3)
+      // should equal subpixel(3.0, 4.0).
+      val sub = image.subpixelSubimage(2.0, 3.0, 3, 3)
+      sub.width shouldBe 3
+      sub.height shouldBe 3
+      sub.pixel(1, 1).argb shouldBe image.subpixel(3.0, 4.0)
+      sub.pixel(0, 0).argb shouldBe image.subpixel(2.0, 3.0)
+      sub.pixel(2, 2).argb shouldBe image.subpixel(4.0, 5.0)
+   }
 })

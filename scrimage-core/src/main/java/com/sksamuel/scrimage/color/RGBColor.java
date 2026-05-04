@@ -2,8 +2,6 @@ package com.sksamuel.scrimage.color;
 
 import com.sksamuel.scrimage.pixels.PixelTools;
 
-import java.util.Objects;
-
 /**
  * Red/Green/Blue
  * <p>
@@ -200,7 +198,11 @@ public class RGBColor implements Color {
 
    @Override
    public int hashCode() {
-      return Objects.hash(red, green, blue, alpha);
+      int result = red;
+      result = 31 * result + green;
+      result = 31 * result + blue;
+      result = 31 * result + alpha;
+      return result;
    }
 
    @Override

@@ -170,6 +170,7 @@ public class AwtImage {
 
          @Override
          public Pixel next() {
+            if (!hasNext()) throw new java.util.NoSuchElementException();
             if (argb == null) {
                argb = awt.getRGB(0, 0, width, height, null, 0, width);
             }
@@ -288,7 +289,12 @@ public class AwtImage {
     * @return true if there exists at least one pixel that has the given pixels color
     */
    public boolean contains(Color color) {
-      return exists(p -> p.toARGBInt() == RGBColor.fromAwt(color).toARGBInt());
+      int target = color.getRGB();
+      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      for (int v : argb) {
+         if (v == target) return true;
+      }
+      return false;
    }
 
    /**
@@ -298,7 +304,14 @@ public class AwtImage {
     * @return true if p holds for at least one pixel
     */
    public boolean exists(Predicate<Pixel> p) {
-      return Arrays.stream(pixels()).anyMatch(p);
+      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      int i = 0;
+      for (int y = 0; y < height; y++) {
+         for (int x = 0; x < width; x++) {
+            if (p.test(new Pixel(x, y, argb[i++]))) return true;
+         }
+      }
+      return false;
    }
 
    /**
@@ -453,7 +466,13 @@ public class AwtImage {
     * @return the number of pixels that matched the colour of the given pixel
     */
    public long count(Color color) {
-      return count(p -> p.toColor().equals(RGBColor.fromAwt(color)));
+      int target = color.getRGB();
+      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      long n = 0;
+      for (int v : argb) {
+         if (v == target) n++;
+      }
+      return n;
    }
 
    /**
@@ -463,7 +482,15 @@ public class AwtImage {
     * @return the number of pixels that evaluated true
     */
    public long count(Predicate<Pixel> p) {
-      return Arrays.stream(pixels()).filter(p).count();
+      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      long n = 0;
+      int i = 0;
+      for (int y = 0; y < height; y++) {
+         for (int x = 0; x < width; x++) {
+            if (p.test(new Pixel(x, y, argb[i++]))) n++;
+         }
+      }
+      return n;
    }
 
    /**
@@ -474,18 +501,36 @@ public class AwtImage {
     */
    public BufferedImage toNewBufferedImage(int type) {
       BufferedImage target = new BufferedImage(width, height, type);
-      Graphics2D g2 = (Graphics2D) target.getGraphics();
-      g2.drawImage(awt, 0, 0, null);
-      g2.dispose();
+      if (awt.getType() == type) {
+         // Same type — copy the raster data directly. Going through
+         // Graphics2D.drawImage would composite via SrcOver, which
+         // premultiplies alpha and rounds away ±1 from each colour channel
+         // when alpha doesn't divide 255 cleanly.
+         awt.copyData(target.getRaster());
+      } else {
+         // Type conversion — Graphics2D handles the colour-space conversion.
+         Graphics2D g2 = (Graphics2D) target.getGraphics();
+         try {
+            g2.drawImage(awt, 0, 0, null);
+         } finally {
+            g2.dispose();
+         }
+      }
       return target;
    }
 
    /**
     * Returns a new AWTImage with the same dimensions and same AWT type.
     * The data is uninitialized.
+    * <p>
+    * If the source has BufferedImage.TYPE_CUSTOM (type 0) — which can't be
+    * fed back into the BufferedImage(width, height, type) constructor —
+    * falls back to TYPE_INT_ARGB, matching ImmutableImage.fromAwt's policy.
     */
    public AwtImage empty() {
-      return new AwtImage(new BufferedImage(width, height, awt.getType()));
+      int type = awt.getType();
+      if (type == 0) type = BufferedImage.TYPE_INT_ARGB;
+      return new AwtImage(new BufferedImage(width, height, type));
    }
 
    // See this Stack Overflow question to see why this is implemented this way.
@@ -495,23 +540,13 @@ public class AwtImage {
       return imageState().hashCode();
    }
 
-   private <T> boolean sameElements(Iterator<T> a, Iterator<T> b) {
-      boolean same = true;
-      while (a.hasNext()) {
-         if (!a.next().equals(b.next())) {
-            same = false;
-            break;
-         }
-      }
-      return same;
-   }
-
    public boolean equals(Object other) {
       if (other instanceof AwtImage) {
          AwtImage that = (AwtImage) other;
-         return this.width == that.width &&
-            this.height == that.height &&
-            sameElements(iterator(), ((AwtImage) other).iterator());
+         if (this.width != that.width || this.height != that.height) return false;
+         int[] a = this.awt().getRGB(0, 0, width, height, null, 0, width);
+         int[] b = that.awt().getRGB(0, 0, that.width, that.height, null, 0, that.width);
+         return Arrays.equals(a, b);
       }
       return false;
    }
@@ -544,10 +579,13 @@ public class AwtImage {
 
       BufferedImage rotated = ImmutableImage.filled(neww, newh, bgcolor, getType()).awt();
       Graphics2D graphic = rotated.createGraphics();
-      graphic.translate((neww - width) / 2.0, (newh - height) / 2.0);
-      graphic.rotate(angle.value, width / 2.0, height / 2.0);
-      graphic.drawRenderedImage(awt, null);
-      graphic.dispose();
+      try {
+         graphic.translate((neww - width) / 2.0, (newh - height) / 2.0);
+         graphic.rotate(angle.value, width / 2.0, height / 2.0);
+         graphic.drawRenderedImage(awt, null);
+      } finally {
+         graphic.dispose();
+      }
       return rotated;
    }
 
@@ -555,7 +593,14 @@ public class AwtImage {
     * Returns true if the given predicate holds for all pixels in the image.
     */
    public boolean forAll(Predicate<Pixel> predicate) {
-      return Arrays.stream(pixels()).allMatch(predicate);
+      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      int i = 0;
+      for (int y = 0; y < height; y++) {
+         for (int x = 0; x < width; x++) {
+            if (!predicate.test(new Pixel(x, y, argb[i++]))) return false;
+         }
+      }
+      return true;
    }
 
    /**
@@ -605,8 +650,12 @@ public class AwtImage {
     * @param color the color to test pixels against
     */
    public boolean isFilled(Color color) {
-      int argbColor = RGBColor.fromAwt(color).toARGBInt();
-      return forAll(p -> p.argb == argbColor);
+      int target = color.getRGB();
+      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      for (int v : argb) {
+         if (v != target) return false;
+      }
+      return true;
    }
 
    public Path output(ImageWriter writer, String path) throws IOException {
@@ -646,9 +695,21 @@ public class AwtImage {
    public AwtImage clone(int imageType) {
       if (imageType <= 0) throw new IllegalArgumentException("Image type must be > 0");
       BufferedImage target = new BufferedImage(awt.getWidth(null), awt.getHeight(null), imageType);
-      Graphics g2 = target.getGraphics();
-      g2.drawImage(awt, 0, 0, null);
-      g2.dispose();
+      if (awt.getType() == imageType) {
+         // Same type — copy the raster data directly. Going through
+         // Graphics2D.drawImage would composite via SrcOver, which
+         // premultiplies alpha and rounds away ±1 from each colour channel
+         // when alpha doesn't divide 255 cleanly.
+         awt.copyData(target.getRaster());
+      } else {
+         // Type conversion — Graphics2D handles the colour-space conversion.
+         Graphics g2 = target.getGraphics();
+         try {
+            g2.drawImage(awt, 0, 0, null);
+         } finally {
+            g2.dispose();
+         }
+      }
       return new AwtImage(target);
    }
 }

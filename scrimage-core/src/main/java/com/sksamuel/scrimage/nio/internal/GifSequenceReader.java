@@ -297,8 +297,16 @@ public class GifSequenceReader {
     * @throws IOException
     */
    public byte[] bytes() throws IOException {
+      // Use the first frame's recorded delay rather than the parser's
+      // (now correctly reset-to-zero) leftover GCE state. GifSequenceWriter
+      // applies a single delay to every frame, so for uniform-delay GIFs
+      // (the common case) this preserves the source's playback timing.
+      // Previously this read the instance `delay` field, which only
+      // happened to hold the last frame's delay because resetFrame was
+      // shadowing rather than resetting it.
+      long frameDelayMs = frames.isEmpty() ? 0 : frames.get(0).delay;
       return new GifSequenceWriter()
-         .withFrameDelay(delay)
+         .withFrameDelay(frameDelayMs)
          .withInfiniteLoop(loopCount == 0)
          .bytes(frames.stream()
             .map(frame -> frame.image)
@@ -810,9 +818,14 @@ public class GifSequenceReader {
       lastRect = new Rectangle(ix, iy, iw, ih);
       lastImage = image;
       lastBgColor = bgColor;
-      int dispose = 0;
-      boolean transparency = false;
-      int delay = 0;
+      // These three were previously declared as locals, shadowing the
+      // instance fields. The intent is to reset the frame state ready for
+      // the next image: per the GIF spec, the graphics control extension
+      // is optional, so when a frame omits one the parser must fall back
+      // to defaults rather than inheriting the previous frame's values.
+      this.dispose = 0;
+      this.transparency = false;
+      this.delay = 0;
       lct = null;
    }
 

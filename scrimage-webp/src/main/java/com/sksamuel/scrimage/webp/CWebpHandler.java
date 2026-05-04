@@ -49,19 +49,26 @@ public class CWebpHandler extends WebpHandler {
                          boolean lossless,
                          boolean withoutAlpha,
                          boolean multiThread) throws IOException {
+      // Use nested try/finally so if the second createTempFile throws
+      // (disk full between the two calls), the first temp file is still
+      // cleaned up. Previously both creates lived outside the try and a
+      // mid-creation failure leaked the first one.
       Path input = Files.createTempFile("input", "webp").toAbsolutePath();
-      Path output = Files.createTempFile("to_webp", "webp").toAbsolutePath();
       try {
-         Files.write(input, bytes, StandardOpenOption.CREATE);
-         convert(input, output, m, q, z, lossless, withoutAlpha, multiThread);
-         return Files.readAllBytes(output);
+         Path output = Files.createTempFile("to_webp", "webp").toAbsolutePath();
+         try {
+            Files.write(input, bytes, StandardOpenOption.CREATE);
+            convert(input, output, m, q, z, lossless, withoutAlpha, multiThread);
+            return Files.readAllBytes(output);
+         } finally {
+            try {
+               output.toFile().delete();
+            } catch (Exception e) {
+            }
+         }
       } finally {
          try {
             input.toFile().delete();
-         } catch (Exception e) {
-         }
-         try {
-            output.toFile().delete();
          } catch (Exception e) {
          }
       }
@@ -109,13 +116,22 @@ public class CWebpHandler extends WebpHandler {
 
       Process process = builder.start();
       try {
-         process.waitFor(5, TimeUnit.MINUTES);
+         // waitFor(timeout, unit) returns false if the process is still
+         // running when the timeout expires. The previous code ignored
+         // the return value and called exitValue() unconditionally,
+         // which throws IllegalThreadStateException if the process
+         // hadn't exited — masking the real failure (a hang).
+         boolean finished = process.waitFor(5, TimeUnit.MINUTES);
+         if (!finished) {
+            throw new IOException("cwebp timed out after 5 minutes");
+         }
          int exitStatus = process.exitValue();
          if (exitStatus != 0) {
             List<String> error = Files.readAllLines(stdout);
             throw new IOException(error.toString());
          }
       } catch (InterruptedException e) {
+         Thread.currentThread().interrupt();
          throw new IOException(e);
       } finally {
          process.destroy();

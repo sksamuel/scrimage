@@ -49,26 +49,29 @@ public class VignetteFilter implements Filter {
 
         ImmutableImage target = image.blank();
         Graphics2D g2 = (Graphics2D) target.awt().getGraphics();
-        float radius = image.radius() * end;
+        try {
+            float radius = image.radius() * end;
 
-        final float fraction;
-        if (start == 0) fraction = 0.01f;
-        else if (start == 1) fraction = 0.999f;
-        else fraction = start;
+            final float fraction;
+            if (start == 0) fraction = 0.01f;
+            else if (start == 1) fraction = 0.999f;
+            else fraction = start;
 
-        RadialGradientPaint p = new RadialGradientPaint(
-                new Point2D.Float(target.centreX(), target.centreY()),
-                radius,
-                new float[]{0.0f, fraction, 1f},
-                new Color[]{Color.WHITE, Color.WHITE, color});
+            RadialGradientPaint p = new RadialGradientPaint(
+                    new Point2D.Float(target.centreX(), target.centreY()),
+                    radius,
+                    new float[]{0.0f, fraction, 1f},
+                    new Color[]{Color.WHITE, Color.WHITE, color});
 
-        g2.setPaint(p);
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
-        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-        g2.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
-        g2.fillRect(0, 0, target.width, target.height);
-        g2.dispose();
+            g2.setPaint(p);
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            g2.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+            g2.fillRect(0, 0, target.width, target.height);
+        } finally {
+            g2.dispose();
+        }
 
         return target;
     }
@@ -78,8 +81,11 @@ public class VignetteFilter implements Filter {
     public void apply(ImmutableImage image) throws IOException {
         ImmutableImage bg = background(image).filter(new GaussianBlurFilter((int) (image.radius() * blur)));
         Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
-        g2.setComposite(new BlendComposite(BlendingMode.MULTIPLY, 1.0f));
-        g2.drawImage(bg.awt(), 0, 0, null);
-        g2.dispose();
+        try {
+            g2.setComposite(new BlendComposite(BlendingMode.MULTIPLY, 1.0f));
+            g2.drawImage(bg.awt(), 0, 0, null);
+        } finally {
+            g2.dispose();
+        }
     }
 }
