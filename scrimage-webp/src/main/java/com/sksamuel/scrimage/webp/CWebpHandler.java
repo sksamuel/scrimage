@@ -83,59 +83,65 @@ public class CWebpHandler extends WebpHandler {
                         boolean withoutAlpha,
                         boolean multiThread) throws IOException {
       Path stdout = Files.createTempFile("stdout", "webp");
-      List<String> commands = new ArrayList<>();
-      commands.add(binary.toAbsolutePath().toString());
-      if (m >= 0) {
-         commands.add("-m");
-         commands.add(m + "");
-      }
-      if (q >= 0) {
-         commands.add("-q");
-         commands.add(q + "");
-      }
-      if (z >= 0) {
-         commands.add("-z");
-         commands.add(z + "");
-      }
-      if (lossless) {
-         commands.add("-lossless");
-      }
-      if (withoutAlpha) {
-         commands.add("-noalpha");
-      }
-      if (multiThread) {
-         commands.add("-mt");
-      }
-      commands.add(input.toAbsolutePath().toString());
-      commands.add("-o");
-      commands.add(target.toAbsolutePath().toString());
-
-      ProcessBuilder builder = new ProcessBuilder(commands);
-      builder.redirectErrorStream(true);
-      builder.redirectOutput(stdout.toFile());
-
-      Process process = builder.start();
       try {
-         // waitFor(timeout, unit) returns false if the process is still
-         // running when the timeout expires. The previous code ignored
-         // the return value and called exitValue() unconditionally,
-         // which throws IllegalThreadStateException if the process
-         // hadn't exited — masking the real failure (a hang).
-         boolean finished = process.waitFor(5, TimeUnit.MINUTES);
-         if (!finished) {
-            throw new IOException("cwebp timed out after 5 minutes");
+         List<String> commands = new ArrayList<>();
+         commands.add(binary.toAbsolutePath().toString());
+         if (m >= 0) {
+            commands.add("-m");
+            commands.add(m + "");
          }
-         int exitStatus = process.exitValue();
-         if (exitStatus != 0) {
-            List<String> error = Files.readAllLines(stdout);
-            throw new IOException(error.toString());
+         if (q >= 0) {
+            commands.add("-q");
+            commands.add(q + "");
          }
-      } catch (InterruptedException e) {
-         Thread.currentThread().interrupt();
-         throw new IOException(e);
+         if (z >= 0) {
+            commands.add("-z");
+            commands.add(z + "");
+         }
+         if (lossless) {
+            commands.add("-lossless");
+         }
+         if (withoutAlpha) {
+            commands.add("-noalpha");
+         }
+         if (multiThread) {
+            commands.add("-mt");
+         }
+         commands.add(input.toAbsolutePath().toString());
+         commands.add("-o");
+         commands.add(target.toAbsolutePath().toString());
+
+         ProcessBuilder builder = new ProcessBuilder(commands);
+         builder.redirectErrorStream(true);
+         builder.redirectOutput(stdout.toFile());
+
+         Process process = builder.start();
+         try {
+            // waitFor(timeout, unit) returns false if the process is still
+            // running when the timeout expires. The previous code ignored
+            // the return value and called exitValue() unconditionally,
+            // which throws IllegalThreadStateException if the process
+            // hadn't exited — masking the real failure (a hang).
+            boolean finished = process.waitFor(5, TimeUnit.MINUTES);
+            if (!finished) {
+               throw new IOException("cwebp timed out after 5 minutes");
+            }
+            int exitStatus = process.exitValue();
+            if (exitStatus != 0) {
+               List<String> error = Files.readAllLines(stdout);
+               throw new IOException(error.toString());
+            }
+         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IOException(e);
+         } finally {
+            process.destroy();
+         }
       } finally {
-         process.destroy();
-         stdout.toFile().delete();
+         try {
+            stdout.toFile().delete();
+         } catch (Exception ignored) {
+         }
       }
    }
 }

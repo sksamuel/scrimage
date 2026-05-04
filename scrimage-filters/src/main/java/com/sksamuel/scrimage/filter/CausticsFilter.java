@@ -53,8 +53,11 @@ public class CausticsFilter implements Filter {
 
         AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
         Graphics2D g2 = image.awt().createGraphics();
-        g2.setComposite(composite);
-        g2.drawImage(caustics, 0, 0, null);
-        g2.dispose();
+        try {
+            g2.setComposite(composite);
+            g2.drawImage(caustics, 0, 0, null);
+        } finally {
+            g2.dispose();
+        }
     }
 }

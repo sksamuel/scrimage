@@ -82,45 +82,52 @@ public class WebpMuxHandler extends WebpHandler {
     * canvas size, loop count and per-frame table out of its stdout.
     */
    public WebpInfo info(byte[] webpBytes) throws IOException {
+      // Nest the two temp-file lifetimes: if the second createTempFile
+      // throws (disk full between the two calls), `input` is still cleaned
+      // up. Previously both creates lived outside the try and a
+      // mid-creation failure leaked the first one.
       Path input = Files.createTempFile("webpmux_in_", ".webp").toAbsolutePath();
-      Path stdout = Files.createTempFile("webpmux_stdout_", ".log");
       try {
-         Files.write(input, webpBytes, StandardOpenOption.CREATE);
-
-         List<String> commands = new ArrayList<>();
-         commands.add(binary.toAbsolutePath().toString());
-         commands.add("-info");
-         commands.add(input.toAbsolutePath().toString());
-
-         ProcessBuilder builder = new ProcessBuilder(commands);
-         builder.redirectErrorStream(true);
-         builder.redirectOutput(stdout.toFile());
-
-         Process process = builder.start();
+         Path stdout = Files.createTempFile("webpmux_stdout_", ".log");
          try {
-            boolean finished = process.waitFor(1, TimeUnit.MINUTES);
-            if (!finished) {
-               throw new IOException("webpmux did not complete within 1 minute");
+            Files.write(input, webpBytes, StandardOpenOption.CREATE);
+
+            List<String> commands = new ArrayList<>();
+            commands.add(binary.toAbsolutePath().toString());
+            commands.add("-info");
+            commands.add(input.toAbsolutePath().toString());
+
+            ProcessBuilder builder = new ProcessBuilder(commands);
+            builder.redirectErrorStream(true);
+            builder.redirectOutput(stdout.toFile());
+
+            Process process = builder.start();
+            try {
+               boolean finished = process.waitFor(1, TimeUnit.MINUTES);
+               if (!finished) {
+                  throw new IOException("webpmux did not complete within 1 minute");
+               }
+               int exitStatus = process.exitValue();
+               List<String> lines = Files.readAllLines(stdout);
+               if (exitStatus != 0) {
+                  throw new IOException("webpmux exited with status " + exitStatus + ": " + lines);
+               }
+               return parseInfo(lines);
+            } catch (InterruptedException e) {
+               Thread.currentThread().interrupt();
+               throw new IOException(e);
+            } finally {
+               process.destroy();
             }
-            int exitStatus = process.exitValue();
-            List<String> lines = Files.readAllLines(stdout);
-            if (exitStatus != 0) {
-               throw new IOException("webpmux exited with status " + exitStatus + ": " + lines);
-            }
-            return parseInfo(lines);
-         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new IOException(e);
          } finally {
-            process.destroy();
+            try {
+               stdout.toFile().delete();
+            } catch (Exception ignored) {
+            }
          }
       } finally {
          try {
             input.toFile().delete();
-         } catch (Exception ignored) {
-         }
-         try {
-            stdout.toFile().delete();
          } catch (Exception ignored) {
          }
       }

@@ -65,40 +65,45 @@ public class AnimDumpHandler extends WebpHandler {
     * PNG bytes in playback order.
     */
    public List<byte[]> dumpFrames(byte[] webpBytes) throws IOException {
+      // Nest the two temp lifetimes: if createTempDirectory throws after
+      // input has been allocated, the input file would otherwise leak.
       Path input = Files.createTempFile("anim_dump_in_", ".webp").toAbsolutePath();
-      Path folder = Files.createTempDirectory("anim_dump_out_");
       try {
-         Files.write(input, webpBytes, StandardOpenOption.CREATE);
-         dumpFrames(input, folder);
+         Path folder = Files.createTempDirectory("anim_dump_out_");
+         try {
+            Files.write(input, webpBytes, StandardOpenOption.CREATE);
+            dumpFrames(input, folder);
 
-         List<Path> dumped;
-         try (Stream<Path> stream = Files.list(folder)) {
-            dumped = new ArrayList<>();
-            stream.forEach(dumped::add);
-         }
-         // anim_dump names files like dump_0000.png, dump_0001.png, ... and
-         // overflows to dump_10000.png at frame 10000. Sort by the parsed
-         // numeric portion rather than lexicographically — under a string
-         // sort dump_10000.png comes BEFORE dump_2.png, which would scramble
-         // playback order for animations with 10000+ frames.
-         dumped.sort(Comparator.comparingInt(AnimDumpHandler::frameIndex));
+            List<Path> dumped;
+            try (Stream<Path> stream = Files.list(folder)) {
+               dumped = new ArrayList<>();
+               stream.forEach(dumped::add);
+            }
+            // anim_dump names files like dump_0000.png, dump_0001.png, ... and
+            // overflows to dump_10000.png at frame 10000. Sort by the parsed
+            // numeric portion rather than lexicographically — under a string
+            // sort dump_10000.png comes BEFORE dump_2.png, which would scramble
+            // playback order for animations with 10000+ frames.
+            dumped.sort(Comparator.comparingInt(AnimDumpHandler::frameIndex));
 
-         List<byte[]> frames = new ArrayList<>(dumped.size());
-         for (Path p : dumped) {
-            frames.add(Files.readAllBytes(p));
+            List<byte[]> frames = new ArrayList<>(dumped.size());
+            for (Path p : dumped) {
+               frames.add(Files.readAllBytes(p));
+            }
+            return frames;
+         } finally {
+            try (Stream<Path> stream = Files.list(folder)) {
+               stream.forEach(p -> p.toFile().delete());
+            } catch (Exception ignored) {
+            }
+            try {
+               folder.toFile().delete();
+            } catch (Exception ignored) {
+            }
          }
-         return frames;
       } finally {
          try {
             input.toFile().delete();
-         } catch (Exception ignored) {
-         }
-         try (Stream<Path> stream = Files.list(folder)) {
-            stream.forEach(p -> p.toFile().delete());
-         } catch (Exception ignored) {
-         }
-         try {
-            folder.toFile().delete();
          } catch (Exception ignored) {
          }
       }
