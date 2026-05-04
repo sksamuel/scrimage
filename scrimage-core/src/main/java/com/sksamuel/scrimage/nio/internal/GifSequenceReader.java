@@ -207,16 +207,19 @@ public class GifSequenceReader {
             if (dispose == 2) {
                // fill last image rect area with background color
                Graphics2D g = image.createGraphics();
-               Color c = null;
-               if (transparency) {
-                  c = new Color(0, 0, 0, 0); 	// assume background is transparent
-               } else {
-                  c = new Color(lastBgColor); // use given background color
+               try {
+                  Color c = null;
+                  if (transparency) {
+                     c = new Color(0, 0, 0, 0); 	// assume background is transparent
+                  } else {
+                     c = new Color(lastBgColor); // use given background color
+                  }
+                  g.setColor(c);
+                  g.setComposite(AlphaComposite.Src); // replace area
+                  g.fill(lastRect);
+               } finally {
+                  g.dispose();
                }
-               g.setColor(c);
-               g.setComposite(AlphaComposite.Src); // replace area
-               g.fill(lastRect);
-               g.dispose();
             }
          }
       }
