@@ -57,8 +57,16 @@ public abstract class TransformFilter extends AbstractBufferedImageOp {
 
     /**
      * The action to take for pixels off the image edge.
+     *
+     * Defaults to CLAMP: hold the edge colour AND alpha for pixels
+     * that the inverse transform maps outside the source image.
+     * Previously this defaulted to RGB_CLAMP, which forced alpha to 0
+     * at the edges — meaning every TransformFilter subclass (TwirlFilter,
+     * SwimFilter, RippleFilter, KaleidoscopeFilter, PinchFilter, …)
+     * produced transparent corners on opaque inputs, leaving visible
+     * holes when the result was composited.
      */
-	protected int edgeAction = RGB_CLAMP;
+	protected int edgeAction = CLAMP;
 
     /**
      * The type of interpolation to use.
