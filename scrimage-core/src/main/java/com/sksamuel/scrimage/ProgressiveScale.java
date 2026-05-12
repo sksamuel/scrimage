@@ -17,11 +17,32 @@ public class ProgressiveScale {
                                      int targetHeight,
                                      Object interpolation) {
 
+      // Progressive scaling halves each dimension until it reaches the
+      // target. It is a downscale-only algorithm; if a target dimension
+      // is greater than or equal to the source dimension on that axis,
+      // there is nothing to do for that axis. The earlier code never
+      // moved w/h toward target when the source was already at or below
+      // it on an axis, so callers asking for `(targetWidth >= source.w,
+      // targetHeight < source.h)` spun forever, each iteration
+      // allocating a new BufferedImage.
+      if (targetWidth < 1 || targetHeight < 1)
+         throw new IllegalArgumentException("target dimensions must be positive, got "
+            + targetWidth + "x" + targetHeight);
+
       int type = getType(image);
       BufferedImage temp = image;
-      int w, h;
-      w = image.getWidth();
-      h = image.getHeight();
+      int w = image.getWidth();
+      int h = image.getHeight();
+      // Snap each axis that is already at or below the target.
+      if (w < targetWidth) w = targetWidth;
+      if (h < targetHeight) h = targetHeight;
+
+      // Already at target? Return the original; no progressive step
+      // needed, and skipping the unconditional iteration avoids a wasted
+      // allocation and Graphics2D round-trip.
+      if (w == targetWidth && h == targetHeight) {
+         return image;
+      }
 
       do {
          if (w > targetWidth) {
