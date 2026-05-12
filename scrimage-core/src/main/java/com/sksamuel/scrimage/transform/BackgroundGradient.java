@@ -25,9 +25,13 @@ public class BackgroundGradient implements Transform {
    public ImmutableImage apply(ImmutableImage input) throws IOException {
       // get the dominant colours
       RGBColor[] dominant = input.quantize(2);
-      // create the linear gradient
+      // Create the vertical (top-to-bottom) linear gradient. The previous
+      // code called LinearGradient.horizontal(...) which, due to a swapped
+      // name bug fixed in the same commit as this file, actually produced
+      // a vertical gradient — switching to vertical() preserves the visual
+      // output that the existing fixture images depend on.
       ImmutableImage bg = ImmutableImage.create(width, height)
-         .fill(LinearGradient.horizontal(dominant[0].awt(), dominant[1].awt()));
+         .fill(LinearGradient.vertical(dominant[0].awt(), dominant[1].awt()));
       // write the input over
       return bg.overlay(input, Position.Center);
    }

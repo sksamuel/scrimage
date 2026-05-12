@@ -46,8 +46,11 @@ public class WatermarkFilter implements Filter {
     @Override
     public void apply(ImmutableImage image) {
         Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
-        setupGraphics(g2);
-        g2.drawString(text, x, y);
-        g2.dispose();
+        try {
+            setupGraphics(g2);
+            g2.drawString(text, x, y);
+        } finally {
+            g2.dispose();
+        }
     }
 }

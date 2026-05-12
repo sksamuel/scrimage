@@ -19,8 +19,11 @@ class BlenderComposite implements Composite {
     @Override
     public void apply(AwtImage src, AwtImage overlay) {
         Graphics2D g2 = (Graphics2D) src.awt().getGraphics();
-        g2.setComposite(BlendComposite.getInstance(mode, (float) alpha));
-        g2.drawImage(overlay.awt(), 0, 0, null);
-        g2.dispose();
+        try {
+            g2.setComposite(BlendComposite.getInstance(mode, (float) alpha));
+            g2.drawImage(overlay.awt(), 0, 0, null);
+        } finally {
+            g2.dispose();
+        }
     }
 }

@@ -37,7 +37,7 @@ myimage.output(WebpWriter.MAX_LOSSLESS_COMPRESSION,"output.webp");
 ```
 
 ### Animated Gif to Webp
-The writer is configuration with options for compression quality, compression method, and lossless compression factor.
+The writer is configurable with options for compression quality, compression method, and lossless compression factor.
 
 If want to change Animated Gif to webp, you should be able to read animated file by using by `AnimatedGifReader` as normal :
 
@@ -53,6 +53,6 @@ animatedGif.bytes(Gif2WebpWriter.DEFAULT);
 animatedGif.output(Gif2WebpWriter.DEFAULT, "output.webp");
 ```
 
-The gif2webp writer is configuration with options for compression quality, compression method, and lossly compression factor.
+The gif2webp writer is configurable with options for compression quality, compression method, and lossy compression factor.
 
 > animated webp to animated gif is not currently supported in this module.

@@ -14,8 +14,12 @@ public class DominantGradient implements Transform {
       // get the dominant colours
       RGBColor[] dominant = input.quantize(2);
 
-      // create the linear gradient image
+      // create the linear gradient image (top-to-bottom). The previous code
+      // called LinearGradient.horizontal(...) which, due to a swapped name
+      // bug fixed in the same commit as this file, actually produced a
+      // vertical gradient — switching to vertical() preserves the visual
+      // output that the existing fixture images depend on.
       return ImmutableImage.create(input.width, input.height)
-         .fill(LinearGradient.horizontal(dominant[0].awt(), dominant[1].awt()));
+         .fill(LinearGradient.vertical(dominant[0].awt(), dominant[1].awt()));
    }
 }

@@ -1,30 +1,7 @@
 package com.sksamuel.scrimage.subpixel;
 
 import com.sksamuel.scrimage.AwtImage;
-import com.sksamuel.scrimage.pixels.Pixel;
 import com.sksamuel.scrimage.pixels.PixelTools;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-class Pair<A, B> {
-    private final A a;
-    private final B b;
-
-    Pair(A a, B b) {
-        this.a = a;
-        this.b = b;
-    }
-
-    public A getA() {
-        return a;
-    }
-
-    public B getB() {
-        return b;
-    }
-}
 
 public class LinearSubpixelInterpolator implements SubpixelInterpolator {
 
@@ -38,71 +15,65 @@ public class LinearSubpixelInterpolator implements SubpixelInterpolator {
         height = awt.height;
     }
 
-    // As a part of linear interpolation, determines the integer coordinates
-    // of the pixel's neighbors, as well as the amount of weight each should
-    // get in the weighted average.
-    // Operates on one dimension at a time.
-    private List<Pair<Integer, Double>> integerPixelCoordinatesAndWeights(double d, int numPixels) {
-        if (d <= 0.5) return Collections.singletonList(new Pair<>(0, 1.0));
-        else if (d >= numPixels - 0.5) return Collections.singletonList(new Pair<>(numPixels - 1, 1.0));
-        else {
-            double shifted = d - 0.5;
-            double floor = Math.floor(shifted);
-            double floorWeight = 1 - (shifted - floor);
-            double ceil = Math.ceil(shifted);
-            double ceilWeight = 1 - floorWeight;
-            assert (floorWeight + ceilWeight == 1);
-            return Arrays.asList(new Pair<>((int) floor, floorWeight), new Pair<>((int) ceil, ceilWeight));
-        }
-    }
-
-    public double[][] summands(double x, double y) {
-
-        List<Pair<Integer, Double>> xIntsAndWeights = integerPixelCoordinatesAndWeights(x, width);
-        List<Pair<Integer, Double>> yIntsAndWeights = integerPixelCoordinatesAndWeights(y, height);
-
-        double[][] summands = new double[xIntsAndWeights.size() * yIntsAndWeights.size()][];
-        int k = 0;
-        for (Pair<Integer, Double> xintweight : xIntsAndWeights) {
-            for (Pair<Integer, Double> yintweight : yIntsAndWeights) {
-                double weight = xintweight.getB() * yintweight.getB();
-
-                if (weight == 0) {
-                    summands[k++] = new double[]{0.0, 0.0, 0.0, 0.0};
-                } else {
-                    Pixel px = awt.pixel(xintweight.getA(), yintweight.getA());
-                    summands[k++] = new double[]{
-                            weight * px.alpha(),
-                            weight * px.red(),
-                            weight * px.green(),
-                            weight * px.blue()
-                    };
-                }
-            }
-        }
-
-        return summands;
-    }
-
-    private int sumChannel(int channel, double[][] summands) {
-        return (int) Math.round(Arrays.stream(summands).mapToDouble(ds -> ds[channel]).sum());
-    }
-
     @Override
     public int subpixel(double x, double y) {
         assert (x >= 0 && x < width && y >= 0 && y < height);
 
-        // These are the summands in the weighted averages.
-        // Note there are 4 weighted averages: one for each channel (a, r, g, b).
-        double[][] summands = summands(x, y);
+        // Determine the integer pixel neighbours along each axis and their
+        // bilinear weights. Each axis contributes 1 or 2 (coord, weight) pairs.
+        int xCount, x0, x1;
+        double xw0, xw1;
+        if (x <= 0.5) {
+            xCount = 1; x0 = 0; xw0 = 1.0; x1 = 0; xw1 = 0.0;
+        } else if (x >= width - 0.5) {
+            xCount = 1; x0 = width - 1; xw0 = 1.0; x1 = 0; xw1 = 0.0;
+        } else {
+            double shifted = x - 0.5;
+            double floor = Math.floor(shifted);
+            double floorWeight = 1 - (shifted - floor);
+            xCount = 2;
+            x0 = (int) floor; xw0 = floorWeight;
+            x1 = (int) Math.ceil(shifted); xw1 = 1 - floorWeight;
+        }
 
-        // We perform the weighted averaging (a summation).
-        // We need to sum within channels not within pixels
-        int a = sumChannel(0, summands);
-        int r = sumChannel(1, summands);
-        int g = sumChannel(2, summands);
-        int b = sumChannel(3, summands);
+        int yCount, y0, y1;
+        double yw0, yw1;
+        if (y <= 0.5) {
+            yCount = 1; y0 = 0; yw0 = 1.0; y1 = 0; yw1 = 0.0;
+        } else if (y >= height - 0.5) {
+            yCount = 1; y0 = height - 1; yw0 = 1.0; y1 = 0; yw1 = 0.0;
+        } else {
+            double shifted = y - 0.5;
+            double floor = Math.floor(shifted);
+            double floorWeight = 1 - (shifted - floor);
+            yCount = 2;
+            y0 = (int) floor; yw0 = floorWeight;
+            y1 = (int) Math.ceil(shifted); yw1 = 1 - floorWeight;
+        }
 
-        return PixelTools.argb(a, r, g, b);
+        // Accumulate the weighted channel sums over the up-to-four neighbours.
+        double sumA = 0, sumR = 0, sumG = 0, sumB = 0;
+        for (int xi = 0; xi < xCount; xi++) {
+            int xc = (xi == 0) ? x0 : x1;
+            double xw = (xi == 0) ? xw0 : xw1;
+            for (int yi = 0; yi < yCount; yi++) {
+                int yc = (yi == 0) ? y0 : y1;
+                double yw = (yi == 0) ? yw0 : yw1;
+                double weight = xw * yw;
+                if (weight == 0) continue;
+                int p = awt.awt().getRGB(xc, yc);
+                sumA += weight * ((p >>> 24) & 0xFF);
+                sumR += weight * ((p >> 16) & 0xFF);
+                sumG += weight * ((p >> 8) & 0xFF);
+                sumB += weight * (p & 0xFF);
+            }
+        }
+
+        return PixelTools.argb(
+                (int) Math.round(sumA),
+                (int) Math.round(sumR),
+                (int) Math.round(sumG),
+                (int) Math.round(sumB)
+        );
     }
 }

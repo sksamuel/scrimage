@@ -36,12 +36,15 @@ public class Canvas {
 
    public void drawInPlace(Collection<Drawable> drawables) {
       Graphics2D g = g2(image);
-      drawables.forEach(d -> {
-         RichGraphics2D rich2d = new RichGraphics2D(g);
-         d.context().configure(rich2d);
-         d.draw(rich2d);
-      });
-      g.dispose();
+      try {
+         drawables.forEach(d -> {
+            RichGraphics2D rich2d = new RichGraphics2D(g);
+            d.context().configure(rich2d);
+            d.draw(rich2d);
+         });
+      } finally {
+         g.dispose();
+      }
    }
 
    public Canvas draw(Drawable... drawables) {
@@ -51,12 +54,15 @@ public class Canvas {
    public Canvas draw(Collection<Drawable> drawables) {
       ImmutableImage target = image.copy();
       Graphics2D g = g2(target);
-      drawables.forEach(d -> {
-         RichGraphics2D rich2d = new RichGraphics2D(g);
-         d.context().configure(rich2d);
-         d.draw(rich2d);
-      });
-      g.dispose();
+      try {
+         drawables.forEach(d -> {
+            RichGraphics2D rich2d = new RichGraphics2D(g);
+            d.context().configure(rich2d);
+            d.draw(rich2d);
+         });
+      } finally {
+         g.dispose();
+      }
       return new Canvas(target);
    }
 }

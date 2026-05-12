@@ -20,7 +20,11 @@ public class Text implements Drawable {
 
     @Override
     public void draw(RichGraphics2D g2) {
-        context.configure(g2);
+        // Canvas.draw / drawInPlace already invoke `d.context().configure(g2)`
+        // before calling d.draw(g2) — the same way it does for every other
+        // Drawable. This class used to call configure() a second time here,
+        // which was a no-op for overwriting setters (setColor/setFont/...) but
+        // applied additive operations (translate/rotate/transform) twice.
         g2.drawString(text, x, y);
     }
 

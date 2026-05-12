@@ -1,7 +1,5 @@
 package com.sksamuel.scrimage.color;
 
-import java.util.Objects;
-
 public class CMYKColor implements Color {
 
     public final float c;
@@ -53,6 +51,11 @@ public class CMYKColor implements Color {
 
     @Override
     public int hashCode() {
-        return Objects.hash(c, m, y, k, alpha);
+        int result = Float.floatToIntBits(c);
+        result = 31 * result + Float.floatToIntBits(m);
+        result = 31 * result + Float.floatToIntBits(y);
+        result = 31 * result + Float.floatToIntBits(k);
+        result = 31 * result + Float.floatToIntBits(alpha);
+        return result;
     }
 }

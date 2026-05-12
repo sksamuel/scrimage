@@ -1,7 +1,5 @@
 package com.sksamuel.scrimage.color;
 
-import java.util.Objects;
-
 /**
  * Hue/Saturation/Lightness
  * <p>
@@ -86,6 +84,10 @@ public class HSLColor implements Color {
 
     @Override
     public int hashCode() {
-        return Objects.hash(hue, saturation, lightness, alpha);
+        int result = Float.floatToIntBits(hue);
+        result = 31 * result + Float.floatToIntBits(saturation);
+        result = 31 * result + Float.floatToIntBits(lightness);
+        result = 31 * result + Float.floatToIntBits(alpha);
+        return result;
     }
 }

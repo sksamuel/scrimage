@@ -85,4 +85,33 @@ class PixelToolsTest : FunSpec({
       PixelTools.approx(ref, 10, arrayOf(pixel)) shouldBe false
    }
 
+   // Regression: scale() called rgb() without clamping, so any factor that
+   // pushed a channel above 255 (or below 0) was masked with & 0xFF and
+   // wrapped — meaning a "brightening" call could silently darken a pixel.
+   test("scale clamps rather than wrapping when factor pushes a channel above 255") {
+      val pixel = PixelTools.rgb(200, 100, 50)
+      val scaled = PixelTools.scale(2.0, pixel)
+      // Without clamping, red would have been (400 & 0xFF) = 144, i.e. darker
+      // than the input. With clamping it caps at 255.
+      PixelTools.red(scaled) shouldBe 255
+      PixelTools.green(scaled) shouldBe 200
+      PixelTools.blue(scaled) shouldBe 100
+   }
+
+   test("scale clamps rather than wrapping when factor is negative") {
+      val pixel = PixelTools.rgb(200, 100, 50)
+      val scaled = PixelTools.scale(-1.0, pixel)
+      PixelTools.red(scaled) shouldBe 0
+      PixelTools.green(scaled) shouldBe 0
+      PixelTools.blue(scaled) shouldBe 0
+   }
+
+   test("scale leaves channels unchanged when factor is exactly 1") {
+      val pixel = PixelTools.rgb(123, 45, 67)
+      val scaled = PixelTools.scale(1.0, pixel)
+      PixelTools.red(scaled) shouldBe 123
+      PixelTools.green(scaled) shouldBe 45
+      PixelTools.blue(scaled) shouldBe 67
+   }
+
 })

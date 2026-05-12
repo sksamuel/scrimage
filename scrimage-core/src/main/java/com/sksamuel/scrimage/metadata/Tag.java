@@ -1,5 +1,7 @@
 package com.sksamuel.scrimage.metadata;
 
+import java.util.Objects;
+
 public class Tag {
 
    private final String name;
@@ -14,6 +16,12 @@ public class Tag {
       this.value = value;
    }
 
+   // rawValue and value can both be null in practice — they come from
+   // drewmetadata's `dir.getString(tagType)` and `tag.getDescription()`,
+   // which return null for some real EXIF tags. Use Objects.equals /
+   // Objects.hashCode rather than calling .equals / .hashCode directly
+   // to avoid NullPointerException on those metadata records.
+
    @Override
    public boolean equals(Object o) {
       if (this == o) return true;
@@ -22,17 +30,17 @@ public class Tag {
       Tag tag = (Tag) o;
 
       if (type != tag.type) return false;
-      if (!name.equals(tag.name)) return false;
-      if (!rawValue.equals(tag.rawValue)) return false;
-      return value.equals(tag.value);
+      if (!Objects.equals(name, tag.name)) return false;
+      if (!Objects.equals(rawValue, tag.rawValue)) return false;
+      return Objects.equals(value, tag.value);
    }
 
    @Override
    public int hashCode() {
-      int result = name.hashCode();
+      int result = Objects.hashCode(name);
       result = 31 * result + type;
-      result = 31 * result + rawValue.hashCode();
-      result = 31 * result + value.hashCode();
+      result = 31 * result + Objects.hashCode(rawValue);
+      result = 31 * result + Objects.hashCode(value);
       return result;
    }
 
