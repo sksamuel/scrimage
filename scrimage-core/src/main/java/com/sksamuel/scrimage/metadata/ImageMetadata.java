@@ -77,7 +77,11 @@ public class ImageMetadata {
    private final Directory[] directories;
 
    public Directory[] getDirectories() {
-      return directories;
+      // Return a defensive copy. Previously this leaked the backing
+      // array; a caller writing `meta.getDirectories()[0] = null`
+      // corrupted internal state — equals/hashCode broke and the
+      // tags() stream NPE'd.
+      return directories.clone();
    }
 
    @Override
