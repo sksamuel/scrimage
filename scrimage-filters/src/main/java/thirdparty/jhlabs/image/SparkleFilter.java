@@ -109,6 +109,22 @@ public class SparkleFilter extends PointFilter {
 			rayLengths[i] = radius + randomness / 100.0f * radius * (float)randomNumbers.nextGaussian();
 	}
 
+	public void setCentreX(int centreX) {
+		this.centreX = centreX;
+	}
+
+	public int getCentreX() {
+		return centreX;
+	}
+
+	public void setCentreY(int centreY) {
+		this.centreY = centreY;
+	}
+
+	public int getCentreY() {
+		return centreY;
+	}
+
 	public int filterRGB(int x, int y, int rgb) {
 		float dx = x-centreX;
 		float dy = y-centreY;
