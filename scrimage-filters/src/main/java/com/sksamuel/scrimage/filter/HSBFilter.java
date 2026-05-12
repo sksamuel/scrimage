@@ -26,17 +26,23 @@ public class HSBFilter extends BufferedOpFilter {
     private final float brightness;
 
     public HSBFilter(float hue, float saturation, float brightness) {
-
-        assert hue <= 1;
-        assert brightness <= 1;
-        assert saturation <= 1;
-        assert hue >= -1;
-        assert brightness >= -1;
-        assert saturation >= -1;
+        // Plain `assert` is a no-op without -ea, so the documented
+        // [-1, 1] contract wasn't enforced in production — a hue of
+        // 10 silently produced visually wrong output rather than
+        // failing fast. Use IllegalArgumentException for the same
+        // explicit validation other filters in this package use.
+        requireUnitFactor("hue", hue);
+        requireUnitFactor("saturation", saturation);
+        requireUnitFactor("brightness", brightness);
 
         this.hue = hue;
         this.saturation = saturation;
         this.brightness = brightness;
+    }
+
+    private static void requireUnitFactor(String name, float value) {
+        if (!(value >= -1f && value <= 1f))
+            throw new IllegalArgumentException(name + " must be in [-1, 1], got " + value);
     }
 
     public HSBFilter() {
