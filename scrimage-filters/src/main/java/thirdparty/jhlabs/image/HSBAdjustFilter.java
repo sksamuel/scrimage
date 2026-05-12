@@ -65,8 +65,13 @@ public class HSBAdjustFilter extends PointFilter {
 		int b = rgb & 0xff;
 		Color.RGBtoHSB(r, g, b, hsb);
 		hsb[0] += hFactor;
-		while (hsb[0] < 0)
-			hsb[0] += Math.PI*2;
+		// Color.RGBtoHSB produces hue normalised to [0, 1), not [0, 2π).
+		// The previous wrap added Math.PI*2 (~6.28), so a negative hue
+		// was nudged into the positive range but at a meaningless offset
+		// — for hue=0 with hFactor=-0.1, expected post-shift hue 0.9,
+		// actual ~0.18. Wrap with a single fract() so any magnitude of
+		// negative drift normalises in O(1) rather than O(n) loops.
+		hsb[0] = hsb[0] - (float) Math.floor(hsb[0]);
 		hsb[1] += sFactor;
 		if (hsb[1] < 0)
 			hsb[1] = 0;
