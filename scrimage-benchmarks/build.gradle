@@ -21,6 +21,12 @@ jmh {
    profilers = ['gc']
    zip64 = true
    duplicateClassesStrategy = DuplicatesStrategy.EXCLUDE
+   resultFormat = 'JSON'
+   resultsFile = layout.buildDirectory.file('results/jmh/results.json')
+   def jmhIncludes = project.findProperty('jmh.includes')
+   if (jmhIncludes) {
+      includes = [jmhIncludes.toString()]
+   }
 }
 
 processJmhResources {
