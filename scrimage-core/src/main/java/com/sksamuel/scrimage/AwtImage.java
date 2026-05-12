@@ -582,8 +582,13 @@ public class AwtImage {
       double sin = Math.abs(Math.sin(angle.value)),
          cos = Math.abs(Math.cos(angle.value));
 
-      int neww = (int) Math.floor(width * cos + height * sin),
-         newh = (int) Math.floor(height * cos + width * sin);
+      // Math.ceil — using floor on the axis-aligned bounding box of a
+      // rotated rectangle truncates a fractional pixel on each side and
+      // clips the corners. At 45° a 10x10 image has bbox 10√2 ≈ 14.14:
+      // floor produced a 14x14 canvas which can't fit the rotated
+      // corners, ceil gives 15x15 and preserves them.
+      int neww = (int) Math.ceil(width * cos + height * sin),
+         newh = (int) Math.ceil(height * cos + width * sin);
 
       BufferedImage rotated = ImmutableImage.filled(neww, newh, bgcolor, getType()).awt();
       Graphics2D graphic = rotated.createGraphics();
