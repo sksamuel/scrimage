@@ -39,11 +39,30 @@ public class SparkleFilter extends BufferedOpFilter {
 
     @Override
     public BufferedImageOp op() {
-        thirdparty.jhlabs.image.SparkleFilter op = new thirdparty.jhlabs.image.SparkleFilter();
+        // Capture the configured sparkle centre into locals so the anonymous
+        // subclass can re-apply them after jhlabs' setDimensions clobbers
+        // centreX/centreY back to (width/2, height/2). PointFilter.filter
+        // calls setDimensions(srcWidth, srcHeight) right before iterating,
+        // so without this override the constructor's (x, y) is dead.
+        //
+        // (0, 0) is kept as a sentinel meaning "image centre" so the
+        // pre-existing no-arg SparkleFilter() still produces a centred
+        // sparkle. Any other (x, y) is honoured as a pixel coordinate.
+        final int cx = x;
+        final int cy = y;
+        thirdparty.jhlabs.image.SparkleFilter op = new thirdparty.jhlabs.image.SparkleFilter() {
+            @Override
+            public void setDimensions(int width, int height) {
+                super.setDimensions(width, height);
+                if (cx != 0 || cy != 0) {
+                    setCentreX(cx);
+                    setCentreY(cy);
+                }
+            }
+        };
         op.setRays(rays);
         op.setRadius(radius);
         op.setAmount(amount);
-        op.setDimensions(x, y);
         return op;
     }
 }
