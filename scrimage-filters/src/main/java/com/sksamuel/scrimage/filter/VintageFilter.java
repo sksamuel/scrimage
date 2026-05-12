@@ -28,7 +28,10 @@ public class VintageFilter implements Filter {
         ThistleFilter thistle = new ThistleFilter();
         BufferedImage filtered = thistle.filter(image.awt());
         Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
-        g2.drawImage(filtered, 0, 0, null);
-        g2.dispose();
+        try {
+            g2.drawImage(filtered, 0, 0, null);
+        } finally {
+            g2.dispose();
+        }
     }
 }

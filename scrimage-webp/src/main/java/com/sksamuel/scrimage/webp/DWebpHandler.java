@@ -43,8 +43,10 @@ public class DWebpHandler extends WebpHandler {
 
    public byte[] convert(byte[] bytes) throws IOException {
       Path input = Files.createTempFile("input", "webp").toAbsolutePath();
-      Files.write(input, bytes, StandardOpenOption.CREATE);
       try {
+         // Files.write was previously called BEFORE the try block; if it
+         // threw (disk full, permissions, ...) the temp file leaked.
+         Files.write(input, bytes, StandardOpenOption.CREATE);
          return convert(input);
       } finally {
          input.toFile().delete();
@@ -64,28 +66,43 @@ public class DWebpHandler extends WebpHandler {
    private void convert(Path input, Path target) throws IOException {
 
       Path stdout = Files.createTempFile("stdout", "webp");
-      ProcessBuilder builder = new ProcessBuilder(
-         binary.toAbsolutePath().toString(),
-         input.toAbsolutePath().toString(),
-         "-o",
-         target.toAbsolutePath().toString()
-      );
-      builder.redirectErrorStream(true);
-      builder.redirectOutput(stdout.toFile());
-
-      Process process = builder.start();
       try {
-         process.waitFor(5, TimeUnit.MINUTES);
-         int exitStatus = process.exitValue();
-         if (exitStatus != 0) {
-            List<String> error = Files.readAllLines(stdout);
-            throw new IOException(error.toString());
+         ProcessBuilder builder = new ProcessBuilder(
+            binary.toAbsolutePath().toString(),
+            input.toAbsolutePath().toString(),
+            "-o",
+            target.toAbsolutePath().toString()
+         );
+         builder.redirectErrorStream(true);
+         builder.redirectOutput(stdout.toFile());
+
+         Process process = builder.start();
+         try {
+            // waitFor(timeout, unit) returns false if the process is still
+            // running when the timeout expires. The previous code ignored
+            // the return value and called exitValue() unconditionally,
+            // which throws IllegalThreadStateException if the process
+            // hadn't exited — masking the real failure (a hang).
+            boolean finished = process.waitFor(5, TimeUnit.MINUTES);
+            if (!finished) {
+               throw new IOException("dwebp timed out after 5 minutes");
+            }
+            int exitStatus = process.exitValue();
+            if (exitStatus != 0) {
+               List<String> error = Files.readAllLines(stdout);
+               throw new IOException(error.toString());
+            }
+         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IOException(e);
+         } finally {
+            process.destroy();
          }
-      } catch (InterruptedException | IOException e) {
-         throw new IOException(e);
       } finally {
-         process.destroy();
-         stdout.toFile().delete();
+         try {
+            stdout.toFile().delete();
+         } catch (Exception ignored) {
+         }
       }
 
    }

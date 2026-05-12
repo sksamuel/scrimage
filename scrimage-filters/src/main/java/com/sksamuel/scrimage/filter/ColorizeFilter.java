@@ -39,8 +39,11 @@ public class ColorizeFilter implements Filter {
     @Override
     public void apply(ImmutableImage image) {
         Graphics2D g2 = (Graphics2D) image.awt().getGraphics();
-        g2.setColor(color);
-        g2.fillRect(0, 0, image.width, image.height);
-        g2.dispose();
+        try {
+            g2.setColor(color);
+            g2.fillRect(0, 0, image.width, image.height);
+        } finally {
+            g2.dispose();
+        }
     }
 }

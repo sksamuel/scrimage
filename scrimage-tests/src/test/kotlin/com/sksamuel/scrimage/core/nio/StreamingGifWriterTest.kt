@@ -52,6 +52,37 @@ class StreamingGifWriterTest : WordSpec({
          bytes shouldBe IOUtils.toByteArray(javaClass.getResourceAsStream("/gif/fallingroof_scaled.gif"))
       }
 
+      "compressed-mode write of DataBufferInt frames round-trips through reader" {
+         // Hits the new DataBufferInt fast path: two TYPE_INT_ARGB frames
+         // differing on a single pixel. The first frame is written verbatim;
+         // the second has matching pixels zeroed before being encoded with
+         // the GIF transparency mechanism. Decoding back must reconstruct
+         // both frames at the original dimensions.
+         val w = 8; val h = 8
+         val frame1 = ImmutableImage.create(w, h, BufferedImage.TYPE_INT_ARGB)
+         val frame2 = ImmutableImage.create(w, h, BufferedImage.TYPE_INT_ARGB)
+         for (y in 0 until h) for (x in 0 until w) {
+            val color = RGBColor(x * 30, y * 30, 128, 255)
+            frame1.setColor(x, y, color)
+            frame2.setColor(x, y, color)
+         }
+         frame2.setColor(3, 3, RGBColor(255, 0, 0, 255))
+
+         val writer = StreamingGifWriter().withCompression(true).withFrameDelay(Duration.ofMillis(100))
+         val output = ByteArrayOutputStream()
+         val stream = writer.prepareStream(output, BufferedImage.TYPE_INT_ARGB)
+         stream.writeFrame(frame1)
+         stream.writeFrame(frame2)
+         stream.close()
+
+         val decoded = AnimatedGifReader.read(ImageSource.of(output.toByteArray()))
+         decoded.frameCount shouldBe 2
+         decoded.getFrame(0).width shouldBe w
+         decoded.getFrame(0).height shouldBe h
+         decoded.getFrame(1).width shouldBe w
+         decoded.getFrame(1).height shouldBe h
+      }
+
       "not mutate caller's ImmutableImage in compressed mode" {
          // Two 8x8 images where most pixels match, so the compressed diff path
          // will attempt to zero-fill matching cells.

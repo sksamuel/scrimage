@@ -1,7 +1,5 @@
 package com.sksamuel.scrimage.canvas.painters;
 
-import com.sksamuel.scrimage.color.RGBColor;
-
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
@@ -35,12 +33,27 @@ public class RandomPainter implements Painter {
 
                @Override
                public Raster getRaster(int x, int y, int w, int h) {
+                  // Bugs the previous implementation had:
+                  //  - the loops incremented x / y (the method parameters),
+                  //    not x2 / y2, so only one pixel was ever written and
+                  //    the conditions terminated arbitrarily;
+                  //  - it called raster.setPixel(x2, y2, ...) using the
+                  //    GLOBAL coords rather than raster-local (0..w, 0..h),
+                  //    which would have thrown AIOOB had the loops advanced;
+                  //  - it built the channel array as [a, r, g, b] but the
+                  //    default RGB ColorModel expects [r, g, b, a];
+                  //  - it set alpha=0 on every pixel even though the Paint
+                  //    advertises Transparency.OPAQUE.
                   WritableRaster raster = getColorModel().createCompatibleWritableRaster(w, h);
                   Random r = new Random();
-                  for (int x2 = x; x2 < x + w; x++) {
-                     for (int y2 = y; y2 < y + h; y++) {
-                        RGBColor color = new RGBColor(r.nextInt(256), r.nextInt(256), r.nextInt(256), 0);
-                        raster.setPixel(x2, y2, color.toArray());
+                  int[] pixel = new int[4];
+                  pixel[3] = 255; // opaque alpha — matches getTransparency()
+                  for (int dx = 0; dx < w; dx++) {
+                     for (int dy = 0; dy < h; dy++) {
+                        pixel[0] = r.nextInt(256);
+                        pixel[1] = r.nextInt(256);
+                        pixel[2] = r.nextInt(256);
+                        raster.setPixel(dx, dy, pixel);
                      }
                   }
                   return raster;

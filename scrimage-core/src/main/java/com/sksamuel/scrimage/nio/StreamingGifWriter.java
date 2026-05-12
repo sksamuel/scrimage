@@ -12,6 +12,7 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferInt;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -138,9 +139,20 @@ public class StreamingGifWriter extends AbstractGifWriter {
                ImmutableImage work = image.copy();
                DataBuffer workBuffer = work.awt().getRaster().getDataBuffer();
                DataBuffer lastBuffer = last.awt().getRaster().getDataBuffer();
-               for (int i = 0; i < workBuffer.getSize(); i++) {
-                  if (workBuffer.getElem(i) == lastBuffer.getElem(i)) {
-                     workBuffer.setElem(i, 0);
+               if (workBuffer instanceof DataBufferInt && lastBuffer instanceof DataBufferInt) {
+                  int[] workData = ((DataBufferInt) workBuffer).getData();
+                  int[] lastData = ((DataBufferInt) lastBuffer).getData();
+                  int n = Math.min(workData.length, lastData.length);
+                  for (int i = 0; i < n; i++) {
+                     if (workData[i] == lastData[i]) {
+                        workData[i] = 0;
+                     }
+                  }
+               } else {
+                  for (int i = 0; i < workBuffer.getSize(); i++) {
+                     if (workBuffer.getElem(i) == lastBuffer.getElem(i)) {
+                        workBuffer.setElem(i, 0);
+                     }
                   }
                }
                last = image.copy();

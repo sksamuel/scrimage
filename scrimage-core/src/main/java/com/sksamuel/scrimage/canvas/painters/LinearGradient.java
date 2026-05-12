@@ -4,12 +4,20 @@ import java.awt.*;
 
 public class LinearGradient implements Painter {
 
+   /**
+    * Returns a left-to-right gradient — the colour varies along the horizontal
+    * axis, color1 on the left and color2 on the right.
+    */
    public static LinearGradient horizontal(Color color1, Color color2) {
-      return new LinearGradient(0, Integer.MIN_VALUE, color1, 0, Integer.MAX_VALUE, color2);
+      return new LinearGradient(Integer.MIN_VALUE, 0, color1, Integer.MAX_VALUE, 0, color2);
    }
 
+   /**
+    * Returns a top-to-bottom gradient — the colour varies along the vertical
+    * axis, color1 at the top and color2 at the bottom.
+    */
    public static LinearGradient vertical(Color color1, Color color2) {
-      return new LinearGradient(Integer.MIN_VALUE, 0, color1, Integer.MAX_VALUE, 0, color2);
+      return new LinearGradient(0, Integer.MIN_VALUE, color1, 0, Integer.MAX_VALUE, color2);
    }
 
    private final int x1;

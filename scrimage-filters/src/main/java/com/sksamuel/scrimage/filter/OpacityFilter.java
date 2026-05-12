@@ -16,7 +16,6 @@
 package com.sksamuel.scrimage.filter;
 
 import com.sksamuel.scrimage.ImmutableImage;
-import com.sksamuel.scrimage.color.RGBColor;
 
 public class OpacityFilter implements Filter {
 
@@ -27,11 +26,20 @@ public class OpacityFilter implements Filter {
    }
 
    public void apply(ImmutableImage image) {
-      image.mapInPlace(p -> {
-         int _r = (int) (p.red() + (255 - p.red()) * amount);
-         int _g = (int) (p.green() + (255 - p.green()) * amount);
-         int _b = (int) (p.blue() + (255 - p.blue()) * amount);
-         return new RGBColor(_r, _g, _b, p.alpha()).awt();
-      });
+      int w = image.width;
+      int h = image.height;
+      int[] argb = image.awt().getRGB(0, 0, w, h, null, 0, w);
+      for (int i = 0; i < argb.length; i++) {
+         int p = argb[i];
+         int a = (p >>> 24) & 0xFF;
+         int r = (p >> 16) & 0xFF;
+         int g = (p >> 8) & 0xFF;
+         int b = p & 0xFF;
+         int nr = (int) (r + (255 - r) * amount);
+         int ng = (int) (g + (255 - g) * amount);
+         int nb = (int) (b + (255 - b) * amount);
+         argb[i] = (a << 24) | (nr << 16) | (ng << 8) | nb;
+      }
+      image.awt().setRGB(0, 0, w, h, argb, 0, w);
    }
 }
