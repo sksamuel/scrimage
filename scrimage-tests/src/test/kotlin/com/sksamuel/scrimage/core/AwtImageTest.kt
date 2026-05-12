@@ -13,10 +13,13 @@ class AwtImageTest : FunSpec({
    // Regression tests for https://github.com/sksamuel/scrimage/pull/351
    // k was never incremented, so every patch overwrote patches[0]
 
-   test("patches returns the correct number of non-null patches") {
+   test("patches returns one entry per valid sliding-window position") {
       val image = ImmutableImage.create(4, 4)
       val patches = image.patches(2, 2)
-      patches.size shouldBe (4 - 2) * (4 - 2)  // = 4
+      // A 2x2 patch on a 4x4 image has valid top-left positions (0..2, 0..2),
+      // so 9 patches total. The earlier (4-2)*(4-2)=4 formula dropped the
+      // rightmost column and bottom row of patch starts.
+      patches.size shouldBe (4 - 2 + 1) * (4 - 2 + 1)
       patches.forEach { it shouldNotBe null }
    }
 
@@ -25,16 +28,27 @@ class AwtImageTest : FunSpec({
       val pixels = Array(16) { i -> Pixel(i % 4, i / 4, i, 0, 0, 255) }
       val image = ImmutableImage.create(4, 4, pixels)
 
-      // 1x1 patches: (4-1)*(4-1) = 9; each patch contains one pixel
+      // 1x1 patches: (4-1+1)*(4-1+1) = 16; each patch contains one pixel
       val patches = image.patches(1, 1)
-      patches.size shouldBe 9
+      patches.size shouldBe 16
 
       // patch 0 → col=0, row=0 → pixel index 0 → red=0
       patches[0][0].red() shouldBe 0
       // patch 1 → col=1, row=0 → pixel index 1 → red=1
       patches[1][0].red() shouldBe 1
-      // patch 3 → col=0, row=1 → pixel index 4 → red=4
-      patches[3][0].red() shouldBe 4
+      // patch 4 → col=0, row=1 → pixel index 4 → red=4
+      patches[4][0].red() shouldBe 4
+      // The last patch picks up the bottom-right pixel — previously missing.
+      patches[15][0].red() shouldBe 15
+   }
+
+   // Regression: patches() previously skipped the rightmost column and
+   // bottom row of valid patch starts. A 1x1 patch should iterate every
+   // pixel in the image.
+   test("patches with patchSize 1 enumerates every pixel exactly once") {
+      val image = ImmutableImage.create(5, 3)
+      val patches = image.patches(1, 1)
+      patches.size shouldBe 5 * 3
    }
 
    // Regression: AwtImage.pixels() fast path for TYPE_INT_RGB read data[index] directly,
