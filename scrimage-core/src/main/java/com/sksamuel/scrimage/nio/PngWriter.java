@@ -40,10 +40,18 @@ public class PngWriter implements ImageWriter {
    }
 
    public PngWriter(int compressionLevel) {
+      // Validate up front rather than at write time. The earlier
+      // code deferred the check to write(), which only fires after
+      // the caller has opened the OutputStream — so a bad compression
+      // level both produced a confusing failure mode and (when the
+      // caller passed a FileOutputStream that wasn't closed on the
+      // throw) leaked file descriptors.
+      if (compressionLevel < 0 || compressionLevel > 9) {
+         throw new IllegalArgumentException(
+            "Compression level must be between 0 (none) and 9 (max), got " + compressionLevel);
+      }
       this.compressionLevel = compressionLevel;
    }
-
-   // require(compressionLevel >= 0 && compressionLevel < 10, "Compression level must be between 0 (none) and 9 (max)")
 
    public PngWriter withMaxCompression() {
       return MaxCompression;
@@ -59,10 +67,6 @@ public class PngWriter implements ImageWriter {
 
    @Override
    public void write(AwtImage image, ImageMetadata metadata, OutputStream out) throws IOException {
-   
-      if (compressionLevel < 0 || compressionLevel >= 10) {
-         throw new IOException("Compression level must be between 0 (none) and 9 (max)");
-      }
 
       ImageTypeSpecifier type = ImageTypeSpecifier.createFromBufferedImageType(image.getType());
       javax.imageio.ImageWriter writer = ImageIO.getImageWriters(type, "png").next();
