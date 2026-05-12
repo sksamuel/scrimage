@@ -401,9 +401,18 @@ public class AwtImage {
    }
 
    public Pixel[] patch(int x, int y, int patchWidth, int patchHeight) {
+      if (x < 0 || y < 0 || patchWidth < 0 || patchHeight < 0
+            || x + patchWidth > width || y + patchHeight > height) {
+         throw new IllegalArgumentException(
+            "Patch (" + x + "," + y + " " + patchWidth + "x" + patchHeight + ") falls outside image bounds " + width + "x" + height);
+      }
       return patchFrom(pixels(), x, y, patchWidth, patchHeight);
    }
 
+   // Internal helper, callers (this::patch, this::patches) are responsible
+   // for staying inside [0, width] × [0, height]. arraycopy below copies
+   // patchWidth contiguous Pixels per row from a row-major flat array, so
+   // an out-of-range x or width would silently span row boundaries.
    private Pixel[] patchFrom(Pixel[] source, int x, int y, int patchWidth, int patchHeight) {
       Pixel[] patch = new Pixel[patchWidth * patchHeight];
       for (int i = 0; i < patchHeight; i++) {
