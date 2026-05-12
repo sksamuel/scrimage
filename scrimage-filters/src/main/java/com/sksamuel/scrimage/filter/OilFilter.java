@@ -23,6 +23,16 @@ public class OilFilter extends BufferedOpFilter {
     private final int levels;
 
     public OilFilter(int range, int levels) {
+        if (range < 0)
+            throw new IllegalArgumentException("range must be >= 0, got " + range);
+        // The jhlabs implementation allocates histograms of size `levels`
+        // and reads `rTotal[0] / rHistogram[0]` after the bucketing loop —
+        // so `levels < 1` crashes with NegativeArraySizeException (negative)
+        // or ArrayIndexOutOfBoundsException (zero). Buckets are computed
+        // as `r * levels / 256`, so levels above 256 wastes memory without
+        // adding fidelity but is technically valid; cap defensively anyway.
+        if (levels < 1 || levels > 256)
+            throw new IllegalArgumentException("levels must be in [1, 256], got " + levels);
         this.range = range;
         this.levels = levels;
     }
