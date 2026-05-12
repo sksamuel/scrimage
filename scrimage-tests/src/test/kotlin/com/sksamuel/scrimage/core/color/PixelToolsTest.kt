@@ -114,4 +114,36 @@ class PixelToolsTest : FunSpec({
       PixelTools.blue(scaled) shouldBe 67
    }
 
+   // Regression: approx() ignored the alpha channel. autocrop routes its
+   // tolerance > 0 path through colorMatches -> approx. With a transparent
+   // target (e.g. Colors.Transparent = (0,0,0,0)) and tolerance > 0, an
+   // opaque near-black pixel matched on RGB alone — so autocropping a
+   // photo with a transparent border around an opaque dark subject would
+   // crop into the subject. approx now matches alpha within tolerance,
+   // with the same fully-transparent special case as uniform.
+   test("approx rejects an opaque near-black pixel when target is transparent") {
+      val transparent = Color(0, 0, 0, 0)
+      // RGB sits within tolerance of (0, 0, 0) but alpha is 255 — opaque
+      // content over a transparent background should not match.
+      val opaqueNearBlack = Pixel(0, 0, 5, 5, 5, 255)
+      PixelTools.approx(transparent, 10, arrayOf(opaqueNearBlack)) shouldBe false
+   }
+
+   test("approx accepts a fully-transparent pixel against a transparent target regardless of RGB") {
+      // Transparent pixels have indeterminate RGB; both PNG decoders and
+      // most callers leave them as (0,0,0,0) but the wire format permits
+      // any RGB under alpha=0. Match transparent-on-transparent regardless.
+      val transparent = Color(0, 0, 0, 0)
+      val transparentWithGarbageRgb = Pixel(0, 0, 200, 100, 50, 0)
+      PixelTools.approx(transparent, 0, arrayOf(transparentWithGarbageRgb)) shouldBe true
+      PixelTools.approx(transparent, 10, arrayOf(transparentWithGarbageRgb)) shouldBe true
+   }
+
+   test("approx rejects an opaque pixel when reference is semi-transparent and alpha is well outside tolerance") {
+      val semiTransparent = Color(100, 100, 100, 64)
+      val opaque = Pixel(0, 0, 100, 100, 100, 255)
+      // alpha tolerance of 10 → opaque (255) is far outside [54, 74].
+      PixelTools.approx(semiTransparent, 10, arrayOf(opaque)) shouldBe false
+   }
+
 })
