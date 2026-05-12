@@ -57,9 +57,14 @@ public class DimensionTools {
          maxHeight = target.getY();
       }
 
-      if (maxWidth * source.getY() < maxHeight * source.getX())
-         return new Dimension(maxWidth, (int) (source.getY() * maxWidth / source.getX()));
+      // Compare with `long` arithmetic. The earlier int * int could
+      // overflow before comparison for large source images (e.g. a
+      // 60000 × 50000 source against a 60000 maxWidth produces
+      // 60000 * 50000 = 3e9, overflowing int and flipping the sign,
+      // selecting the wrong scale branch).
+      if ((long) maxWidth * source.getY() < (long) maxHeight * source.getX())
+         return new Dimension(maxWidth, (int) ((long) source.getY() * maxWidth / source.getX()));
       else
-         return new Dimension((int) (source.getX() * maxHeight / source.getY()), maxHeight);
+         return new Dimension((int) ((long) source.getX() * maxHeight / source.getY()), maxHeight);
    }
 }
