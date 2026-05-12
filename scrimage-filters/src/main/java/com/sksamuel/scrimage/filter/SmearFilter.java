@@ -27,6 +27,18 @@ public class SmearFilter extends BufferedOpFilter {
     private final float mix;
 
     public SmearFilter(SmearType smearType, float angle, float density, float scatter, int distance, float mix) {
+        if (smearType == null)
+            throw new IllegalArgumentException("smearType must not be null");
+        // The jhlabs implementation does `nextInt() % distance` in the
+        // shape-drawing loops; distance == 0 throws ArithmeticException
+        // ("/ by zero") deep inside filterPixels. Negative values give
+        // negative `length` and degenerate output.
+        if (distance < 1)
+            throw new IllegalArgumentException("distance must be >= 1, got " + distance);
+        if (density < 0 || density > 1)
+            throw new IllegalArgumentException("density must be in [0, 1], got " + density);
+        if (mix < 0 || mix > 1)
+            throw new IllegalArgumentException("mix must be in [0, 1], got " + mix);
         this.smearType = smearType;
         this.angle = angle;
         this.density = density;
