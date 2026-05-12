@@ -54,8 +54,18 @@ abstract class AbstractGifWriter {
       child.setAttribute("applicationID", "NETSCAPE");
       child.setAttribute("authenticationCode", "2.0");
 
+      // The NETSCAPE2.0 loop count is a little-endian 16-bit integer.
+      // The previous code hard-coded the high byte to 0, silently
+      // truncating any value >= 256 to its low byte. Today only 0/1
+      // is exposed (infiniteLoop boolean), but emitting both bytes
+      // correctly makes the byte sequence spec-compliant and
+      // future-proofs the encoder for a finite-loop-count API.
       int loop = infiniteLoop ? 0 : 1;
-      child.setUserObject(new byte[]{0x1, (byte) (loop & 0xFF), (byte) (0)});
+      child.setUserObject(new byte[]{
+         0x1,
+         (byte) (loop & 0xFF),
+         (byte) ((loop >> 8) & 0xFF)
+      });
       appEntensionsNode.appendChild(child);
    }
 }
