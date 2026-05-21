@@ -12,7 +12,10 @@ public class Directory {
     }
 
     public Tag[] getTags() {
-        return tags;
+        // Return a defensive copy. Previously this leaked the backing
+        // array; a caller writing `dir.getTags()[0] = null` corrupted
+        // internal state and broke equals/hashCode.
+        return tags.clone();
     }
 
     private final Tag[] tags;
