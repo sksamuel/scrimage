@@ -22,6 +22,12 @@ public class ColorHalftoneFilter extends BufferedOpFilter {
     private final float radius;
 
     public ColorHalftoneFilter(float radius) {
+        // The jhlabs implementation computes `gridSize = 2 * radius * sqrt(2)`
+        // and then `ImageMath.mod(tx, gridSize)` — a non-positive radius
+        // produces a zero gridSize and divides by zero, propagating NaN
+        // through the whole image.
+        if (!(radius > 0))
+            throw new IllegalArgumentException("radius must be > 0, got " + radius);
         this.radius = radius;
     }
 
