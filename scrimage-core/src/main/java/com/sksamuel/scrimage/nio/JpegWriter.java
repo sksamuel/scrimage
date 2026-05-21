@@ -52,9 +52,15 @@ public class JpegWriter implements ImageWriter {
       javax.imageio.ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
       ImageWriteParam params = writer.getDefaultWriteParam();
 
-      if (compression == 100) {
-         params.setCompressionMode(ImageWriteParam.MODE_DISABLED);
-      } else if (compression > -1 && compression < 100) {
+      // compression is a quality knob in [0, 100]. The earlier code
+      // treated `compression == 100` as MODE_DISABLED — invalid for
+      // JPEG (JPEG is always compressed) and rejected at write time
+      // by the JDK writer. Treat any non-negative compression in
+      // [0, 100] as explicit quality, including 100 → quality=1.0
+      // (the best the codec offers). Negative values (the existing
+      // CompressionFromMetaData = -1 sentinel) take the
+      // COPY_FROM_METADATA path.
+      if (compression >= 0 && compression <= 100) {
          params.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
          params.setCompressionQuality(compression / 100f);
       } else {
