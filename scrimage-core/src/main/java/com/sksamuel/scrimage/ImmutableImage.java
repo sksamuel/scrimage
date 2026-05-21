@@ -1353,7 +1353,7 @@ public class ImmutableImage extends MutableImage {
    }
 
    public ImmutableImage scaleHeightToRatio(double ratio, ScaleMethod scaleMethod) {
-      return scaleToHeight((int) (width * ratio), scaleMethod);
+      return scaleToHeight((int) (height * ratio), scaleMethod);
    }
 
    public ImmutableImage scale(double scaleFactor) {
