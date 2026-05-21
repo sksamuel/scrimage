@@ -110,7 +110,11 @@ public class PixelTools {
 
    /**
     * Returns true if the colors of all pixels in the array are within the given tolerance
-    * compared to the referenced color
+    * compared to the referenced color.
+    * <p>
+    * Like {@link #uniform}, fully-transparent pixels (alpha == 0) match a fully-transparent
+    * target regardless of RGB — the colour channels of a transparent pixel are
+    * indeterminate.
     */
    public static boolean approx(Color color, int tolerance, Pixel[] pixels) {
 
@@ -118,11 +122,19 @@ public class PixelTools {
       int minR = Math.max(ref.red - tolerance, 0),   maxR = Math.min(ref.red + tolerance, 255);
       int minG = Math.max(ref.green - tolerance, 0), maxG = Math.min(ref.green + tolerance, 255);
       int minB = Math.max(ref.blue - tolerance, 0),  maxB = Math.min(ref.blue + tolerance, 255);
+      int minA = Math.max(ref.alpha - tolerance, 0), maxA = Math.min(ref.alpha + tolerance, 255);
 
       return Arrays.stream(pixels).allMatch(p ->
-         p.red()   >= minR && p.red()   <= maxR &&
-         p.green() >= minG && p.green() <= maxG &&
-         p.blue()  >= minB && p.blue()  <= maxB
+         // Mirror uniform()'s special case for transparency: a fully-transparent
+         // pixel matches a fully-transparent target regardless of RGB. Without
+         // this and without the alpha bounds check, autocrop(Transparent, tol>0)
+         // would treat any opaque pixel whose RGB happened to fall near (0,0,0)
+         // as matching transparent and crop it away.
+         (p.alpha() == 0 && ref.alpha == 0) ||
+         (p.alpha() >= minA && p.alpha() <= maxA &&
+          p.red()   >= minR && p.red()   <= maxR &&
+          p.green() >= minG && p.green() <= maxG &&
+          p.blue()  >= minB && p.blue()  <= maxB)
       );
    }
 
