@@ -25,6 +25,14 @@ public class LensBlurFilter extends BufferedOpFilter {
     private final int sides;
 
     public  LensBlurFilter(float radius, float bloom, float bloomThreshold, int sides) {
+        if (radius < 0)
+            throw new IllegalArgumentException("radius must be >= 0, got " + radius);
+        // The jhlabs implementation computes `polyAngle = π / sides` and
+        // walks the polygon vertices; sides < 3 either divides by zero
+        // (sides == 0) or produces a degenerate "polygon" of 1–2 vertices
+        // that the bokeh-shape math doesn't handle.
+        if (sides < 3)
+            throw new IllegalArgumentException("sides must be >= 3, got " + sides);
         this.radius = radius;
         this.bloom = bloom;
         this.bloomThreshold = bloomThreshold;
