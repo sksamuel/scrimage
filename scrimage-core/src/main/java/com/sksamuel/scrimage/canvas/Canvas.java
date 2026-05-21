@@ -37,11 +37,7 @@ public class Canvas {
    public void drawInPlace(Collection<Drawable> drawables) {
       Graphics2D g = g2(image);
       try {
-         drawables.forEach(d -> {
-            RichGraphics2D rich2d = new RichGraphics2D(g);
-            d.context().configure(rich2d);
-            d.draw(rich2d);
-         });
+         drawables.forEach(d -> drawScoped(g, d));
       } finally {
          g.dispose();
       }
@@ -55,14 +51,27 @@ public class Canvas {
       ImmutableImage target = image.copy();
       Graphics2D g = g2(target);
       try {
-         drawables.forEach(d -> {
-            RichGraphics2D rich2d = new RichGraphics2D(g);
-            d.context().configure(rich2d);
-            d.draw(rich2d);
-         });
+         drawables.forEach(d -> drawScoped(g, d));
       } finally {
          g.dispose();
       }
       return new Canvas(target);
+   }
+
+   // Each drawable gets a scratch Graphics2D snapshot so its GraphicsContext's
+   // configure() mutations (setColor, setStroke, setFont, translate, rotate,
+   // setComposite, …) don't bleed across to the next drawable. Without this
+   // every subsequent drawable inherited whatever state the previous one
+   // happened to leave on the shared Graphics2D — a red rectangle followed
+   // by an un-configured one would render the second in red too.
+   private static void drawScoped(Graphics2D g, Drawable d) {
+      Graphics2D scoped = (Graphics2D) g.create();
+      try {
+         RichGraphics2D rich2d = new RichGraphics2D(scoped);
+         d.context().configure(rich2d);
+         d.draw(rich2d);
+      } finally {
+         scoped.dispose();
+      }
    }
 }
