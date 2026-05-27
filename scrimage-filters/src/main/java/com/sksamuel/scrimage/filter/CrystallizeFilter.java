@@ -25,6 +25,15 @@ public class CrystallizeFilter extends BufferedOpFilter {
     private final double randomness;
 
     public CrystallizeFilter(double scale, double edgeThickness, int edgeColor, double randomness) {
+        if (!(scale > 0))
+            throw new IllegalArgumentException("scale must be > 0, got " + scale);
+        // The jhlabs implementation computes `f = (f2 - f1) / edgeThickness`
+        // — `edgeThickness == 0` produces ±Infinity, the subsequent
+        // smoothStep flattens the entire output to a single colour.
+        if (edgeThickness <= 0)
+            throw new IllegalArgumentException("edgeThickness must be > 0, got " + edgeThickness);
+        if (randomness < 0 || randomness > 1)
+            throw new IllegalArgumentException("randomness must be in [0, 1], got " + randomness);
         this.scale = scale;
         this.edgeThickness = edgeThickness;
         this.edgeColor = edgeColor;
