@@ -1,0 +1,80 @@
+name: jmh
+
+run-name: jmh @ ${{ inputs.commit || github.sha }}
+
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+      - 'mkdocs.yml'
+  workflow_dispatch:
+    inputs:
+      commit:
+        description: 'Commit SHA, branch, or tag to benchmark (defaults to HEAD of the selected branch)'
+        required: false
+        default: ''
+      include:
+        description: 'JMH benchmark regex filter (e.g. ResizeBenchmark)'
+        required: false
+        default: ''
+
+jobs:
+  jmh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.commit || github.sha }}
+
+      - name: Run JMH benchmarks
+        run: |
+          if [ -n "${{ inputs.include }}" ]; then
+            ./gradlew :scrimage-benchmarks:jmh -Pjmh.includes='${{ inputs.include }}'
+          else
+            ./gradlew :scrimage-benchmarks:jmh
+          fi
+
+      - name: Render results to step summary
+        if: ${{ !cancelled() }}
+        run: |
+          set -euo pipefail
+          RESULTS=scrimage-benchmarks/build/results/jmh/results.json
+          {
+            echo "## JMH Benchmark Results"
+            echo
+            echo "Commit: \`${{ inputs.commit || github.sha }}\`"
+            echo
+            if [ ! -s "$RESULTS" ]; then
+              echo "_No JMH results produced at \`$RESULTS\`._"
+              exit 0
+            fi
+            echo "| Benchmark | Mode | Score | Error | Unit |"
+            echo "|---|---|---:|---:|---|"
+            jq -r '
+              .[]
+              | [
+                  (.benchmark | sub("^com\\.sksamuel\\.scrimage\\."; "")),
+                  .mode,
+                  (.primaryMetric.score | . * 1000 | round / 1000 | tostring),
+                  ("± " + (.primaryMetric.scoreError | . * 1000 | round / 1000 | tostring)),
+                  .primaryMetric.scoreUnit
+                ]
+              | "| " + join(" | ") + " |"
+            ' "$RESULTS"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload raw JMH results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: jmh-results
+          path: scrimage-benchmarks/build/results/jmh/
+
+env:
+  GRADLE_OPTS: -Dorg.gradle.configureondemand=true -Dorg.gradle.parallel=false -Dorg.gradle.jvmargs="-Xmx3g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8"
