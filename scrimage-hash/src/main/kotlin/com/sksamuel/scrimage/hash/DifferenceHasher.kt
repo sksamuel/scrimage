@@ -16,9 +16,15 @@ class DifferenceHasher(private val cols: Int, private val rows: Int) {
       // the centre instead of summarising the whole image. That defeated
       // the entire point of the perceptual hash.
       val r = gs.scaleTo(cols, rows)
+      // Compare luminance via the unsigned-byte red channel of the
+      // already-grayscale image. The previous code compared `argb`
+      // packed ints directly — opaque grayscale pixels have a high
+      // byte of 0xFF, making the int negative, so on inputs with
+      // varying source alpha the dhash sorted by alpha rather than
+      // brightness and produced a perceptually meaningless hash.
       return r.rows()
          .flatMap { row ->
-            row.toList().windowed(2).map { if (it.first().argb < it.last().argb) 1 else 0 }
+            row.toList().windowed(2).map { if (it.first().red() < it.last().red()) 1 else 0 }
          }
    }
 
