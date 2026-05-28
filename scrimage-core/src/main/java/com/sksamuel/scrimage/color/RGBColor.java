@@ -23,15 +23,26 @@ public class RGBColor implements Color {
 
    public RGBColor(int red, int green, int blue, int alpha) {
 
-      assert (0 <= red && red <= 255);
-      assert (0 <= green && green <= 255);
-      assert (0 <= blue && blue <= 255);
-      assert (0 <= alpha && alpha <= 255);
+      // Validate at runtime rather than via assert (disabled by default in
+      // production JVMs). An out-of-range component would otherwise be stored
+      // unchecked and later silently wrapped by `& 0xFF` in toARGBInt() — e.g.
+      // red = 256 becomes 0 and red = -1 becomes 255 — producing a wrong colour
+      // instead of failing fast.
+      requireInRange("red", red);
+      requireInRange("green", green);
+      requireInRange("blue", blue);
+      requireInRange("alpha", alpha);
 
       this.red = red;
       this.green = green;
       this.blue = blue;
       this.alpha = alpha;
+   }
+
+   private static void requireInRange(String component, int value) {
+      if (value < 0 || value > 255)
+         throw new IllegalArgumentException(
+            "RGBColor " + component + " component must be in [0, 255] but was " + value);
    }
 
    public static RGBColor fromARGBInt(int argb) {
