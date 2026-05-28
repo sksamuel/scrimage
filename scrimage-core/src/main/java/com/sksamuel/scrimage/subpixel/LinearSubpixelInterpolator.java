@@ -64,6 +64,11 @@ public class LinearSubpixelInterpolator implements SubpixelInterpolator {
         }
 
         // Accumulate the weighted channel sums over the up-to-four neighbours.
+        // Colour is weighted by alpha (premultiplied) so that the colour of
+        // transparent neighbours does not bleed into the result: a fully
+        // transparent pixel may carry arbitrary RGB, and blending it straight
+        // produces colour fringing along transparency edges. Alpha itself is
+        // interpolated normally.
         double sumA = 0, sumR = 0, sumG = 0, sumB = 0;
         for (int xi = 0; xi < xCount; xi++) {
             int xc = (xi == 0) ? x0 : x1;
@@ -74,18 +79,25 @@ public class LinearSubpixelInterpolator implements SubpixelInterpolator {
                 double weight = xw * yw;
                 if (weight == 0) continue;
                 int p = (pixels != null) ? pixels[yc * width + xc] : awt.awt().getRGB(xc, yc);
-                sumA += weight * ((p >>> 24) & 0xFF);
-                sumR += weight * ((p >> 16) & 0xFF);
-                sumG += weight * ((p >> 8) & 0xFF);
-                sumB += weight * (p & 0xFF);
+                double a = (p >>> 24) & 0xFF;
+                double wa = weight * a;
+                sumA += wa;
+                sumR += wa * ((p >> 16) & 0xFF);
+                sumG += wa * ((p >> 8) & 0xFF);
+                sumB += wa * (p & 0xFF);
             }
         }
 
+        // Un-premultiply: divide the alpha-weighted colour sums by the summed
+        // alpha-weight. When the combined alpha is zero the result is fully clear.
+        int alpha = (int) Math.round(sumA);
+        if (sumA == 0)
+            return PixelTools.argb(0, 0, 0, 0);
         return PixelTools.argb(
-                (int) Math.round(sumA),
-                (int) Math.round(sumR),
-                (int) Math.round(sumG),
-                (int) Math.round(sumB)
+                alpha,
+                (int) Math.round(sumR / sumA),
+                (int) Math.round(sumG / sumA),
+                (int) Math.round(sumB / sumA)
         );
     }
 }
