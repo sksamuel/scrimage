@@ -71,7 +71,7 @@ jobs:
 
       - name: Upload raw JMH results
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: jmh-results
           path: scrimage-benchmarks/build/results/jmh/
