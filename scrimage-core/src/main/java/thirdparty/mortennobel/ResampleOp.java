@@ -129,7 +129,12 @@ public class ResampleOp extends AdvancedResizeOp {
 
     if (scale < 1.0f) {
       final float width = fwidth / scale;
-      numContributors = (int) (width * 2.0f + 2); // Heinz: added 1 to be save with the ceilling
+      // The sample window for a destination pixel is [floor(center - width), ceil(center + width)],
+      // whose size is ceil(center+width) - floor(center-width) + 1 and can reach ceil(2*width) + 2
+      // contributors. The previous "(int)(width*2 + 2)" pad truncated and was one short for certain
+      // scale factors (e.g. resampling a 121px axis down to 3px), letting the final contributor write
+      // into the next destination row/column's segment and corrupting both. Size from the true window.
+      numContributors = (int) Math.ceil(width * 2.0f) + 2;
       arrWeight = new float[dstSize * numContributors];
       arrPixel = new int[dstSize * numContributors];
 
@@ -178,7 +183,10 @@ public class ResampleOp extends AdvancedResizeOp {
     // super-sampling
     // Scales from smaller to bigger height
     {
-      numContributors = (int) (fwidth * 2.0f + 1);
+      // See the downscale branch: the window [floor(center-fwidth), ceil(center+fwidth)] can hold up
+      // to ceil(2*fwidth) + 2 contributors, so size the segment to that to avoid spilling into the
+      // next destination row/column.
+      numContributors = (int) Math.ceil(fwidth * 2.0f) + 2;
       arrWeight = new float[dstSize * numContributors];
       arrPixel = new int[dstSize * numContributors];
       //
