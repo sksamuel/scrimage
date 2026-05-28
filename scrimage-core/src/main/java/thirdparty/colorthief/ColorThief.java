@@ -19,6 +19,8 @@ package thirdparty.colorthief;
  */
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferInt;
+import java.awt.image.SinglePixelPackedSampleModel;
 import java.util.Arrays;
 
 public class ColorThief {
@@ -168,6 +170,15 @@ public class ColorThief {
             pixelArray = getPixelsFast(sourceImage, quality, ignoreWhite);
             break;
 
+         case BufferedImage.TYPE_INT_ARGB:
+         case BufferedImage.TYPE_INT_RGB:
+            // Scrimage's canonical image type is TYPE_INT_ARGB, which previously
+            // fell through to the per-pixel getRGB slow path. Read the backing
+            // int[] directly when the raster layout is simple.
+            int[][] fast = getPixelsFastInt(sourceImage, quality, ignoreWhite);
+            pixelArray = (fast != null) ? fast : getPixelsSlow(sourceImage, quality, ignoreWhite);
+            break;
+
          default:
             pixelArray = getPixelsSlow(sourceImage, quality, ignoreWhite);
       }
@@ -270,6 +281,59 @@ public class ColorThief {
 
       // Remove unused pixels from the array
       return Arrays.copyOfRange(pixelArray, 0, numUsedPixels);
+   }
+
+   /**
+    * Fast path for TYPE_INT_ARGB / TYPE_INT_RGB images: samples the backing int[]
+    * directly instead of calling BufferedImage.getRGB per pixel.
+    * <p>
+    * For these types the stored int has the same ARGB bit layout that getRGB
+    * returns, so the red/green/blue extraction (and white filtering) is identical
+    * to {@link #getPixelsSlow}; like that method it does not filter on alpha.
+    * Returns {@code null} (caller falls back to the slow path) if the raster is
+    * not a single-bank, contiguous, zero-offset SinglePixelPackedSampleModel —
+    * e.g. a sub-raster with a scanline stride wider than the image.
+    */
+   private static int[][] getPixelsFastInt(
+      BufferedImage sourceImage,
+      int quality,
+      boolean ignoreWhite) {
+
+      if (!(sourceImage.getRaster().getDataBuffer() instanceof DataBufferInt))
+         return null;
+      DataBufferInt buffer = (DataBufferInt) sourceImage.getRaster().getDataBuffer();
+      if (buffer.getNumBanks() != 1 || buffer.getOffset() != 0)
+         return null;
+      if (!(sourceImage.getSampleModel() instanceof SinglePixelPackedSampleModel))
+         return null;
+      SinglePixelPackedSampleModel sm = (SinglePixelPackedSampleModel) sourceImage.getSampleModel();
+      int width = sourceImage.getWidth();
+      if (sm.getScanlineStride() != width
+         || sourceImage.getRaster().getSampleModelTranslateX() != 0
+         || sourceImage.getRaster().getSampleModelTranslateY() != 0)
+         return null;
+
+      int[] data = buffer.getData();
+      int pixelCount = width * sourceImage.getHeight();
+      if (data.length != pixelCount)
+         return null;
+
+      int numRegardedPixels = (pixelCount + quality - 1) / quality;
+      int numUsedPixels = 0;
+      int[][] res = new int[numRegardedPixels][];
+
+      for (int i = 0; i < pixelCount; i += quality) {
+         int rgb = data[i];
+         int r = (rgb >> 16) & 0xFF;
+         int g = (rgb >> 8) & 0xFF;
+         int b = rgb & 0xFF;
+         if (!(ignoreWhite && r > 250 && g > 250 && b > 250)) {
+            res[numUsedPixels] = new int[]{r, g, b};
+            numUsedPixels++;
+         }
+      }
+
+      return Arrays.copyOfRange(res, 0, numUsedPixels);
    }
 
    /**
