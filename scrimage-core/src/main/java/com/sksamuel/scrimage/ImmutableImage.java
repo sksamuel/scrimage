@@ -1198,7 +1198,12 @@ public class ImmutableImage extends MutableImage {
    public ImmutableImage padWith(int left, int top, int right, int bottom, Color color) {
       int w = width + left + right;
       int h = height + top + bottom;
-      return filled(w, h, color).overlay(this, left, top).associateMetadata(metadata);
+      // filled() returns a fresh, unshared image, so draw straight into it with
+      // overlayInPlace. Going through overlay() would clone that just-created
+      // buffer first (a full-image copy) for no reason.
+      ImmutableImage result = filled(w, h, color);
+      result.overlayInPlace(awt(), left, top);
+      return result.associateMetadata(metadata);
    }
 
    /**
@@ -1570,7 +1575,11 @@ public class ImmutableImage extends MutableImage {
     * @return a new Image with this image translated.
     */
    public ImmutableImage translate(int x, int y, Color bg) {
-      return fill(bg).overlay(this, x, y).associateMetadata(metadata);
+      // fill() returns a fresh, unshared image, so draw straight into it with
+      // overlayInPlace rather than overlay(), which would clone it first.
+      ImmutableImage result = fill(bg);
+      result.overlayInPlace(awt(), x, y);
+      return result.associateMetadata(metadata);
    }
 
    /**
