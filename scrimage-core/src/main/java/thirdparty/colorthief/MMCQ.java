@@ -254,21 +254,29 @@ public class MMCQ {
          gval = pixel[1] >> RSHIFT;
          bval = pixel[2] >> RSHIFT;
 
+         // Use independent if's (not else-if): the first pixel always takes the
+         // `< min` branch and would never update max, so a channel with a single
+         // distinct value ended up with min > max (e.g. min=10, max=0). That made
+         // VBox.volume() negative and VBox.count() iterate an empty range, silently
+         // dropping that colour dimension from the quantization.
          if (rval < rmin) {
             rmin = rval;
-         } else if (rval > rmax) {
+         }
+         if (rval > rmax) {
             rmax = rval;
          }
 
          if (gval < gmin) {
             gmin = gval;
-         } else if (gval > gmax) {
+         }
+         if (gval > gmax) {
             gmax = gval;
          }
 
          if (bval < bmin) {
             bmin = bval;
-         } else if (bval > bmax) {
+         }
+         if (bval > bmax) {
             bmax = bval;
          }
       }
