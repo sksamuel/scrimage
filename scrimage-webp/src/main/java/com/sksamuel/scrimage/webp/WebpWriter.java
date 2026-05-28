@@ -65,7 +65,7 @@ public class WebpWriter implements ImageWriter {
     * @return a new {@code WebpWriter} instance with lossless compression enabled.
     */
    public WebpWriter withLossless() {
-      return new WebpWriter(z, q, m, true);
+      return new WebpWriter(z, q, m, true, noAlpha, multiThread);
    }
 
    /**
@@ -75,7 +75,7 @@ public class WebpWriter implements ImageWriter {
     * @return a new {@code WebpWriter} instance with alpha channel support disabled.
     */
    public WebpWriter withoutAlpha() {
-      return new WebpWriter(z, q, m, lossless, true);
+      return new WebpWriter(z, q, m, lossless, true, multiThread);
    }
 
    /**
@@ -97,7 +97,7 @@ public class WebpWriter implements ImageWriter {
    public WebpWriter withQ(int q) {
       if (q < 0) throw new IllegalArgumentException("q must be between 0 and 100");
       if (q > 100) throw new IllegalArgumentException("q must be between 0 and 100");
-      return new WebpWriter(z, q, m, lossless, noAlpha);
+      return new WebpWriter(z, q, m, lossless, noAlpha, multiThread);
    }
 
    /**
@@ -110,7 +110,7 @@ public class WebpWriter implements ImageWriter {
    public WebpWriter withM(int m) {
       if (m < 0) throw new IllegalArgumentException("m must be between 0 and 6");
       if (m > 6) throw new IllegalArgumentException("m must be between 0 and 6");
-      return new WebpWriter(z, q, m, lossless, noAlpha);
+      return new WebpWriter(z, q, m, lossless, noAlpha, multiThread);
    }
 
    /**
@@ -122,7 +122,7 @@ public class WebpWriter implements ImageWriter {
    public WebpWriter withZ(int z) {
       if (z < 0) throw new IllegalArgumentException("z must be between 0 and 9");
       if (z > 9) throw new IllegalArgumentException("z must be between 0 and 9");
-      return new WebpWriter(z, q, m, lossless, noAlpha);
+      return new WebpWriter(z, q, m, lossless, noAlpha, multiThread);
    }
 
    @Override
