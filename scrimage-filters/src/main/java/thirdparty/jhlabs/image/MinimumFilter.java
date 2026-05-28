@@ -32,6 +32,7 @@ public class MinimumFilter extends WholeImageFilter {
 
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
+				int centre = inPixels[y * width + x];
 				int pixel = 0xffffffff;
 				for (int dy = -1; dy <= 1; dy++) {
 					int iy = y+dy;
@@ -46,7 +47,9 @@ public class MinimumFilter extends WholeImageFilter {
 						}
 					}
 				}
-				outPixels[index++] = pixel;
+				// Preserve the centre pixel's source alpha. See MaximumFilter
+				// for the explanation — same shape of bug.
+				outPixels[index++] = (centre & 0xff000000) | (pixel & 0x00ffffff);
 			}
 		}
 		return outPixels;
