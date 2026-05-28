@@ -22,11 +22,18 @@ public class SaltAndPepperFilter implements Filter {
 
    @Override
    public void apply(ImmutableImage img) {
+      // Single draw per pixel partitioned across the two outcomes.
+      // Using `Math.random() < pepper` followed by `else if
+      // (Math.random() < salt)` would give each pixel a probability
+      // of being salt of (1 - pepper) * salt rather than the
+      // documented `salt` — e.g. SaltAndPepperFilter(0.5, 0.5)
+      // produced 50% pepper but only 25% salt.
       for (int i = 0; i < img.width; i++) {
          for (int j = 0; j < img.height; j++) {
-            if (Math.random() < pepper) {
+            double r = Math.random();
+            if (r < pepper) {
                img.setColor(i, j, RGBColor.fromARGBInt(OPAQUE_BLACK));
-            } else if (Math.random() < salt) {
+            } else if (r < pepper + salt) {
                img.setColor(i, j, RGBColor.fromARGBInt(OPAQUE_WHITE));
             }
          }
