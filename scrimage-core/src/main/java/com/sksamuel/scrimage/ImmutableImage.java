@@ -1505,7 +1505,13 @@ public class ImmutableImage extends MutableImage {
       // to materialise a Pixel[w*h] just so wrapPixels → create(Pixel[])
       // could re-extract argb from each Pixel.
       int[] argb = awt().getRGB(x, y, w, h, null, 0, w);
-      ImmutableImage result = ImmutableImage.create(w, h, DEFAULT_DATA_TYPE);
+      // Preserve the source image's type so cropping (and trim/autocrop/takeX,
+      // which delegate here) doesn't silently promote e.g. a TYPE_INT_RGB image
+      // to TYPE_INT_ARGB. TYPE_CUSTOM (0) can't be fed to the BufferedImage type
+      // constructor, so fall back to the default ARGB type for it.
+      int type = awt().getType();
+      if (type == BufferedImage.TYPE_CUSTOM) type = DEFAULT_DATA_TYPE;
+      ImmutableImage result = ImmutableImage.create(w, h, type);
       result.awt().setRGB(0, 0, w, h, argb, 0, w);
       return result.associateMetadata(metadata);
    }
