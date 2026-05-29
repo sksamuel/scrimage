@@ -50,6 +50,11 @@ public class JpegWriter implements ImageWriter {
    public void write(AwtImage image, ImageMetadata metadata, OutputStream out) throws IOException {
 
       javax.imageio.ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
+      // dispose() in a finally that spans every use of the writer. Acquiring it
+      // here but only disposing inside the write try-block leaked the native
+      // JPEG writer if anything in between threw — e.g. allocating the no-alpha
+      // BufferedImage for a very large image, or setCompressionQuality.
+      try {
       ImageWriteParam params = writer.getDefaultWriteParam();
 
       // compression is a quality knob in [0, 100]. The earlier code
@@ -96,6 +101,8 @@ public class JpegWriter implements ImageWriter {
       try (MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream(out)) {
          writer.setOutput(output);
          writer.write(null, new IIOImage(noAlpha, null, null), params);
+      }
+
       } finally {
          writer.dispose();
       }
