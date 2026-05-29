@@ -92,6 +92,7 @@ object ExampleGenerator {
       "colorize" to { _, _ -> ColorizeFilter(255, 0, 0, 50) },
       "contour" to { _, _ -> ContourFilter() },
       "contrast" to { _, _ -> ContrastFilter(1.4) },
+      "crema" to { _, _ -> CremaFilter() },
       "crystallize" to { _, _ -> CrystallizeFilter() },
       "despeckle" to { _, _ -> DespeckleFilter() },
       "diffuse" to { _, _ -> DiffuseFilter(4f) },
