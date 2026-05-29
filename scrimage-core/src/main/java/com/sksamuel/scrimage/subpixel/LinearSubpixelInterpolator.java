@@ -8,11 +8,23 @@ public class LinearSubpixelInterpolator implements SubpixelInterpolator {
     private final AwtImage awt;
     private final int width;
     private final int height;
+    private final int[] pixels;
 
     public LinearSubpixelInterpolator(AwtImage awt) {
+        this(awt, null);
+    }
+
+    /**
+     * Creates an interpolator backed by a pre-read, row-major ARGB buffer of the
+     * whole image (as returned by getRGB(0, 0, width, height, ...)). When many
+     * subpixel() calls are made against the same image this avoids a scalar
+     * getRGB call per neighbour. Pass null to read each neighbour on demand.
+     */
+    public LinearSubpixelInterpolator(AwtImage awt, int[] pixels) {
         this.awt = awt;
         width = awt.width;
         height = awt.height;
+        this.pixels = pixels;
     }
 
     @Override
@@ -61,7 +73,7 @@ public class LinearSubpixelInterpolator implements SubpixelInterpolator {
                 double yw = (yi == 0) ? yw0 : yw1;
                 double weight = xw * yw;
                 if (weight == 0) continue;
-                int p = awt.awt().getRGB(xc, yc);
+                int p = (pixels != null) ? pixels[yc * width + xc] : awt.awt().getRGB(xc, yc);
                 sumA += weight * ((p >>> 24) & 0xFF);
                 sumR += weight * ((p >> 16) & 0xFF);
                 sumG += weight * ((p >> 8) & 0xFF);
