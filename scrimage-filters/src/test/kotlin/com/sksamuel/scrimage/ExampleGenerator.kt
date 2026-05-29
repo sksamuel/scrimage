@@ -106,6 +106,7 @@ object ExampleGenerator {
       "gotham" to { _, _ -> GothamFilter() },
       "grayscale" to { _, _ -> GrayscaleFilter() },
       "hsb" to { _, _ -> HSBFilter(0.5f, 0f, 0f) },
+      "hudson" to { _, _ -> HudsonFilter() },
       "invert" to { _, _ -> InvertFilter() },
       "invert_alpha" to { _, _ -> InvertAlphaFilter() },
       "juno" to { _, _ -> JunoFilter() },
