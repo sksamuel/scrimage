@@ -169,6 +169,13 @@ object ExampleGenerator extends App {
         val w = source.width
         val faded = source.map(p => new java.awt.Color(p.red, p.green, p.blue, if (w > 1) (255 * p.x) / (w - 1) else 255))
         checkerboard(source.width, source.height).overlay(faded.filter(new InvertAlphaFilter()))
+      } else if (filterName == "alpha_mask") {
+        // AlphaMaskFilter drives the source's alpha from a channel of the mask
+        // image. Masking the (opaque) alpha channel of a JPEG mask is a no-op,
+        // so sample the mask's red channel (channel 1) for a varying alpha and
+        // composite over a checkerboard so the transparency is visible.
+        val masked = source.filter(new AlphaMaskFilter(differentFrom(imgName, source), 1))
+        checkerboard(source.width, source.height).overlay(masked)
       } else if (filterName == "noise_reduction")
         source.filter(new NoiseReductionFilter(), new NoiseReductionFilter(), new NoiseReductionFilter(), new NoiseReductionFilter(), new NoiseReductionFilter())
       else source.filter(factory(imgName, source))
