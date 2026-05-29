@@ -57,7 +57,7 @@ object ExampleGenerator extends App {
     ("crystallize", (_, _) => new CrystallizeFilter()),
     ("despeckle", (_, _) => new DespeckleFilter),
     ("diffuse", (_, _) => new DiffuseFilter(4)),
-    ("dissolve", (_, _) => new DissolveFilter(0.5f)),
+    ("dissolve", (_, _) => new DissolveFilter(0.4f)),
     ("dither", (_, _) => new DitherFilter),
     ("edge", (_, _) => new EdgeFilter),
     ("emboss", (_, _) => new EmbossFilter),
