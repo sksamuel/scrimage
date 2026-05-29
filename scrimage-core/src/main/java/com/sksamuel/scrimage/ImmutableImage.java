@@ -46,6 +46,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
+import com.sksamuel.scrimage.subpixel.LinearSubpixelInterpolator;
+
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferInt;
 import java.awt.image.WritableRaster;
@@ -1456,10 +1458,16 @@ public class ImmutableImage extends MutableImage {
       // which itself re-extracted the argb from each Pixel — a wasted round
       // trip now that subpixel() already returns a packed ARGB int.
       int[] argb = new int[subWidth * subHeight];
+      // Reuse a single interpolator backed by one bulk read of the source
+      // pixels, rather than constructing a fresh interpolator (each issuing
+      // scalar getRGB calls) for every output cell via the inherited
+      // subpixel(x, y).
+      int[] sourcePixels = awt().getRGB(0, 0, width, height, null, 0, width);
+      LinearSubpixelInterpolator interpolator = new LinearSubpixelInterpolator(this, sourcePixels);
       int k = 0;
       for (int yIndex = 0; yIndex < subHeight; yIndex++) {
          for (int xIndex = 0; xIndex < subWidth; xIndex++) {
-            argb[k++] = subpixel(xIndex + x, yIndex + y);
+            argb[k++] = interpolator.subpixel(xIndex + x, yIndex + y);
          }
       }
       ImmutableImage result = ImmutableImage.create(subWidth, subHeight, DEFAULT_DATA_TYPE);
