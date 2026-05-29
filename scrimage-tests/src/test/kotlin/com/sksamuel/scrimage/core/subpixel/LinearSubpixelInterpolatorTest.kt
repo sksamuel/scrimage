@@ -91,4 +91,31 @@ class LinearSubpixelInterpolatorTest : FunSpec({
       sub.pixel(0, 0).argb shouldBe image.subpixel(2.0, 3.0)
       sub.pixel(2, 2).argb shouldBe image.subpixel(4.0, 5.0)
    }
+
+   // Colour is weighted by alpha (premultiplied) so a fully transparent
+   // neighbour, whose RGB is arbitrary, does not bleed into the result.
+   test("interpolation weights colour by alpha so transparent neighbours don't bleed") {
+      // 2x1: opaque red on the left, fully transparent green on the right.
+      val pixels = arrayOf(
+         Pixel(0, 0, 255, 0, 0, 255), // opaque red
+         Pixel(1, 0, 0, 255, 0, 0)    // fully transparent green
+      )
+      val img = ImmutableImage.create(2, 1, pixels)
+      // x = 1.0 sits midway between the two columns → equal bilinear weights.
+      val argb = img.subpixel(1.0, 0.0)
+      ((argb ushr 16) and 0xFF) shouldBe 255 // red preserved
+      ((argb ushr 8) and 0xFF) shouldBe 0    // no green bleed from the transparent neighbour
+      (argb and 0xFF) shouldBe 0
+      ((argb ushr 24) and 0xFF) shouldBe 128 // alpha is the average of 255 and 0
+   }
+
+   // When both neighbours are fully transparent the result is fully clear.
+   test("interpolation of fully transparent neighbours is transparent") {
+      val pixels = arrayOf(
+         Pixel(0, 0, 255, 0, 0, 0),
+         Pixel(1, 0, 0, 255, 0, 0)
+      )
+      val img = ImmutableImage.create(2, 1, pixels)
+      ((img.subpixel(1.0, 0.0) ushr 24) and 0xFF) shouldBe 0
+   }
 })
