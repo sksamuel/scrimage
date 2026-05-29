@@ -5,6 +5,7 @@ on:
          - master
       paths:
          - 'docs/**'
+         - 'scrimage-filters/src/test/kotlin/com/sksamuel/scrimage/ExampleGenerator.kt'
 
 jobs:
    deploy:
