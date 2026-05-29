@@ -182,7 +182,7 @@ object ExampleGenerator extends App {
         val masked = source.filter(new AlphaMaskFilter(differentFrom(imgName, source), 1))
         checkerboard(source.width, source.height).overlay(masked)
       } else if (filterName == "noise_reduction")
-        source.filter(new NoiseReductionFilter(), new NoiseReductionFilter(), new NoiseReductionFilter(), new NoiseReductionFilter())
+        source.filter(new NoiseReductionFilter(), new NoiseReductionFilter(), new NoiseReductionFilter())
       else if (filterName == "blur")
         source.filter(new BlurFilter(), new BlurFilter(), new BlurFilter(), new BlurFilter(), new BlurFilter())
       else if (filterName == "maximum")
