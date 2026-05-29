@@ -39,7 +39,7 @@ object ExampleGenerator extends App {
     ("background_blend", (_, _) => new BackgroundBlendFilter()),
     ("black_threshold", (_, _) => new BlackThresholdFilter(52)),
     ("blur", (_, _) => new BlurFilter),
-    ("border", (_, _) => new BorderFilter(8)),
+    ("border", (_, _) => new BorderFilter(8, java.awt.Color.GRAY)),
     ("brightness", (_, _) => new BrightnessFilter(1.3f)),
     ("bump", (_, _) => new BumpFilter),
     ("caption", (_, _) => new CaptionFilter("Example", Position.BottomLeft, font, Color.White.toAWT, 1, true, true, Color.White.toAWT, 0.2, new Padding(10))),
