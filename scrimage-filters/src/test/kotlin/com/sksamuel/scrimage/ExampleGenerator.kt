@@ -101,6 +101,7 @@ object ExampleGenerator {
       "gain_bias" to { _, _ -> GainBiasFilter(0.7f, 0.6f) },
       "gamma" to { _, _ -> GammaFilter(2.0) },
       "gaussian" to { _, _ -> GaussianBlurFilter(10) },
+      "gingham" to { _, _ -> GinghamFilter() },
       "glint" to { _, _ -> GlintFilter(0.5f, 0.3f, 10, 0.0f) },
       "glow" to { _, _ -> GlowFilter() },
       "gotham" to { _, _ -> GothamFilter() },
