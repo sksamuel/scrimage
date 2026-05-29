@@ -162,9 +162,22 @@ public class PixelTools {
     * Returns a new Pixel with the transparency in the given pixel replaced by the given color.
     */
    public static Pixel replaceTransparencyWithColor(Pixel p, Color color) {
-      int r = (p.red() * p.alpha() + color.getRed() * color.getAlpha() * (255 - p.alpha()) / 255) / 255;
-      int g = (p.green() * p.alpha() + color.getGreen() * color.getAlpha() * (255 - p.alpha()) / 255) / 255;
-      int b = (p.blue() * p.alpha() + color.getBlue() * color.getAlpha() * (255 - p.alpha()) / 255) / 255;
-      return new Pixel(p.x, p.y, r, g, b, 255);
+      int argb = replaceTransparencyWithColor(p.argb, color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+      return new Pixel(p.x, p.y, argb);
+   }
+
+   /**
+    * Returns the packed ARGB int for the given pixel with its transparency replaced by the
+    * given colour components. Equivalent to {@link #replaceTransparencyWithColor(Pixel, Color)}
+    * but works on packed ints, avoiding per-pixel Pixel allocation when used in a loop. The
+    * colour components are passed in so callers can hoist the java.awt.Color accessors out of
+    * their loop.
+    */
+   public static int replaceTransparencyWithColor(int pixel, int colorRed, int colorGreen, int colorBlue, int colorAlpha) {
+      int a = alpha(pixel);
+      int r = (red(pixel) * a + colorRed * colorAlpha * (255 - a) / 255) / 255;
+      int g = (green(pixel) * a + colorGreen * colorAlpha * (255 - a) / 255) / 255;
+      int b = (blue(pixel) * a + colorBlue * colorAlpha * (255 - a) / 255) / 255;
+      return argb(255, r, g, b);
    }
 }
