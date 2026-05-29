@@ -62,6 +62,7 @@ object ExampleGenerator extends App {
     ("prewitt", new PrewittFilter),
     ("quantize", new QuantizeFilter(256)),
     ("rays", new RaysFilter(0.1f, 0.6f, 0.5f)),
+    ("repeater", new RepeaterFilter(2, 3)),
     ("rgb", new RGBFilter(0.4f, 0.6f, 0.5f)),
     ("ripple", new RippleFilter(RippleType.Sine)),
     ("roberts", new RobertsFilter),
