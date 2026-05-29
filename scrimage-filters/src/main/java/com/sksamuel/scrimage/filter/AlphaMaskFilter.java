@@ -48,23 +48,26 @@ public class AlphaMaskFilter implements Filter {
       int[] imagePixels = image.awt().getRGB(0, 0, w, h, null, 0, w);
       int[] maskPixels = mask.awt().getRGB(0, 0, w, h, null, 0, w);
 
+      // The chosen source channel is fixed for the whole call, so resolve the
+      // mask bits and left shift once instead of branching per pixel. The
+      // default (alpha) case is a shift of 0, identical to masking the alpha
+      // channel in place.
+      int maskBits;
+      int shift;
+      switch (channel) {
+         case 1:
+            maskBits = 0x00FF0000; shift = 8;  break; // Shift red to alpha
+         case 2:
+            maskBits = 0x0000FF00; shift = 16; break; // Shift green to alpha
+         case 3:
+            maskBits = 0x000000FF; shift = 24; break; // Shift blue to alpha
+         default:
+            maskBits = 0xFF000000; shift = 0;  break; // use alpha channel
+      }
+
       for (int i = 0; i < imagePixels.length; i++) {
          int color = imagePixels[i] & 0x00ffffff; // Mask preexisting alpha
-         int alpha;
-         switch (channel) {
-            case 1:
-               alpha = (maskPixels[i] & 0x00FF0000) << 8; // Shift red to alpha
-               break;
-            case 2:
-               alpha = (maskPixels[i] & 0x0000FF00) << 16; // Shift green to alpha
-               break;
-            case 3:
-               alpha = (maskPixels[i] & 0x000000FF) << 24; // Shift blue to alpha
-               break;
-            default:
-               alpha = (maskPixels[i] & 0xFF000000); // use alpha channel
-               break;
-         }
+         int alpha = (maskPixels[i] & maskBits) << shift;
          imagePixels[i] = color | alpha;
       }
       image.awt().setRGB(0, 0, w, h, imagePixels, 0, w);
