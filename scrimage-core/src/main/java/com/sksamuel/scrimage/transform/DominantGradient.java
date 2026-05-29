@@ -6,6 +6,15 @@ import com.sksamuel.scrimage.color.RGBColor;
 
 import java.io.IOException;
 
+/**
+ * Produces a top-to-bottom linear gradient between the two most dominant colours
+ * of an image.
+ *
+ * @deprecated the output keeps the input's dimensions, so this is better
+ * expressed as a size-preserving filter. Use
+ * {@link com.sksamuel.scrimage.filter.DominantGradientFilter} instead.
+ */
+@Deprecated
 public class DominantGradient implements Transform {
 
    @Override
