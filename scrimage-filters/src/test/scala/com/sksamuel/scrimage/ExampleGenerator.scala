@@ -49,6 +49,7 @@ object ExampleGenerator extends App {
     ("lensflare", new LensFlareFilter),
     ("minimum", new MinimumFilter),
     ("maximum", new MaximumFilter),
+    ("mirror", new MirrorFilter),
     ("motionblur", new MotionBlurFilter(Math.PI / 3.0, 20)),
     ("nashville", new NashvilleFilter()),
     ("noise", new NoiseFilter()),
