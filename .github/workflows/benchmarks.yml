@@ -1,6 +1,14 @@
 name: benchmarks
 
 on:
+  push:
+    branches:
+      - main
+      - master
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+      - 'mkdocs.yml'
   workflow_dispatch:
 
 jobs:
