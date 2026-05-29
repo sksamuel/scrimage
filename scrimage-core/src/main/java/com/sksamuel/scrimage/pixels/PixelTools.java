@@ -18,7 +18,6 @@ package com.sksamuel.scrimage.pixels;
 import com.sksamuel.scrimage.color.RGBColor;
 
 import java.awt.*;
-import java.util.Arrays;
 
 public class PixelTools {
 
@@ -82,9 +81,12 @@ public class PixelTools {
     */
    public static boolean uniform(Color color, Pixel[] pixels) {
       RGBColor target = RGBColor.fromAwt(color);
-      return Arrays.stream(pixels).allMatch(p ->
-         (p.alpha() == 0 && target.alpha == 0) || (p.toARGBInt() == target.toARGBInt())
-      );
+      int targetArgb = target.toARGBInt();
+      boolean targetTransparent = target.alpha == 0;
+      for (Pixel p : pixels) {
+         if (!((p.alpha() == 0 && targetTransparent) || p.toARGBInt() == targetArgb)) return false;
+      }
+      return true;
    }
 
    /**
@@ -119,11 +121,12 @@ public class PixelTools {
       int minG = Math.max(ref.green - tolerance, 0), maxG = Math.min(ref.green + tolerance, 255);
       int minB = Math.max(ref.blue - tolerance, 0),  maxB = Math.min(ref.blue + tolerance, 255);
 
-      return Arrays.stream(pixels).allMatch(p ->
-         p.red()   >= minR && p.red()   <= maxR &&
-         p.green() >= minG && p.green() <= maxG &&
-         p.blue()  >= minB && p.blue()  <= maxB
-      );
+      for (Pixel p : pixels) {
+         if (!(p.red()   >= minR && p.red()   <= maxR &&
+               p.green() >= minG && p.green() <= maxG &&
+               p.blue()  >= minB && p.blue()  <= maxB)) return false;
+      }
+      return true;
    }
 
    /**
