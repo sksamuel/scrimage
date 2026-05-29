@@ -106,6 +106,7 @@ object ExampleGenerator {
       "hsb" to { _, _ -> HSBFilter(0.5f, 0f, 0f) },
       "invert" to { _, _ -> InvertFilter() },
       "invert_alpha" to { _, _ -> InvertAlphaFilter() },
+      "juno" to { _, _ -> JunoFilter() },
       "kaleidoscope" to { _, _ -> KaleidoscopeFilter() },
       "laplace" to { _, _ -> LaplaceFilter() },
       "lensblur" to { _, _ -> LensBlurFilter() },
