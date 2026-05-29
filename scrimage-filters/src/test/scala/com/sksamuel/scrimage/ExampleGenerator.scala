@@ -91,6 +91,7 @@ object ExampleGenerator extends App {
     ("opacity", (_, _) => new OpacityFilter(0.5f)),
     ("pixelate", (_, _) => new PixelateFilter(6)),
     ("pointillize_square", (_, _) => new PointillizeFilter(PointillizeGridType.Square)),
+    ("poprocket", (_, _) => new PoprocketFilter()),
     ("posterize", (_, _) => new PosterizeFilter()),
     ("prewitt", (_, _) => new PrewittFilter),
     ("quantize", (_, _) => new QuantizeFilter(64)),
