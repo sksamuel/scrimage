@@ -124,6 +124,7 @@ object ExampleGenerator {
       "invert_alpha" to { _, _ -> InvertAlphaFilter() },
       "juno" to { _, _ -> JunoFilter() },
       "kaleidoscope" to { _, _ -> KaleidoscopeFilter() },
+      "kelvin" to { _, _ -> KelvinFilter() },
       "laplace" to { _, _ -> LaplaceFilter() },
       "lensblur" to { _, _ -> LensBlurFilter() },
       "lensflare" to { _, _ -> LensFlareFilter() },
