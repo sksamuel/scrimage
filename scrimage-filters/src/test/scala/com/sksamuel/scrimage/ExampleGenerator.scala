@@ -74,6 +74,7 @@ object ExampleGenerator extends App {
     ("sobels", new SobelsFilter),
     ("solarize", new SolarizeFilter),
     ("sparkle", new SparkleFilter()),
+    ("split_channels", new SplitChannelsFilter(true, false, false)),
     ("summer", new SummerFilter(true)),
     ("swim", new SwimFilter()),
     ("television", new TelevisionFilter),
