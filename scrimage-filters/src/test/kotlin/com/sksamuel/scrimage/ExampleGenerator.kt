@@ -110,6 +110,7 @@ object ExampleGenerator {
       "gamma" to { _, _ -> GammaFilter(2.0) },
       "gaussian" to { _, _ -> GaussianBlurFilter(10) },
       "gingham" to { _, _ -> GinghamFilter() },
+      "ginza" to { _, _ -> GinzaFilter() },
       "glint" to { _, _ -> GlintFilter(0.5f, 0.3f, 10, 0.0f) },
       "glow" to { _, _ -> GlowFilter() },
       "gotham" to { _, _ -> GothamFilter() },
