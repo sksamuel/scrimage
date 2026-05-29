@@ -161,14 +161,17 @@ object ExampleGenerator extends App {
     val source = img.copy(java.awt.image.BufferedImage.TYPE_INT_ARGB)
     println("Generating example " + imgName + " " + filterName)
     // invert_alpha only flips the alpha channel, which is invisible on an opaque
-    // photo saved as JPEG. Demonstrate it by fading the source's alpha left-to-right,
-    // inverting, and compositing over a checkerboard so the transparency shows.
+    // photo saved as JPEG: fade the source's alpha, invert, and composite over a
+    // checkerboard so it shows. NoiseReduction has no strength parameter (20 fixed
+    // iterations), so apply it several times for a clearly visible smoothing.
     val result =
       if (filterName == "invert_alpha") {
         val w = source.width
         val faded = source.map(p => new java.awt.Color(p.red, p.green, p.blue, if (w > 1) (255 * p.x) / (w - 1) else 255))
         checkerboard(source.width, source.height).overlay(faded.filter(new InvertAlphaFilter()))
-      } else source.filter(factory(imgName, source))
+      } else if (filterName == "noise_reduction")
+        source.filter(new NoiseReductionFilter(), new NoiseReductionFilter(), new NoiseReductionFilter(), new NoiseReductionFilter(), new NoiseReductionFilter())
+      else source.filter(factory(imgName, source))
     result.output(new File("examples/filters/" + imgName + "_" + filterName + "_large.jpeg"))(JpegWriter.compression(95))
     result.scaleToWidth(thumbWidth).forWriter(PngWriter.MaxCompression)
       .write(new File("examples/filters/" + imgName + "_" + filterName + "_small.png"))
