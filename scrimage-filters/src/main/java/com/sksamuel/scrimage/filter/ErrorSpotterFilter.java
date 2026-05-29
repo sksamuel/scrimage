@@ -51,11 +51,17 @@ public class ErrorSpotterFilter implements Filter {
                     + "src=" + src.width + "x" + src.height
                     + ", base=" + base.width + "x" + base.height);
         }
-        for (int x = 0; x < src.width; x++) {
-            for (int y = 0; y < src.height; y++) {
-                int delta = error(RGBColor.fromARGBInt(base.awt().getRGB(x, y)), RGBColor.fromARGBInt(src.awt().getRGB(x, y)));
-                src.awt().setRGB(x, y, delta);
-            }
+        // Read both rasters in a single bulk getRGB each, rather than a slow
+        // scalar getRGB(x, y) per pixel on both images plus a scalar
+        // setRGB(x, y) per pixel. Each pixel is computed independently, so the
+        // row-major iteration order produces identical results.
+        int w = src.width;
+        int h = src.height;
+        int[] basePixels = base.awt().getRGB(0, 0, w, h, null, 0, w);
+        int[] srcPixels = src.awt().getRGB(0, 0, w, h, null, 0, w);
+        for (int i = 0; i < srcPixels.length; i++) {
+            srcPixels[i] = error(RGBColor.fromARGBInt(basePixels[i]), RGBColor.fromARGBInt(srcPixels[i]));
         }
+        src.awt().setRGB(0, 0, w, h, srcPixels, 0, w);
     }
 }
