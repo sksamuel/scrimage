@@ -69,6 +69,7 @@ object ExampleGenerator extends App {
     ("rylanders", new RylandersFilter),
     ("sepia", new SepiaFilter),
     ("sharpen", new SharpenFilter),
+    ("skeleton", new SkeletonFilter()),
     ("smear_circles", new SmearFilter(SmearType.Circles)),
     ("snow", new SnowFilter()),
     ("sobels", new SobelsFilter),
