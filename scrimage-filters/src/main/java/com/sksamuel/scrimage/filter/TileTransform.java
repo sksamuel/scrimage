@@ -26,19 +26,19 @@ import java.awt.Graphics2D;
  * the source width and {@code rows} times the source height, with the source
  * drawn at full size into every cell.
  * <p>
- * For example {@code new TileFilter(2, 3)} produces an image twice as wide
+ * For example {@code new TileTransform(2, 3)} produces an image twice as wide
  * and three times as tall as the source, tiled 2 across and 3 down.
  * <p>
  * Because the result changes the image dimensions it is a {@link Transform}
  * (applied via {@code image.transform(...)}) rather than a size-preserving
  * {@link Filter}.
  */
-public class TileFilter implements Transform {
+public class TileTransform implements Transform {
 
    private final int columns;
    private final int rows;
 
-   public TileFilter(int columns, int rows) {
+   public TileTransform(int columns, int rows) {
       if (columns < 1 || rows < 1)
          throw new IllegalArgumentException("columns and rows must both be >= 1");
       this.columns = columns;

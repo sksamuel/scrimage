@@ -62,24 +62,24 @@ Produces a linear gradient copy of the image for the two most dominent colours o
 
 ### Tile
 
-Tiles the source image into a larger image. `TileFilter(columns, rows)` produces an image `columns` times the source width and `rows` times the source height, with the source drawn into every cell — so `TileFilter(3, 2)` repeats the image 3 across and 2 down.
+Tiles the source image into a larger image. `TileTransform(columns, rows)` produces an image `columns` times the source width and `rows` times the source height, with the source drawn into every cell — so `TileTransform(3, 2)` repeats the image 3 across and 2 down.
 
 === "Java"
 
     ```
-    ImmutableImage transformed = image1.transform(new TileFilter(3, 2))
+    ImmutableImage transformed = image1.transform(new TileTransform(3, 2))
     ```
 
 === "Kotlin"
 
     ```
-    val transformed = image1.transform(TileFilter(3, 2))
+    val transformed = image1.transform(TileTransform(3, 2))
     ```
 
 === "Scala"
 
     ```
-    val transformed = image1.transform(new TileFilter(3, 2))
+    val transformed = image1.transform(new TileTransform(3, 2))
     ```
 
 |  Input | Output |
