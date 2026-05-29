@@ -110,6 +110,7 @@ object ExampleGenerator {
       "laplace" to { _, _ -> LaplaceFilter() },
       "lensblur" to { _, _ -> LensBlurFilter() },
       "lensflare" to { _, _ -> LensFlareFilter() },
+      "ludwig" to { _, _ -> LudwigFilter() },
       "maximum" to { _, _ -> MaximumFilter() },
       "minimum" to { _, _ -> MinimumFilter() },
       "mirror" to { _, _ -> MirrorFilter() },
