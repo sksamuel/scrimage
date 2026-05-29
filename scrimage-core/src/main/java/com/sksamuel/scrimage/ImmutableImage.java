@@ -1411,16 +1411,16 @@ public class ImmutableImage extends MutableImage {
                return wrapAwt(fastScaleAwt(targetWidth, targetHeight), metadata);
          case Lanczos3:
             Lanczos3Filter lan = ResampleFilters.lanczos3Filter;
-            // op() preserves metadata; the previous code re-wrapped via
+            // resample() preserves metadata; the previous code re-wrapped via
             // wrapAwt(awt, type) which uses ImageMetadata.empty and silently
             // dropped EXIF/etc. on every scale.
-            return op(new ResampleOp(lan, targetWidth, targetHeight));
+            return resample(lan, targetWidth, targetHeight);
          case BSpline:
             BSplineFilter bs = ResampleFilters.bSplineFilter;
-            return op(new ResampleOp(bs, targetWidth, targetHeight));
+            return resample(bs, targetWidth, targetHeight);
          case Bilinear:
             TriangleFilter t = ResampleFilters.triangleFilter;
-            return op(new ResampleOp(t, targetWidth, targetHeight));
+            return resample(t, targetWidth, targetHeight);
          case Progressive:
             if (targetWidth >= width || targetHeight >= height)
                return scaleTo(targetWidth, targetHeight, ScaleMethod.Bicubic);
@@ -1428,10 +1428,78 @@ public class ImmutableImage extends MutableImage {
             return wrapAwt(result, metadata);
          case Bicubic:
             BiCubicFilter b = ResampleFilters.biCubicFilter;
-            return op(new ResampleOp(b, targetWidth, targetHeight));
+            return resample(b, targetWidth, targetHeight);
          default:
             throw new UnsupportedOperationException();
       }
+   }
+
+   /**
+    * Resamples this image with the given filter, premultiplying alpha so the
+    * colour of transparent pixels does not bleed into visible neighbours.
+    * <p>
+    * ResampleOp blends the colour channels with the filter weights without
+    * weighting by alpha. Where a transparent source pixel holds arbitrary
+    * (often black) colour, that colour leaks into nearby visible pixels,
+    * producing dark/bright halos along transparency edges after scaling. The
+    * correct approach is to resample in premultiplied-alpha space, which is
+    * linear and therefore separable. We do it here on plain ARGB ints — rather
+    * than inside ResampleOp — so it is independent of that class's internal
+    * (and type-dependent) channel ordering.
+    * <p>
+    * Fully opaque images take the original path unchanged, so their output is
+    * byte-for-byte identical to before.
+    */
+   private ImmutableImage resample(ResampleFilter filter, int targetWidth, int targetHeight) {
+      ResampleOp resampleOp = new ResampleOp(filter, targetWidth, targetHeight);
+      if (!awt().getColorModel().hasAlpha())
+         return op(resampleOp);
+
+      int[] src = awt().getRGB(0, 0, width, height, null, 0, width);
+      boolean hasTransparency = false;
+      for (int p : src) {
+         if (((p >>> 24) & 0xFF) != 0xFF) {
+            hasTransparency = true;
+            break;
+         }
+      }
+      if (!hasTransparency)
+         return op(resampleOp);
+
+      // Premultiply: colour' = colour * alpha / 255.
+      int[] prem = new int[src.length];
+      for (int i = 0; i < src.length; i++) {
+         int p = src[i];
+         int a = (p >>> 24) & 0xFF;
+         int r = ((p >> 16) & 0xFF) * a / 255;
+         int g = ((p >> 8) & 0xFF) * a / 255;
+         int bl = (p & 0xFF) * a / 255;
+         prem[i] = (a << 24) | (r << 16) | (g << 8) | bl;
+      }
+      ImmutableImage premul = ImmutableImage.create(width, height, BufferedImage.TYPE_INT_ARGB);
+      premul.awt().setRGB(0, 0, width, height, prem, 0, width);
+
+      BufferedImage scaled = resampleOp.filter(premul.awt(), null);
+
+      // Un-premultiply: colour = colour' * 255 / alpha (alpha == 0 → fully clear).
+      int sw = scaled.getWidth();
+      int sh = scaled.getHeight();
+      int[] out = scaled.getRGB(0, 0, sw, sh, null, 0, sw);
+      for (int i = 0; i < out.length; i++) {
+         int p = out[i];
+         int a = (p >>> 24) & 0xFF;
+         if (a == 0) {
+            out[i] = 0;
+            continue;
+         }
+         int r = Math.min(255, ((p >> 16) & 0xFF) * 255 / a);
+         int g = Math.min(255, ((p >> 8) & 0xFF) * 255 / a);
+         int bl = Math.min(255, (p & 0xFF) * 255 / a);
+         out[i] = (a << 24) | (r << 16) | (g << 8) | bl;
+      }
+      ImmutableImage result = ImmutableImage.create(sw, sh, DEFAULT_DATA_TYPE);
+      result.awt().setRGB(0, 0, sw, sh, out, 0, sw);
+      return result.associateMetadata(metadata);
    }
 
    /**
