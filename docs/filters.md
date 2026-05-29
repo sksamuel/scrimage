@@ -32,7 +32,7 @@ To apply a filter, we just use the `filter` method on an image, for example:
 === "Scala"
 
     ```
-    val filtered = image.composite(new DitherFilter())
+    val filtered = image.filter(new DitherFilter())
     ```
 
 
