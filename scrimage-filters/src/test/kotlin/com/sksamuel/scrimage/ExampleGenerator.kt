@@ -79,6 +79,7 @@ object ExampleGenerator {
       "black_threshold" to { _, _ -> BlackThresholdFilter(38.0) },
       "blur" to { _, _ -> BlurFilter() },
       "border" to { _, _ -> BorderFilter(8, Color.GRAY) },
+      "brannan" to { _, _ -> BrannanFilter() },
       "brightness" to { _, _ -> BrightnessFilter(1.3f) },
       "brooklyn" to { _, _ -> BrooklynFilter() },
       "bump" to { _, _ -> BumpFilter() },
