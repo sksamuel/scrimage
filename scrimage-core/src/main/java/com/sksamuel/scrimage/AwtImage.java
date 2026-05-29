@@ -123,14 +123,12 @@ public class AwtImage {
          Pixel[] pixels = new Pixel[data.length];
          if (awt().getType() == BufferedImage.TYPE_INT_ARGB) {
             while (index < data.length) {
-               Point point = PixelTools.offsetToPoint(index, width);
-               pixels[index] = new Pixel(point.x, point.y, data[index]);
+               pixels[index] = new Pixel(index % width, index / width, data[index]);
                index++;
             }
          } else if (awt().getType() == BufferedImage.TYPE_INT_RGB) {
             while (index < data.length) {
-               Point point = PixelTools.offsetToPoint(index, width);
-               pixels[index] = new Pixel(point.x, point.y, data[index] | 0xFF000000);
+               pixels[index] = new Pixel(index % width, index / width, data[index] | 0xFF000000);
                index++;
             }
          } else {
