@@ -190,7 +190,8 @@ object ExampleGenerator {
       "watermark" to { _, _ -> WatermarkFilter("watermark", 50, 200, font, true, 0.5, Color.WHITE) },
       "watermark_cover" to { _, _ -> WatermarkCoverFilter("watermark", font, true, 0.2, Color.WHITE) },
       "watermark_stamp" to { _, s -> WatermarkStampFilter("watermark", FontUtils.createFont(Font.SANS_SERIF, s.width / 10), true, 0.2, Color.WHITE) },
-      "willow" to { _, _ -> WillowFilter() }
+      "willow" to { _, _ -> WillowFilter() },
+      "xpro_ii" to { _, _ -> Xpro2Filter() }
    ).sortedBy { it.first }
 
    @JvmStatic
