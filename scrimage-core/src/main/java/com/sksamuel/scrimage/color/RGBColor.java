@@ -72,6 +72,8 @@ public class RGBColor implements Color {
     * Returns as an int the value of this color.
     * The RGB and alpha components are packed as rgba.
     * Use toARGBInt() for clarity.
+    *
+    * @return the packed ARGB integer value of this color
     */
    @Deprecated
    public int toInt() {
@@ -109,6 +111,8 @@ public class RGBColor implements Color {
    /**
     * Returns a conversion of this color into a CYMK color.
     * If this colour is already a CYMK then the same instance will be returned.
+    *
+    * @return this color converted to a CMYKColor
     */
    public CMYKColor toCMYK() {
       float max = Math.max(Math.max(red, green), blue) / 255f;

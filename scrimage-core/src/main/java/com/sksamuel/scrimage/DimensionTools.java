@@ -38,6 +38,8 @@ public class DimensionTools {
    /**
     * Returns width and height that allow the given source width, height to fit inside the target width, height
     * without losing aspect ratio
+    *
+    * @return the dimensions that fit the source inside the target while preserving aspect ratio
     */
    public static Dimension dimensionsToFit(Dimension target, Dimension source) {
 

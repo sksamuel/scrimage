@@ -6,6 +6,8 @@ public interface GraphicsContext {
 
     /**
      * An implementation of [GraphicsContext] that does not change the Graphics object.
+     *
+     * @return a GraphicsContext that leaves the Graphics object unmodified.
      */
     static GraphicsContext identity() {
         return g2 -> {

@@ -53,6 +53,8 @@ public class AwtImage {
 
    /**
     * Returns the [BufferedImage] that this Image is wrapping.
+    *
+    * @return the wrapped BufferedImage
     */
    public BufferedImage awt() {
       return awt;
@@ -60,6 +62,8 @@ public class AwtImage {
 
    /**
     * The centre coordinates for the image.
+    *
+    * @return the centre point of the image
     */
    public Point center() {
       return new Point(width / 2, height / 2);
@@ -75,6 +79,8 @@ public class AwtImage {
 
    /**
     * The radius of the image defined as the centre to the corners.
+    *
+    * @return the radius of the image in pixels
     */
    public int radius() {
       return (int) Math.sqrt(Math.pow(width / 2.0, 2) + Math.pow(height / 2.0, 2));
@@ -94,6 +100,8 @@ public class AwtImage {
 
    /**
     * Returns the AWT type of this image.
+    *
+    * @return the AWT image type
     */
    public int getType() {
       return awt().getType();
@@ -101,6 +109,8 @@ public class AwtImage {
 
    /**
     * Returns the colors of this image represented as an array of RGBColor.
+    *
+    * @return an array of the image's colors as RGBColor
     */
    public RGBColor[] colors() {
       int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
@@ -113,6 +123,8 @@ public class AwtImage {
 
    /**
     * Returns the pixels of this image represented as an array of Pixels.
+    *
+    * @return an array of the image's pixels
     */
    public Pixel[] pixels() {
       DataBuffer buffer = awt().getRaster().getDataBuffer();
@@ -216,6 +228,8 @@ public class AwtImage {
     * iterate over all the coordinates.
     * <p>
     * If you want the actual pixel values of every point then use pixels().
+    *
+    * @return an array of every point in the image
     */
    public Point[] points() {
       Point[] points = new Point[width * height];
@@ -261,6 +275,8 @@ public class AwtImage {
 
    /**
     * Returns an array of rows, where each row is itself an array of pixels in that row.
+    *
+    * @return an array of rows, each an array of pixels
     */
    public Pixel[][] rows() {
       int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
@@ -430,6 +446,8 @@ public class AwtImage {
     * <p>
     * Legal values for `x` and `y` are in [0, width) and [0, height),
     * respectively.
+    *
+    * @return the interpolated sub-pixel as a packed ARGB int
     */
    public int subpixel(double x, double y) {
       return new LinearSubpixelInterpolator(this).subpixel(x, y);
@@ -440,6 +458,8 @@ public class AwtImage {
     * alignment (no subpixel extraction).
     * <p>
     * The patches are returned as an array of of pixel matrices arrays.
+    *
+    * @return an array of patches, each an array of pixels
     */
    public Pixel[][] patches(int patchWidth, int patchHeight) {
       // Sliding-window enumeration: a patch starting at (col, row) is valid
@@ -547,6 +567,8 @@ public class AwtImage {
     * If the source has BufferedImage.TYPE_CUSTOM (type 0) — which can't be
     * fed back into the BufferedImage(width, height, type) constructor —
     * falls back to TYPE_INT_ARGB, matching ImmutableImage.fromAwt's policy.
+    *
+    * @return a new uninitialized AwtImage with the same dimensions
     */
    public AwtImage empty() {
       int type = awt.getType();
@@ -587,6 +609,8 @@ public class AwtImage {
 
    /**
     * Returns a new AWT BufferedImage scaled using nearest-neighbour.
+    *
+    * @return a new scaled BufferedImage
     */
    protected BufferedImage fastScaleAwt(int targetWidth, int targetHeight) {
       return scale(targetWidth, targetHeight, new AwtNearestNeighbourScale());
@@ -594,6 +618,8 @@ public class AwtImage {
 
    /**
     * Returns a new AWT Image rotated with the given angle (in radians)
+    *
+    * @return a new rotated BufferedImage
     */
    protected BufferedImage rotateByRadians(Radians angle, Color bgcolor) {
 
@@ -617,6 +643,8 @@ public class AwtImage {
 
    /**
     * Returns true if the given predicate holds for all pixels in the image.
+    *
+    * @return true if the predicate holds for every pixel
     */
    public boolean forAll(Predicate<Pixel> predicate) {
       int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
@@ -631,6 +659,8 @@ public class AwtImage {
 
    /**
     * Programatically returns the origin point of top left.
+    *
+    * @return the pixel at the top left of the image
     */
    public Pixel topLeftPixel() {
       return pixel(0, 0);
@@ -650,6 +680,8 @@ public class AwtImage {
 
    /**
     * Returns true if this image supports transparency/alpha in its underlying data model.
+    *
+    * @return true if the image supports alpha
     */
    public boolean hasAlpha() {
       return awt().getColorModel().hasAlpha();
@@ -657,6 +689,8 @@ public class AwtImage {
 
    /**
     * Returns true if this image supports transparency/alpha in its underlying data model.
+    *
+    * @return true if the image supports alpha
     */
    @Deprecated()
    public boolean hasTransparency() {
@@ -665,6 +699,8 @@ public class AwtImage {
 
    /**
     * Returns the average colour of all pixels in this image
+    *
+    * @return the average colour of the image
     */
    public RGBColor average() {
       return Arrays.stream(pixels()).map(Pixel::toColor).reduce(com.sksamuel.scrimage.color.Color::average).get();
@@ -674,6 +710,7 @@ public class AwtImage {
     * Returns true if all the pixels on this image are a single color.
     *
     * @param color the color to test pixels against
+    * @return true if every pixel matches the given color
     */
    public boolean isFilled(Color color) {
       int target = color.getRGB();
@@ -709,6 +746,7 @@ public class AwtImage {
     * the supplied writer.
     *
     * @deprecated pointless method that simply wraps bytes()
+    * @return a stream of the image's bytes written by the given writer
     */
    @Deprecated
    public ByteArrayInputStream stream(ImageWriter writer) throws IOException {
@@ -717,6 +755,8 @@ public class AwtImage {
 
    /**
     * Returns a copy of this image with the backing image type set to the given value.
+    *
+    * @return a copy of this image with the given backing type
     */
    public AwtImage clone(int imageType) {
       if (imageType <= 0) throw new IllegalArgumentException("Image type must be > 0");

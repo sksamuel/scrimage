@@ -186,6 +186,7 @@ public class ImmutableImage extends MutableImage {
     * Creates a new [ImmutableImage] from a file.
     * This method will also attach metadata.
     *
+    * @return a new ImmutableImage loaded from the given file
     * @deprecated use ImmutableImage.loader().fromFile(file);
     */
    @Deprecated
@@ -197,6 +198,7 @@ public class ImmutableImage extends MutableImage {
     * Creates a new [ImmutableImage] from a path.
     * This method will also attach metadata.
     *
+    * @return a new ImmutableImage loaded from the given path
     * @deprecated use ImmutableImage.loader().fromPath(path);
     */
    @Deprecated
@@ -327,6 +329,7 @@ public class ImmutableImage extends MutableImage {
    /**
     * Creates a new Image from the resource on the classpath.
     *
+    * @return a new Image loaded from the classpath resource
     * @deprecated use ImmutableImage.loader().fromResource(file);
     */
    @Deprecated
@@ -335,6 +338,7 @@ public class ImmutableImage extends MutableImage {
    }
 
    /**
+    * @return a new Image loaded from the classpath resource using the given image type
     * @deprecated use ImmutableImage.loader().fromResource(file);
     */
    @Deprecated
@@ -434,6 +438,7 @@ public class ImmutableImage extends MutableImage {
     * @param color          the color to match
     * @param colorTolerance the amount of tolerance to use when determining whether
     *                       the color matches the reference color [0..255]
+    * @return a new cropped Image with the matching rows and columns removed
     */
    public ImmutableImage autocrop(Color color, int colorTolerance) {
       int x1 = AutocropOps.scanright(color, height, width, 0, pixelExtractor(), colorTolerance);
@@ -470,6 +475,8 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Convenience method for bound(w, h, ScaleMethod.Bicubic)
+    *
+    * @return a new Image bounded to the given width and height
     */
    public ImmutableImage bound(int w, int h) {
       return bound(w, h, ScaleMethod.Bicubic);
@@ -496,6 +503,8 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Returns a new Image with the brightness adjusted.
+    *
+    * @return a new Image with the brightness adjusted by the given factor
     */
    public ImmutableImage brightness(double factor) {
       ImmutableImage target = copy();
@@ -521,6 +530,8 @@ public class ImmutableImage extends MutableImage {
    /**
     * Returns a copy of this image with the underlying image type set to the given value.
     * The type value is one of the AWT standard image types, taken from BufferedImage.
+    *
+    * @return a copy of this image using the given underlying image type
     */
    public ImmutableImage copy(int type) {
       return fromAwt(awt(), type).associateMetadata(metadata);
@@ -546,6 +557,8 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Returns a new Image with the contrast adjusted.
+    *
+    * @return a new Image with the contrast adjusted by the given factor
     */
    public ImmutableImage contrast(double factor) {
       ImmutableImage target = copy();
@@ -555,6 +568,8 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Convenience method for cover(targetWidth, targetHeight, ScaleMethod.Bicubic, Position.Center)
+    *
+    * @return a new Image scaled to cover the given dimensions
     */
    public ImmutableImage cover(int targetWidth,
                                int targetHeight) {
@@ -563,6 +578,8 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Convenience method for cover(targetWidth, targetHeight, ScaleMethod.Bicubic, position)
+    *
+    * @return a new Image scaled to cover the given dimensions at the given position
     */
    public ImmutableImage cover(int targetWidth,
                                int targetHeight,
@@ -704,6 +721,8 @@ public class ImmutableImage extends MutableImage {
    /**
     * Convenience method for:
     * fit(canvasWidth, canvasHeight, Colors.Transparent.toAWT(), ScaleMethod.Bicubic, Position.Center)
+    *
+    * @return a new Image scaled to fit inside the given canvas dimensions
     */
    public ImmutableImage fit(int canvasWidth,
                              int canvasHeight) {
@@ -788,6 +807,7 @@ public class ImmutableImage extends MutableImage {
     * Returns the most n used colours in this image.
     *
     * @param colours how many colours to quantize for.
+    * @return an array of the most used colours in this image
     */
    public RGBColor[] quantize(int colours) {
       MMCQ.CMap cmap = ColorThief.getColorMap(this.awt(), colours);
@@ -796,6 +816,8 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Applies an affine transform in place.
+    *
+    * @return the BufferedImage resulting from applying the affine transform
     */
    private BufferedImage affineTransform(AffineTransform tx) {
       AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
@@ -826,6 +848,8 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Convenience method for max(maxW, maxH, ScaleMethod.Bicubic)
+    *
+    * @return a new Image constrained to the given maximum width and height
     */
    public ImmutableImage max(int maxW, int maxH) {
       return max(maxW, maxH, ScaleMethod.Bicubic);
@@ -1110,6 +1134,8 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Returns a copy of this image rotated 90 degrees anti-clockwise (counter clockwise to US English speakers).
+    *
+    * @return a copy of this image rotated 90 degrees anti-clockwise
     */
    public ImmutableImage rotateLeft() {
       Radians angle = new Radians(-Math.PI / 2);
@@ -1118,6 +1144,8 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Returns a copy of this image rotated 90 degrees clockwise.
+    *
+    * @return a copy of this image rotated 90 degrees clockwise
     */
    public ImmutableImage rotateRight() {
       Radians angle = new Radians(Math.PI / 2);
@@ -1280,6 +1308,8 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Returns a new ImmutableImage with transparency replaced with the given color.
+    *
+    * @return a new ImmutableImage with transparency replaced by the given color
     */
    public ImmutableImage removeTransparency(Color color) {
       ImmutableImage target = copy();
@@ -1289,6 +1319,8 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Convenience method for scaleToWidth(targetWith, scaleMethod)
+    *
+    * @return a new Image scaled to the given target width
     */
    public ImmutableImage scaleToWidth(int targetWidth) {
       return scaleToWidth(targetWidth, ScaleMethod.Bicubic);
@@ -1319,6 +1351,8 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Convenience method for scaleToHeight(targetHeight, ScaleMethod.Bicubic)
+    *
+    * @return a new Image scaled to the given target height
     */
    public ImmutableImage scaleToHeight(int targetHeight) {
       return scaleToHeight(targetHeight, ScaleMethod.Bicubic);
@@ -1326,6 +1360,8 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Convenience method for scaleToHeight(targetHeight, scaleMethod, true)
+    *
+    * @return a new Image scaled to the given target height using the given scale method
     */
    public ImmutableImage scaleToHeight(int targetHeight, ScaleMethod scaleMethod) {
       return scaleToHeight(targetHeight, scaleMethod, true);
@@ -1381,6 +1417,8 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Convenience method for scaleTo(targetWidth, targetHeight, ScaleMethod.Bicubic);
+    *
+    * @return a new Image scaled to the given target width and height
     */
    public ImmutableImage scaleTo(int targetWidth,
                                  int targetHeight) {
@@ -1449,6 +1487,8 @@ public class ImmutableImage extends MutableImage {
     * <p>
     * Fully opaque images take the original path unchanged, so their output is
     * byte-for-byte identical to before.
+    *
+    * @return a new Image resampled to the given target width and height
     */
    private ImmutableImage resample(ResampleFilter filter, int targetWidth, int targetHeight) {
       ResampleOp resampleOp = new ResampleOp(filter, targetWidth, targetHeight);
@@ -1504,6 +1544,8 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Extracts a subimage, but using subpixel interpolation.
+    *
+    * @return a new Image extracted using subpixel interpolation
     */
    public ImmutableImage subpixelSubimage(double x,
                                           double y,
@@ -1550,6 +1592,8 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Extract a patch, centered at a subpixel point.
+    *
+    * @return a new Image patch centered at the given subpixel point
     */
    public ImmutableImage subpixelSubimageCenteredAtPoint(double x,
                                                          double y,
@@ -1606,6 +1650,8 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Returns a new Image which is the source image, but only keeping a max of k columns from the left.
+    *
+    * @return a new Image keeping at most k columns from the left
     */
    public ImmutableImage takeLeft(int k) {
       return subimage(0, 0, Math.min(k, width), height);
@@ -1613,6 +1659,8 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Returns a new Image which is the source image, but only keeping a max of k columns from the right.
+    *
+    * @return a new Image keeping at most k columns from the right
     */
    public ImmutableImage takeRight(int k) {
       // trim k to the max we can use, which is the width
@@ -1622,6 +1670,8 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Returns a new Image which is the source image, but only keeping a max of k rows from the top.
+    *
+    * @return a new Image keeping at most k rows from the top
     */
    public ImmutableImage takeTop(int k) {
       return subimage(0, 0, width, Math.min(k, height));
@@ -1629,6 +1679,8 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Returns a new Image which is the source image, but only keeping a max of k rows from the bottom.
+    *
+    * @return a new Image keeping at most k rows from the bottom
     */
    public ImmutableImage takeBottom(int k) {
       // trim k to the max we can use, which is the height
@@ -1783,6 +1835,8 @@ public class ImmutableImage extends MutableImage {
     * Returns this image, with metadata attached.
     * <p>
     * Both the original and the new image will share a buffer
+    *
+    * @return a new ImmutableImage sharing this image's buffer with the given metadata attached
     */
    public ImmutableImage associateMetadata(ImageMetadata metadata) {
       return new ImmutableImage(awt(), metadata);
@@ -1820,6 +1874,7 @@ public class ImmutableImage extends MutableImage {
     * The function accepts a pixel being transformed and returns a new (or same) color.
     *
     * @param mapper the function to transform pixel x,y with existing value p into new pixel value p' (p prime)
+    * @return a new Image with the mapper function applied to each pixel
     */
    public ImmutableImage map(Function<Pixel, Color> mapper) {
       ImmutableImage target = copy();
@@ -1829,6 +1884,8 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Returns a Canvas that wraps this image.
+    *
+    * @return a new Canvas that wraps this image
     */
    public Canvas toCanvas() {
       return new Canvas(this);

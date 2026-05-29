@@ -63,6 +63,8 @@ public class Pixel {
 
    /**
     * Returns this pixel as a packed ARGB int.
+    *
+    * @return the packed ARGB int value of this pixel
     */
    public int toARGBInt() {
       return argb;
@@ -71,6 +73,8 @@ public class Pixel {
    /**
     * Returns a copy of this pixel, with the same red, green, blue values, but with alpha
     * set to the given value.
+    *
+    * @return a new pixel with the given alpha value
     */
    public Pixel alpha(int a) {
       return new Pixel(x, y, red(), green(), blue(), a);
@@ -79,6 +83,8 @@ public class Pixel {
    /**
     * Returns a copy of this pixel, with the same red, green, blue values, but with alpha
     * set to fully opaque (255).
+    *
+    * @return a new fully opaque copy of this pixel
     */
    public Pixel noalpha() {
       return alpha(255);
@@ -87,6 +93,8 @@ public class Pixel {
    /**
     * Returns a copy of this pixel, with the same red, green, blue values, but with alpha
     * set to fully transparent (0).
+    *
+    * @return a new fully transparent copy of this pixel
     */
    public Pixel fullalpha() {
       return alpha(0);
@@ -94,6 +102,8 @@ public class Pixel {
 
    /**
     * Returns a copy of this pixel with the red component set to the given value.
+    *
+    * @return a new pixel with the given red component
     */
    public Pixel red(int r) {
       return new Pixel(x, y, r, green(), blue(), alpha());
@@ -101,6 +111,8 @@ public class Pixel {
 
    /**
     * Returns a copy of this pixel with the green component set to the given value.
+    *
+    * @return a new pixel with the given green component
     */
    public Pixel green(int g) {
       return new Pixel(x, y, red(), g, blue(), alpha());
@@ -108,6 +120,8 @@ public class Pixel {
 
    /**
     * Returns a copy of this pixel with the blue component set to the given value.
+    *
+    * @return a new pixel with the given blue component
     */
    public Pixel blue(int b) {
       return new Pixel(x, y, red(), green(), b, alpha());
@@ -115,6 +129,8 @@ public class Pixel {
 
    /**
     * Returns this pixel as an array of ARGB values.
+    *
+    * @return an array of the alpha, red, green and blue components
     */
    public int[] toARGB() {
       return new int[]{alpha(), red(), green(), blue()};
@@ -123,6 +139,8 @@ public class Pixel {
    /**
     * Returns a copy of this Pixel with the colour as grayscale using the average method.
     * The Average method takes the average value of R, G, and B as the grayscale value.
+    *
+    * @return a new grayscale copy of this pixel using the average method
     */
    public Pixel toAverageGrayscale() {
       int gray = (red() + green() + blue()) / 3;
@@ -131,6 +149,8 @@ public class Pixel {
 
    /**
     * Returns this pixel as an array of RGB values, ignoring any alpha value.
+    *
+    * @return an array of the red, green and blue components
     */
    public int[] toRGB() {
       return new int[]{red(), green(), blue()};

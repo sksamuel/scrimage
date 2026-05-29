@@ -43,6 +43,7 @@ public class ImageReaders {
     * @param source    the image source
     * @param rectangle an optional subset of the image to read.
     * @param readers   the readers that should be used to attempt to load this image.
+    * @return the image read from the given source
     */
    public static ImmutableImage read(ImageSource source, Rectangle rectangle, List<ImageReader> readers) throws IOException {
       List<Throwable> errors = new ArrayList<>();

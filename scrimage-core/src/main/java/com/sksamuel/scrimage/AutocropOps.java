@@ -18,6 +18,8 @@ public class AutocropOps {
    /**
     * Starting with the given column index, will return the first column index
     * which contains a colour that does not match the given color.
+    *
+    * @return the index of the first column from the left that does not match the given color
     */
    public static int scanright(Color color, int height, int width, int col, PixelsExtractor f, int tolerance) {
       while (col < width && PixelTools.colorMatches(color, tolerance, f.apply(new Rectangle(col, 0, 1, height))))

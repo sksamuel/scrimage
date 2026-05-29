@@ -11,6 +11,8 @@ public class ProgressiveScale {
 
    /**
     * Scales an image progressively, by starting with the original scale and halving it, until the target size is reached.
+    *
+    * @return the progressively scaled BufferedImage at the target dimensions
     */
    public static BufferedImage scale(BufferedImage image,
                                      int targetWidth,

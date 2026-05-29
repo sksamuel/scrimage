@@ -19,7 +19,11 @@ public final class CssFilters {
       return v < 0f ? 0f : (v > 1f ? 1f : v);
    }
 
-   /** {@code brightness(amount)} multiplies each channel by amount. */
+   /**
+    * {@code brightness(amount)} multiplies each channel by amount.
+    *
+    * @return a CssOp applying the brightness adjustment
+    */
    public static CssOp brightness(float amount) {
       return rgb -> {
          rgb[0] = clamp(rgb[0] * amount);
@@ -28,7 +32,11 @@ public final class CssFilters {
       };
    }
 
-   /** {@code contrast(amount)} scales each channel around the 0.5 midpoint. */
+   /**
+    * {@code contrast(amount)} scales each channel around the 0.5 midpoint.
+    *
+    * @return a CssOp applying the contrast adjustment
+    */
    public static CssOp contrast(float amount) {
       return rgb -> {
          rgb[0] = clamp((rgb[0] - 0.5f) * amount + 0.5f);
@@ -37,22 +45,38 @@ public final class CssFilters {
       };
    }
 
-   /** {@code saturate(amount)}; 0 is greyscale, 1 is identity, &gt;1 over-saturates. */
+   /**
+    * {@code saturate(amount)}; 0 is greyscale, 1 is identity, &gt;1 over-saturates.
+    *
+    * @return a CssOp applying the saturation adjustment
+    */
    public static CssOp saturate(float amount) {
       return matrix(saturateMatrix(amount));
    }
 
-   /** {@code grayscale(amount)}; 1 is fully grey. Equivalent to saturate(1 - amount). */
+   /**
+    * {@code grayscale(amount)}; 1 is fully grey. Equivalent to saturate(1 - amount).
+    *
+    * @return a CssOp applying the grayscale adjustment
+    */
    public static CssOp grayscale(float amount) {
       return matrix(saturateMatrix(1f - amount));
    }
 
-   /** {@code sepia(amount)}; 0 is identity, 1 is full sepia. */
+   /**
+    * {@code sepia(amount)}; 0 is identity, 1 is full sepia.
+    *
+    * @return a CssOp applying the sepia adjustment
+    */
    public static CssOp sepia(float amount) {
       return matrix(sepiaMatrix(amount));
    }
 
-   /** {@code hue-rotate(degrees)} rotates the hue around the colour wheel. */
+   /**
+    * {@code hue-rotate(degrees)} rotates the hue around the colour wheel.
+    *
+    * @return a CssOp applying the hue rotation
+    */
    public static CssOp hueRotate(float degrees) {
       return matrix(hueRotateMatrix(degrees));
    }

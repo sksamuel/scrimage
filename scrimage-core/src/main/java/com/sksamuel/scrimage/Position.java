@@ -24,11 +24,15 @@ public interface Position {
 
     /**
      * Returns the x coordinate for where a target should be placed inside the source.
+     *
+     * @return the x coordinate for the target within the source.
      */
     int calculateX(int sourceWidth, int sourceHeight, int targetWidth, int targetHeight);
 
     /**
      * Returns the y coordinate for where an image should be placed inside the canvas.
+     *
+     * @return the y coordinate for the target within the source.
      */
     int calculateY(int sourceWidth, int sourceHeight, int targetWidth, int targetHeight);
 
