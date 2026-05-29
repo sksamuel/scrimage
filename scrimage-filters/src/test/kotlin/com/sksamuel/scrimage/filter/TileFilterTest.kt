@@ -6,11 +6,11 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 
-class RepeaterFilterTest : FunSpec({
+class TileFilterTest : FunSpec({
 
-   test("RepeaterFilter enlarges the image to columns x rows of the source") {
+   test("TileFilter enlarges the image to columns x rows of the source") {
       val image = ImmutableImage.create(40, 30)
-      val out = image.transform(RepeaterFilter(2, 3))
+      val out = image.transform(TileFilter(2, 3))
       out.width shouldBe 80
       out.height shouldBe 90
    }
@@ -24,7 +24,7 @@ class RepeaterFilterTest : FunSpec({
          Pixel(1, 1, 255, 255, 0, 255)
       )
       val image = ImmutableImage.create(2, 2, pixels)
-      val out = image.transform(RepeaterFilter(2, 3))
+      val out = image.transform(TileFilter(2, 3))
       out.width shouldBe 4
       out.height shouldBe 6
       // top-left pixel of every tile equals the source top-left (red)
@@ -36,8 +36,8 @@ class RepeaterFilterTest : FunSpec({
       }
    }
 
-   test("RepeaterFilter rejects non-positive grid dimensions") {
-      shouldThrow<IllegalArgumentException> { RepeaterFilter(0, 2) }
-      shouldThrow<IllegalArgumentException> { RepeaterFilter(2, 0) }
+   test("TileFilter rejects non-positive grid dimensions") {
+      shouldThrow<IllegalArgumentException> { TileFilter(0, 2) }
+      shouldThrow<IllegalArgumentException> { TileFilter(2, 0) }
    }
 })
