@@ -129,6 +129,25 @@ object ExampleGenerator extends App {
   def cell(imgName: String, name: String): String =
     s"<a href='$baseUrl/${imgName}_${name}_large.jpeg'><img width='$displayWidth' src='$baseUrl/${imgName}_${name}_small.png'></a>"
 
+  // A grey/white checkerboard, used as a backdrop so transparency is visible.
+  def checkerboard(w: Int, h: Int): ImmutableImage = {
+    val img = ImmutableImage.create(w, h)
+    val g = img.awt().getGraphics.asInstanceOf[java.awt.Graphics2D]
+    val sq = Math.max(8, w / 24)
+    var y = 0
+    while (y < h) {
+      var x = 0
+      while (x < w) {
+        g.setColor(if (((x / sq) + (y / sq)) % 2 == 0) new java.awt.Color(0xCCCCCC) else java.awt.Color.WHITE)
+        g.fillRect(x, y, sq, sq)
+        x += sq
+      }
+      y += sq
+    }
+    g.dispose()
+    img
+  }
+
   val sb = new StringBuffer()
   sb.append("| Filter | Original | Filter |\n")
   sb.append("| ------ | -------- | ------ |\n")
@@ -139,8 +158,17 @@ object ExampleGenerator extends App {
     // original dimensions and only the inline thumbnail is downscaled.
     val source = img.copy(java.awt.image.BufferedImage.TYPE_INT_ARGB)
     println("Generating example " + imgName + " " + filterName)
-    source.filter(factory(imgName, source)).output(new File("examples/filters/" + imgName + "_" + filterName + "_large.jpeg"))(JpegWriter.compression(95))
-    source.filter(factory(imgName, source)).scaleToWidth(thumbWidth).forWriter(PngWriter.MaxCompression)
+    // invert_alpha only flips the alpha channel, which is invisible on an opaque
+    // photo saved as JPEG. Demonstrate it by fading the source's alpha left-to-right,
+    // inverting, and compositing over a checkerboard so the transparency shows.
+    val result =
+      if (filterName == "invert_alpha") {
+        val w = source.width
+        val faded = source.map(p => new java.awt.Color(p.red, p.green, p.blue, if (w > 1) (255 * p.x) / (w - 1) else 255))
+        checkerboard(source.width, source.height).overlay(faded.filter(new InvertAlphaFilter()))
+      } else source.filter(factory(imgName, source))
+    result.output(new File("examples/filters/" + imgName + "_" + filterName + "_large.jpeg"))(JpegWriter.compression(95))
+    result.scaleToWidth(thumbWidth).forWriter(PngWriter.MaxCompression)
       .write(new File("examples/filters/" + imgName + "_" + filterName + "_small.png"))
     sb.append(s"| $filterName | ${cell(imgName, "original")} | ${cell(imgName, filterName)} |\n")
   }
