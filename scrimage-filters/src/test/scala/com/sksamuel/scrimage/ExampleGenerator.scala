@@ -89,6 +89,7 @@ object ExampleGenerator extends App {
     ("oil", (_, _) => new OilFilter()),
     ("old_photo", (_, _) => new OldPhotoFilter()),
     ("opacity", (_, _) => new OpacityFilter(0.5f)),
+    ("perpetua", (_, _) => new PerpetuaFilter()),
     ("pixelate", (_, _) => new PixelateFilter(6)),
     ("pointillize_square", (_, _) => new PointillizeFilter(PointillizeGridType.Square)),
     ("posterize", (_, _) => new PosterizeFilter()),
