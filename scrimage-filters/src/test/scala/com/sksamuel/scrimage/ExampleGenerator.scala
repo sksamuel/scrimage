@@ -129,7 +129,8 @@ object ExampleGenerator extends App {
     ("walden", (_, _) => new WaldenFilter()),
     ("watermark", (_, _) => new WatermarkFilter("watermark", 50, 200, font, true, 0.5, java.awt.Color.WHITE)),
     ("watermark_cover", (_, _) => new WatermarkCoverFilter("watermark", font, true, 0.2, Color.White.toAWT)),
-    ("watermark_stamp", (_, s) => new WatermarkStampFilter("watermark", FontUtils.createFont(Font.SANS_SERIF, s.width / 10), true, 0.2, Color.White.toAWT))
+    ("watermark_stamp", (_, s) => new WatermarkStampFilter("watermark", FontUtils.createFont(Font.SANS_SERIF, s.width / 10), true, 0.2, Color.White.toAWT)),
+    ("willow", (_, _) => new WillowFilter())
   ).sortBy(_._1)
 
   // One unfiltered "original" per sample image. The large click-through image
