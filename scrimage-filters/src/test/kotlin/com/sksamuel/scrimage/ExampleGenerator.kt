@@ -84,6 +84,7 @@ object ExampleGenerator {
       "caption" to { _, _ -> CaptionFilter("Example", Position.BottomLeft, font, Color.WHITE, 1.0, true, true, Color.WHITE, 0.2, Padding(10)) },
       "caustics" to { _, _ -> CausticsFilter(1.2f, 1.0f, 0.3f, 0xff799fff.toInt()) },
       "chrome" to { _, _ -> ChromeFilter(0.3f, 1.0f) },
+      "clarendon" to { _, _ -> ClarendonFilter() },
       "color_halftone" to { _, _ -> ColorHalftoneFilter() },
       "colorize" to { _, _ -> ColorizeFilter(255, 0, 0, 50) },
       "contour" to { _, _ -> ContourFilter() },
