@@ -135,6 +135,7 @@ object ExampleGenerator {
       "sepia" to { _, _ -> SepiaFilter() },
       "sharpen" to { _, _ -> SharpenFilter() },
       "skeleton" to { _, _ -> SkeletonFilter() },
+      "slumber" to { _, _ -> SlumberFilter() },
       "smear_circles" to { _, _ -> SmearFilter(SmearType.Circles) },
       "snow" to { _, _ -> SnowFilter() },
       "sobels" to { _, _ -> SobelsFilter() },
