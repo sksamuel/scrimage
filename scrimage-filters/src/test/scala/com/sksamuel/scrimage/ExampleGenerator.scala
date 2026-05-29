@@ -37,7 +37,7 @@ object ExampleGenerator extends App {
   val filters: List[(String, (String, ImmutableImage) => Filter)] = List(
     ("alpha_mask", (n, s) => new AlphaMaskFilter(differentFrom(n, s))),
     ("background_blend", (_, _) => new BackgroundBlendFilter()),
-    ("black_threshold", (_, _) => new BlackThresholdFilter(60)),
+    ("black_threshold", (_, _) => new BlackThresholdFilter(52)),
     ("blur", (_, _) => new BlurFilter),
     ("border", (_, _) => new BorderFilter(8)),
     ("brightness", (_, _) => new BrightnessFilter(1.3f)),
