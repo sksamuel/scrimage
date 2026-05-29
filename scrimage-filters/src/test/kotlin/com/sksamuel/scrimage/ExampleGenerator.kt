@@ -98,6 +98,7 @@ object ExampleGenerator {
       "diffuse" to { _, _ -> DiffuseFilter(4f) },
       "dissolve" to { _, _ -> DissolveFilter(0.4f) },
       "dither" to { _, _ -> DitherFilter() },
+      "dogpatch" to { _, _ -> DogpatchFilter() },
       "dominant_gradient" to { _, _ -> DominantGradientFilter() },
       "edge" to { _, _ -> EdgeFilter() },
       "emboss" to { _, _ -> EmbossFilter() },
