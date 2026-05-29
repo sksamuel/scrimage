@@ -126,6 +126,7 @@ object ExampleGenerator {
       "kaleidoscope" to { _, _ -> KaleidoscopeFilter() },
       "kelvin" to { _, _ -> KelvinFilter() },
       "laplace" to { _, _ -> LaplaceFilter() },
+      "lark" to { _, _ -> LarkFilter() },
       "lensblur" to { _, _ -> LensBlurFilter() },
       "lensflare" to { _, _ -> LensFlareFilter() },
       "ludwig" to { _, _ -> LudwigFilter() },
