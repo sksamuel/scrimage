@@ -74,6 +74,7 @@ object ExampleGenerator extends App {
     ("hsb", (_, _) => new HSBFilter(0.5f, 0, 0)),
     ("invert", (_, _) => new InvertFilter),
     ("invert_alpha", (_, _) => new InvertAlphaFilter),
+    ("juno", (_, _) => new JunoFilter()),
     ("kaleidoscope", (_, _) => new KaleidoscopeFilter()),
     ("laplace", (_, _) => new LaplaceFilter()),
     ("lensblur", (_, _) => new LensBlurFilter()),
