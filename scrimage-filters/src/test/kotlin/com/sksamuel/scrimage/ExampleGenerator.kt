@@ -117,6 +117,7 @@ object ExampleGenerator {
       "maximum" to { _, _ -> MaximumFilter() },
       "minimum" to { _, _ -> MinimumFilter() },
       "mirror" to { _, _ -> MirrorFilter() },
+      "moon" to { _, _ -> MoonFilter() },
       "motionblur" to { _, _ -> MotionBlurFilter(Math.PI / 3.0, 20.0) },
       "nashville" to { _, _ -> NashvilleFilter() },
       "noise" to { _, _ -> NoiseFilter() },
