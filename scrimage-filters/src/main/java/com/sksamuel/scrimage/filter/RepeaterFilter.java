@@ -18,15 +18,23 @@ package com.sksamuel.scrimage.filter;
 import com.sksamuel.scrimage.ImmutableImage;
 
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 
 /**
- * Repeats (tiles) the source image across the canvas. Given {@code columns} and
- * {@code rows}, the image is laid out as a grid of {@code columns} copies across
- * and {@code rows} copies down, each copy scaled to fit its cell. The output
- * keeps the original dimensions, so {@code RepeaterFilter(2, 3)} produces a 2x3
- * grid of shrunken copies of the original within the same frame.
+ * Repeats (tiles) the source image across a larger canvas. Given {@code columns} and
+ * {@code rows}, the output image is laid out as a grid of {@code columns} copies across
+ * and {@code rows} copies down, with each copy drawn at the source image's full size.
+ * <p>
+ * Unlike a size-preserving {@link Filter}, this grows the canvas: the result has
+ * dimensions {@code (width * columns) x (height * rows)}. For example,
+ * {@code new RepeaterFilter(2, 3).apply(image)} returns an image twice as wide and three
+ * times as tall as the original, with the original tiled across its rows and columns.
+ * <p>
+ * Because the output dimensions differ from the input, this is not implemented as a
+ * {@link Filter} (which draws into a canvas of the original size); call
+ * {@link #apply(ImmutableImage)} directly to obtain the enlarged, tiled image.
  */
-public class RepeaterFilter implements Filter {
+public class RepeaterFilter {
 
    private final int columns;
    private final int rows;
@@ -38,27 +46,34 @@ public class RepeaterFilter implements Filter {
       this.rows = rows;
    }
 
-   @Override
-   public void apply(ImmutableImage image) {
+   /**
+    * Returns a new image that tiles the given image in a {@code columns x rows} grid,
+    * each tile drawn at the source image's full size. The returned image has dimensions
+    * {@code (image.width * columns) x (image.height * rows)}.
+    *
+    * @param image the image to tile
+    * @return a new, enlarged image containing the tiled copies
+    */
+   public ImmutableImage apply(ImmutableImage image) {
       int w = image.width;
       int h = image.height;
-      // Snapshot the current content; we draw scaled copies of it back over the
-      // same canvas. Cell boundaries are computed so the grid covers the full
-      // width/height exactly with no uncovered strip from integer division.
-      ImmutableImage source = image.copy();
-      Graphics2D g = (Graphics2D) image.awt().getGraphics();
+
+      // Preserve the source buffer type where possible; TYPE_CUSTOM cannot be used to
+      // construct a BufferedImage, so fall back to the default (ARGB) in that case.
+      int type = image.awt().getType();
+      if (type == BufferedImage.TYPE_CUSTOM) type = ImmutableImage.DEFAULT_DATA_TYPE;
+
+      ImmutableImage out = ImmutableImage.create(w * columns, h * rows, type);
+      Graphics2D g = (Graphics2D) out.awt().getGraphics();
       try {
          for (int c = 0; c < columns; c++) {
-            int x0 = c * w / columns;
-            int x1 = (c + 1) * w / columns;
             for (int r = 0; r < rows; r++) {
-               int y0 = r * h / rows;
-               int y1 = (r + 1) * h / rows;
-               g.drawImage(source.awt(), x0, y0, x1 - x0, y1 - y0, null);
+               g.drawImage(image.awt(), c * w, r * h, w, h, null);
             }
          }
       } finally {
          g.dispose();
       }
+      return out;
    }
 }

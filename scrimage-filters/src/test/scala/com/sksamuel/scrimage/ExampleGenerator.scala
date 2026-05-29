@@ -62,7 +62,6 @@ object ExampleGenerator extends App {
     ("prewitt", new PrewittFilter),
     ("quantize", new QuantizeFilter(256)),
     ("rays", new RaysFilter(0.1f, 0.6f, 0.5f)),
-    ("repeater", new RepeaterFilter(2, 3)),
     ("rgb", new RGBFilter(0.4f, 0.6f, 0.5f)),
     ("ripple", new RippleFilter(RippleType.Sine)),
     ("roberts", new RobertsFilter),
@@ -117,6 +116,18 @@ object ExampleGenerator extends App {
     //    image.resize(0.5).write(new File("examples/" + filename + "_resize_half.png"))
     //   image.fit(image.width - 20, image.height - 100).write(new File("examples/" + filename + "_fitted.png"))
     //    image.scale(0.5).write(new File("examples/" + filename + "_scale_half.png"))
+  }
+
+  // The repeater is not a size-preserving Filter (it grows the canvas by tiling the
+  // source across a columns x rows grid), so its examples are generated separately.
+  for (t <- List(("bird", image1), ("colosseum", image2), ("lanzarote", image3))) {
+    val filename = t._1
+    val resized = t._2.scaleToWidth(1200)
+    println("Generating example " + filename + " repeater")
+    val repeated = new RepeaterFilter(2, 3).apply(resized)
+    repeated.output(new File("examples/filters/" + filename + "_repeater_large.jpeg"))(JpegWriter.compression(95))
+    repeated.scaleToWidth(250).forWriter(PngWriter.MaxCompression)
+            .write(new File("examples/filters/" + filename + "_repeater_small.png"))
   }
 
   FileUtils.write(new File("filters.md"), sb.toString, Charset.defaultCharset())
