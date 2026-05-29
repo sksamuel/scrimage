@@ -133,6 +133,7 @@ object ExampleGenerator {
       "ludwig" to { _, _ -> LudwigFilter() },
       "maven" to { _, _ -> MavenFilter() },
       "maximum" to { _, _ -> MaximumFilter() },
+      "mayfair" to { _, _ -> MayfairFilter() },
       "minimum" to { _, _ -> MinimumFilter() },
       "mirror" to { _, _ -> MirrorFilter() },
       "moon" to { _, _ -> MoonFilter() },
