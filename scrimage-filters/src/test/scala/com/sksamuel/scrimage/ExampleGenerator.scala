@@ -46,6 +46,7 @@ object ExampleGenerator extends App {
     ("blur", (_, _) => new BlurFilter),
     ("border", (_, _) => new BorderFilter(8, java.awt.Color.GRAY)),
     ("brightness", (_, _) => new BrightnessFilter(1.3f)),
+    ("brooklyn", (_, _) => new BrooklynFilter()),
     ("bump", (_, _) => new BumpFilter),
     ("caption", (_, _) => new CaptionFilter("Example", Position.BottomLeft, font, Color.White.toAWT, 1, true, true, Color.White.toAWT, 0.2, new Padding(10))),
     ("caustics", (_, _) => new CausticsFilter(1.2f, 1.0f, 0.3f, 0xff799fff)),
