@@ -35,11 +35,21 @@ public class OpacityFilter implements Filter {
          int r = (p >> 16) & 0xFF;
          int g = (p >> 8) & 0xFF;
          int b = p & 0xFF;
-         int nr = (int) (r + (255 - r) * amount);
-         int ng = (int) (g + (255 - g) * amount);
-         int nb = (int) (b + (255 - b) * amount);
+         // Clamp to [0, 255]. For amount outside [0, 1] a channel could exceed
+         // 255 (or go negative); packed unmasked with `nr << 16` etc. it would
+         // overflow into the neighbouring channel's bits and corrupt the colour,
+         // so saturate instead of letting the value wrap.
+         int nr = clamp((int) (r + (255 - r) * amount));
+         int ng = clamp((int) (g + (255 - g) * amount));
+         int nb = clamp((int) (b + (255 - b) * amount));
          argb[i] = (a << 24) | (nr << 16) | (ng << 8) | nb;
       }
       image.awt().setRGB(0, 0, w, h, argb, 0, w);
+   }
+
+   private static int clamp(int value) {
+      if (value < 0) return 0;
+      if (value > 255) return 255;
+      return value;
    }
 }
