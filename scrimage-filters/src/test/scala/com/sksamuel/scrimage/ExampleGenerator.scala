@@ -114,11 +114,11 @@ object ExampleGenerator extends App {
     ("watermark_stamp", (_, _) => new WatermarkStampFilter("watermark", font, true, 0.2, Color.White.toAWT))
   ).sortBy(_._1)
 
-  // One unfiltered "original" thumbnail per sample image.
+  // One unfiltered "original" thumbnail per sample image. The large click-through
+  // image is the full-size original; only the inline thumbnail is downscaled.
   for ((name, img) <- images) {
-    val r = img.scaleToWidth(1200)
-    r.output(new File("examples/filters/" + name + "_original_large.jpeg"))(JpegWriter.compression(95))
-    r.scaleToWidth(thumbWidth).forWriter(PngWriter.MaxCompression)
+    img.output(new File("examples/filters/" + name + "_original_large.jpeg"))(JpegWriter.compression(95))
+    img.scaleToWidth(thumbWidth).forWriter(PngWriter.MaxCompression)
       .write(new File("examples/filters/" + name + "_original_small.png"))
   }
 
@@ -133,7 +133,9 @@ object ExampleGenerator extends App {
 
   filters.zipWithIndex.foreach { case ((filterName, factory), i) =>
     val (imgName, img) = images(i % images.size)
-    val source = img.scaleToWidth(1200).copy(java.awt.image.BufferedImage.TYPE_INT_ARGB)
+    // Filter the full-size original; the large click-through image keeps the
+    // original dimensions and only the inline thumbnail is downscaled.
+    val source = img.copy(java.awt.image.BufferedImage.TYPE_INT_ARGB)
     println("Generating example " + imgName + " " + filterName)
     source.filter(factory(imgName, source)).output(new File("examples/filters/" + imgName + "_" + filterName + "_large.jpeg"))(JpegWriter.compression(95))
     source.filter(factory(imgName, source)).scaleToWidth(thumbWidth).forWriter(PngWriter.MaxCompression)
