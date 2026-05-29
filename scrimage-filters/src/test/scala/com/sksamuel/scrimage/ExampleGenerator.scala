@@ -67,7 +67,7 @@ object ExampleGenerator extends App {
     ("gain_bias", (_, _) => new GainBiasFilter(0.7f, 0.6f)),
     ("gamma", (_, _) => new GammaFilter(2)),
     ("gaussian", (_, _) => new GaussianBlurFilter(10)),
-    ("glint", (_, _) => new GlintFilter(0.5f, 0.5f, 10, 0.0f)),
+    ("glint", (_, _) => new GlintFilter(0.5f, 0.3f, 10, 0.0f)),
     ("glow", (_, _) => new GlowFilter()),
     ("gotham", (_, _) => new GothamFilter()),
     ("grayscale", (_, _) => new GrayscaleFilter),
