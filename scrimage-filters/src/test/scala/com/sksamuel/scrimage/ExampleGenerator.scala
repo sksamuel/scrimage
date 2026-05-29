@@ -44,7 +44,7 @@ object ExampleGenerator extends App {
     ("bump", (_, _) => new BumpFilter),
     ("caption", (_, _) => new CaptionFilter("Example", Position.BottomLeft, font, Color.White.toAWT, 1, true, true, Color.White.toAWT, 0.2, new Padding(10))),
     ("caustics", (_, _) => new CausticsFilter()),
-    ("chrome", (_, _) => new ChromeFilter()),
+    ("chrome", (_, _) => new ChromeFilter(0.3f, 1.0f)),
     ("color_halftone", (_, _) => new ColorHalftoneFilter()),
     ("colorize", (_, _) => new ColorizeFilter(255, 0, 0, 50)),
     ("contour", (_, _) => new ContourFilter()),
