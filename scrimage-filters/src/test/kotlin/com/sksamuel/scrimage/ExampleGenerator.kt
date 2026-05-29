@@ -123,6 +123,7 @@ object ExampleGenerator {
       "opacity" to { _, _ -> OpacityFilter(0.5f) },
       "pixelate" to { _, _ -> PixelateFilter(6) },
       "pointillize_square" to { _, _ -> PointillizeFilter(PointillizeGridType.Square) },
+      "poprocket" to { _, _ -> PoprocketFilter() },
       "posterize" to { _, _ -> PosterizeFilter() },
       "prewitt" to { _, _ -> PrewittFilter() },
       "quantize" to { _, _ -> QuantizeFilter(64) },
