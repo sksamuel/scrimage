@@ -129,6 +129,7 @@ object ExampleGenerator {
       "lark" to { _, _ -> LarkFilter() },
       "lensblur" to { _, _ -> LensBlurFilter() },
       "lensflare" to { _, _ -> LensFlareFilter() },
+      "lofi" to { _, _ -> LofiFilter() },
       "ludwig" to { _, _ -> LudwigFilter() },
       "maximum" to { _, _ -> MaximumFilter() },
       "minimum" to { _, _ -> MinimumFilter() },
