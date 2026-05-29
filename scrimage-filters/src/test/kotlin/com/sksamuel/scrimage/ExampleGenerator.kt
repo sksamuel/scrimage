@@ -153,6 +153,7 @@ object ExampleGenerator {
       "prewitt" to { _, _ -> PrewittFilter() },
       "quantize" to { _, _ -> QuantizeFilter(64) },
       "rays" to { _, _ -> RaysFilter(1.0f, 0.6f, 1.0f) },
+      "reyes" to { _, _ -> ReyesFilter() },
       "rgb" to { _, _ -> RGBFilter(0.4f, 0.6f, 0.5f) },
       "ripple" to { _, _ -> RippleFilter(RippleType.Sine, 4f, 4f, 6f, 6f) },
       "roberts" to { _, _ -> RobertsFilter() },
