@@ -162,6 +162,7 @@ object ExampleGenerator {
       "salt_and_pepper" to { _, _ -> SaltAndPepperFilter(0.05, 0.05) },
       "sepia" to { _, _ -> SepiaFilter() },
       "sharpen" to { _, _ -> SharpenFilter() },
+      "sierra" to { _, _ -> SierraFilter() },
       "skeleton" to { _, _ -> SkeletonFilter() },
       "slumber" to { _, _ -> SlumberFilter() },
       "smear_circles" to { _, _ -> SmearFilter(SmearType.Circles) },
