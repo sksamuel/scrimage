@@ -20,6 +20,10 @@ object ExampleGenerator extends App {
   // alternates per row across these three samples.
   val images = List(("bird", image1), ("colosseum", image2), ("lanzarote", image3))
 
+  // The large click-through images (input and output) are all scaled to this
+  // width so every linked example is a consistent size; height follows the
+  // aspect ratio of each source.
+  val largeWidth = 1600
   // Thumbnails are rendered at 250px but displayed at 300px (+20%) in the table.
   val thumbWidth = 250
   val displayWidth = 300
@@ -116,11 +120,13 @@ object ExampleGenerator extends App {
     ("watermark_stamp", (_, s) => new WatermarkStampFilter("watermark", FontUtils.createFont(Font.SANS_SERIF, s.width / 10), true, 0.2, Color.White.toAWT))
   ).sortBy(_._1)
 
-  // One unfiltered "original" thumbnail per sample image. The large click-through
-  // image is the full-size original; only the inline thumbnail is downscaled.
+  // One unfiltered "original" per sample image. The large click-through image
+  // is scaled to largeWidth so it matches the filter outputs; the inline
+  // thumbnail is downscaled further.
   for ((name, img) <- images) {
-    img.output(new File("examples/filters/" + name + "_original_large.jpeg"))(JpegWriter.compression(95))
-    img.scaleToWidth(thumbWidth).forWriter(PngWriter.MaxCompression)
+    val large = img.scaleToWidth(largeWidth)
+    large.output(new File("examples/filters/" + name + "_original_large.jpeg"))(JpegWriter.compression(95))
+    large.scaleToWidth(thumbWidth).forWriter(PngWriter.MaxCompression)
       .write(new File("examples/filters/" + name + "_original_small.png"))
   }
 
@@ -154,9 +160,10 @@ object ExampleGenerator extends App {
 
   filters.zipWithIndex.foreach { case ((filterName, factory), i) =>
     val (imgName, img) = images(i % images.size)
-    // Filter the full-size original; the large click-through image keeps the
-    // original dimensions and only the inline thumbnail is downscaled.
-    val source = img.copy(java.awt.image.BufferedImage.TYPE_INT_ARGB)
+    // Filter a copy scaled to largeWidth so the large click-through image is a
+    // consistent size across all examples; only the inline thumbnail is
+    // downscaled further.
+    val source = img.scaleToWidth(largeWidth).copy(java.awt.image.BufferedImage.TYPE_INT_ARGB)
     println("Generating example " + imgName + " " + filterName)
     // invert_alpha only flips the alpha channel, which is invisible on an opaque
     // photo saved as JPEG: fade the source's alpha, invert, and composite over a
