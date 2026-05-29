@@ -59,7 +59,7 @@ object ExampleGenerator extends App {
     ("erode", (_, _) => new ErodeFilter(8)),
     ("error_diffusion_halftone", (_, _) => new ErrorDiffusionHalftoneFilter()),
     ("error_spotter", (n, s) => new ErrorSpotterFilter(differentFrom(n, s))),
-    ("gain_bias", (_, _) => new GainBiasFilter(0.5f, 0.5f)),
+    ("gain_bias", (_, _) => new GainBiasFilter(0.7f, 0.6f)),
     ("gamma", (_, _) => new GammaFilter(2)),
     ("gaussian", (_, _) => new GaussianBlurFilter()),
     ("glint", (_, _) => new GlintFilter()),
