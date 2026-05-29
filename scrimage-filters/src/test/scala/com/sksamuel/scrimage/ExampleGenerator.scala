@@ -15,6 +15,8 @@ object ExampleGenerator extends App {
   val image2 = ImmutableImage.fromResource("/colosseum.jpg")
   val image3 = ImmutableImage.fromResource("/lanzarote.jpg")
   val font = FontUtils.createFont(Font.SANS_SERIF, 48)
+  // Larger font for the watermark_stamp example so the stamp is more prominent.
+  val stampFont = FontUtils.createFont(Font.SANS_SERIF, 96)
 
   // The table has two image columns (original, filter) and the source image
   // alternates per row across these three samples.
@@ -113,7 +115,7 @@ object ExampleGenerator extends App {
     ("vintage", (_, _) => new VintageFilter),
     ("watermark", (_, _) => new WatermarkFilter("watermark", 50, 200, font, true, 0.5, java.awt.Color.WHITE)),
     ("watermark_cover", (_, _) => new WatermarkCoverFilter("watermark", font, true, 0.2, Color.White.toAWT)),
-    ("watermark_stamp", (_, _) => new WatermarkStampFilter("watermark", font, true, 0.2, Color.White.toAWT))
+    ("watermark_stamp", (_, _) => new WatermarkStampFilter("watermark", stampFont, true, 0.2, Color.White.toAWT))
   ).sortBy(_._1)
 
   // One unfiltered "original" thumbnail per sample image. The large click-through
