@@ -164,6 +164,7 @@ object ExampleGenerator {
       "sharpen" to { _, _ -> SharpenFilter() },
       "sierra" to { _, _ -> SierraFilter() },
       "skeleton" to { _, _ -> SkeletonFilter() },
+      "skyline" to { _, _ -> SkylineFilter() },
       "slumber" to { _, _ -> SlumberFilter() },
       "smear_circles" to { _, _ -> SmearFilter(SmearType.Circles) },
       "snow" to { _, _ -> SnowFilter() },
