@@ -120,6 +120,7 @@ object ExampleGenerator extends App {
     ("valencia", (_, _) => new ValenciaFilter()),
     ("vignette", (_, _) => new VignetteFilter(0.7f, 0.95f, 0.3f, java.awt.Color.BLACK)),
     ("vintage", (_, _) => new VintageFilter),
+    ("walden", (_, _) => new WaldenFilter()),
     ("watermark", (_, _) => new WatermarkFilter("watermark", 50, 200, font, true, 0.5, java.awt.Color.WHITE)),
     ("watermark_cover", (_, _) => new WatermarkCoverFilter("watermark", font, true, 0.2, Color.White.toAWT)),
     ("watermark_stamp", (_, s) => new WatermarkStampFilter("watermark", FontUtils.createFont(Font.SANS_SERIF, s.width / 10), true, 0.2, Color.White.toAWT))
