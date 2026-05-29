@@ -1,6 +1,7 @@
 package com.sksamuel.scrimage
 
 import com.sksamuel.scrimage.filter._
+import com.sksamuel.scrimage.filter.instagram._
 import com.sksamuel.scrimage.nio.{JpegWriter, PngWriter}
 import java.awt.Font
 import java.io.File
@@ -37,6 +38,8 @@ object ExampleGenerator extends App {
   // Each filter is built from (sourceName, source) so the ones that need a
   // second image of matching dimensions size correctly against the row's image.
   val filters: List[(String, (String, ImmutableImage) => Filter)] = List(
+    ("1977", (_, _) => new Filter1977()),
+    ("aden", (_, _) => new AdenFilter()),
     ("alpha_mask", (n, s) => new AlphaMaskFilter(differentFrom(n, s))),
     ("background_blend", (_, _) => new BackgroundBlendFilter()),
     ("black_threshold", (_, _) => new BlackThresholdFilter(38)),
