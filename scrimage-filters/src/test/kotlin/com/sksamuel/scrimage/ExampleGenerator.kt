@@ -172,6 +172,7 @@ object ExampleGenerator {
       "solarize" to { _, _ -> SolarizeFilter() },
       "sparkle" to { _, _ -> SparkleFilter(1100, 300, 50, 200, 6) },
       "split_channels" to { _, _ -> SplitChannelsFilter(true, false, false) },
+      "stinson" to { _, _ -> StinsonFilter() },
       "summer" to { _, _ -> SummerFilter(true) },
       "sutro" to { _, _ -> SutroFilter() },
       "swim" to { _, _ -> SwimFilter() },
