@@ -48,7 +48,7 @@ object ExampleGenerator extends App {
     ("color_halftone", (_, _) => new ColorHalftoneFilter()),
     ("colorize", (_, _) => new ColorizeFilter(255, 0, 0, 50)),
     ("contour", (_, _) => new ContourFilter()),
-    ("contrast", (_, _) => new ContrastFilter(1.3f)),
+    ("contrast", (_, _) => new ContrastFilter(1.4f)),
     ("crystallize", (_, _) => new CrystallizeFilter()),
     ("despeckle", (_, _) => new DespeckleFilter),
     ("diffuse", (_, _) => new DiffuseFilter(4)),
