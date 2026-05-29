@@ -183,6 +183,7 @@ object ExampleGenerator {
       "twirl" to { _, s -> TwirlFilter((Math.PI / 4).toFloat(), s.radius().toFloat()) },
       "unsharp" to { _, _ -> UnsharpFilter() },
       "valencia" to { _, _ -> ValenciaFilter() },
+      "vesper" to { _, _ -> VesperFilter() },
       "vignette" to { _, _ -> VignetteFilter(0.7f, 0.95f, 0.3f, Color.BLACK) },
       "vintage" to { _, _ -> VintageFilter() },
       "walden" to { _, _ -> WaldenFilter() },
