@@ -142,6 +142,7 @@ object ExampleGenerator {
       "sparkle" to { _, _ -> SparkleFilter(1100, 300, 50, 200, 6) },
       "split_channels" to { _, _ -> SplitChannelsFilter(true, false, false) },
       "summer" to { _, _ -> SummerFilter(true) },
+      "sutro" to { _, _ -> SutroFilter() },
       "swim" to { _, _ -> SwimFilter() },
       "television" to { _, _ -> TelevisionFilter() },
       "threshold" to { _, _ -> ThresholdFilter(127) },
