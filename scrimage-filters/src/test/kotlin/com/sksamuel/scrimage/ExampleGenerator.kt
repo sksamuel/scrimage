@@ -145,6 +145,7 @@ object ExampleGenerator {
       "swim" to { _, _ -> SwimFilter() },
       "television" to { _, _ -> TelevisionFilter() },
       "threshold" to { _, _ -> ThresholdFilter(127) },
+      "toaster" to { _, _ -> ToasterFilter() },
       "tritone" to { _, _ -> TritoneFilter(Color(0xFF000044.toInt()), Color(0xFF0066FF.toInt()), Color.WHITE) },
       "twirl" to { _, s -> TwirlFilter((Math.PI / 4).toFloat(), s.radius().toFloat()) },
       "unsharp" to { _, _ -> UnsharpFilter() },
