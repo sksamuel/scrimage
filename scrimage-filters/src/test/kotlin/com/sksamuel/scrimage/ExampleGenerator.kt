@@ -131,6 +131,7 @@ object ExampleGenerator {
       "lensflare" to { _, _ -> LensFlareFilter() },
       "lofi" to { _, _ -> LofiFilter() },
       "ludwig" to { _, _ -> LudwigFilter() },
+      "maven" to { _, _ -> MavenFilter() },
       "maximum" to { _, _ -> MaximumFilter() },
       "minimum" to { _, _ -> MinimumFilter() },
       "mirror" to { _, _ -> MirrorFilter() },
