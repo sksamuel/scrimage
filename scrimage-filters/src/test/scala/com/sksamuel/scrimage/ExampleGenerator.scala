@@ -111,7 +111,7 @@ object ExampleGenerator extends App {
     ("tritone", (_, _) => new TritoneFilter(new java.awt.Color(0xFF000044), new java.awt.Color(0xFF0066FF), java.awt.Color.WHITE)),
     ("twirl", (_, _) => new TwirlFilter(450)),
     ("unsharp", (_, _) => new UnsharpFilter()),
-    ("vignette", (_, _) => new VignetteFilter()),
+    ("vignette", (_, _) => new VignetteFilter(0.7f, 0.95f, 0.3f, java.awt.Color.BLACK)),
     ("vintage", (_, _) => new VintageFilter),
     ("watermark", (_, _) => new WatermarkFilter("watermark", 50, 200, font, true, 0.5, java.awt.Color.WHITE)),
     ("watermark_cover", (_, _) => new WatermarkCoverFilter("watermark", font, true, 0.2, Color.White.toAWT)),
