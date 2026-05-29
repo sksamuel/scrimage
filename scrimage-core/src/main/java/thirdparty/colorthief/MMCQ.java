@@ -204,11 +204,10 @@ public class MMCQ {
          int numVBoxes = vboxes.size();
          for (int i = 0; i < numVBoxes; i++) {
             int[] vbColor = vboxes.get(i).avg(false);
-            d2 = Math
-               .sqrt(
-                  Math.pow(color[0] - vbColor[0], 2)
-                     + Math.pow(color[1] - vbColor[1], 2)
-                     + Math.pow(color[2] - vbColor[2], 2));
+            int dr = color[0] - vbColor[0];
+            int dg = color[1] - vbColor[1];
+            int db = color[2] - vbColor[2];
+            d2 = Math.sqrt(dr * dr + dg * dg + db * db);
             if (d2 < d1) {
                d1 = d2;
                pColor = vbColor;
