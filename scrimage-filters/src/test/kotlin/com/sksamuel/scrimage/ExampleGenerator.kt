@@ -150,6 +150,7 @@ object ExampleGenerator {
       "unsharp" to { _, _ -> UnsharpFilter() },
       "vignette" to { _, _ -> VignetteFilter(0.7f, 0.95f, 0.3f, Color.BLACK) },
       "vintage" to { _, _ -> VintageFilter() },
+      "walden" to { _, _ -> WaldenFilter() },
       "watermark" to { _, _ -> WatermarkFilter("watermark", 50, 200, font, true, 0.5, Color.WHITE) },
       "watermark_cover" to { _, _ -> WatermarkCoverFilter("watermark", font, true, 0.2, Color.WHITE) },
       "watermark_stamp" to { _, s -> WatermarkStampFilter("watermark", FontUtils.createFont(Font.SANS_SERIF, s.width / 10), true, 0.2, Color.WHITE) }
