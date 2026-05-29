@@ -21,6 +21,7 @@ object ExampleGenerator extends App {
     ("blur", new BlurFilter),
     ("border", new BorderFilter(8)),
     ("brightness", new BrightnessFilter(1.3f)),
+    ("brushed_metal", new BrushedMetalFilter()),
     ("bump", new BumpFilter),
     ("caption", new CaptionFilter("Example", Position.BottomLeft, font, Color.White.toAWT, 1, true, true, Color.White.toAWT, 0.2, new Padding(10))),
     ("chrome", new ChromeFilter()),
