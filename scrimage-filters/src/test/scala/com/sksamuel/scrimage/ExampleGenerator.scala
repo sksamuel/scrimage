@@ -94,7 +94,7 @@ object ExampleGenerator extends App {
     ("posterize", (_, _) => new PosterizeFilter()),
     ("prewitt", (_, _) => new PrewittFilter),
     ("quantize", (_, _) => new QuantizeFilter(64)),
-    ("rays", (_, _) => new RaysFilter(0.8f, 0.6f, 0.5f)),
+    ("rays", (_, _) => new RaysFilter(1.0f, 0.6f, 1.0f)),
     ("rgb", (_, _) => new RGBFilter(0.4f, 0.6f, 0.5f)),
     ("ripple", (_, _) => new RippleFilter(RippleType.Sine, 4f, 4f, 6f, 6f)),
     ("roberts", (_, _) => new RobertsFilter),
