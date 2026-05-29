@@ -187,6 +187,8 @@ object ExampleGenerator extends App {
         source.filter(new BlurFilter(), new BlurFilter(), new BlurFilter(), new BlurFilter(), new BlurFilter())
       else if (filterName == "maximum")
         source.filter(new MaximumFilter(), new MaximumFilter(), new MaximumFilter())
+      else if (filterName == "despeckle")
+        source.filter(Array.fill(10)(new DespeckleFilter): _*)
       else source.filter(factory(imgName, source))
     result.output(new File("examples/filters/" + imgName + "_" + filterName + "_large.jpeg"))(JpegWriter.compression(95))
     result.scaleToWidth(thumbWidth).forWriter(PngWriter.MaxCompression)
