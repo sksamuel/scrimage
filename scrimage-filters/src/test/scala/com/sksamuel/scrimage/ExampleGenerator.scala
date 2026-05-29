@@ -41,6 +41,7 @@ object ExampleGenerator extends App {
     ("1977", (_, _) => new Filter1977()),
     ("aden", (_, _) => new AdenFilter()),
     ("alpha_mask", (n, s) => new AlphaMaskFilter(differentFrom(n, s))),
+    ("amaro", (_, _) => new AmaroFilter()),
     ("background_blend", (_, _) => new BackgroundBlendFilter()),
     ("black_threshold", (_, _) => new BlackThresholdFilter(38)),
     ("blur", (_, _) => new BlurFilter),
