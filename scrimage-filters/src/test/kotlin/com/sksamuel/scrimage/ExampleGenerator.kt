@@ -121,6 +121,7 @@ object ExampleGenerator {
       "oil" to { _, _ -> OilFilter() },
       "old_photo" to { _, _ -> OldPhotoFilter() },
       "opacity" to { _, _ -> OpacityFilter(0.5f) },
+      "perpetua" to { _, _ -> PerpetuaFilter() },
       "pixelate" to { _, _ -> PixelateFilter(6) },
       "pointillize_square" to { _, _ -> PointillizeFilter(PointillizeGridType.Square) },
       "posterize" to { _, _ -> PosterizeFilter() },
