@@ -25,6 +25,8 @@ public interface Filter {
    /**
     * Some filters only work for certain types.
     * Override this method to return the supported types.
+    *
+    * @return the image types supported by this filter.
     */
    default int[] types() {
       return new int[0];

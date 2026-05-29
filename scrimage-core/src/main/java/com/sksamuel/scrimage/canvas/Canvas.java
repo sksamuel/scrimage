@@ -21,6 +21,8 @@ public class Canvas {
 
    /**
     * Returns the image that backs this canvas.
+    *
+    * @return the ImmutableImage that backs this canvas
     */
    public ImmutableImage getImage() {
       return image;

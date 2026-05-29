@@ -27,13 +27,21 @@ public final class Overlay {
       this.o1 = o1; this.r1 = r1; this.g1 = g1; this.b1 = b1; this.a1 = a1;
    }
 
-   /** A flat colour overlay (r, g, b in [0, 255], alpha in [0, 1]). */
+   /**
+    * A flat colour overlay (r, g, b in [0, 255], alpha in [0, 1]).
+    *
+    * @return a solid colour Overlay.
+    */
    public static Overlay solid(int r, int g, int b, float alpha, BlendMode blend) {
       float rf = r / 255f, gf = g / 255f, bf = b / 255f;
       return new Overlay(Kind.SOLID, blend, 0f, rf, gf, bf, alpha, 1f, rf, gf, bf, alpha);
    }
 
-   /** A top-to-bottom linear gradient between two RGBA stops. */
+   /**
+    * A top-to-bottom linear gradient between two RGBA stops.
+    *
+    * @return a linear gradient Overlay.
+    */
    public static Overlay linear(BlendMode blend,
                                 float o0, int r0, int g0, int b0, float a0,
                                 float o1, int r1, int g1, int b1, float a1) {
@@ -42,7 +50,11 @@ public final class Overlay {
          o1, r1 / 255f, g1 / 255f, b1 / 255f, a1);
    }
 
-   /** A centred radial gradient (sized to the closest corner) between two RGBA stops. */
+   /**
+    * A centred radial gradient (sized to the closest corner) between two RGBA stops.
+    *
+    * @return a radial gradient Overlay.
+    */
    public static Overlay radial(BlendMode blend,
                                 float o0, int r0, int g0, int b0, float a0,
                                 float o1, int r1, int g1, int b1, float a1) {

@@ -26,6 +26,8 @@ public class PipelineFilter implements Filter {
     * created a *new* ImmutableImage and discarded it after the filters ran,
     * so for any non-INT-ARGB/RGB source the entire pipeline silently became
     * a no-op (NashvilleFilter on TYPE_4BYTE_ABGR did nothing).
+    *
+    * @return the BufferedImage types this filter operates on
     */
    @Override
    public int[] types() {

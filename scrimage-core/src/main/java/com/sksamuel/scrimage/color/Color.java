@@ -9,12 +9,16 @@ public interface Color {
    /**
     * Returns a conversion of this Color into an RGBColor.
     * If this colour is already an instance of RGBColor then the same instance will be returned.
+    *
+    * @return this colour as an RGBColor
     */
    RGBColor toRGB();
 
    /**
     * Returns a conversion of this color into a CYMK color.
     * If this colour is already a CYMK then the same instance will be returned.
+    *
+    * @return this colour as a CMYKColor
     */
    default CMYKColor toCMYK() {
       return toRGB().toCMYK();
@@ -38,6 +42,8 @@ public interface Color {
 
    /**
     * Returns a HEX String of this colour. Eg for 0,255,0, this method will return 00FF00.
+    *
+    * @return the six-character uppercase hex representation of this colour
     */
    default String toHex() {
       StringBuilder hex = new StringBuilder(Integer.toHexString(toRGB().toARGBInt() & 0xffffff).toUpperCase());
@@ -54,6 +60,8 @@ public interface Color {
    /**
     * Returns this instance as a java.awt.Color.
     * AWT Colors use the RGB color model.
+    *
+    * @return this colour as a java.awt.Color
     */
    default java.awt.Color toAWT() {
       RGBColor rgb = toRGB();
@@ -70,6 +78,8 @@ public interface Color {
     * Takes into account alpha and returns the average as an RGB value.
     * <p>
     * See https://stackoverflow.com/questions/1944095/how-to-mix-two-argb-pixels
+    *
+    * @return the alpha-weighted average of this colour and the other colour as an RGBColor
     */
    default RGBColor average(Color other) {
       RGBColor c1 = this.toRGB();
@@ -87,6 +97,8 @@ public interface Color {
 
    /**
     * Returns this colour as an AWT Paint.
+    *
+    * @return this colour as an AWT Paint
     */
    default Paint paint() {
       return new java.awt.Color(toRGB().toARGBInt(), true);

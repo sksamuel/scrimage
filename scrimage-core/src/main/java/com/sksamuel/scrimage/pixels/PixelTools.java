@@ -23,6 +23,8 @@ public class PixelTools {
 
    /**
     * Returns an encoded rgb int, with alpha 255, from the given components.
+    *
+    * @return the encoded rgb int with alpha 255
     */
    public static int rgb(int r, int g, int b) {
       return argb(255, r, g, b);
@@ -30,6 +32,8 @@ public class PixelTools {
 
    /**
     * Returns an encoded argb int from the given components.
+    *
+    * @return the encoded argb int
     */
    public static int argb(int a, int r, int g, int b) {
       return (a & 0xFF) << 24 | (r & 0xFF) << 16 | (g & 0xFF) << 8 | (b & 0xFF);
@@ -37,6 +41,8 @@ public class PixelTools {
 
    /**
     * Returns the alpha component of a pixel as a value between 0 and 255.
+    *
+    * @return the alpha component of the pixel, between 0 and 255
     */
    public static int alpha(int pixel) {
       return pixel >> 24 & 0xFF;
@@ -44,6 +50,8 @@ public class PixelTools {
 
    /**
     * Returns the red component of a pixel as a value between 0 and 255.
+    *
+    * @return the red component of the pixel, between 0 and 255
     */
    public static int red(int pixel) {
       return pixel >> 16 & 0xFF;
@@ -51,6 +59,8 @@ public class PixelTools {
 
    /**
     * Returns the green component of a pixel as a value between 0 and 255.
+    *
+    * @return the green component of the pixel, between 0 and 255
     */
    public static int green(int pixel) {
       return pixel >> 8 & 0xFF;
@@ -58,6 +68,8 @@ public class PixelTools {
 
    /**
     * Returns the blue component of a pixel as a value between 0 and 255.
+    *
+    * @return the blue component of the pixel, between 0 and 255
     */
    public static int blue(int pixel) {
       return pixel & 0xFF;
@@ -65,6 +77,8 @@ public class PixelTools {
 
    /**
     * Returns the gray value of a pixel as a value between 0 and 255.
+    *
+    * @return the gray value of the pixel, between 0 and 255
     */
    public static int gray(int pixel) {
       return (red(pixel) + green(pixel) + blue(pixel)) / 3;
@@ -78,6 +92,8 @@ public class PixelTools {
     * Clamps the given value to [0, 255] and truncates it to an int, avoiding the
     * autoboxing the {@link #truncate(Double)} overload incurs when called in a
     * per-pixel loop.
+    *
+    * @return the value clamped to [0, 255] and truncated to an int
     */
    public static int truncate(double value) {
       if (value < 0) return 0;
@@ -87,6 +103,8 @@ public class PixelTools {
 
    /**
     * Returns true if all pixels in the array have the same color, or both are fully transparent.
+    *
+    * @return true if all pixels match the given color, false otherwise
     */
    public static boolean uniform(Color color, Pixel[] pixels) {
       RGBColor target = RGBColor.fromAwt(color);
@@ -100,6 +118,8 @@ public class PixelTools {
 
    /**
     * Scales the brightness of a pixel.
+    *
+    * @return the encoded rgb int of the brightness-scaled pixel
     */
    public static int scale(Double factor, int pixel) {
       // Clamp each channel to [0, 255]. Without clamping, a factor > 1 (or
@@ -122,6 +142,8 @@ public class PixelTools {
    /**
     * Returns true if the colors of all pixels in the array are within the given tolerance
     * compared to the referenced color
+    *
+    * @return true if all pixels are within tolerance of the given color, false otherwise
     */
    public static boolean approx(Color color, int tolerance, Pixel[] pixels) {
 
@@ -143,6 +165,8 @@ public class PixelTools {
     * compared to the referenced color.
     * <p>
     * If the given colour and target colour are both fully transparent, then they will match.
+    *
+    * @return true if all pixels match the given color within tolerance, false otherwise
     */
    public static boolean colorMatches(Color color, int tolerance, Pixel[] pixels) {
       if (tolerance < 0 || tolerance > 255)
@@ -165,6 +189,8 @@ public class PixelTools {
     * Given a width and an offset returns the coordinate for that offset.
     * In other words, starting at 0,0 and moving along each row before starting the next row,
     * it gives the coordinate that is kth from the start.
+    *
+    * @return the point corresponding to the given offset
     */
    public static Point offsetToPoint(int offset, int width) {
       return new Point(offset % width, offset / width);
@@ -172,6 +198,8 @@ public class PixelTools {
 
    /**
     * Returns a new Pixel with the transparency in the given pixel replaced by the given color.
+    *
+    * @return a new Pixel with its transparency replaced by the given color
     */
    public static Pixel replaceTransparencyWithColor(Pixel p, Color color) {
       int argb = replaceTransparencyWithColor(p.argb, color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
@@ -184,6 +212,8 @@ public class PixelTools {
     * but works on packed ints, avoiding per-pixel Pixel allocation when used in a loop. The
     * colour components are passed in so callers can hoist the java.awt.Color accessors out of
     * their loop.
+    *
+    * @return the packed ARGB int with its transparency replaced by the given colour components
     */
    public static int replaceTransparencyWithColor(int pixel, int colorRed, int colorGreen, int colorBlue, int colorAlpha) {
       int a = alpha(pixel);

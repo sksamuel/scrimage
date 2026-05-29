@@ -30,6 +30,8 @@ public enum Orientation {
 
    /**
     * Returns the [Orientation] enum that matches the given raw value.
+    *
+    * @return an Optional containing the matching Orientation, or empty if none matches
     */
    public static Optional<Orientation> fromRawValue(int i) {
       return Arrays.stream(Orientation.values()).filter(o -> o.value == i).findFirst();

@@ -33,6 +33,8 @@ public class ImmutableImageLoader {
    /**
     * Set to true to reorientate the image if applicable. Requires metadata to be enabled.
     * Default true.
+    *
+    * @return this loader for method chaining
     */
    public ImmutableImageLoader detectOrientation(boolean reorientate) {
       this.reorientate = reorientate;
@@ -43,6 +45,8 @@ public class ImmutableImageLoader {
     * Set to true to load metadata from the file.
     * Set to false to skip metadata load.
     * Default true.
+    *
+    * @return this loader for method chaining
     */
    public ImmutableImageLoader detectMetadata(boolean metadata) {
       this.metadata = metadata;
@@ -52,6 +56,8 @@ public class ImmutableImageLoader {
    /**
     * Specifies a region of the image to be loaded. Specifying a region here, rather than resizing
     * the canvas after load can result in a performance gain under certain loaders.
+    *
+    * @return this loader for method chaining
     */
    public ImmutableImageLoader sourceRegion(Rectangle rectangle) {
       this.rectangle = rectangle;
@@ -62,6 +68,8 @@ public class ImmutableImageLoader {
     * Set the BufferedImage type for the backing image. If the specified type is different
     * from the type detected on load, this can result in an image copy operation.
     * Default is to use the type in the underlying format.
+    *
+    * @return this loader for method chaining
     */
    public ImmutableImageLoader type(int type) {
       this.type = type;
@@ -72,6 +80,8 @@ public class ImmutableImageLoader {
     * Specifies the ImageReader's to use when trying to decode an image.
     * If not specified, then Scrimage will default to detecting the image readers on the classpath,
     * through the Java Service Loader API.
+    *
+    * @return this loader for method chaining
     */
    public ImmutableImageLoader withImageReaders(List<ImageReader> readers) {
       this.readers = readers;
@@ -81,6 +91,8 @@ public class ImmutableImageLoader {
    /**
     * Specifies to use [javax.image.ImageReader] implementations only.
     * The javax.image.ImageReader to use will be detected by the JDK based on the stream contents.
+    *
+    * @return this loader for method chaining
     */
    public ImmutableImageLoader withJavaxImageReaders() {
       this.readers = Collections.singletonList(new ImageIOReader());
@@ -89,6 +101,8 @@ public class ImmutableImageLoader {
 
    /**
     * Specifies to use the given [javax.image.ImageReader] implementations only.
+    *
+    * @return this loader for method chaining
     */
    public ImmutableImageLoader withJavaxImageReaders(List<javax.imageio.ImageReader> readers) {
       this.readers = Collections.singletonList(new ImageIOReader(readers));
@@ -136,6 +150,8 @@ public class ImmutableImageLoader {
    /**
     * Configures this loader to read from the provided input stream.
     * The stream should be closed by the caller after this method has returned.
+    *
+    * @return the loaded ImmutableImage read from the input stream
     */
    public ImmutableImage fromStream(InputStream in) throws IOException {
       if (in == null)
