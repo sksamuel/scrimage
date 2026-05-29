@@ -146,11 +146,19 @@ public final class BlendComposite implements Composite {
 
                int[] result = blender.blend(srcPixel, dstPixel);
 
-               // mixes the result with the opacity
-               dstPixels[x] = ((int) (dstPixel[3] + (result[3] - dstPixel[3]) * alpha) & 0xFF) << 24 |
-                  ((int) (dstPixel[0] + (result[0] - dstPixel[0]) * alpha) & 0xFF) << 16 |
-                  ((int) (dstPixel[1] + (result[1] - dstPixel[1]) * alpha) & 0xFF) << 8 |
-                  (int) (dstPixel[2] + (result[2] - dstPixel[2]) * alpha) & 0xFF;
+               // Mix the blended result with the destination, scaling the
+               // composite opacity by the source pixel's own alpha. The blend
+               // formulas above derive the result purely from the colour
+               // channels and ignore srcPixel[3], so without this a transparent
+               // overlay pixel (alpha 0, often holding black/garbage RGB) would
+               // still drag the destination toward its colour. Scaling by
+               // src alpha makes fully transparent overlay pixels no-ops and
+               // leaves fully opaque overlays (src alpha 255) identical to before.
+               float fa = alpha * (srcPixel[3] / 255f);
+               dstPixels[x] = ((int) (dstPixel[3] + (result[3] - dstPixel[3]) * fa) & 0xFF) << 24 |
+                  ((int) (dstPixel[0] + (result[0] - dstPixel[0]) * fa) & 0xFF) << 16 |
+                  ((int) (dstPixel[1] + (result[1] - dstPixel[1]) * fa) & 0xFF) << 8 |
+                  (int) (dstPixel[2] + (result[2] - dstPixel[2]) * fa) & 0xFF;
             }
             dstOut.setDataElements(0, y, width, 1, dstPixels);
          }
