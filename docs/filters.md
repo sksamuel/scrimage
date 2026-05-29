@@ -6,7 +6,9 @@ Scrimage comes with a wide array of filters. A filter modifies the pixels of an 
 Most of these filters I have not written myself, but rather collected from other open source imaging libraries (for
 compliance with licenses and / or attribution - see file headers), and either wrapped them, fixed bugs or improved them.
 
-!!! note These filters require the `scrimage-filters` module to be added to your build.
+!!! note
+
+    These filters require the `scrimage-filters` module to be added to your build.
 
 Applying a filter returns a new image. The original image is unmodified.
 Some filters have options which can be set when creating the filters.
