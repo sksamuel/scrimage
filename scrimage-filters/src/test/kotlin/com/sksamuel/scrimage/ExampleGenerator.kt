@@ -156,6 +156,7 @@ object ExampleGenerator {
       "reyes" to { _, _ -> ReyesFilter() },
       "rgb" to { _, _ -> RGBFilter(0.4f, 0.6f, 0.5f) },
       "ripple" to { _, _ -> RippleFilter(RippleType.Sine, 4f, 4f, 6f, 6f) },
+      "rise" to { _, _ -> RiseFilter() },
       "roberts" to { _, _ -> RobertsFilter() },
       "rylanders" to { _, _ -> RylandersFilter() },
       "salt_and_pepper" to { _, _ -> SaltAndPepperFilter(0.05, 0.05) },
