@@ -305,10 +305,14 @@ public class ColorThief {
       int[][] res = new int[numRegardedPixels][];
       int r, g, b;
 
+      // Read the whole raster once instead of a slow scalar getRGB(col, row)
+      // per sampled pixel. The flat index i maps directly to the row-major
+      // buffer (i = row * width + col), so rgbAll[i] equals getRGB(i % width,
+      // i / width).
+      int[] rgbAll = sourceImage.getRGB(0, 0, width, height, null, 0, width);
+
       for (int i = 0; i < pixelCount; i += quality) {
-         int row = i / width;
-         int col = i % width;
-         int rgb = sourceImage.getRGB(col, row);
+         int rgb = rgbAll[i];
 
          r = (rgb >> 16) & 0xFF;
          g = (rgb >> 8) & 0xFF;
