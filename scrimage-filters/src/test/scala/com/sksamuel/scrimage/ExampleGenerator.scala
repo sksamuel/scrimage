@@ -78,6 +78,7 @@ object ExampleGenerator extends App {
     ("laplace", (_, _) => new LaplaceFilter()),
     ("lensblur", (_, _) => new LensBlurFilter()),
     ("lensflare", (_, _) => new LensFlareFilter),
+    ("ludwig", (_, _) => new LudwigFilter()),
     ("maximum", (_, _) => new MaximumFilter),
     ("minimum", (_, _) => new MinimumFilter),
     ("mirror", (_, _) => new MirrorFilter),
