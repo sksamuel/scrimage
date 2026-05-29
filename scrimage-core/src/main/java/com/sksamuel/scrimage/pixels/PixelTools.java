@@ -72,9 +72,18 @@ public class PixelTools {
    }
 
    public static int truncate(Double value) {
+      return truncate(value.doubleValue());
+   }
+
+   /**
+    * Clamps the given value to [0, 255] and truncates it to an int, avoiding the
+    * autoboxing the {@link #truncate(Double)} overload incurs when called in a
+    * per-pixel loop.
+    */
+   public static int truncate(double value) {
       if (value < 0) return 0;
       else if (value > 255) return 255;
-      else return value.intValue();
+      else return (int) value;
    }
 
    /**
