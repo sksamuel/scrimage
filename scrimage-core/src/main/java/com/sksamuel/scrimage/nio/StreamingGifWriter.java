@@ -107,25 +107,49 @@ public class StreamingGifWriter extends AbstractGifWriter {
    public GifStream prepareStream(OutputStream output, int imageType) throws IOException {
 
       ImageWriter writer = ImageIO.getImageWritersBySuffix("gif").next();
-      ImageWriteParam imageWriteParam = writer.getDefaultWriteParam();
+      // Until the GifStream below is constructed and returned, nothing else owns
+      // the writer or the IIO stream. If any setup step throws (setFromTree can
+      // raise IIOInvalidTreeException, prepareWriteSequence can raise IOException),
+      // GifStream.close() is never reachable, so dispose/close them here.
+      MemoryCacheImageOutputStream ios = null;
+      try {
+         ImageWriteParam imageWriteParam = writer.getDefaultWriteParam();
 
-      ImageTypeSpecifier imageTypeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(imageType);
-      IIOMetadata imageMetaData = writer.getDefaultImageMetadata(imageTypeSpecifier, imageWriteParam);
+         ImageTypeSpecifier imageTypeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(imageType);
+         IIOMetadata imageMetaData = writer.getDefaultImageMetadata(imageTypeSpecifier, imageWriteParam);
 
-      String metaFormatName = imageMetaData.getNativeMetadataFormatName();
+         String metaFormatName = imageMetaData.getNativeMetadataFormatName();
 
-      IIOMetadataNode root = (IIOMetadataNode) imageMetaData.getAsTree(metaFormatName);
-      populateGraphicsControlNode(root, frameDelay);
-      populateCommentsNode(root);
-      if (infiniteLoop)
-         populateApplicationExtensions(root, infiniteLoop);
+         IIOMetadataNode root = (IIOMetadataNode) imageMetaData.getAsTree(metaFormatName);
+         populateGraphicsControlNode(root, frameDelay);
+         populateCommentsNode(root);
+         if (infiniteLoop)
+            populateApplicationExtensions(root, infiniteLoop);
 
-      imageMetaData.setFromTree(metaFormatName, root);
+         imageMetaData.setFromTree(metaFormatName, root);
 
-      MemoryCacheImageOutputStream ios = new MemoryCacheImageOutputStream(output);
+         ios = new MemoryCacheImageOutputStream(output);
 
-      writer.setOutput(ios);
-      writer.prepareWriteSequence(null);
+         writer.setOutput(ios);
+         writer.prepareWriteSequence(null);
+
+         return buildStream(writer, ios, imageMetaData, imageWriteParam, metaFormatName, output);
+      } catch (IOException | RuntimeException e) {
+         try {
+            writer.dispose();
+         } finally {
+            if (ios != null) ios.close();
+         }
+         throw e;
+      }
+   }
+
+   private GifStream buildStream(ImageWriter writer,
+                                 MemoryCacheImageOutputStream ios,
+                                 IIOMetadata imageMetaData,
+                                 ImageWriteParam imageWriteParam,
+                                 String metaFormatName,
+                                 OutputStream output) {
 
       return new GifStream() {
 
