@@ -20,8 +20,27 @@ import thirdparty.marvin.image.color.Sepia;
 
 public class SepiaFilter extends MarvinFilter {
 
+    private final int intensity;
+
+    /**
+     * Creates a SepiaFilter with the default intensity of 20.
+     */
+    public SepiaFilter() {
+        this(20);
+    }
+
+    /**
+     * Creates a SepiaFilter with the given intensity, which is passed through to
+     * the underlying Sepia plugin.
+     *
+     * @param intensity the sepia intensity
+     */
+    public SepiaFilter(int intensity) {
+        this.intensity = intensity;
+    }
+
     @Override
     public MarvinAbstractImagePlugin plugin() {
-        return new Sepia(20);
+        return new Sepia(intensity);
     }
 }
