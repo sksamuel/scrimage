@@ -100,6 +100,7 @@ object ExampleGenerator {
       "dither" to { _, _ -> DitherFilter() },
       "dogpatch" to { _, _ -> DogpatchFilter() },
       "dominant_gradient" to { _, _ -> DominantGradientFilter() },
+      "earlybird" to { _, _ -> EarlybirdFilter() },
       "edge" to { _, _ -> EdgeFilter() },
       "emboss" to { _, _ -> EmbossFilter() },
       "erode" to { _, _ -> ErodeFilter(8) },
