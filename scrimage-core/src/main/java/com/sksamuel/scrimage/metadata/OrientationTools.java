@@ -4,6 +4,7 @@ import com.drew.metadata.exif.ExifIFD0Directory;
 import com.sksamuel.scrimage.ImmutableImage;
 
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -66,17 +67,24 @@ public class OrientationTools {
          .map(Directory::getTags)
          .orElseGet(() -> new Tag[0]);
 
-      Set<Tag> tag274s = Arrays.stream(tags).filter(t -> t.getType() == 274).collect(Collectors.toSet());
+      // Use LinkedHashSet (encounter/tag-declaration order) rather than the
+      // unordered HashSet from Collectors.toSet(). When more than one tag with
+      // id 274 is present, the caller picks the first element via findFirst();
+      // with a HashSet that choice depended on hash iteration order, so the same
+      // image could be reoriented differently across runs/JVMs.
+      Set<Tag> tag274s = Arrays.stream(tags)
+         .filter(t -> t.getType() == 274)
+         .collect(Collectors.toCollection(LinkedHashSet::new));
 
       if (tag274s.size() == 1) {
          return tag274s.stream()
             .map(OrientationTools::fromTag)
-            .collect(Collectors.toSet());
+            .collect(Collectors.toCollection(LinkedHashSet::new));
       } else {
          return tag274s.stream()
             .filter(t -> t.getName().toLowerCase().equals("orientation"))
             .map(OrientationTools::fromTag)
-            .collect(Collectors.toSet());
+            .collect(Collectors.toCollection(LinkedHashSet::new));
       }
    }
 
