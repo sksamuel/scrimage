@@ -148,6 +148,7 @@ object ExampleGenerator {
       "tritone" to { _, _ -> TritoneFilter(Color(0xFF000044.toInt()), Color(0xFF0066FF.toInt()), Color.WHITE) },
       "twirl" to { _, s -> TwirlFilter((Math.PI / 4).toFloat(), s.radius().toFloat()) },
       "unsharp" to { _, _ -> UnsharpFilter() },
+      "valencia" to { _, _ -> ValenciaFilter() },
       "vignette" to { _, _ -> VignetteFilter(0.7f, 0.95f, 0.3f, Color.BLACK) },
       "vintage" to { _, _ -> VintageFilter() },
       "watermark" to { _, _ -> WatermarkFilter("watermark", 50, 200, font, true, 0.5, Color.WHITE) },
