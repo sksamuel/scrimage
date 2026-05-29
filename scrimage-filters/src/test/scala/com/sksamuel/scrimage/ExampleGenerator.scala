@@ -84,7 +84,8 @@ object ExampleGenerator extends App {
     ("vignette", new VignetteFilter()),
     ("vintage", new VintageFilter),
     ("watermark_cover", new WatermarkCoverFilter("watermark", font, true, 0.2, Color.White.toAWT)),
-    ("watermark_stamp", new WatermarkStampFilter("watermark", font, true, 0.2, Color.White.toAWT))
+    ("watermark_stamp", new WatermarkStampFilter("watermark", font, true, 0.2, Color.White.toAWT)),
+    ("weave", new WeaveFilter())
   )
 
   val sb = new StringBuffer()
