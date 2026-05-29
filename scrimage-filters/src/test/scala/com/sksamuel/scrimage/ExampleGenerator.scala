@@ -113,6 +113,7 @@ object ExampleGenerator extends App {
     ("swim", (_, _) => new SwimFilter()),
     ("television", (_, _) => new TelevisionFilter),
     ("threshold", (_, _) => new ThresholdFilter(127)),
+    ("toaster", (_, _) => new ToasterFilter()),
     ("tritone", (_, _) => new TritoneFilter(new java.awt.Color(0xFF000044), new java.awt.Color(0xFF0066FF), java.awt.Color.WHITE)),
     ("twirl", (_, s) => new TwirlFilter((Math.PI / 4).toFloat, s.radius.toFloat)),
     ("unsharp", (_, _) => new UnsharpFilter()),
