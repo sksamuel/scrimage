@@ -56,9 +56,7 @@ public class GlintFilter extends AbstractBufferedImageOp {
 	
 	/**
 	 * Set the amount of glint.
-	 * @param amount the amount
-     * @min-value 0
-     * @max-value 1
+	 * @param amount the amount (min-value 0, max-value 1)
      * @see #getAmount
 	 */
 	public void setAmount( float amount ) {
