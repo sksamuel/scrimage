@@ -110,6 +110,7 @@ object ExampleGenerator extends App {
     ("sparkle", (_, _) => new SparkleFilter(1100, 300, 50, 200, 6)),
     ("split_channels", (_, _) => new SplitChannelsFilter(true, false, false)),
     ("summer", (_, _) => new SummerFilter(true)),
+    ("sutro", (_, _) => new SutroFilter()),
     ("swim", (_, _) => new SwimFilter()),
     ("television", (_, _) => new TelevisionFilter),
     ("threshold", (_, _) => new ThresholdFilter(127)),
