@@ -16,109 +16,129 @@ object ExampleGenerator extends App {
   val image3 = ImmutableImage.fromResource("/lanzarote.jpg")
   val font = FontUtils.createFont(Font.SANS_SERIF, 48)
 
-  val filters: List[(String, Filter)] = List(
-    ("black_threshold", new BlackThresholdFilter(35)),
-    ("blur", new BlurFilter),
-    ("border", new BorderFilter(8)),
-    ("brightness", new BrightnessFilter(1.3f)),
-    ("bump", new BumpFilter),
-    ("caption", new CaptionFilter("Example", Position.BottomLeft, font, Color.White.toAWT, 1, true, true, Color.White.toAWT, 0.2, new Padding(10))),
-    ("chrome", new ChromeFilter()),
-    ("color_halftone", new ColorHalftoneFilter()),
-    ("colorize", new ColorizeFilter(255, 0, 0, 50)),
-    ("contour", new ContourFilter()),
-    ("contrast", new ContrastFilter(1.3f)),
-    ("crystallize", new CrystallizeFilter()),
-    ("despeckle", new DespeckleFilter),
-    ("diffuse", new DiffuseFilter(4)),
-    ("dither", new DitherFilter),
-    ("edge", new EdgeFilter),
-    ("emboss", new EmbossFilter),
-    ("error_diffusion_halftone", new ErrorDiffusionHalftoneFilter()),
-    ("gain_bias", new GainBiasFilter(0.5f, 0.5f)),
-    ("gamma", new GammaFilter(2)),
-    ("gaussian", new GaussianBlurFilter()),
-    ("glow", new GlowFilter()),
-    ("gotham", new GothamFilter()),
-    ("grayscale", new GrayscaleFilter),
-    ("hsb", new HSBFilter(0.5f, 0, 0)),
-    ("invert_alpha", new InvertAlphaFilter),
-    ("invert", new InvertFilter),
-    ("kaleidoscope", new KaleidoscopeFilter()),
-    ("lensblur", new LensBlurFilter()),
-    ("lensflare", new LensFlareFilter),
-    ("minimum", new MinimumFilter),
-    ("maximum", new MaximumFilter),
-    ("mirror", new MirrorFilter),
-    ("motionblur", new MotionBlurFilter(Math.PI / 3.0, 20)),
-    ("nashville", new NashvilleFilter()),
-    ("noise", new NoiseFilter()),
-    ("offset", new OffsetFilter(60, 40)),
-    ("oil", new OilFilter()),
-    ("old_photo", new OldPhotoFilter()),
-    ("opacity", new OpacityFilter(0.5f)),
-    ("pixelate", new PixelateFilter(4)),
-    ("pointillize_square", new PointillizeFilter(PointillizeGridType.Square)),
-    ("posterize", new PosterizeFilter()),
-    ("prewitt", new PrewittFilter),
-    ("quantize", new QuantizeFilter(256)),
-    ("rays", new RaysFilter(0.1f, 0.6f, 0.5f)),
-    ("rgb", new RGBFilter(0.4f, 0.6f, 0.5f)),
-    ("ripple", new RippleFilter(RippleType.Sine)),
-    ("roberts", new RobertsFilter),
-    ("rylanders", new RylandersFilter),
-    ("sepia", new SepiaFilter),
-    ("sharpen", new SharpenFilter),
-    ("skeleton", new SkeletonFilter()),
-    ("smear_circles", new SmearFilter(SmearType.Circles)),
-    ("snow", new SnowFilter()),
-    ("sobels", new SobelsFilter),
-    ("solarize", new SolarizeFilter),
-    ("sparkle", new SparkleFilter()),
-    ("split_channels", new SplitChannelsFilter(true, false, false)),
-    ("summer", new SummerFilter(true)),
-    ("swim", new SwimFilter()),
-    ("television", new TelevisionFilter),
-    ("threshold", new ThresholdFilter(127)),
-    ("tritone", new TritoneFilter(new java.awt.Color(0xFF000044), new java.awt.Color(0xFF0066FF), java.awt.Color.WHITE)),
-    ("twirl", new TwirlFilter(75)),
-    ("unsharp", new UnsharpFilter()),
-    ("vignette", new VignetteFilter()),
-    ("vintage", new VintageFilter),
-    ("watermark_cover", new WatermarkCoverFilter("watermark", font, true, 0.2, Color.White.toAWT)),
-    ("watermark_stamp", new WatermarkStampFilter("watermark", font, true, 0.2, Color.White.toAWT))
-  )
+  // The table has two image columns (original, filter) and the source image
+  // alternates per row across these three samples.
+  val images = List(("bird", image1), ("colosseum", image2), ("lanzarote", image3))
+
+  // Thumbnails are rendered at 250px but displayed at 300px (+20%) in the table.
+  val thumbWidth = 250
+  val displayWidth = 300
+
+  // A different sample of the same size, for filters that take a second image.
+  def differentFrom(srcName: String, src: ImmutableImage): ImmutableImage = {
+    val alt = if (srcName == "colosseum") image1 else image2
+    alt.scaleTo(src.width, src.height)
+  }
+
+  // Each filter is built from (sourceName, source) so the ones that need a
+  // second image of matching dimensions size correctly against the row's image.
+  val filters: List[(String, (String, ImmutableImage) => Filter)] = List(
+    ("alpha_mask", (n, s) => new AlphaMaskFilter(differentFrom(n, s))),
+    ("background_blend", (_, _) => new BackgroundBlendFilter()),
+    ("black_threshold", (_, _) => new BlackThresholdFilter(35)),
+    ("blur", (_, _) => new BlurFilter),
+    ("border", (_, _) => new BorderFilter(8)),
+    ("brightness", (_, _) => new BrightnessFilter(1.3f)),
+    ("bump", (_, _) => new BumpFilter),
+    ("caption", (_, _) => new CaptionFilter("Example", Position.BottomLeft, font, Color.White.toAWT, 1, true, true, Color.White.toAWT, 0.2, new Padding(10))),
+    ("caustics", (_, _) => new CausticsFilter()),
+    ("chrome", (_, _) => new ChromeFilter()),
+    ("color_halftone", (_, _) => new ColorHalftoneFilter()),
+    ("colorize", (_, _) => new ColorizeFilter(255, 0, 0, 50)),
+    ("contour", (_, _) => new ContourFilter()),
+    ("contrast", (_, _) => new ContrastFilter(1.3f)),
+    ("crystallize", (_, _) => new CrystallizeFilter()),
+    ("despeckle", (_, _) => new DespeckleFilter),
+    ("diffuse", (_, _) => new DiffuseFilter(4)),
+    ("dissolve", (_, _) => new DissolveFilter(0.5f)),
+    ("dither", (_, _) => new DitherFilter),
+    ("edge", (_, _) => new EdgeFilter),
+    ("emboss", (_, _) => new EmbossFilter),
+    ("error_diffusion_halftone", (_, _) => new ErrorDiffusionHalftoneFilter()),
+    ("error_spotter", (n, s) => new ErrorSpotterFilter(differentFrom(n, s))),
+    ("gain_bias", (_, _) => new GainBiasFilter(0.5f, 0.5f)),
+    ("gamma", (_, _) => new GammaFilter(2)),
+    ("gaussian", (_, _) => new GaussianBlurFilter()),
+    ("glow", (_, _) => new GlowFilter()),
+    ("gotham", (_, _) => new GothamFilter()),
+    ("grayscale", (_, _) => new GrayscaleFilter),
+    ("hsb", (_, _) => new HSBFilter(0.5f, 0, 0)),
+    ("invert", (_, _) => new InvertFilter),
+    ("invert_alpha", (_, _) => new InvertAlphaFilter),
+    ("kaleidoscope", (_, _) => new KaleidoscopeFilter()),
+    ("laplace", (_, _) => new LaplaceFilter()),
+    ("lensblur", (_, _) => new LensBlurFilter()),
+    ("lensflare", (_, _) => new LensFlareFilter),
+    ("maximum", (_, _) => new MaximumFilter),
+    ("minimum", (_, _) => new MinimumFilter),
+    ("mirror", (_, _) => new MirrorFilter),
+    ("motionblur", (_, _) => new MotionBlurFilter(Math.PI / 3.0, 20)),
+    ("nashville", (_, _) => new NashvilleFilter()),
+    ("noise", (_, _) => new NoiseFilter()),
+    ("noise_reduction", (_, _) => new NoiseReductionFilter()),
+    ("offset", (_, _) => new OffsetFilter(60, 40)),
+    ("oil", (_, _) => new OilFilter()),
+    ("old_photo", (_, _) => new OldPhotoFilter()),
+    ("opacity", (_, _) => new OpacityFilter(0.5f)),
+    ("pixelate", (_, _) => new PixelateFilter(4)),
+    ("pointillize_square", (_, _) => new PointillizeFilter(PointillizeGridType.Square)),
+    ("posterize", (_, _) => new PosterizeFilter()),
+    ("prewitt", (_, _) => new PrewittFilter),
+    ("quantize", (_, _) => new QuantizeFilter(256)),
+    ("rays", (_, _) => new RaysFilter(0.1f, 0.6f, 0.5f)),
+    ("rgb", (_, _) => new RGBFilter(0.4f, 0.6f, 0.5f)),
+    ("ripple", (_, _) => new RippleFilter(RippleType.Sine)),
+    ("roberts", (_, _) => new RobertsFilter),
+    ("rylanders", (_, _) => new RylandersFilter),
+    ("salt_and_pepper", (_, _) => new SaltAndPepperFilter(0.05, 0.05)),
+    ("sepia", (_, _) => new SepiaFilter),
+    ("sharpen", (_, _) => new SharpenFilter),
+    ("skeleton", (_, _) => new SkeletonFilter()),
+    ("smear_circles", (_, _) => new SmearFilter(SmearType.Circles)),
+    ("snow", (_, _) => new SnowFilter()),
+    ("sobels", (_, _) => new SobelsFilter),
+    ("solarize", (_, _) => new SolarizeFilter),
+    ("sparkle", (_, _) => new SparkleFilter()),
+    ("split_channels", (_, _) => new SplitChannelsFilter(true, false, false)),
+    ("summer", (_, _) => new SummerFilter(true)),
+    ("swim", (_, _) => new SwimFilter()),
+    ("television", (_, _) => new TelevisionFilter),
+    ("threshold", (_, _) => new ThresholdFilter(127)),
+    ("tritone", (_, _) => new TritoneFilter(new java.awt.Color(0xFF000044), new java.awt.Color(0xFF0066FF), java.awt.Color.WHITE)),
+    ("twirl", (_, _) => new TwirlFilter(75)),
+    ("unsharp", (_, _) => new UnsharpFilter()),
+    ("vignette", (_, _) => new VignetteFilter()),
+    ("vintage", (_, _) => new VintageFilter),
+    ("watermark", (_, _) => new WatermarkFilter("watermark", 50, 200, font, true, 0.5, java.awt.Color.WHITE)),
+    ("watermark_cover", (_, _) => new WatermarkCoverFilter("watermark", font, true, 0.2, Color.White.toAWT)),
+    ("watermark_stamp", (_, _) => new WatermarkStampFilter("watermark", font, true, 0.2, Color.White.toAWT))
+  ).sortBy(_._1)
+
+  // One unfiltered "original" thumbnail per sample image.
+  for ((name, img) <- images) {
+    val r = img.scaleToWidth(1200)
+    r.output(new File("examples/filters/" + name + "_original_large.jpeg"))(JpegWriter.compression(95))
+    r.scaleToWidth(thumbWidth).forWriter(PngWriter.MaxCompression)
+      .write(new File("examples/filters/" + name + "_original_small.png"))
+  }
+
+  val baseUrl = "https://raw.github.com/sksamuel/scrimage/master/examples/filters"
+
+  def cell(imgName: String, name: String): String =
+    s"<a href='$baseUrl/${imgName}_${name}_large.jpeg'><img width='$displayWidth' src='$baseUrl/${imgName}_${name}_small.png'></a>"
 
   val sb = new StringBuffer()
+  sb.append("| Filter | Original | Filter |\n")
+  sb.append("| ------ | -------- | ------ |\n")
 
-  for (filter <- filters) {
-
-    val filterName = filter._1
-
-    sb.append("\n| " + filterName + " | ")
-
-    for (t <- List(("bird", image1), ("colosseum", image2), ("lanzarote", image3))) {
-
-      val filename = t._1
-      val image = t._2
-      val resized = image.scaleToWidth(1200)
-
-      println("Generating example " + filename + " " + filterName)
-
-      resized.filter(filter._2).output(new File("examples/filters/" + filename + "_" + filterName + "_large.jpeg"))(JpegWriter.compression(95))
-      resized.filter(filter._2).scaleToWidth(250).forWriter(PngWriter.MaxCompression)
-              .write(new File("examples/filters/" + filename + "_" + filterName + "_small.png"))
-
-      sb
-        .append(s"<a href='https://raw.github.com/sksamuel/scrimage/master/examples/filters/${filename}_${filterName}_large.jpeg'><img src='https://raw.github.com/sksamuel/scrimage/master/examples/filters/${filename}_${filterName}_small.png'><a/> | ")
-    }
-
-    //// --- API examples /////
-
-    //    image.pad(20, Color.Black).write(new File("examples/" + filename + "_pad_20.png"))
-    //    image.resize(0.5).write(new File("examples/" + filename + "_resize_half.png"))
-    //   image.fit(image.width - 20, image.height - 100).write(new File("examples/" + filename + "_fitted.png"))
-    //    image.scale(0.5).write(new File("examples/" + filename + "_scale_half.png"))
+  filters.zipWithIndex.foreach { case ((filterName, factory), i) =>
+    val (imgName, img) = images(i % images.size)
+    val source = img.scaleToWidth(1200).copy(java.awt.image.BufferedImage.TYPE_INT_ARGB)
+    println("Generating example " + imgName + " " + filterName)
+    source.filter(factory(imgName, source)).output(new File("examples/filters/" + imgName + "_" + filterName + "_large.jpeg"))(JpegWriter.compression(95))
+    source.filter(factory(imgName, source)).scaleToWidth(thumbWidth).forWriter(PngWriter.MaxCompression)
+      .write(new File("examples/filters/" + imgName + "_" + filterName + "_small.png"))
+    sb.append(s"| $filterName | ${cell(imgName, "original")} | ${cell(imgName, filterName)} |\n")
   }
 
   FileUtils.write(new File("filters.md"), sb.toString, Charset.defaultCharset())
@@ -139,7 +159,7 @@ object ExampleGenerator extends App {
     val filter = new LensBlurFilter(radius, bloom, bloomThreshold, sides)
     val fileName = s"${baseFilename}_$filterName.jpeg"
     println("Generating example " + fileName)
-    val fgImage = resized // image.scaleHeightToRatio(ratio)
+    val fgImage = resized
     val targetWidth = fgImage.width * 2
     val targetHeight = fgImage.height
     resized
