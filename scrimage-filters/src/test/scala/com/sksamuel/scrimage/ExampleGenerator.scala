@@ -91,7 +91,7 @@ object ExampleGenerator extends App {
     ("quantize", (_, _) => new QuantizeFilter(256)),
     ("rays", (_, _) => new RaysFilter(0.1f, 0.6f, 0.5f)),
     ("rgb", (_, _) => new RGBFilter(0.4f, 0.6f, 0.5f)),
-    ("ripple", (_, _) => new RippleFilter(RippleType.Sine)),
+    ("ripple", (_, _) => new RippleFilter(RippleType.Sine, 4f, 4f, 6f, 6f)),
     ("roberts", (_, _) => new RobertsFilter),
     ("rylanders", (_, _) => new RylandersFilter),
     ("salt_and_pepper", (_, _) => new SaltAndPepperFilter(0.05, 0.05)),
