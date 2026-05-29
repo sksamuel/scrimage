@@ -109,7 +109,7 @@ object ExampleGenerator extends App {
     ("television", (_, _) => new TelevisionFilter),
     ("threshold", (_, _) => new ThresholdFilter(127)),
     ("tritone", (_, _) => new TritoneFilter(new java.awt.Color(0xFF000044), new java.awt.Color(0xFF0066FF), java.awt.Color.WHITE)),
-    ("twirl", (_, _) => new TwirlFilter(75)),
+    ("twirl", (_, _) => new TwirlFilter(450)),
     ("unsharp", (_, _) => new UnsharpFilter()),
     ("vignette", (_, _) => new VignetteFilter()),
     ("vintage", (_, _) => new VintageFilter),
