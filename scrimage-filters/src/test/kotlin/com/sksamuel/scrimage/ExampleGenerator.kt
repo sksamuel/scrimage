@@ -74,6 +74,7 @@ object ExampleGenerator {
       "aden" to { _, _ -> AdenFilter() },
       "alpha_mask" to { n, s -> AlphaMaskFilter(differentFrom(n, s)) },
       "amaro" to { _, _ -> AmaroFilter() },
+      "ashby" to { _, _ -> AshbyFilter() },
       "background_blend" to { _, _ -> BackgroundBlendFilter() },
       "black_threshold" to { _, _ -> BlackThresholdFilter(38.0) },
       "blur" to { _, _ -> BlurFilter() },
