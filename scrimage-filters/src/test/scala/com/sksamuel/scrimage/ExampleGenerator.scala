@@ -104,7 +104,7 @@ object ExampleGenerator extends App {
     ("snow", (_, _) => new SnowFilter()),
     ("sobels", (_, _) => new SobelsFilter),
     ("solarize", (_, _) => new SolarizeFilter),
-    ("sparkle", (_, _) => new SparkleFilter(0, 0, 50, 50, 50)),
+    ("sparkle", (_, _) => new SparkleFilter(1100, 300, 50, 100, 25)),
     ("split_channels", (_, _) => new SplitChannelsFilter(true, false, false)),
     ("summer", (_, _) => new SummerFilter(true)),
     ("swim", (_, _) => new SwimFilter()),
