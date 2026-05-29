@@ -24,6 +24,12 @@ public class PngReader implements ImageReader {
          return null;
 
       ar.com.hjg.pngj.PngReader pngr = new ar.com.hjg.pngj.PngReader(new ByteArrayInputStream(bytes));
+      // close() in a finally: any exception during the read loop (truncated or
+      // malformed PNG, palette index out of range, OOM on a huge declared size)
+      // would otherwise skip end()/close() and leak the reader and its zlib
+      // Inflater. ImageReaders swallows the exception and tries the next reader,
+      // so repeated corrupt-PNG loads would accumulate undeflated Inflaters.
+      try {
 
       int channels = pngr.imgInfo.channels;
       int bitDepth = pngr.imgInfo.bitDepth;
@@ -88,6 +94,10 @@ public class PngReader implements ImageReader {
          image = image.subimage(rectangle);
       }
       return image;
+
+      } finally {
+         pngr.close();
+      }
    }
 
    private boolean isPng(byte[] bytes) {
