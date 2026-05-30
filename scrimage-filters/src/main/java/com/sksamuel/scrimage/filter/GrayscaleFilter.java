@@ -19,6 +19,7 @@ import com.sksamuel.scrimage.ImmutableImage;
 
 public class GrayscaleFilter implements Filter {
 
+   @Override
    public void apply(ImmutableImage image) {
       int w = image.width;
       int h = image.height;
