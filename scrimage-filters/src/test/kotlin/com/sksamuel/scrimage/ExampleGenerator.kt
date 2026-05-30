@@ -114,7 +114,7 @@ object ExampleGenerator {
       "gingham" to { _, _ -> GinghamFilter() },
       "ginza" to { _, _ -> GinzaFilter() },
       "glint" to { _, _ -> GlintFilter(0.5f, 0.15f, 10, 0.0f) },
-      "glow" to { _, _ -> GlowFilter() },
+      "glow" to { _, _ -> GlowFilter(0.25f) },
       "gotham" to { _, _ -> GothamFilter() },
       "grayscale" to { _, _ -> GrayscaleFilter() },
       "hefe" to { _, _ -> HefeFilter() },
