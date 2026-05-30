@@ -132,10 +132,11 @@ public class ImmutableImageLoader {
    }
 
    public ImmutableImage fromResource(String resource) throws IOException {
-      InputStream in = getClass().getResourceAsStream(resource);
-      if (in == null)
-         throw new IOException("Could not locate resource: " + resource);
-      return fromStream(in);
+      try (InputStream in = getClass().getResourceAsStream(resource)) {
+         if (in == null)
+            throw new IOException("Could not locate resource: " + resource);
+         return fromStream(in);
+      }
    }
 
    public ImmutableImage fromUrl(URL url) throws IOException {
