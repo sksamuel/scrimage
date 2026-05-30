@@ -28,6 +28,16 @@ public class ImageIOReader implements ImageReader {
 
    private ImmutableImage tryLoad(javax.imageio.ImageReader reader, ImageInputStream iis, Rectangle rectangle) throws IOException {
       try {
+         // Rewind the stream to the start before each reader attempt. The same
+         // ImageInputStream is reused across multiple readers in read(...)'s
+         // fallback loop; a previous reader may have consumed/advanced the
+         // stream (or partially read before throwing), leaving the position
+         // past the start. Without seeking back, subsequent fallback readers
+         // would read from a consumed/garbage position and fail spuriously.
+         // The MemoryCacheImageInputStream created over a ByteArrayInputStream
+         // is seekable, and seek(0) is a no-op for the common single-reader
+         // success case.
+         iis.seek(0);
          reader.setInput(iis);
 
          // Skip a redundant header pass: setDestinationType(imageTypes.next())
