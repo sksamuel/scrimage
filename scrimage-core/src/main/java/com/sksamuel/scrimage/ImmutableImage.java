@@ -364,7 +364,8 @@ public class ImmutableImage extends MutableImage {
     * @return a new Image
     */
    public static ImmutableImage create(int w, int h, Pixel[] pixels, int type) {
-      assert w * h == pixels.length;
+      if (pixels.length != (long) w * h)
+         throw new IllegalArgumentException("pixels array length " + pixels.length + " does not match " + w + "x" + h + " = " + ((long) w * h));
       ImmutableImage image = ImmutableImage.create(w, h, type);
       int[] argb = new int[pixels.length];
       for (int i = 0; i < pixels.length; i++) {
