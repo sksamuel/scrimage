@@ -16,11 +16,11 @@ import java.util.List;
  */
 public abstract class InstagramFilter implements Filter {
 
-   private final List<CssOp> ops;
+   private final CssOp[] ops;
    private final Overlay overlay;
 
    protected InstagramFilter(List<CssOp> ops, Overlay overlay) {
-      this.ops = ops;
+      this.ops = ops.toArray(new CssOp[0]);
       this.overlay = overlay;
    }
 
@@ -45,8 +45,8 @@ public abstract class InstagramFilter implements Filter {
          rgb[0] = ((argb >> 16) & 0xff) / 255f;
          rgb[1] = ((argb >> 8) & 0xff) / 255f;
          rgb[2] = (argb & 0xff) / 255f;
-         for (CssOp op : ops) {
-            op.apply(rgb);
+         for (int j = 0; j < ops.length; j++) {
+            ops[j].apply(rgb);
          }
          px[i] = (al << 24) | (to8(rgb[0]) << 16) | (to8(rgb[1]) << 8) | to8(rgb[2]);
       }
