@@ -46,11 +46,7 @@ public interface Color {
     * @return the six-character uppercase hex representation of this colour
     */
    default String toHex() {
-      StringBuilder hex = new StringBuilder(Integer.toHexString(toRGB().toARGBInt() & 0xffffff).toUpperCase());
-      while (hex.length() < 6) {
-         hex.insert(0, "0");
-      }
-      return hex.toString();
+      return String.format("%06X", toRGB().toARGBInt() & 0xffffff);
    }
 
    default java.awt.Color awt() {
