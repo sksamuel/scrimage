@@ -13,17 +13,26 @@ public class CMYKColor implements Color {
     }
 
     public CMYKColor(float c, float m, float y, float k, float alpha) {
-        assert (0 <= c && c <= 1f);
-        assert (0 <= m && m <= 1f);
-        assert (0 <= y && y <= 1f);
-        assert (0 <= k && k <= 1f);
-        assert (0 <= alpha && alpha <= 1f);
+        // Validate explicitly rather than with `assert`, which is disabled by
+        // default in production JVMs (so out-of-range values would slip through
+        // and produce wrong colours in toRGB()).
+        requireInRange("c", c);
+        requireInRange("m", m);
+        requireInRange("y", y);
+        requireInRange("k", k);
+        requireInRange("alpha", alpha);
 
         this.c = c;
         this.m = m;
         this.y = y;
         this.k = k;
         this.alpha = alpha;
+    }
+
+    private static void requireInRange(String component, float value) {
+        if (value < 0 || value > 1f)
+            throw new IllegalArgumentException(
+                "CMYKColor " + component + " component must be in [0, 1] but was " + value);
     }
 
     public CMYKColor toCMYK() {
