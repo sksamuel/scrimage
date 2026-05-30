@@ -36,7 +36,15 @@ public class PngReader implements ImageReader {
       int w = pngr.imgInfo.cols;
       int h = pngr.imgInfo.rows;
 
-      int[] matrix = new int[w * h];
+      // Guard against int overflow: w * h is computed in int arithmetic below, so a PNG
+      // declaring very large dimensions can wrap to a negative size (NegativeArraySizeException)
+      // or a small/wrong positive size, producing an undersized buffer that later trips
+      // ArrayIndexOutOfBoundsException in the row loops. Validate up front with long math.
+      long pixelCount = (long) w * h;
+      if (pixelCount > Integer.MAX_VALUE)
+         throw new IllegalArgumentException("PNG too large: " + w + "x" + h);
+
+      int[] matrix = new int[(int) pixelCount];
 
       if (pngr.imgInfo.indexed) {
          int[] pixels = null;
