@@ -22,11 +22,13 @@ object ExampleGenerator {
    private val image1 = ImmutableImage.fromResource("/bird.jpg")
    private val image2 = ImmutableImage.fromResource("/colosseum.jpg")
    private val image3 = ImmutableImage.fromResource("/lanzarote.jpg")
+   private val image4 = ImmutableImage.fromResource("/etron.jpeg")
+   private val image5 = ImmutableImage.fromResource("/chinese_lantern.jpeg")
    private val font = FontUtils.createFont(Font.SANS_SERIF, 48)
 
    // The table has two image columns (original, filter) and the source image
-   // alternates per row across these three samples.
-   private val images = listOf("bird" to image1, "colosseum" to image2, "lanzarote" to image3)
+   // alternates per row across these five samples.
+   private val images = listOf("bird" to image1, "colosseum" to image2, "lanzarote" to image3, "etron" to image4, "chinese_lantern" to image5)
 
    // The large click-through images (input and output) are all scaled to this
    // width so every linked example is a consistent size; height follows the
