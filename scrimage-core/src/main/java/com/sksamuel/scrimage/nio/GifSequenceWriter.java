@@ -63,33 +63,35 @@ public class GifSequenceWriter extends AbstractGifWriter {
    public byte[] bytes(ImmutableImage[] images) throws IOException {
 
       ImageWriter writer = ImageIO.getImageWritersBySuffix("gif").next();
-      ImageWriteParam imageWriteParam = writer.getDefaultWriteParam();
+      try {
+         ImageWriteParam imageWriteParam = writer.getDefaultWriteParam();
 
-      ImageTypeSpecifier imageTypeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(images[0].awt().getType());
-      IIOMetadata imageMetaData = writer.getDefaultImageMetadata(imageTypeSpecifier, imageWriteParam);
+         ImageTypeSpecifier imageTypeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(images[0].awt().getType());
+         IIOMetadata imageMetaData = writer.getDefaultImageMetadata(imageTypeSpecifier, imageWriteParam);
 
-      String metaFormatName = imageMetaData.getNativeMetadataFormatName();
+         String metaFormatName = imageMetaData.getNativeMetadataFormatName();
 
-      IIOMetadataNode root = (IIOMetadataNode) imageMetaData.getAsTree(metaFormatName);
-      populateGraphicsControlNode(root, Duration.ofMillis(frameDelayMillis));
-      populateCommentsNode(root);
-      if (infiniteLoop)
-         populateApplicationExtensions(root, infiniteLoop);
+         IIOMetadataNode root = (IIOMetadataNode) imageMetaData.getAsTree(metaFormatName);
+         populateGraphicsControlNode(root, Duration.ofMillis(frameDelayMillis));
+         populateCommentsNode(root);
+         if (infiniteLoop)
+            populateApplicationExtensions(root, infiniteLoop);
 
-      imageMetaData.setFromTree(metaFormatName, root);
+         imageMetaData.setFromTree(metaFormatName, root);
 
-      try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-         try (MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream(baos)) {
-            writer.setOutput(output);
-            writer.prepareWriteSequence(null);
+         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            try (MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream(baos)) {
+               writer.setOutput(output);
+               writer.prepareWriteSequence(null);
 
-            for (ImmutableImage image : images) {
-               writer.writeToSequence(new IIOImage(image.awt(), null, imageMetaData), imageWriteParam);
+               for (ImmutableImage image : images) {
+                  writer.writeToSequence(new IIOImage(image.awt(), null, imageMetaData), imageWriteParam);
+               }
+
+               writer.endWriteSequence();
+               output.flush();
+               return baos.toByteArray();
             }
-
-            writer.endWriteSequence();
-            output.flush();
-            return baos.toByteArray();
          }
       } finally {
          writer.dispose();
