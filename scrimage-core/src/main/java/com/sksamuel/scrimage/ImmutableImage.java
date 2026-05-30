@@ -426,6 +426,19 @@ public class ImmutableImage extends MutableImage {
    }
 
    /**
+    * Crops the image by removing borders of the default (transparent) colour,
+    * tolerating up to {@code colorTolerance} drift per channel from the base
+    * colour (the "fuzziness"). For example a tolerance of 1 treats a channel
+    * value of 254 as matching a base of 255.
+    *
+    * @param colorTolerance the per-channel tolerance to allow [0..255]
+    * @return a new cropped Image with the matching rows and columns removed
+    */
+   public ImmutableImage autocrop(int colorTolerance) {
+      return autocrop(Colors.Transparent.awt(), colorTolerance);
+   }
+
+   /**
     * Crops an image by removing cols and rows that are composed only of a single
     * given color.
     * <p>
