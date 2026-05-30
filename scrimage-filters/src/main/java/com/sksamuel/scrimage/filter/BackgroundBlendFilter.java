@@ -13,8 +13,11 @@ public class BackgroundBlendFilter implements Filter {
     public void apply(ImmutableImage image) {
         ImmutableImage background = image.fill(new RGBColor(51, 0, 0, 255).toAWT());
         Graphics2D g = (Graphics2D) image.awt().getGraphics();
-        g.setComposite(BlendComposite.getInstance(BlendingMode.ADD, 1f));
-        g.drawImage(background.awt(), 0, 0, null);
-        g.dispose();
+        try {
+            g.setComposite(BlendComposite.getInstance(BlendingMode.ADD, 1f));
+            g.drawImage(background.awt(), 0, 0, null);
+        } finally {
+            g.dispose();
+        }
     }
 }
