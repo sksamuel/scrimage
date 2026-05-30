@@ -45,19 +45,25 @@ public class GifWriter implements ImageWriter {
     public void write(AwtImage image, ImageMetadata metadata, OutputStream out) throws IOException {
 
         javax.imageio.ImageWriter writer = ImageIO.getImageWritersByFormatName("gif").next();
-        ImageWriteParam params = writer.getDefaultWriteParam();
+        // dispose() in a finally that spans every use of the writer. Acquiring it
+        // here but only disposing inside the write try-block leaked the native
+        // GIF writer if anything in between threw — e.g. getDefaultWriteParam()
+        // or setProgressiveMode() raising a RuntimeException from a writer plugin.
+        try {
+            ImageWriteParam params = writer.getDefaultWriteParam();
 
-        if (params.canWriteProgressive()) {
-          if (progressive) {
-              params.setProgressiveMode(ImageWriteParam.MODE_DEFAULT);
-          } else {
-              params.setProgressiveMode(ImageWriteParam.MODE_DISABLED);
-          }
-        }
+            if (params.canWriteProgressive()) {
+                if (progressive) {
+                    params.setProgressiveMode(ImageWriteParam.MODE_DEFAULT);
+                } else {
+                    params.setProgressiveMode(ImageWriteParam.MODE_DISABLED);
+                }
+            }
 
-        try (MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream(out)) {
-            writer.setOutput(output);
-            writer.write(null, new IIOImage(image.awt(), null, null), params);
+            try (MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream(out)) {
+                writer.setOutput(output);
+                writer.write(null, new IIOImage(image.awt(), null, null), params);
+            }
         } finally {
             writer.dispose();
         }
