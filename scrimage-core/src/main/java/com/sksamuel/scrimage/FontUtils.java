@@ -19,7 +19,7 @@ public class FontUtils {
    }
 
    public static Font createTrueType(InputStream in, int size) throws IOException, FontFormatException {
-      assert (in != null);
+      if (in == null) throw new IllegalArgumentException("input stream must not be null");
       Font font = Font.createFont(Font.TRUETYPE_FONT, in);
       GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
       ge.registerFont(font);
