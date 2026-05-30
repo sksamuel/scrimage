@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 
 public class AwtNearestNeighbourScale implements Scale {
 
+   @Override
    public BufferedImage scale(BufferedImage in, int w, int h) {
       // Bulk getRGB → manual nearest-neighbour map → bulk setRGB. The
       // previous Graphics2D.drawImage path with NEAREST_NEIGHBOR composited
