@@ -22,4 +22,16 @@ class TwelveMonkeysFormatsTest : FunSpec({
    test("should support bmp images") {
       ImmutableImage.loader().fromResource("/MARBLES.BMP").width shouldBe 1419
    }
+
+   test("should support psd images") {
+      ImmutableImage.loader().fromResource("/etron.psd").width shouldBe 600
+   }
+
+   test("should support pict images") {
+      ImmutableImage.loader().fromResource("/etron.pct").width shouldBe 600
+   }
+
+   test("should support svg images") {
+      ImmutableImage.loader().fromResource("/etron.svg").width shouldBe 600
+   }
 })
