@@ -588,6 +588,7 @@ public class AwtImage {
       return 31 * result + Arrays.hashCode(argb);
    }
 
+   @Override
    public boolean equals(Object other) {
       if (other instanceof AwtImage) {
          AwtImage that = (AwtImage) other;
