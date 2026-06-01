@@ -13,6 +13,7 @@ public abstract class BufferedOpFilter implements Filter {
 
   public abstract BufferedImageOp op();
 
+  @Override
   public void apply(ImmutableImage image) {
     op().filter(image.awt(), image.awt());
   }
