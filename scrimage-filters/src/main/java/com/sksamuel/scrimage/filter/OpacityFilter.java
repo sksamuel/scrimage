@@ -25,6 +25,7 @@ public class OpacityFilter implements Filter {
       this.amount = amount;
    }
 
+   @Override
    public void apply(ImmutableImage image) {
       int w = image.width;
       int h = image.height;
