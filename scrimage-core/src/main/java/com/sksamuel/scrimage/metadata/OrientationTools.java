@@ -1,6 +1,5 @@
 package com.sksamuel.scrimage.metadata;
 
-import com.drew.metadata.exif.ExifIFD0Directory;
 import com.sksamuel.scrimage.ImmutableImage;
 
 import java.util.Arrays;
@@ -9,6 +8,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class OrientationTools {
+
+   // ExifIFD0Directory.getName() always returns this literal constant. Hold it as a
+   // static final value rather than allocating a new ExifIFD0Directory (and its
+   // descriptor) on every imageOrientationsOf call just to read the name.
+   private static final String EXIF_IFD0_DIR_NAME = "Exif IFD0";
 
    public static Boolean requiresReorientation(ImageMetadata metadata) {
 
@@ -59,10 +63,8 @@ public class OrientationTools {
    // check the name, if there is more than one.
    static Set<Orientation> imageOrientationsOf(ImageMetadata metadata) {
 
-      String exifIFD0DirName = new ExifIFD0Directory().getName();
-
       Tag[] tags = Arrays.stream(metadata.getDirectories())
-         .filter(dir -> dir.getName().equals(exifIFD0DirName))
+         .filter(dir -> dir.getName().equals(EXIF_IFD0_DIR_NAME))
          .findFirst()
          .map(Directory::getTags)
          .orElseGet(() -> new Tag[0]);
