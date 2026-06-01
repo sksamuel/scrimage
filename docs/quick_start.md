@@ -3,7 +3,6 @@
 Scrimage is available on maven central. There are several modules.
 
 One is the `scrimage-core` library which is required. The others are `scrimage-filters`, `scrimage-formats-extra`, `scrimage-webp`.
-And if you're using Scala you can also add `scrimage-scala_2.12` or `scrimage-scala_2.13` for enhanced scala functions.
 
 They are split into several modules because the image filters is a large jar, and most people just want the basic resize/scale/load/save functionality.
 
@@ -21,7 +20,6 @@ around the [TwelveMonkeys](https://github.com/haraldk/TwelveMonkeys) library.
 
     ```scala
     libraryDependencies += "com.sksamuel.scrimage" % "scrimage-core" % "$version"
-    libraryDependencies += "com.sksamuel.scrimage" %% "scrimage-scala" % "$version"
     ```
 
 === "Maven"
@@ -33,16 +31,3 @@ around the [TwelveMonkeys](https://github.com/haraldk/TwelveMonkeys) library.
         <version>${version}</version>
     </dependency>
     ```
-
-
-
-
-### Scala Helpers
-
-If you are using Scala and you have added the scala module, then add the import
-`import com.sksamuel.scrimage.implicits._` to bring into scope some useful implicits.
-
-Firstly, an implicit `PNGWriter` so you do not have to specify it when outputting images.
-Secondly, a conversion to / from
-`java.awt.Color` and Scrimage's `RGBColor`.
-Lastly, forall, foreach and map methods on `ImmutableImage` which work with Scala functions.
