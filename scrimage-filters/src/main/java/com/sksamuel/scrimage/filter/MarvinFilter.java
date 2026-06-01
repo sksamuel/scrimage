@@ -31,6 +31,7 @@ abstract class MarvinFilter implements Filter {
 
   public abstract MarvinAbstractImagePlugin plugin();
 
+  @Override
   public void apply(ImmutableImage image) {
 
     MarvinImage input = new MarvinImage(image.awt());
