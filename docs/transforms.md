@@ -33,33 +33,6 @@ Produces a linear gradient background underlay for the two most dominent colours
 | <a href='https://raw.githubusercontent.com/sksamuel/scrimage/master/docs/images/background_gradient_input1.jpeg'><img src='https://raw.githubusercontent.com/sksamuel/scrimage/master/docs/images/background_gradient_input1.jpeg' width='300'><a/> |<a href='https://raw.githubusercontent.com/sksamuel/scrimage/master/docs/images/background_gradient_output1.png'><img src='https://raw.githubusercontent.com/sksamuel/scrimage/master/docs/images/background_gradient_output1.png' width='300'><a/> |
 
 
-### Dominant Gradient
-
-Produces a linear gradient copy of the image for the two most dominent colours of an image.
-
-=== "Java"
-
-    ```
-    ImmutableImage transformed = image1.transform(new DominantGradient())
-    ```
-
-=== "Kotlin"
-
-    ```
-    val transformed = image1.transform(DominantGradient())
-    ```
-
-=== "Scala"
-
-    ```
-    val transformed = image1.transform(new DominantGradient())
-    ```
-
-|  Input | Output |
-| ------ | --------- |
-| <a href='https://raw.githubusercontent.com/sksamuel/scrimage/master/docs/images/dominant_gradient_input1.jpeg'><img src='https://raw.githubusercontent.com/sksamuel/scrimage/master/docs/images/dominant_gradient_input1.jpeg' width='300'><a/> |<a href='https://raw.githubusercontent.com/sksamuel/scrimage/master/docs/images/dominant_gradient_output1.png'><img src='https://raw.githubusercontent.com/sksamuel/scrimage/master/docs/images/dominant_gradient_output1.png' width='300'><a/> |
-
-
 ### Tile
 
 Tiles the source image into a larger image. `TileTransform(columns, rows)` produces an image `columns` times the source width and `rows` times the source height, with the source drawn into every cell — so `TileTransform(3, 2)` repeats the image 3 across and 2 down.
