@@ -1,5 +1,7 @@
 package com.sksamuel.scrimage.color;
 
+import com.sksamuel.scrimage.pixels.PixelTools;
+
 /**
  * Hue/Saturation/Value
  * <p>
@@ -33,8 +35,7 @@ public class HSVColor implements Color {
 
    public RGBColor toRGB() {
       int rgb = java.awt.Color.HSBtoRGB(hue / 360f, saturation, value);
-      RGBColor noAlpha = RGBColor.fromRGBInt(rgb);
-      return new RGBColor(noAlpha.red, noAlpha.green, noAlpha.blue, Math.round(alpha * 255));
+      return new RGBColor(PixelTools.red(rgb), PixelTools.green(rgb), PixelTools.blue(rgb), Math.round(alpha * 255));
    }
 
    @Override
