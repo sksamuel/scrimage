@@ -1,7 +1,6 @@
 package com.sksamuel.scrimage.filter;
 
 import com.sksamuel.scrimage.ImmutableImage;
-import com.sksamuel.scrimage.color.RGBColor;
 
 public class SaltAndPepperFilter implements Filter {
 
@@ -28,15 +27,17 @@ public class SaltAndPepperFilter implements Filter {
       // of being salt of (1 - pepper) * salt rather than the
       // documented `salt` — e.g. SaltAndPepperFilter(0.5, 0.5)
       // produced 50% pepper but only 25% salt.
-      for (int i = 0; i < img.width; i++) {
-         for (int j = 0; j < img.height; j++) {
-            double r = Math.random();
-            if (r < pepper) {
-               img.setColor(i, j, RGBColor.fromARGBInt(OPAQUE_BLACK));
-            } else if (r < pepper + salt) {
-               img.setColor(i, j, RGBColor.fromARGBInt(OPAQUE_WHITE));
-            }
+      int w = img.width;
+      int h = img.height;
+      int[] argb = img.awt().getRGB(0, 0, w, h, null, 0, w);
+      for (int i = 0; i < argb.length; i++) {
+         double r = Math.random();
+         if (r < pepper) {
+            argb[i] = OPAQUE_BLACK;
+         } else if (r < pepper + salt) {
+            argb[i] = OPAQUE_WHITE;
          }
       }
+      img.awt().setRGB(0, 0, w, h, argb, 0, w);
    }
 }
