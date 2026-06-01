@@ -14,8 +14,6 @@ include(
    ":scrimage-filters",
    ":scrimage-formats-extra",
    ":scrimage-hash",
-   ":scrimage-scala_2.12",
-   ":scrimage-scala_2.13",
    ":scrimage-tests",
    ":scrimage-webp",
 )
