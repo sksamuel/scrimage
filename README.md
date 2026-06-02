@@ -15,4 +15,4 @@ resizing to fit a required width and height, applying filters, cropping, and so 
 It is easy to use from any language on the JVM.
 
 To begin, head over to the [microsite](https://sksamuel.github.io/scrimage).
-To see latest changes, view the [changelog](https://sksamuel.github.io/scrimage/changelog/).
+To see latest changes, view the [release history](https://github.com/sksamuel/scrimage/releases)
