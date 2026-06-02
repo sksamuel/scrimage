@@ -1,6 +1,8 @@
 package com.sksamuel.scrimage.nio;
 
 import com.sksamuel.scrimage.ImmutableImage;
+import com.sksamuel.scrimage.format.Format;
+import com.sksamuel.scrimage.format.FormatDetector;
 import com.sksamuel.scrimage.metadata.ImageMetadata;
 import com.sksamuel.scrimage.metadata.OrientationTools;
 
@@ -10,9 +12,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Collections;
 import java.util.List;
 
@@ -129,6 +134,65 @@ public class ImmutableImageLoader {
 
    public ImmutableImage fromPath(Path path) throws IOException {
       return fromFile(path.toFile());
+   }
+
+   /**
+    * Rewrites the given file in place, stripping any embedded metadata (such as EXIF) from it.
+    *
+    * <p>The image is decoded and then re-encoded using the default writer for its detected format.
+    * Scrimage's writers emit only pixel data, so the rewritten file contains no EXIF, IPTC, or XMP
+    * metadata. If the source carries an EXIF orientation tag, the orientation is baked into the
+    * pixels before the metadata is discarded (subject to {@link #detectOrientation(boolean)}), so
+    * the visible image is unchanged.
+    *
+    * <p>The new bytes are first written to a temporary file in the same directory and then moved
+    * over the original, so a failure mid-write does not corrupt the source file.
+    *
+    * <p>Supported formats are PNG, JPEG, and GIF. WEBP is not supported by scrimage-core.
+    *
+    * @param file the image file to rewrite without metadata
+    * @return the same file, now stripped of metadata
+    * @throws IOException if the file is missing, its format cannot be detected, or the format is
+    *                     not supported for stripping
+    */
+   public File stripMetadata(File file) throws IOException {
+      if (!file.exists()) throw new FileNotFoundException(file.toString());
+
+      Format format;
+      try (InputStream in = Files.newInputStream(file.toPath())) {
+         format = FormatDetector.detect(in)
+            .orElseThrow(() -> new IOException("Could not detect image format of " + file));
+      }
+
+      ImageWriter writer;
+      switch (format) {
+         case PNG:
+            writer = new PngWriter();
+            break;
+         case JPEG:
+            writer = JpegWriter.Default;
+            break;
+         case GIF:
+            writer = GifWriter.Default;
+            break;
+         default:
+            throw new IOException("Stripping metadata is not supported for format " + format);
+      }
+
+      // Decode first (applying orientation per this loader's config) before touching the original.
+      ImmutableImage image = fromFile(file);
+
+      File dir = file.getAbsoluteFile().getParentFile();
+      File tmp = File.createTempFile("scrimage-strip", ".tmp", dir);
+      try {
+         try (OutputStream out = Files.newOutputStream(tmp.toPath())) {
+            writer.write(image, ImageMetadata.empty, out);
+         }
+         Files.move(tmp.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+      } finally {
+         Files.deleteIfExists(tmp.toPath());
+      }
+      return file;
    }
 
    public ImmutableImage fromResource(String resource) throws IOException {
