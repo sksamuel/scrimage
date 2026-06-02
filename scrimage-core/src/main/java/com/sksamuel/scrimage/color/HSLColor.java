@@ -16,14 +16,26 @@ public class HSLColor implements Color {
     public final float alpha;
 
     public HSLColor(float hue, float saturation, float lightness, float alpha) {
-        assert (0 <= hue && hue <= 360F);
-        assert (0 <= saturation && saturation <= 1f);
-        assert (0 <= lightness && lightness <= 1f);
-        assert (0 <= alpha && alpha <= 1f);
+
+        // Validate at runtime rather than via assert (disabled by default in
+        // production JVMs). An out-of-range component would otherwise be stored
+        // unchecked and silently produce a wrong colour when converted via
+        // toRGB(), instead of failing fast on the bad input.
+        requireInRange("hue", hue, 360f);
+        requireInRange("saturation", saturation, 1f);
+        requireInRange("lightness", lightness, 1f);
+        requireInRange("alpha", alpha, 1f);
+
         this.hue = hue;
         this.saturation = saturation;
         this.lightness = lightness;
         this.alpha = alpha;
+    }
+
+    private static void requireInRange(String component, float value, float bound) {
+        if (value < 0 || value > bound)
+            throw new IllegalArgumentException(
+                    "HSLColor " + component + " must be in [0, " + bound + "] but was " + value);
     }
 
     public HSLColor toHSL() {
