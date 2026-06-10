@@ -29,6 +29,7 @@ public class SparkleFilter extends PointFilter {
 	private int centreX, centreY;
 	private long seed = 371;
 	private float[] rayLengths;
+	private double power;
 	private Random randomNumbers = new Random();
 
 	public SparkleFilter() {
@@ -103,6 +104,7 @@ public class SparkleFilter extends PointFilter {
 		centreX = width/2;
 		centreY = height/2;
 		super.setDimensions(width, height);
+		power = (100-amount) / 50.0;
 		randomNumbers.setSeed(seed);
 		rayLengths = new float[rays];
 		for (int i = 0; i < rays; i++)
@@ -137,7 +139,7 @@ public class SparkleFilter extends PointFilter {
 		if (radius != 0) {
 			float length = ImageMath.lerp(f, rayLengths[i % rays], rayLengths[(i+1) % rays]);
 			float g = length*length / (distance+0.0001f);
-			g = (float)Math.pow(g, (100-amount) / 50.0);
+			g = (float)Math.pow(g, power);
 			f -= 0.5f;
 //			f *= amount/50.0f;
 			f = 1 - f*f;
