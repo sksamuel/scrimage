@@ -150,10 +150,18 @@ public class VariableBlurFilter extends AbstractBufferedImageOp {
                 if ( i1 > widthMinus1 ) {
                     int f = i1-widthMinus1;
 					int l = widthMinus1;
-					ta += (a[l]-a[l-1]) * f;
-					tr += (r[l]-r[l-1]) * f;
-					tg += (g[l]-g[l-1]) * f;
-					tb += (b[l]-b[l-1]) * f;
+					if ( l == 0 ) {
+						// only one column: the prefix sum a[0] is the pixel value itself
+						ta += a[0] * f;
+						tr += r[0] * f;
+						tg += g[0] * f;
+						tb += b[0] * f;
+					} else {
+						ta += (a[l]-a[l-1]) * f;
+						tr += (r[l]-r[l-1]) * f;
+						tg += (g[l]-g[l-1]) * f;
+						tb += (b[l]-b[l-1]) * f;
+					}
 					i1 = widthMinus1;
                 }
 				int i2 = x-ra-1;
