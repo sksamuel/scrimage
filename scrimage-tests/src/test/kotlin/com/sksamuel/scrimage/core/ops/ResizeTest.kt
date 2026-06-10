@@ -3,6 +3,7 @@ package com.sksamuel.scrimage.core.ops
 import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.Position
 import com.sksamuel.scrimage.color.RGBColor
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import java.awt.Color
@@ -102,6 +103,24 @@ class ResizeTest : FunSpec({
       actual1 shouldBe image
       actual2.ratio() shouldBe 1.0
       actual3.ratio() shouldBe 2.0
+   }
+
+   test("resizeToRatio should throw IllegalArgumentException for a zero ratio") {
+      shouldThrow<IllegalArgumentException> {
+         image.resizeToRatio(0.0)
+      }
+   }
+
+   test("resizeToRatio should throw IllegalArgumentException for a negative ratio") {
+      shouldThrow<IllegalArgumentException> {
+         image.resizeToRatio(-0.5)
+      }
+   }
+
+   test("resizeToRatio should throw IllegalArgumentException for a NaN ratio") {
+      shouldThrow<IllegalArgumentException> {
+         image.resizeToRatio(Double.NaN)
+      }
    }
 
    test("when resizing by pixels then the output image has the given dimensions") {

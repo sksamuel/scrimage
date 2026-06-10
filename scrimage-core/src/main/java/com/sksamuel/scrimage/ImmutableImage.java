@@ -1054,8 +1054,18 @@ public class ImmutableImage extends MutableImage {
     * @param background  the background color if the canvas was enlarged
     * @param imageType   the AWT image type to create. See BufferedImage.TYPE_*
     * @return a new Image that is the result of resizing the canvas.
+    * @throws IllegalArgumentException if the target ratio is NaN, zero or negative.
     */
    public ImmutableImage resizeToRatio(double targetRatio, Position position, Color background, int imageType) {
+
+      // Validate up front: a zero ratio would divide to Infinity and the int cast
+      // would silently produce Integer.MAX_VALUE (an absurd allocation), a negative
+      // ratio a negative dimension, and NaN a zero dimension - all failing later
+      // with confusing errors instead of failing fast on the bad input.
+      if (Double.isNaN(targetRatio) || targetRatio <= 0)
+         throw new IllegalArgumentException(
+            "Target ratio (width / height) must be a positive number but was " + targetRatio);
+
       double currRatio = ratio();
       if (currRatio == targetRatio) return this;
       else if (currRatio > targetRatio) {
