@@ -13,7 +13,6 @@ import java.awt.image.DataBufferInt;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
-import java.util.Arrays;
 
 public class PngReader implements ImageReader {
 
@@ -108,13 +107,18 @@ public class PngReader implements ImageReader {
       }
    }
 
+   // PNG magic bytes: 0x89 'P' 'N' 'G' 0x0D 0x0A 0x1A 0x0A, compared in place
+   // to avoid allocating two 8-byte arrays per call.
    private boolean isPng(byte[] bytes) {
-      if (bytes.length < 8)
-         return false;
-      byte[] expected = new byte[]{(byte) 0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A, 0x0A};
-      byte[] actual = new byte[8];
-      System.arraycopy(bytes, 0, actual, 0, 8);
-      return Arrays.equals(expected, actual);
+      return bytes.length >= 8 &&
+         bytes[0] == (byte) 0x89 &&
+         bytes[1] == 'P' &&
+         bytes[2] == 'N' &&
+         bytes[3] == 'G' &&
+         bytes[4] == 0x0D &&
+         bytes[5] == 0x0A &&
+         bytes[6] == 0x1A &&
+         bytes[7] == 0x0A;
    }
 
    @Override

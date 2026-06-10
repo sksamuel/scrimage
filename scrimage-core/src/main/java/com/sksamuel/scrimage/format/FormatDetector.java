@@ -2,11 +2,8 @@ package com.sksamuel.scrimage.format;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Optional;
-
-import static java.util.Arrays.copyOf;
-import static java.util.Arrays.copyOfRange;
-import static java.util.Objects.deepEquals;
 
 public class FormatDetector {
 
@@ -32,17 +29,23 @@ public class FormatDetector {
     }
 
     public static Optional<Format> detect(byte[] bytes) {
-        if (deepEquals(copyOf(bytes, gif.length), gif)) return Optional.of(Format.GIF);
-        if (deepEquals(copyOf(bytes, png.length), png)) return Optional.of(Format.PNG);
-        if (deepEquals(copyOf(bytes, jpeg1.length), jpeg1)) return Optional.of(Format.JPEG);
-        if (deepEquals(copyOf(bytes, jpeg2.length), jpeg2)) return Optional.of(Format.JPEG);
+        if (startsWith(bytes, gif)) return Optional.of(Format.GIF);
+        if (startsWith(bytes, png)) return Optional.of(Format.PNG);
+        if (startsWith(bytes, jpeg1)) return Optional.of(Format.JPEG);
+        if (startsWith(bytes, jpeg2)) return Optional.of(Format.JPEG);
         if (isWebp(bytes)) return Optional.of(Format.WEBP);
         return Optional.empty();
     }
 
     private static boolean isWebp(byte[] bytes) {
-        return deepEquals(copyOf(bytes, webp1.length), webp1) &&
+        return startsWith(bytes, webp1) &&
             bytes.length >= 12 &&
-            deepEquals(copyOfRange(bytes, 8, 12), webp2);
+            Arrays.equals(bytes, 8, 12, webp2, 0, webp2.length);
+    }
+
+    // allocation-free prefix comparison; Arrays.copyOf + equals would copy the prefix per check
+    private static boolean startsWith(byte[] bytes, byte[] prefix) {
+        return bytes.length >= prefix.length &&
+            Arrays.equals(bytes, 0, prefix.length, prefix, 0, prefix.length);
     }
 }

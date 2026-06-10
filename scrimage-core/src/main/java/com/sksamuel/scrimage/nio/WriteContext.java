@@ -25,9 +25,20 @@ public class WriteContext {
    }
 
    public byte[] bytes() throws IOException {
-      ByteArrayOutputStream bos = new ByteArrayOutputStream();
+      ByteArrayOutputStream bos = new ByteArrayOutputStream(estimatedSize());
       writer.write(image, metadata, bos);
       return bos.toByteArray();
+   }
+
+   /**
+    * Estimates the encoded size so the buffer does not have to grow from the
+    * default 32-byte capacity through repeated array copies. One byte per pixel
+    * is a reasonable guess for compressed formats; the result is clamped to
+    * keep the initial allocation bounded for very small or very large images.
+    */
+   private int estimatedSize() {
+      long pixels = (long) image.width * image.height;
+      return (int) Math.max(1024, Math.min(pixels, 8 * 1024 * 1024));
    }
 
    public ByteArrayInputStream stream() throws IOException {
