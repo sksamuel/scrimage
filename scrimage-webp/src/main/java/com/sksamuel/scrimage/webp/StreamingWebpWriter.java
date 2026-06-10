@@ -182,7 +182,20 @@ public class StreamingWebpWriter {
             // these PNGs are intermediates that get discarded at close().
             byte[] pngBytes = image.bytes(PngWriter.NoCompression);
             Path temp = Files.createTempFile("scrimage_webp_frame_", ".png");
-            Files.write(temp, pngBytes, StandardOpenOption.CREATE);
+            try {
+               Files.write(temp, pngBytes, StandardOpenOption.CREATE);
+            } catch (IOException | RuntimeException e) {
+               // the temp file has not been registered in `inputs` yet, so the
+               // cleanup in close() would never see it; delete it here or it
+               // leaks on disk. Deleting (rather than registering first) also
+               // keeps `inputs` and `delays` in sync if the caller swallows
+               // the exception and carries on.
+               try {
+                  temp.toFile().delete();
+               } catch (Exception ignored) {
+               }
+               throw e;
+            }
             inputs.add(temp);
             delays.add((int) delay.toMillis());
             return this;

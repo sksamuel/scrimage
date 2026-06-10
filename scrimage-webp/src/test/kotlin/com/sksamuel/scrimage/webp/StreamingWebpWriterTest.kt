@@ -8,7 +8,10 @@ import io.kotest.matchers.shouldBe
 import java.awt.Color
 import java.io.ByteArrayOutputStream
 import java.io.IOException
+import java.io.OutputStream
 import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.time.Duration
 
 class StreamingWebpWriterTest : FunSpec({
@@ -45,6 +48,21 @@ class StreamingWebpWriterTest : FunSpec({
          if (match) { count++; i += needle.size } else i++
       }
       return count
+   }
+
+   /**
+    * Snapshots the scrimage temp files currently sitting in java.io.tmpdir so
+    * tests can diff before/after instead of asserting the directory is empty
+    * (other tests or leftovers from earlier runs may already have files there).
+    */
+   fun scrimageTempFiles(): Set<Path> {
+      val tmpdir = Paths.get(System.getProperty("java.io.tmpdir"))
+      Files.list(tmpdir).use { stream ->
+         return stream
+            .filter { it.fileName.toString().startsWith("scrimage_webp_") }
+            .toList()
+            .toSet()
+      }
    }
 
    val red = ImmutableImage.filled(32, 16, Color.RED)
@@ -149,6 +167,36 @@ class StreamingWebpWriterTest : FunSpec({
       // Second close must not throw, must not re-encode, must not corrupt the
       // already-written output.
       stream.close()
+   }
+
+   test("no scrimage temp files remain after write and close") {
+      val before = scrimageTempFiles()
+      val output = ByteArrayOutputStream()
+      StreamingWebpWriter().prepareStream(output).use { stream ->
+         stream.writeFrame(red)
+         stream.writeFrame(blue)
+      }
+      isAnimatedWebp(output.toByteArray()).shouldBeTrue()
+      (scrimageTempFiles() - before) shouldBe emptySet<Path>()
+   }
+
+   test("no scrimage temp files remain when close fails to write to the destination") {
+      // A destination stream that rejects every write makes Files.copy inside
+      // close() throw after the frames were already buffered to temp PNGs.
+      // The frame temp files (and the encoded output temp file) must still be
+      // cleaned up on that failure path.
+      val failing = object : OutputStream() {
+         override fun write(b: Int): Unit = throw IOException("boom")
+         override fun write(b: ByteArray, off: Int, len: Int): Unit = throw IOException("boom")
+      }
+      val before = scrimageTempFiles()
+      val stream = StreamingWebpWriter().prepareStream(failing)
+      stream.writeFrame(red)
+      stream.writeFrame(blue)
+      shouldThrow<IOException> {
+         stream.close()
+      }
+      (scrimageTempFiles() - before) shouldBe emptySet<Path>()
    }
 
    test("withQ rejects out-of-range values") {
