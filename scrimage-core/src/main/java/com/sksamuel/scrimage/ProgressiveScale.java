@@ -31,6 +31,13 @@ public class ProgressiveScale {
          throw new IllegalArgumentException("target dimensions must be positive, got "
             + targetWidth + "x" + targetHeight);
 
+      // setRenderingHint(KEY_INTERPOLATION, null) throws an opaque
+      // IllegalArgumentException from deep inside AWT, only after we have
+      // already allocated intermediate BufferedImages. Fail fast with a
+      // clear message instead.
+      if (interpolation == null)
+         throw new IllegalArgumentException("interpolation hint must not be null");
+
       int type = getType(image);
       BufferedImage temp = image;
       int w = image.getWidth();
