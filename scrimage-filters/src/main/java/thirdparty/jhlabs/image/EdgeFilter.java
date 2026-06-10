@@ -93,11 +93,12 @@ public class EdgeFilter extends WholeImageFilter {
 		int[] outPixels = new int[width * height];
 
 		for (int y = 0; y < height; y++) {
+			int yOffset = y*width;
 			for (int x = 0; x < width; x++) {
 				int r = 0, g = 0, b = 0;
 				int rh = 0, gh = 0, bh = 0;
 				int rv = 0, gv = 0, bv = 0;
-				int a = inPixels[y*width+x] & 0xff000000;
+				int a = inPixels[yOffset+x] & 0xff000000;
 
 				for (int row = -1; row <= 1; row++) {
 					int iy = y+row;
@@ -105,7 +106,7 @@ public class EdgeFilter extends WholeImageFilter {
 					if (0 <= iy && iy < height)
 						ioffset = iy*width;
 					else
-						ioffset = y*width;
+						ioffset = yOffset;
 					int moffset = 3*(row+1)+1;
 					for (int col = -1; col <= 1; col++) {
 						int ix = x+col;

@@ -121,15 +121,20 @@ public class ColorHalftoneFilter extends AbstractBufferedImageOp {
         float halfGridSize = (float)gridSize/2;
         int[] outPixels = new int[width];
         int[] inPixels = getRGB( src, 0, 0, width, height, null );
+        float[] sins = new float[3];
+        float[] coss = new float[3];
+        for ( int channel = 0; channel < 3; channel++ ) {
+            sins[channel] = (float)Math.sin( angles[channel] );
+            coss[channel] = (float)Math.cos( angles[channel] );
+        }
         for ( int y = 0; y < height; y++ ) {
             for ( int x = 0, ix = y*width; x < width; x++, ix++ )
                 outPixels[x] = (inPixels[ix] & 0xff000000) | 0xffffff;
             for ( int channel = 0; channel < 3; channel++ ) {
                 int shift = 16-8*channel;
                 int mask = 0x000000ff << shift;
-                float angle = angles[channel];
-                float sin = (float)Math.sin( angle );
-                float cos = (float)Math.cos( angle );
+                float sin = sins[channel];
+                float cos = coss[channel];
 
                 for ( int x = 0; x < width; x++ ) {
                     // Transform x,y into halftone screen coordinate space
