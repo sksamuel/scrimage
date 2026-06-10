@@ -1860,13 +1860,16 @@ public class ImmutableImage extends MutableImage {
     * <p>
     * This can be thought of as zooming in on a camera - the viewpane does not change but the image increases
     * in size with the outer columns/rows being dropped as required.
+    * <p>
+    * When zooming out (factor &lt; 1) the canvas area not covered by the scaled image is transparent,
+    * consistent with the defaults used by resizeTo, fit and pad.
     *
     * @param factor how much to zoom by
     * @param method how to apply the scaling method
     * @return the zoomed image
     */
    public ImmutableImage zoom(double factor, ScaleMethod method) {
-      return scale(factor, method).resizeTo(width, height, Position.Center, Color.WHITE).associateMetadata(metadata);
+      return scale(factor, method).resizeTo(width, height, Position.Center, Colors.Transparent.awt()).associateMetadata(metadata);
    }
 
    /**
