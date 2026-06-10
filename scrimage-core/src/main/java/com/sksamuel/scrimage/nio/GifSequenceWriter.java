@@ -79,7 +79,10 @@ public class GifSequenceWriter extends AbstractGifWriter {
 
          imageMetaData.setFromTree(metaFormatName, root);
 
-         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+         // Size hint to avoid repeated growth of the default 32 byte buffer; GIF output for a
+         // frame is at most one byte per pixel before LZW compression, and usually much smaller.
+         int initialCapacity = (int) Math.min(16L * 1024 * 1024, Math.max(1024L, (long) images[0].width * images[0].height));
+         try (ByteArrayOutputStream baos = new ByteArrayOutputStream(initialCapacity)) {
             try (MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream(baos)) {
                writer.setOutput(output);
                writer.prepareWriteSequence(null);

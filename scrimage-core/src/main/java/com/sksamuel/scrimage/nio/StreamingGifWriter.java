@@ -12,6 +12,7 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferInt;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -172,8 +173,18 @@ public class StreamingGifWriter extends AbstractGifWriter {
                         workData[i] = 0;
                      }
                   }
+               } else if (workBuffer instanceof DataBufferByte && lastBuffer instanceof DataBufferByte) {
+                  byte[] workData = ((DataBufferByte) workBuffer).getData();
+                  byte[] lastData = ((DataBufferByte) lastBuffer).getData();
+                  int n = Math.min(workData.length, lastData.length);
+                  for (int i = 0; i < n; i++) {
+                     if (workData[i] == lastData[i]) {
+                        workData[i] = 0;
+                     }
+                  }
                } else {
-                  for (int i = 0; i < workBuffer.getSize(); i++) {
+                  int size = workBuffer.getSize();
+                  for (int i = 0; i < size; i++) {
                      if (workBuffer.getElem(i) == lastBuffer.getElem(i)) {
                         workBuffer.setElem(i, 0);
                      }
