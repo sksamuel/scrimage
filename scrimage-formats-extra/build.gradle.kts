@@ -19,5 +19,5 @@ dependencies {
    // imageio-batik delegates SVG rasterization to Apache Batik, which it declares as a
    // provided dependency, so it must be added explicitly.
    implementation("org.apache.xmlgraphics:batik-transcoder:1.19")
-   implementation("org.apache.xmlgraphics:batik-codec:1.18")
+   implementation("org.apache.xmlgraphics:batik-codec:1.19")
 }
