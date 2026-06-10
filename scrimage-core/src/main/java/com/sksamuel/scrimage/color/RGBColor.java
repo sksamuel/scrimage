@@ -101,7 +101,8 @@ public class RGBColor implements Color {
    }
 
    public int average() {
-      return (red + green + blue) / 3;
+      // round, rather than truncate, for consistency with LumaGrayscale and WeightedGrayscale
+      return Math.round((red + green + blue) / 3f);
    }
 
    public int[] toArray() {
