@@ -44,7 +44,8 @@ public class Pixel {
    }
 
    public int average() {
-      return (red() + green() + blue()) / 3;
+      // round, rather than truncate, for consistency with LumaGrayscale and WeightedGrayscale
+      return Math.round((red() + green() + blue()) / 3f);
    }
 
    public int x() {
@@ -143,7 +144,7 @@ public class Pixel {
     * @return a new grayscale copy of this pixel using the average method
     */
    public Pixel toAverageGrayscale() {
-      int gray = (red() + green() + blue()) / 3;
+      int gray = average();
       return new Pixel(x, y, gray, gray, gray, alpha());
    }
 

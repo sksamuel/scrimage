@@ -52,7 +52,7 @@ class ToAverageGrayscaleTest : FunSpec({
 
    test("toAverageGrayscale on pure red returns 85 (255/3)") {
       val p = Pixel(0, 0, 255, 0, 0, 255)
-      // 255 / 3 = 85 (integer division)
+      // 255 / 3 = 85 (exact)
       p.toAverageGrayscale().red() shouldBe 85
    }
 })

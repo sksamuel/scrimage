@@ -81,7 +81,8 @@ public class PixelTools {
     * @return the gray value of the pixel, between 0 and 255
     */
    public static int gray(int pixel) {
-      return (red(pixel) + green(pixel) + blue(pixel)) / 3;
+      // round, rather than truncate, for consistency with LumaGrayscale and WeightedGrayscale
+      return Math.round((red(pixel) + green(pixel) + blue(pixel)) / 3f);
    }
 
    public static int truncate(Double value) {
