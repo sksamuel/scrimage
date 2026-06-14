@@ -90,10 +90,17 @@ public class GifSequenceReader {
    protected byte[] block = new byte[256]; // current data block
    protected int blockSize = 0; // block size
 
-   protected int frameIndexWithLastDoNotDispose = 0;
+   // -1 means "no do-not-dispose frame seen yet"; distinguishing this from a
+   // legitimate index 0 matters for restore-to-previous (see setPixels).
+   protected int frameIndexWithLastDoNotDispose = -1;
    // last graphic control extension info
    // 0=no action; 1=leave in place; 2=restore to bg; 3=restore to prev
    protected int dispose = 0;
+   // The disposal code of the PREVIOUS frame. Per the GIF spec a frame's disposal
+   // method describes what to do with the canvas after that frame is shown, before
+   // the next frame is composited - so building frame N's canvas must consult frame
+   // N-1's disposal, not frame N's.
+   protected int lastDispose = 0;
    protected boolean transparency = false; // use transparent color
    protected int delay = 0; // delay in milliseconds
    protected int transIndex; // transparent color index
@@ -187,11 +194,11 @@ public class GifSequenceReader {
       int[] dest =
          ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 
-      // fill in starting image contents based on the current image's dispose code
-      if (dispose > 0) {
-         if (dispose == 3) {
+      // fill in starting image contents based on the PREVIOUS frame's dispose code
+      if (lastDispose > 0) {
+         if (lastDispose == 3) {
             // use the last image with a 'doNotDispose' code
-            if (frameIndexWithLastDoNotDispose > 0) {
+            if (frameIndexWithLastDoNotDispose >= 0) {
                lastImage = getFrame(frameIndexWithLastDoNotDispose);
             } else {
                lastImage = null;
@@ -204,7 +211,7 @@ public class GifSequenceReader {
             System.arraycopy(prev, 0, dest, 0, width * height);
             // copy pixels
 
-            if (dispose == 2) {
+            if (lastDispose == 2) {
                // fill last image rect area with background color
                Graphics2D g = image.createGraphics();
                try {
@@ -825,6 +832,8 @@ public class GifSequenceReader {
       lastRect = new Rectangle(ix, iy, iw, ih);
       lastImage = image;
       lastBgColor = bgColor;
+      // Remember this frame's disposal so the next frame's setPixels can act on it.
+      lastDispose = dispose;
       // These three were previously declared as locals, shadowing the
       // instance fields. The intent is to reset the frame state ready for
       // the next image: per the GIF spec, the graphics control extension
