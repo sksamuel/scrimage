@@ -62,6 +62,10 @@ public class GifSequenceWriter extends AbstractGifWriter {
 
    public byte[] bytes(ImmutableImage[] images) throws IOException {
 
+      if (images == null || images.length == 0) {
+         throw new IllegalArgumentException("Cannot write a gif with no frames");
+      }
+
       ImageWriter writer = ImageIO.getImageWritersBySuffix("gif").next();
       try {
          ImageWriteParam imageWriteParam = writer.getDefaultWriteParam();
