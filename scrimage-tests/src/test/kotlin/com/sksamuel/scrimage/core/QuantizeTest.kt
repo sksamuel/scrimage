@@ -3,11 +3,23 @@ package com.sksamuel.scrimage.core
 import com.sksamuel.scrimage.ImmutableImage
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import java.awt.Color
 
 class QuantizeTest : FunSpec() {
    init {
 
       val image = ImmutableImage.loader().fromResource("/com/sksamuel/scrimage/bird.jpg")
+
+      test("quantize of a solid colour image returns in-range channels") {
+         // A single dominant colour leaves the upper half of the median cut empty; that empty
+         // box's averaged centre evaluated to 256, outside [0, 255], crashing RGBColor.fromRGB.
+         val palette = ImmutableImage.filled(20, 20, Color.RED).quantize(2)
+         palette.forEach { c ->
+            (c.red in 0..255) shouldBe true
+            (c.green in 0..255) shouldBe true
+            (c.blue in 0..255) shouldBe true
+         }
+      }
 
       test("quantize 16") {
 
