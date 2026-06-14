@@ -1700,6 +1700,55 @@ public class ImmutableImage extends MutableImage {
    }
 
    /**
+    * Returns a new Image with the leftmost {@code amount} columns removed, shrinking
+    * the width by that amount. For example {@code dropLeft(100)} removes the first
+    * 100 columns and the result is 100 pixels narrower.
+    *
+    * @param amount the number of columns to remove from the left edge
+    * @return a new Image with the leftmost columns removed
+    */
+   public ImmutableImage dropLeft(int amount) {
+      int drop = Math.max(0, Math.min(amount, width - 1));
+      return subimage(drop, 0, width - drop, height);
+   }
+
+   /**
+    * Returns a new Image with the rightmost {@code amount} columns removed, shrinking
+    * the width by that amount.
+    *
+    * @param amount the number of columns to remove from the right edge
+    * @return a new Image with the rightmost columns removed
+    */
+   public ImmutableImage dropRight(int amount) {
+      int drop = Math.max(0, Math.min(amount, width - 1));
+      return subimage(0, 0, width - drop, height);
+   }
+
+   /**
+    * Returns a new Image with the topmost {@code amount} rows removed, shrinking the
+    * height by that amount.
+    *
+    * @param amount the number of rows to remove from the top edge
+    * @return a new Image with the top rows removed
+    */
+   public ImmutableImage dropTop(int amount) {
+      int drop = Math.max(0, Math.min(amount, height - 1));
+      return subimage(0, drop, width, height - drop);
+   }
+
+   /**
+    * Returns a new Image with the bottommost {@code amount} rows removed, shrinking
+    * the height by that amount.
+    *
+    * @param amount the number of rows to remove from the bottom edge
+    * @return a new Image with the bottom rows removed
+    */
+   public ImmutableImage dropBottom(int amount) {
+      int drop = Math.max(0, Math.min(amount, height - 1));
+      return subimage(0, 0, width, height - drop);
+   }
+
+   /**
     * Returns an image that is the result of translating the image while keeping the same
     * view window. Eg, if translating by 10,5 then all pixels will move 10 to the right, and 5 down.
     * This would mean 10 columns and 5 rows of background added to the left and top.

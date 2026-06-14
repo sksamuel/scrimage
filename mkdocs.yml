@@ -70,6 +70,7 @@ nav:
          - "resize.md"
          - "rotate.md"
          - "scale.md"
+         - "drop.md"
          - "take.md"
          - "translate.md"
          - "trim.md"
