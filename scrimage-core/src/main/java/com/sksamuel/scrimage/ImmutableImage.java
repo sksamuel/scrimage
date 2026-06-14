@@ -1107,7 +1107,10 @@ public class ImmutableImage extends MutableImage {
     * @return a new Image that is the result of resizing the canvas.
     */
    public ImmutableImage resizeToHeight(int targetHeight, Position position, Color background, int imageType) {
-      return resizeTo((int) (targetHeight / (double) height * width), targetHeight, position, background, imageType);
+      // Clamp the derived width to at least 1: for an extreme aspect ratio (e.g. a 1x1000
+      // image) the integer arithmetic floors to 0, which then fails creating a 0-width canvas.
+      int targetWidth = Math.max(1, (int) (targetHeight / (double) height * width));
+      return resizeTo(targetWidth, targetHeight, position, background, imageType);
    }
 
    /**
@@ -1140,7 +1143,10 @@ public class ImmutableImage extends MutableImage {
     * @return a new Image that is the result of resizing the canvas.
     */
    public ImmutableImage resizeToWidth(int targetWidth, Position position, Color background, int imageType) {
-      return resizeTo(targetWidth, (int) (targetWidth / (double) width * height), position, background, imageType);
+      // Clamp the derived height to at least 1: for an extreme aspect ratio (e.g. a 1000x1
+      // image) the integer arithmetic floors to 0, which then fails creating a 0-height canvas.
+      int targetHeight = Math.max(1, (int) (targetWidth / (double) width * height));
+      return resizeTo(targetWidth, targetHeight, position, background, imageType);
    }
 
    /**
