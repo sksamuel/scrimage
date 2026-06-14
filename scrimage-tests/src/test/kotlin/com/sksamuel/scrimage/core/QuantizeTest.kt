@@ -3,11 +3,18 @@ package com.sksamuel.scrimage.core
 import com.sksamuel.scrimage.ImmutableImage
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import java.awt.Color
 
 class QuantizeTest : FunSpec() {
    init {
 
       val image = ImmutableImage.loader().fromResource("/com/sksamuel/scrimage/bird.jpg")
+
+      test("quantize of an all-white image returns an empty palette instead of NPE") {
+         // ColorThief's default extractor ignores white, so an all-white image leaves no
+         // pixels to quantize and getColorMap returns null. quantize must not dereference it.
+         ImmutableImage.filled(10, 10, Color.WHITE).quantize(2).size shouldBe 0
+      }
 
       test("quantize 16") {
 
