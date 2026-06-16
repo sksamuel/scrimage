@@ -47,8 +47,14 @@ public class LaplaceFilter extends AbstractBufferedImageOp {
         int[] pixels = new int[width];
         row1 = getRGB( src, 0, 0, width, 1, row1 );
         row2 = getRGB( src, 0, 0, width, 1, row2 );
+        // Seed row3 from the first row so it is never null. For height >= 2 it is
+        // overwritten by the y+1 read on the first iteration (so output is unchanged);
+        // for a single-row image there is no row below, and clamping the bottom
+        // neighbour to the current row avoids a NullPointerException at row3[x].
+        row3 = getRGB( src, 0, 0, width, 1, row3 );
         brightness( row1 );
         brightness( row2 );
+        brightness( row3 );
         for ( int y = 0; y < height; y++ ) {
             if ( y < height-1) {
                 row3 = getRGB( src, 0, y+1, width, 1, row3 );
@@ -79,6 +85,8 @@ public class LaplaceFilter extends AbstractBufferedImageOp {
 
         row1 = getRGB( dst, 0, 0, width, 1, row1 );
         row2 = getRGB( dst, 0, 0, width, 1, row2 );
+        // Seed row3 for the same single-row reason as the first pass.
+        row3 = getRGB( dst, 0, 0, width, 1, row3 );
         for ( int y = 0; y < height; y++ ) {
             if ( y < height-1) {
                 row3 = getRGB( dst, 0, y+1, width, 1, row3 );
