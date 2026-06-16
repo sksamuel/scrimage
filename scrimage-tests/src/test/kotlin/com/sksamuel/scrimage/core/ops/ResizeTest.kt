@@ -134,4 +134,18 @@ class ResizeTest : FunSpec({
       972 shouldBe scaled.width
       648 shouldBe scaled.height
    }
+
+   test("resizeToWidth clamps the derived height to at least 1 for an extreme aspect ratio") {
+      // A 1000x1 strip: the aspect-preserving height is 1000/1000 -> floors to 0, which used
+      // to throw "Width (10) and height (0) cannot be <= 0" creating a 0-height canvas.
+      val out = ImmutableImage.create(1000, 1).resizeToWidth(10)
+      out.width shouldBe 10
+      out.height shouldBe 1
+   }
+
+   test("resizeToHeight clamps the derived width to at least 1 for an extreme aspect ratio") {
+      val out = ImmutableImage.create(1, 1000).resizeToHeight(10)
+      out.width shouldBe 1
+      out.height shouldBe 10
+   }
 })
