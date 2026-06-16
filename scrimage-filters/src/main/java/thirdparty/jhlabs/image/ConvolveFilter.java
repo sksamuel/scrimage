@@ -335,11 +335,15 @@ public class ConvolveFilter extends AbstractBufferedImageOp {
 								ix = 0;
 							else if ( edgeAction == WRAP_EDGES )
 								ix = (x+width) % width;
+							else
+								continue; // ZERO_EDGES: out-of-bounds contributes nothing
 						} else if ( ix >= width) {
 							if ( edgeAction == CLAMP_EDGES )
 								ix = width-1;
 							else if ( edgeAction == WRAP_EDGES )
 								ix = (x+width) % width;
+							else
+								continue; // ZERO_EDGES: out-of-bounds contributes nothing
 						}
 						int rgb = inPixels[ioffset+ix];
 						a += f * ((rgb >> 24) & 0xff);
@@ -386,14 +390,14 @@ public class ConvolveFilter extends AbstractBufferedImageOp {
 						else if ( edgeAction == WRAP_EDGES )
 							ioffset = ((y+height) % height)*width;
 						else
-							ioffset = iy*width;
+							continue; // ZERO_EDGES: out-of-bounds contributes nothing
 					} else if ( iy >= height) {
 						if ( edgeAction == CLAMP_EDGES )
 							ioffset = (height-1)*width;
 						else if ( edgeAction == WRAP_EDGES )
 							ioffset = ((y+height) % height)*width;
 						else
-							ioffset = iy*width;
+							continue; // ZERO_EDGES: out-of-bounds contributes nothing
 					} else
 						ioffset = iy*width;
 
