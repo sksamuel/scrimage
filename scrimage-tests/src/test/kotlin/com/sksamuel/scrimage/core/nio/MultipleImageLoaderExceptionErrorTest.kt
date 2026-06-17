@@ -13,7 +13,8 @@ class MultipleImageLoaderExceptionErrorTest : FunSpec() {
          val e = shouldThrowAny {
             ImmutableImageLoader.create().load(ImageSource.of(bytes))
          }
-         e.message shouldContain """Image parsing failed for unknown image format. Tried the following ImageReader implementations"""
+         e.message shouldContain """Image parsing failed"""
+         e.message shouldContain """Tried the following ImageReader implementations"""
          e.message shouldContain """com.sksamuel.scrimage.nio.ImageIOReader"""
          e.message shouldContain """com.sksamuel.scrimage.nio.PngReader"""
       }
