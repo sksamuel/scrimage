@@ -7,7 +7,7 @@ import com.sksamuel.scrimage.pixels.PixelTools;
  * <p>
  * The hue component should be between 0.0 and 360.0
  * The saturation component should be between 0.0 and 1.0
- * The lightness component should be between 0.0 and 1.0
+ * The value component should be between 0.0 and 1.0
  * The alpha component should be between 0.0 and 1.0
  */
 public class HSVColor implements Color {
@@ -18,15 +18,24 @@ public class HSVColor implements Color {
    public final float alpha;
 
    public HSVColor(float hue, float saturation, float value, float alpha) {
-      assert (0 <= hue && hue <= 360f);
-      assert (0 <= saturation && saturation <= 1f);
-      assert (0 <= value && value <= 1f);
-      assert (0 <= alpha && alpha <= 1f);
+      // Validate explicitly rather than with `assert`, which is disabled by
+      // default in production JVMs (so out-of-range values would slip through
+      // and produce wrong colours in toRGB()).
+      requireInRange("hue", hue, 360f);
+      requireInRange("saturation", saturation, 1f);
+      requireInRange("value", value, 1f);
+      requireInRange("alpha", alpha, 1f);
 
       this.hue = hue;
       this.saturation = saturation;
       this.value = value;
       this.alpha = alpha;
+   }
+
+   private static void requireInRange(String component, float value, float max) {
+      if (value < 0 || value > max)
+         throw new IllegalArgumentException(
+            "HSVColor " + component + " component must be in [0, " + max + "] but was " + value);
    }
 
    public HSVColor toHSV() {
