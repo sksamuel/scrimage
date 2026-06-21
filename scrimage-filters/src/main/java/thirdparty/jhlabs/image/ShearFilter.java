@@ -63,16 +63,26 @@ public class ShearFilter extends TransformFilter {
 	}
 	
 	protected void transformSpace(Rectangle r) {
-		float tangent = (float)Math.tan(xangle);
-		xoffset = -r.height * tangent;
-		if (tangent < 0.0)
-			tangent = -tangent;
-		r.width = (int)(r.height * tangent + r.width + 0.999999f);
-		tangent = (float)Math.tan(yangle);
-		yoffset = -r.width * tangent;
-		if (tangent < 0.0)
-			tangent = -tangent;
-		r.height = (int)(r.width * tangent + r.height + 0.999999f);
+		if (resize) {
+			float tangent = (float)Math.tan(xangle);
+			xoffset = -r.height * tangent;
+			if (tangent < 0.0)
+				tangent = -tangent;
+			r.width = (int)(r.height * tangent + r.width + 0.999999f);
+			tangent = (float)Math.tan(yangle);
+			yoffset = -r.width * tangent;
+			if (tangent < 0.0)
+				tangent = -tangent;
+			r.height = (int)(r.width * tangent + r.height + 0.999999f);
+		} else {
+			// When not resizing, keep the output the same size as the input and shear
+			// in place (no offset); the transform's edge action samples/clips whatever
+			// falls outside the source. Previously `resize` was ignored and the output
+			// rectangle was always enlarged, overflowing a same-sized destination buffer
+			// and throwing ArrayIndexOutOfBoundsException from setRGB.
+			xoffset = 0.0f;
+			yoffset = 0.0f;
+		}
 	}
 
 /*
