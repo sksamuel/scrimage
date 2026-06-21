@@ -6,6 +6,7 @@ import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.nio.AnimatedGifReader
 import com.sksamuel.scrimage.nio.GifSequenceWriter
 import com.sksamuel.scrimage.nio.ImageSource
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 import org.apache.commons.io.IOUtils
@@ -39,6 +40,12 @@ class GifSequenceWriterTest : WordSpec({
          decoded.getFrame(0).height shouldBe 2
          decoded.getFrame(1).width shouldBe 2
          decoded.getFrame(1).height shouldBe 2
+      }
+      "reject an empty frame array with a clear error" {
+         // Previously dereferenced images[0] and threw a confusing ArrayIndexOutOfBoundsException.
+         shouldThrow<IllegalArgumentException> {
+            GifSequenceWriter().bytes(emptyArray())
+         }
       }
    }
 
