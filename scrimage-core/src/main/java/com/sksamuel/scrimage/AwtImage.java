@@ -697,9 +697,14 @@ public class AwtImage {
    }
 
    /**
-    * Returns the average colour of all pixels in this image
+    * Reduces all pixels in this image to a single colour by folding them with
+    * {@link com.sksamuel.scrimage.color.Color#average(com.sksamuel.scrimage.color.Color)},
+    * i.e. a left-to-right SrcOver alpha blend in row-major order — not an arithmetic
+    * mean of the channels. As a consequence, a fully opaque image collapses to the
+    * colour of its first (top-left) pixel, since SrcOver of two opaque colours yields
+    * the source.
     *
-    * @return the average colour of the image
+    * @return the SrcOver-blend reduction of every pixel in the image
     */
    public RGBColor average() {
       int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
