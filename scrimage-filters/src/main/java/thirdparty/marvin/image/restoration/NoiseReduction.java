@@ -60,6 +60,20 @@ public class NoiseReduction extends MarvinAbstractImagePlugin {
         width = a_imageIn.getWidth();
         height = a_imageIn.getHeight();
 
+        // Total-variation denoising needs a neighbour along each axis: the
+        // derivative helpers (diff_x/diff_y/diff_xx/diff_yy/diff_xy) index
+        // [i+1] / [j+1], which throws ArrayIndexOutOfBoundsException on a
+        // 1px-wide or 1px-tall image. Such an image has no 2D neighbourhood to
+        // denoise, so copy it through unchanged.
+        if (width < 2 || height < 2) {
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    a_imageOut.setIntColor(x, y, a_imageIn.getIntColor(x, y));
+                }
+            }
+            return;
+        }
+
         mat1 = new double[width][height];
         mat2 = new double[width][height];
         mat4 = new double[width][height];
