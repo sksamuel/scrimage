@@ -2,6 +2,7 @@ package com.sksamuel.scrimage.nio;
 
 import com.sksamuel.scrimage.ImageParseException;
 import com.sksamuel.scrimage.ImmutableImage;
+import com.sksamuel.scrimage.UnsupportedFormatException;
 import com.sksamuel.scrimage.format.Format;
 import com.sksamuel.scrimage.format.FormatDetector;
 
@@ -62,7 +63,7 @@ public class ImageReaders {
       }
       Format format = FormatDetector.detect(bytes).orElse(null);
       if (format == null)
-         throw new ImageParseException(errors);
+         throw new UnsupportedFormatException(errors);
       else
          throw new ImageParseException(errors, format);
    }
