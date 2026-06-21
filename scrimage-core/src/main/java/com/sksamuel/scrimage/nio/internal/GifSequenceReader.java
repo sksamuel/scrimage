@@ -738,14 +738,20 @@ public class GifSequenceReader {
          if (bgIndex == transIndex)
             bgColor = 0;
       }
-      int save = 0;
-      if (transparency) {
-         save = act[transIndex];
-         act[transIndex] = 0; // set transparent color if specified
-      }
-
       if (act == null) {
          status = STATUS_FORMAT_ERROR; // no color table defined
+         return; // bail before dereferencing act below (a malformed GIF with
+                 // no global/local colour table and the transparency flag set
+                 // would otherwise NPE here rather than report a format error)
+      }
+
+      // transIndex is read as an unsigned byte (0-255) but the active colour
+      // table may hold fewer entries, so guard the index before indexing it.
+      boolean applyTransparency = transparency && transIndex < act.length;
+      int save = 0;
+      if (applyTransparency) {
+         save = act[transIndex];
+         act[transIndex] = 0; // set transparent color if specified
       }
 
       if (err()) return;
@@ -765,7 +771,7 @@ public class GifSequenceReader {
 
       frames.add(new GifFrame(image, delay, dispose)); // add image to frame list
 
-      if (transparency) {
+      if (applyTransparency) {
          act[transIndex] = save;
       }
       resetFrame();
