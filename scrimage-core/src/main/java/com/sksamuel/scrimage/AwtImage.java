@@ -21,11 +21,11 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Wraps an AWT BufferedImage with some basic helper functions related to sizes, pixels etc.
@@ -492,12 +492,10 @@ public class AwtImage {
     * @return the set of distinct Colors
     */
    public Set<RGBColor> colours() {
+      // Dedupe the packed ints first so RGBColor is only allocated once per
+      // distinct colour, rather than once per pixel.
       int[] argb = argbints();
-      Set<RGBColor> colours = new HashSet<>();
-      for (int p : argb) {
-         colours.add(RGBColor.fromARGBInt(p));
-      }
-      return colours;
+      return Arrays.stream(argb).distinct().mapToObj(RGBColor::fromARGBInt).collect(Collectors.toSet());
    }
 
    /**
