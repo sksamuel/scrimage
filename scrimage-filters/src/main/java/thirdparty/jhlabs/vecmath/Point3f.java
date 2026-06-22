@@ -49,15 +49,4 @@ public class Point3f extends Tuple3f {
 		this.z = t.z;
 	}
 
-	public float distanceL1( Point3f p ) {
-		return Math.abs(x-p.x) + Math.abs(y-p.y) + Math.abs(z-p.z);
-	}
-
-	public float distanceSquared( Point3f p ) {
-		float dx = x-p.x;
-		float dy = y-p.y;
-		float dz = z-p.z;
-		return dx*dx+dy*dy+dz*dz;
-	}
-
 }
