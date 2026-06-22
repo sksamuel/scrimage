@@ -52,43 +52,11 @@ public class QuantizeFilter extends WholeImageFilter {
 	}
 
 	/**
-	 * Get the number of colors to quantize to.
-	 * @return the number of colors.
-	 */
-	public int getNumColors() {
-		return numColors;
-	}
-
-	/**
 	 * Set whether to use dithering or not. If not, the image is posterized.
 	 * @param dither true to use dithering
 	 */
 	public void setDither(boolean dither) {
 		this.dither = dither;
-	}
-
-	/**
-	 * Return the dithering setting
-	 * @return the current setting
-	 */
-	public boolean getDither() {
-		return dither;
-	}
-
-	/**
-	 * Set whether to use a serpentine pattern for return or not. This can reduce 'avalanche' artifacts in the output.
-	 * @param serpentine true to use serpentine pattern
-	 */
-	public void setSerpentine(boolean serpentine) {
-		this.serpentine = serpentine;
-	}
-	
-	/**
-	 * Return the serpentine setting
-	 * @return the current setting
-	 */
-	public boolean getSerpentine() {
-		return serpentine;
 	}
 	
 	public void quantize(int[] inPixels, int[] outPixels, int width, int height, int numColors, boolean dither, boolean serpentine) {
