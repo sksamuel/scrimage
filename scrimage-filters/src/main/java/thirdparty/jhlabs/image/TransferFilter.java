@@ -59,16 +59,6 @@ public abstract class TransferFilter extends PointFilter {
 	protected float transferFunction( float v ) {
 		return 0;
 	}
-
-	public int[] getLUT() {
-		if (!initialized)
-			initialize();
-		int[] lut = new int[256];
-		for ( int i = 0; i < 256; i++ ) {
-			lut[i] = filterRGB( 0, 0, (i << 24) | (i << 16) | (i << 8) | i );
-		}
-		return lut;
-	}
 	
 }
 
