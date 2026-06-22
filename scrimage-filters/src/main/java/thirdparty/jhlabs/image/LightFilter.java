@@ -99,22 +99,6 @@ public class LightFilter extends WholeImageFilter {
       tmpv2 = new Vector3f();
    }
 
-   public void setMaterial(Material material) {
-      this.material = material;
-   }
-
-   public Material getMaterial() {
-      return material;
-   }
-
-   public void setBumpFunction(Function2D bumpFunction) {
-      this.bumpFunction = bumpFunction;
-   }
-
-   public Function2D getBumpFunction() {
-      return bumpFunction;
-   }
-
    public void setBumpHeight(float bumpHeight) {
       this.bumpHeight = bumpHeight;
    }
@@ -123,60 +107,12 @@ public class LightFilter extends WholeImageFilter {
       return bumpHeight;
    }
 
-   public void setBumpSoftness(float bumpSoftness) {
-      this.bumpSoftness = bumpSoftness;
-   }
-
-   public float getBumpSoftness() {
-      return bumpSoftness;
-   }
-
-   public void setBumpShape(int bumpShape) {
-      this.bumpShape = bumpShape;
-   }
-
-   public int getBumpShape() {
-      return bumpShape;
-   }
-
-   public void setViewDistance(float viewDistance) {
-      this.viewDistance = viewDistance;
-   }
-
-   public float getViewDistance() {
-      return viewDistance;
-   }
-
-   public void setEnvironmentMap(BufferedImage environmentMap) {
-      this.environmentMap = environmentMap;
-      if (environmentMap != null) {
-         envWidth = environmentMap.getWidth();
-         envHeight = environmentMap.getHeight();
-         envPixels = getRGB(environmentMap, 0, 0, envWidth, envHeight, null);
-      } else {
-         envWidth = envHeight = 1;
-         envPixels = null;
-      }
-   }
-
    public Image getEnvironmentMap() {
       return environmentMap;
    }
 
    public void setColorSource(int colorSource) {
       this.colorSource = colorSource;
-   }
-
-   public int getColorSource() {
-      return colorSource;
-   }
-
-   public void setBumpSource(int bumpSource) {
-      this.bumpSource = bumpSource;
-   }
-
-   public int getBumpSource() {
-      return bumpSource;
    }
 
    public void setDiffuseColor(int diffuseColor) {
@@ -189,10 +125,6 @@ public class LightFilter extends WholeImageFilter {
 
    public void addLight(Light light) {
       lights.add(light);
-   }
-
-   public void removeLight(Light light) {
-      lights.remove(light);
    }
 
    public List<Light> getLights() {
@@ -624,30 +556,6 @@ public class LightFilter extends WholeImageFilter {
 
       public float getDistance() {
          return distance;
-      }
-
-      public void setIntensity(float intensity) {
-         this.intensity = intensity;
-      }
-
-      public float getIntensity() {
-         return intensity;
-      }
-
-      public void setConeAngle(float coneAngle) {
-         this.coneAngle = coneAngle;
-      }
-
-      public float getConeAngle() {
-         return coneAngle;
-      }
-
-      public void setFocus(float focus) {
-         this.focus = focus;
-      }
-
-      public float getFocus() {
-         return focus;
       }
 
       public void setColor(int color) {
