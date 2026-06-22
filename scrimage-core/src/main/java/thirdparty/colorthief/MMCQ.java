@@ -50,6 +50,20 @@ public class MMCQ {
    }
 
    /**
+    * Clamp a computed average to a valid 8-bit colour channel. The centre of the topmost
+    * quantization bucket, and the midpoint formula used for empty buckets produced by a
+    * median cut, can evaluate to 256 (or slightly above), which is outside the [0, 255]
+    * range a colour channel can hold. Returning such a value crashes callers that validate
+    * the range (e.g. RGBColor.fromRGB).
+    */
+   private static int clampChannel(int value) {
+      if (value < 0) {
+         return 0;
+      }
+      return Math.min(value, 255);
+   }
+
+   /**
     * 3D color space box.
     */
    public static class VBox {
@@ -140,10 +154,11 @@ public class MMCQ {
             }
 
             if (ntot > 0) {
-               _avg = new int[] {~~(rsum / ntot), ~~(gsum / ntot), ~~(bsum / ntot)};
+               _avg = new int[] {clampChannel(rsum / ntot), clampChannel(gsum / ntot),
+                  clampChannel(bsum / ntot)};
             } else {
-               _avg = new int[] {~~(MULT * (r1 + r2 + 1) / 2), ~~(MULT * (g1 + g2 + 1) / 2),
-                  ~~(MULT * (b1 + b2 + 1) / 2)};
+               _avg = new int[] {clampChannel(MULT * (r1 + r2 + 1) / 2),
+                  clampChannel(MULT * (g1 + g2 + 1) / 2), clampChannel(MULT * (b1 + b2 + 1) / 2)};
             }
          }
 
