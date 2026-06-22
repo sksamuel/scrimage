@@ -119,7 +119,7 @@ public class QuantizeFilter extends WholeImageFilter {
 									else
 										w = matrix[(i+1)*3+j+1];
 									if (w != 0) {
-										int k = reverse ? index - j : index + j;
+										int k = reverse ? index + i * width - j : index + i * width + j;
 										rgb1 = inPixels[k];
 										r1 = (rgb1 >> 16) & 0xff;
 										g1 = (rgb1 >> 8) & 0xff;
