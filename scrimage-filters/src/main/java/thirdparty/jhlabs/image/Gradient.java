@@ -453,10 +453,6 @@ public class Gradient extends ArrayColormap implements Cloneable {
 		}
 	}
 
-	private void rebuild() {
-		sortKnots();
-		rebuildGradient();
-	}
 	
     /**
      * Randomize the gradient.

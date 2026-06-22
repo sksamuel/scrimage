@@ -25,7 +25,6 @@ import java.awt.geom.*;
 public class MotionBlurFilter extends AbstractBufferedImageOp {
 
 	private float angle = 0.0f;
-	private float falloff = 1.0f;
 	private float distance = 1.0f;
 	private float zoom = 0.0f;
 	private float rotation = 0.0f;

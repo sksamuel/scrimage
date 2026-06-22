@@ -117,9 +117,6 @@ public class SmearFilter extends WholeImageFilter {
 		seed = new Date().getTime();
 	}
 
-	private float random(float low, float high) {
-		return low+(high-low) * randomGenerator.nextFloat();
-	}
 
 	protected int[] filterPixels( int width, int height, int[] inPixels, Rectangle transformedSpace ) {
 		int[] outPixels = new int[width * height];

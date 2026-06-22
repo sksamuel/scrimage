@@ -8,13 +8,9 @@ import java.awt.image.WritableRaster;
 public abstract class RGBCompositeContext implements CompositeContext {
 
     private float alpha;
-    private ColorModel srcColorModel;
-    private ColorModel dstColorModel;
 
     public RGBCompositeContext(float alpha, ColorModel srcColorModel, ColorModel dstColorModel) {
         this.alpha = alpha;
-        this.srcColorModel = srcColorModel;
-        this.dstColorModel = dstColorModel;
     }
 
     public void dispose() {
