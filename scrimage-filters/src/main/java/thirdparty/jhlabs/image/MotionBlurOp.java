@@ -61,30 +61,12 @@ public class MotionBlurOp extends AbstractBufferedImageOp {
 	}
 
 	/**
-     * Returns the angle of blur.
-     * @return the angle of blur.
-     * @see #setAngle
-     */
-	public float getAngle() {
-		return angle;
-	}
-
-	/**
      * Set the distance of blur.
      * @param distance the distance of blur.
      * @see #getDistance
      */
 	public void setDistance( float distance ) {
 		this.distance = distance;
-	}
-
-	/**
-     * Get the distance of blur.
-     * @return the distance of blur.
-     * @see #setDistance
-     */
-	public float getDistance() {
-		return distance;
 	}
 
 	/**
@@ -97,85 +79,12 @@ public class MotionBlurOp extends AbstractBufferedImageOp {
 	}
 
 	/**
-     * Get the blur rotation.
-     * @return the angle of rotation.
-     * @see #setRotation
-     */
-	public float getRotation() {
-		return rotation;
-	}
-
-	/**
      * Set the blur zoom.
      * @param zoom the zoom factor.
      * @see #getZoom
      */
 	public void setZoom( float zoom ) {
 		this.zoom = zoom;
-	}
-
-	/**
-     * Get the blur zoom.
-     * @return the zoom factor.
-     * @see #setZoom
-     */
-	public float getZoom() {
-		return zoom;
-	}
-
-	/**
-	 * Set the centre of the effect in the X direction as a proportion of the image size.
-	 * @param centreX the center
-     * @see #getCentreX
-	 */
-	public void setCentreX( float centreX ) {
-		this.centreX = centreX;
-	}
-
-	/**
-	 * Get the centre of the effect in the X direction as a proportion of the image size.
-	 * @return the center
-     * @see #setCentreX
-	 */
-	public float getCentreX() {
-		return centreX;
-	}
-
-	/**
-	 * Set the centre of the effect in the Y direction as a proportion of the image size.
-	 * @param centreY the center
-     * @see #getCentreY
-	 */
-	public void setCentreY( float centreY ) {
-		this.centreY = centreY;
-	}
-
-	/**
-	 * Get the centre of the effect in the Y direction as a proportion of the image size.
-	 * @return the center
-     * @see #setCentreY
-	 */
-	public float getCentreY() {
-		return centreY;
-	}
-
-	/**
-	 * Set the centre of the effect as a proportion of the image size.
-	 * @param centre the center
-     * @see #getCentre
-	 */
-	public void setCentre( Point2D centre ) {
-		this.centreX = (float)centre.getX();
-		this.centreY = (float)centre.getY();
-	}
-
-	/**
-	 * Get the centre of the effect as a proportion of the image size.
-	 * @return the center
-     * @see #setCentre
-	 */
-	public Point2D getCentre() {
-		return new Point2D.Float( centreX, centreY );
 	}
 
     private int log2( int n ) {
