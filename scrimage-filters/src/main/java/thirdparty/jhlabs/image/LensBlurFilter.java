@@ -41,16 +41,6 @@ public class LensBlurFilter extends AbstractBufferedImageOp {
     }
 
     /**
-     * Get the radius of the kernel.
-     *
-     * @return the radius
-     * @see #setRadius
-     */
-    public float getRadius() {
-        return radius;
-    }
-
-    /**
      * Set the number of sides of the aperture.
      *
      * @param sides the number of sides
@@ -58,16 +48,6 @@ public class LensBlurFilter extends AbstractBufferedImageOp {
      */
     public void setSides(int sides) {
         this.sides = sides;
-    }
-
-    /**
-     * Get the number of sides of the aperture.
-     *
-     * @return the number of sides
-     * @see #setSides
-     */
-    public int getSides() {
-        return sides;
     }
 
     /**
@@ -81,16 +61,6 @@ public class LensBlurFilter extends AbstractBufferedImageOp {
     }
 
     /**
-     * Get the bloom factor.
-     *
-     * @return the bloom factor
-     * @see #setBloom
-     */
-    public float getBloom() {
-        return bloom;
-    }
-
-    /**
      * Set the bloom threshold.
      *
      * @param bloomThreshold the bloom threshold
@@ -98,16 +68,6 @@ public class LensBlurFilter extends AbstractBufferedImageOp {
      */
     public void setBloomThreshold(float bloomThreshold) {
         this.bloomThreshold = bloomThreshold;
-    }
-
-    /**
-     * Get the bloom threshold.
-     *
-     * @return the bloom threshold
-     * @see #setBloomThreshold
-     */
-    public float getBloomThreshold() {
-        return bloomThreshold;
     }
 
 
