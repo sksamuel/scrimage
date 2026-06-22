@@ -174,50 +174,9 @@ public class DitherFilter extends PointFilter {
 		levels = 6;
 		colorDither = true;
 	}
-	
-	/**
-	 * Set the dither matrix.
-	 * @param matrix the dither matrix
-     * @see #getMatrix
-	 */
-	public void setMatrix(int[] matrix) {
-		this.matrix = matrix;
-	}
 
-	/**
-	 * Get the dither matrix.
-	 * @return the dither matrix
-     * @see #setMatrix
-	 */
-	public int[] getMatrix() {
-		return matrix;
-	}
-
-	/**
-	 * Set the number of dither levels.
-	 * @param levels the number of levels
-     * @see #getLevels
-	 */
 	public void setLevels(int levels) {
 		this.levels = levels;
-	}
-
-	/**
-	 * Get the number of dither levels.
-	 * @return the number of levels
-     * @see #setLevels
-	 */
-	public int getLevels() {
-		return levels;
-	}
-
-	/**
-	 * Get whether to use a color dither.
-	 * @return whether to use a color dither
-     * @see #getColorDither
-	 */
-	public boolean getColorDither() {
-		return colorDither;
 	}
 
 	/**

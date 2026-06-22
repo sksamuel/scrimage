@@ -15,13 +15,28 @@
  */
 package com.sksamuel.scrimage.filter;
 
-import thirdparty.marvin.image.MarvinAbstractImagePlugin;
-import thirdparty.marvin.image.halftone.Dithering;
+import java.awt.image.BufferedImageOp;
 
-public class DitherFilter extends MarvinFilter {
+public class DitherFilter extends BufferedOpFilter {
+
+    private final int levels;
+
+    public DitherFilter() {
+        // jhlabs DitherFilter default is 6 levels.
+        this(6);
+    }
+
+    /**
+     * @param levels the number of dither levels per channel (jhlabs default 6).
+     */
+    public DitherFilter(int levels) {
+        this.levels = levels;
+    }
 
     @Override
-    public MarvinAbstractImagePlugin plugin() {
-        return new Dithering();
+    public BufferedImageOp op() {
+        thirdparty.jhlabs.image.DitherFilter op = new thirdparty.jhlabs.image.DitherFilter();
+        op.setLevels(levels);
+        return op;
     }
 }
