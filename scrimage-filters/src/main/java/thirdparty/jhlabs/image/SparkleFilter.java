@@ -75,10 +75,6 @@ public class SparkleFilter extends PointFilter {
 		this.rays = rays;
 	}
 
-	public int getRays() {
-		return rays;
-	}
-
 	/**
 	 * Set the radius of the effect.
 	 * @param radius the radius
