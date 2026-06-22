@@ -90,10 +90,6 @@ public class MarvinImage implements Cloneable {
    }
 
 
-   public MarvinImage crop(int x, int y, int w, int h) {
-      return (new MarvinImage(image.getSubimage(x, y, w, h)));
-   }
-
    public void updateColorArray() {
       arrIntColor = image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth());
 //		arrIntColor = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
@@ -109,13 +105,6 @@ public class MarvinImage implements Cloneable {
             image.setRGB(0, 0, image.getWidth(), image.getHeight(), MarvinColorModelConverter.binaryToRgb(arrBinaryColor), 0, w);
             break;
       }
-   }
-
-   /**
-    * Gets the type
-    */
-   public int getType() {
-      return image.getType();
    }
 
    public int getColorModel() {
@@ -419,23 +408,6 @@ public class MarvinImage implements Cloneable {
    }
 
    /**
-    * Resize the image passing the new height and width
-    */
-   public void resize(int w, int h) {
-
-      // using the new approach of Java 2D API
-      BufferedImage buf = new BufferedImage(w, h, image.getType());
-      Graphics2D g2d = (Graphics2D) buf.getGraphics();
-      g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-      g2d.drawImage(image, 0, 0, w, h, null);
-      g2d.dispose();
-      image = buf;
-      width = w;
-      height = h;
-      updateColorArray();
-   }
-
-   /**
     * Clones the {@link thirdparty.marvin.image.MarvinImage}
     */
    public MarvinImage clone() {
@@ -447,99 +419,6 @@ public class MarvinImage implements Cloneable {
       return newMarvinImg;
    }
 
-   /**
-    * Bresenham�s Line Drawing implementation
-    */
-   public void drawLine(int x0, int y0, int x1, int y1, Color c) {
-      int colorRGB = c.getRGB();
-      int dy = y1 - y0;
-      int dx = x1 - x0;
-      int stepx, stepy;
-      int fraction;
-
-
-      if (dy < 0) {
-         dy = -dy;
-         stepy = -1;
-      } else {
-         stepy = 1;
-      }
-      if (dx < 0) {
-         dx = -dx;
-         stepx = -1;
-      } else {
-         stepx = 1;
-      }
-      dy <<= 1;                            // dy is now 2*dy
-      dx <<= 1;                            // dx is now 2*dx
-
-      setIntColor(x0, y0, colorRGB);
-
-      if (dx > dy) {
-         fraction = dy - (dx >> 1);    // same as 2*dy - dx
-         while (x0 != x1) {
-            if (fraction >= 0) {
-               y0 += stepy;
-               fraction -= dx;        // same as fraction -= 2*dx
-            }
-            x0 += stepx;
-            fraction += dy;                // same as fraction -= 2*dy
-            setIntColor(x0, y0, colorRGB);
-         }
-      } else {
-         fraction = dx - (dy >> 1);
-         while (y0 != y1) {
-            if (fraction >= 0) {
-               x0 += stepx;
-               fraction -= dy;
-            }
-            y0 += stepy;
-            fraction += dx;
-            setIntColor(x0, y0, colorRGB);
-         }
-      }
-   }
-
-
-   /**
-    * Draws a rectangle in the image. It�s useful for debugging purposes.
-    *
-    * @param x rect�s start position in x-axis
-    * @param y rect�s start positioj in y-axis
-    * @param w rect�s width
-    * @param h rect�s height
-    * @param c rect�s color
-    */
-   public void drawRect(int x, int y, int w, int h, Color c) {
-      int color = c.getRGB();
-      for (int i = x; i < x + w; i++) {
-         setIntColor(i, y, color);
-         setIntColor(i, y + (h - 1), color);
-      }
-
-      for (int i = y; i < y + h; i++) {
-         setIntColor(x, i, color);
-         setIntColor(x + (w - 1), i, color);
-      }
-   }
-
-   /**
-    * Fills a rectangle in the image.
-    *
-    * @param x rect�s start position in x-axis
-    * @param y rect�s start positioj in y-axis
-    * @param w rect�s width
-    * @param h rect�s height
-    * @param c rect�s color
-    */
-   public void fillRect(int x, int y, int w, int h, Color c) {
-      int color = c.getRGB();
-      for (int i = x; i < x + w; i++) {
-         for (int j = y; j < y + h; j++) {
-            setIntColor(i, j, color);
-         }
-      }
-   }
 
    /**
     * Compare two MarvinImage objects
