@@ -105,29 +105,6 @@ public class ImageMath {
    }
 
    /**
-    * A smoothed pulse function. A cubic function is used to smooth the step between two thresholds.
-    *
-    * @param a1 the lower threshold position for the start of the pulse
-    * @param a2 the upper threshold position for the start of the pulse
-    * @param b1 the lower threshold position for the end of the pulse
-    * @param b2 the upper threshold position for the end of the pulse
-    * @param x  the input parameter
-    * @return the output value
-    */
-   public static float smoothPulse(float a1, float a2, float b1, float b2, float x) {
-      if (x < a1 || x >= b2)
-         return 0;
-      if (x >= a2) {
-         if (x < b1)
-            return 1.0f;
-         x = (x - b1) / (b2 - b1);
-         return 1.0f - (x * x * (3.0f - 2.0f * x));
-      }
-      x = (x - a1) / (a2 - a1);
-      return x * x * (3.0f - 2.0f * x);
-   }
-
-   /**
     * A smoothed step function. A cubic function is used to smooth the step between two thresholds.
     *
     * @param a the lower threshold position
@@ -142,17 +119,6 @@ public class ImageMath {
          return 1;
       x = (x - a) / (b - a);
       return x * x * (3 - 2 * x);
-   }
-
-   /**
-    * A "circle up" function. Returns y on a unit circle given 1-x. Useful for forming bevels.
-    *
-    * @param x the input parameter in the range 0..1
-    * @return the output value
-    */
-   public static float circleUp(float x) {
-      x = 1 - x;
-      return (float) Math.sqrt(1 - x * x);
    }
 
    /**
@@ -335,19 +301,6 @@ public class ImageMath {
       int b = (int) (cy * m0 + y * m1);
 
       return (a << 24) | (r << 16) | (g << 8) | b;
-   }
-
-   /**
-    * Return the NTSC gray level of an RGB value.
-    *
-    * @param rgb the input pixel
-    * @return the gray level (0-255)
-    */
-   public static int brightnessNTSC(int rgb) {
-      int r = (rgb >> 16) & 0xff;
-      int g = (rgb >> 8) & 0xff;
-      int b = rgb & 0xff;
-      return (int) (r * 0.299f + g * 0.587f + b * 0.114f);
    }
 
    // Catmull-Rom splines
