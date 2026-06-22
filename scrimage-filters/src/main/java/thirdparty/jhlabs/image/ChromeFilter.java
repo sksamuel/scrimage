@@ -37,15 +37,6 @@ public class ChromeFilter extends LightFilter {
 	}
 
 	/**
-	 * Get the amount of chrome.
-	 * @return the amount
-     * @see #setAmount
-	 */
-	public float getAmount() {
-		return amount;
-	}
-
-	/**
 	 * Set the exppsure of the effect.
 	 * @param exposure the exposure
      * min-value 0
@@ -54,15 +45,6 @@ public class ChromeFilter extends LightFilter {
 	 */
 	public void setExposure(float exposure) {
 		this.exposure = exposure;
-	}
-
-	/**
-	 * Get the exppsure of the effect.
-	 * @return the exposure
-     * @see #setExposure
-	 */
-	public float getExposure() {
-		return exposure;
 	}
 
     public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
