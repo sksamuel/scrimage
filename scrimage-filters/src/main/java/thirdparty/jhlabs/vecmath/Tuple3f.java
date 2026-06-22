@@ -56,21 +56,6 @@ public class Tuple3f {
 		z = Math.abs(t.z);
 	}
 
-	public void clamp( float min, float max ) {
-		if ( x < min )
-			x = min;
-		else if ( x > max )
-			x = max;
-		if ( y < min )
-			y = min;
-		else if ( y > max )
-			y = max;
-		if ( z < min )
-			z = min;
-		else if ( z > max )
-			z = max;
-	}
-
 	public void set( float x, float y, float z ) {
 		this.x = x;
 		this.y = y;
@@ -111,13 +96,6 @@ public class Tuple3f {
 		x = -t.x;
 		y = -t.y;
 		z = -t.z;
-	}
-
-	public void interpolate( Tuple3f t, float alpha ) {
-		float a = 1-alpha;
-		x = a*x + alpha*t.x;
-		y = a*y + alpha*t.y;
-		z = a*z + alpha*t.z;
 	}
 
 	public void scale( float s ) {
