@@ -54,10 +54,6 @@ public class HSBAdjustFilter extends PointFilter {
 		this.bFactor = bFactor;
 	}
 	
-	public float getBFactor() {
-		return bFactor;
-	}
-	
 	public int filterRGB(int x, int y, int rgb) {
 		int a = rgb & 0xff000000;
 		int r = (rgb >> 16) & 0xff;
