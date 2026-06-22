@@ -32,30 +32,6 @@ public class EmbossFilter extends WholeImageFilter {
 	public EmbossFilter() {
 	}
 
-	public void setAzimuth(float azimuth) {
-		this.azimuth = azimuth;
-	}
-	
-	public float getAzimuth() {
-		return azimuth;
-	}
-	
-	public void setElevation(float elevation) {
-		this.elevation = elevation;
-	}
-	
-	public float getElevation() {
-		return elevation;
-	}
-	
-	public void setBumpHeight(float bumpHeight) {
-		this.width45 = 3 * bumpHeight;
-	}
-
-	public float getBumpHeight() {
-		return width45 / 3;
-	}
-
 	public void setEmboss(boolean emboss) {
 		this.emboss = emboss;
 	}
