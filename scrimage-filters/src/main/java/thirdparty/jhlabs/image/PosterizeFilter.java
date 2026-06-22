@@ -40,15 +40,6 @@ public class PosterizeFilter extends PointFilter {
 	}
 
 	/**
-     * Get the number of levels in the output image.
-     * @return the number of levels
-     * @see #setNumLevels
-     */
-	public int getNumLevels() {
-		return numLevels;
-	}
-
-	/**
      * Initialize the filter.
      */
     protected void initialize() {
