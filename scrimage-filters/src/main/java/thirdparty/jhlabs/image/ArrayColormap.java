@@ -53,31 +53,10 @@ public class ArrayColormap implements Colormap, Cloneable {
    }
 
    /**
-    * Set the array of colors for the colormap.
-    *
-    * @param map the colors
-    * @see #getMap
-    */
-   public void setMap(int[] map) {
-      this.map = map;
-   }
-
-   /**
-    * Get the array of colors for the colormap.
-    *
-    * @return the colors
-    * @see #setMap
-    */
-   public int[] getMap() {
-      return map;
-   }
-
-   /**
     * Convert a value in the range 0..1 to an RGB color.
     *
     * @param v a value in the range 0..1
     * @return an RGB color
-    * @see #setColor
     */
    public int getColor(float v) {
 /*
@@ -121,17 +100,6 @@ public class ArrayColormap implements Colormap, Cloneable {
    public void setColorRange(int firstIndex, int lastIndex, int color) {
       for (int i = firstIndex; i <= lastIndex; i++)
          map[i] = color;
-   }
-
-   /**
-    * Set one element of the colormap to a given color.
-    *
-    * @param index the position of the color
-    * @param color the color
-    * @see #getColor
-    */
-   public void setColor(int index, int color) {
-      map[index] = color;
    }
 
 }
