@@ -212,15 +212,6 @@ public class DitherFilter extends PointFilter {
 	}
 
 	/**
-	 * Set whether to use a color dither.
-	 * @param colorDither whether to use a color dither
-     * @see #getColorDither
-	 */
-	public void setColorDither(boolean colorDither) {
-		this.colorDither = colorDither;
-	}
-
-	/**
 	 * Get whether to use a color dither.
 	 * @return whether to use a color dither
      * @see #getColorDither
