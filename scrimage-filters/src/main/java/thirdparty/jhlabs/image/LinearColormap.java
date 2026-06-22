@@ -42,27 +42,11 @@ public class LinearColormap implements Colormap {
 	}
 
 	/**
-	 * Set the first color.
-	 * @param color1 the color corresponding to value 0 in the colormap
-	 */
-	public void setColor1(int color1) {
-		this.color1 = color1;
-	}
-
-	/**
 	 * Get the first color.
 	 * @return the color corresponding to value 0 in the colormap
 	 */
 	public int getColor1() {
 		return color1;
-	}
-
-	/**
-	 * Set the second color.
-	 * @param color2 the color corresponding to value 1 in the colormap
-	 */
-	public void setColor2(int color2) {
-		this.color2 = color2;
 	}
 
 	/**
