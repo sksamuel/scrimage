@@ -71,16 +71,6 @@ public class RippleFilter extends TransformFilter {
     }
 
     /**
-     * Get the amplitude of ripple in the X direction.
-     *
-     * @return the amplitude (in pixels).
-     * @see #setXAmplitude
-     */
-    public float getXAmplitude() {
-        return xAmplitude;
-    }
-
-    /**
      * Set the wavelength of ripple in the X direction.
      *
      * @param xWavelength the wavelength (in pixels).
@@ -88,16 +78,6 @@ public class RippleFilter extends TransformFilter {
      */
     public void setXWavelength(float xWavelength) {
         this.xWavelength = xWavelength;
-    }
-
-    /**
-     * Get the wavelength of ripple in the X direction.
-     *
-     * @return the wavelength (in pixels).
-     * @see #setXWavelength
-     */
-    public float getXWavelength() {
-        return xWavelength;
     }
 
     /**
@@ -111,16 +91,6 @@ public class RippleFilter extends TransformFilter {
     }
 
     /**
-     * Get the amplitude of ripple in the Y direction.
-     *
-     * @return the amplitude (in pixels).
-     * @see #setYAmplitude
-     */
-    public float getYAmplitude() {
-        return yAmplitude;
-    }
-
-    /**
      * Set the wavelength of ripple in the Y direction.
      *
      * @param yWavelength the wavelength (in pixels).
@@ -128,16 +98,6 @@ public class RippleFilter extends TransformFilter {
      */
     public void setYWavelength(float yWavelength) {
         this.yWavelength = yWavelength;
-    }
-
-    /**
-     * Get the wavelength of ripple in the Y direction.
-     *
-     * @return the wavelength (in pixels).
-     * @see #setYWavelength
-     */
-    public float getYWavelength() {
-        return yWavelength;
     }
 
 
@@ -149,16 +109,6 @@ public class RippleFilter extends TransformFilter {
      */
     public void setWaveType(int waveType) {
         this.waveType = waveType;
-    }
-
-    /**
-     * Get the wave type.
-     *
-     * @return the type.
-     * @see #setWaveType
-     */
-    public int getWaveType() {
-        return waveType;
     }
 
     protected void transformSpace(Rectangle r) {
