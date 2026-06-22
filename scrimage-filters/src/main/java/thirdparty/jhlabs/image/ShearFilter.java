@@ -35,26 +35,14 @@ public class ShearFilter extends TransformFilter {
 		this.resize = resize;
 	}
 
-	public boolean isResize() {
-		return resize;
-	}
-
 	public void setXAngle(float xangle) {
 		this.xangle = xangle;
 		initialize();
 	}
 
-	public float getXAngle() {
-		return xangle;
-	}
-
 	public void setYAngle(float yangle) {
 		this.yangle = yangle;
 		initialize();
-	}
-
-	public float getYAngle() {
-		return yangle;
 	}
 
 	private void initialize() {
