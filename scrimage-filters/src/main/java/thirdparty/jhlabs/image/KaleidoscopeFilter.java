@@ -86,16 +86,6 @@ public class KaleidoscopeFilter extends TransformFilter {
    }
 
    /**
-    * Get the secondary angle of the kaleidoscope.
-    *
-    * @return the angle
-    * @see #setAngle2
-    */
-   public float getAngle2() {
-      return angle2;
-   }
-
-   /**
     * Set the centre of the effect in the X direction as a proportion of the image size.
     *
     * @param centreX the center
