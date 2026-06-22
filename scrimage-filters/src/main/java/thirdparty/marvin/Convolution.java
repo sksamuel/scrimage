@@ -25,6 +25,25 @@ public class Convolution extends MarvinAbstractImagePlugin {
         }
     }
 
+    /**
+     * Clears the output image's RGB channels to black (alpha is preserved).
+     *
+     * applyMatrix accumulates the convolution result onto the existing imageOut
+     * pixel (see "allow the combination of multiple applications" below), which
+     * lets the edge detectors sum their X and Y passes. But MarvinFilter seeds
+     * imageOut as a clone of the input, so the first pass accumulates onto the
+     * original image rather than a blank canvas, leaving the edge map laid over
+     * a washed-out copy of the source. Callers that accumulate should clear the
+     * canvas once before the first pass.
+     */
+    public static void clearRGB(MarvinImage imageOut) {
+        for (int y = 0; y < imageOut.getHeight(); y++) {
+            for (int x = 0; x < imageOut.getWidth(); x++) {
+                imageOut.setIntColor(x, y, 0, 0, 0);
+            }
+        }
+    }
+
     private void applyMatrix(int x,
                              int y,
                              double[][] matrix,
