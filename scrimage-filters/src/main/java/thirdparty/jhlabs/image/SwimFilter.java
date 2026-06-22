@@ -46,17 +46,6 @@ public class SwimFilter extends TransformFilter {
     }
 
     /**
-     * Specifies the scale of the distortion.
-     *
-     * @param scale the scale of the distortion.
-     * min-value 1
-     * max-value 300+
-     */
-    public void setScale(float scale) {
-        this.scale = scale;
-    }
-
-    /**
      * Specifies the stretch factor of the distortion.
      *
      * @param stretch the stretch factor of the distortion.
@@ -65,39 +54,6 @@ public class SwimFilter extends TransformFilter {
      */
     public void setStretch(float stretch) {
         this.stretch = stretch;
-    }
-
-    /**
-     * Specifies the angle of the effect.
-     */
-    public void setAngle(float angle) {
-        this.angle = angle;
-        float cos = (float) Math.cos(angle);
-        float sin = (float) Math.sin(angle);
-        m00 = cos;
-        m01 = sin;
-        m10 = -sin;
-        m11 = cos;
-    }
-
-    /**
-     * Specifies the turbulence of the texture.
-     *
-     * @param turbulence the turbulence of the texture.
-     * min-value 0
-     * max-value 1
-     */
-    public void setTurbulence(float turbulence) {
-        this.turbulence = turbulence;
-    }
-
-    /**
-     * Specifies the time. Use this to animate the effect.
-     *
-     * @param time the time.
-     */
-    public void setTime(float time) {
-        this.time = time;
     }
 
     protected void transformInverse(int x, int y, float[] out) {
