@@ -59,32 +59,16 @@ public class FlareFilter extends PointFilter {
         this.ringWidth = ringWidth;
     }
 
-    public float getRingWidth() {
-        return ringWidth;
-    }
-
     public void setBaseAmount(float baseAmount) {
         this.baseAmount = baseAmount;
-    }
-
-    public float getBaseAmount() {
-        return baseAmount;
     }
 
     public void setRingAmount(float ringAmount) {
         this.ringAmount = ringAmount;
     }
 
-    public float getRingAmount() {
-        return ringAmount;
-    }
-
     public void setRayAmount(float rayAmount) {
         this.rayAmount = rayAmount;
-    }
-
-    public float getRayAmount() {
-        return rayAmount;
     }
 
     public void setCentre(Point2D centre) {
