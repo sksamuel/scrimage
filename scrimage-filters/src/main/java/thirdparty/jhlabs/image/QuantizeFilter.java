@@ -58,7 +58,15 @@ public class QuantizeFilter extends WholeImageFilter {
 	public void setDither(boolean dither) {
 		this.dither = dither;
 	}
-	
+
+	/**
+	 * Set whether to use a serpentine pattern for return or not. This can reduce 'avalanche' artifacts in the output.
+	 * @param serpentine true to use serpentine pattern
+	 */
+	public void setSerpentine(boolean serpentine) {
+		this.serpentine = serpentine;
+	}
+
 	public void quantize(int[] inPixels, int[] outPixels, int width, int height, int numColors, boolean dither, boolean serpentine) {
 		int count = width*height;
 		Quantizer quantizer = new OctTreeQuantizer();
