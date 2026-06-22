@@ -26,9 +26,19 @@ public class RaysFilter extends BufferedOpFilter {
     private final float distance;
     private final float zoom;
     private final float rotation;
+    private final boolean raysOnly;
 
     public RaysFilter(float opacity, float threshold, float strength,
                       float angle, float distance, float zoom, float rotation) {
+        this(opacity, threshold, strength, angle, distance, zoom, rotation, false);
+    }
+
+    /**
+     * @param raysOnly when true, only the rays are rendered (over a black background) rather
+     *                 than composited over the source image.
+     */
+    public RaysFilter(float opacity, float threshold, float strength,
+                      float angle, float distance, float zoom, float rotation, boolean raysOnly) {
         this.opacity = opacity;
         this.threshold = threshold;
         this.strength = strength;
@@ -36,6 +46,7 @@ public class RaysFilter extends BufferedOpFilter {
         this.distance = distance;
         this.zoom = zoom;
         this.rotation = rotation;
+        this.raysOnly = raysOnly;
     }
 
     public RaysFilter(float opacity, float threshold, float strength) {
@@ -63,6 +74,7 @@ public class RaysFilter extends BufferedOpFilter {
         op.setDistance(distance);
         op.setZoom(zoom);
         op.setRotation(rotation);
+        op.setRaysOnly(raysOnly);
         return op;
     }
 }
