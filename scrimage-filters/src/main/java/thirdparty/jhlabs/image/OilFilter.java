@@ -40,16 +40,6 @@ public class OilFilter extends WholeImageFilter {
     }
 
     /**
-     * Get the range of the effect in pixels.
-     *
-     * @return the range
-     * @see #setRange
-     */
-    public int getRange() {
-        return range;
-    }
-
-    /**
      * Set the number of levels for the effect.
      *
      * @param levels the number of levels
@@ -57,16 +47,6 @@ public class OilFilter extends WholeImageFilter {
      */
     public void setLevels(int levels) {
         this.levels = levels;
-    }
-
-    /**
-     * Get the number of levels for the effect.
-     *
-     * @return the number of levels
-     * @see #setLevels
-     */
-    public int getLevels() {
-        return levels;
     }
 
     protected int[] filterPixels(int width, int height, int[] inPixels, Rectangle transformedSpace) {
