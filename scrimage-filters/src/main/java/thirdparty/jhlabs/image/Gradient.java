@@ -146,14 +146,6 @@ public class Gradient extends ArrayColormap implements Cloneable {
 			for (int i = n; i < 256; i++)
 				map[i] = ImageMath.mixColors((float)(i-n)/(256-n), color, lastColor);
 	}
-
-	/**
-	 * Get the number of knots in the gradient.
-	 * @return the number of knots.
-	 */
-	public int getNumKnots() {
-		return numKnots;
-	}
 	
     /**
      * Get a knot type.
@@ -246,37 +238,6 @@ public class Gradient extends ArrayColormap implements Cloneable {
 		System.arraycopy(types, offset, knotTypes, 0, numKnots);
 		sortKnots();
 		rebuildGradient();
-	}
-	
-    /**
-     * Split a span into two by adding a knot in the middle.
-     * @param n the span index
-     */
-	public void splitSpan(int n) {
-		int x = (xKnots[n] + xKnots[n+1])/2;
-		addKnot(x, getColor(x/256.0f), knotTypes[n]);
-		rebuildGradient();
-	}
-
-    /**
-     * Get a knot position.
-     * @param n the knot index
-     * @return the knot position
-     */
-	public int getKnotPosition(int n) {
-		return xKnots[n];
-	}
-
-    /**
-     * Return the knot at a given position.
-     * @param x the position
-     * @return the knot number, or 1 if no knot found
-     */
-	public int knotAt(int x) {
-		for (int i = 1; i < numKnots-1; i++)
-			if (xKnots[i+1] > x)
-				return i;
-		return 1;
 	}
 
 	private void rebuildGradient() {
@@ -383,16 +344,6 @@ public class Gradient extends ArrayColormap implements Cloneable {
 		xKnots[numKnots-1] = 256;
 		sortKnots();
 		rebuildGradient();
-	}
-
-    /**
-     * Build a random gradient.
-     * @return the new Gradient
-     */
-	public static Gradient randomGradient() {
-		Gradient g = new Gradient();
-		g.randomize();
-		return g;
 	}
 
 }
