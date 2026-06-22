@@ -52,30 +52,12 @@ public class ThresholdFilter extends PointFilter {
 	}
 	
 	/**
-     * Get the lower threshold value.
-     * @return the threshold value
-     * @see #setLowerThreshold
-     */
-	public int getLowerThreshold() {
-		return lowerThreshold;
-	}
-	
-	/**
      * Set the upper threshold value.
      * @param upperThreshold the threshold value
      * @see #getUpperThreshold
      */
 	public void setUpperThreshold(int upperThreshold) {
 		this.upperThreshold = upperThreshold;
-	}
-
-	/**
-     * Get the upper threshold value.
-     * @return the threshold value
-     * @see #setUpperThreshold
-     */
-	public int getUpperThreshold() {
-		return upperThreshold;
 	}
 
 	/**
@@ -88,30 +70,12 @@ public class ThresholdFilter extends PointFilter {
 	}
 
 	/**
-     * Get the color to be used for pixels above the upper threshold.
-     * @return the color
-     * @see #setWhite
-     */
-	public int getWhite() {
-		return white;
-	}
-
-	/**
      * Set the color to be used for pixels below the lower threshold.
      * @param black the color
      * @see #getBlack
      */
 	public void setBlack(int black) {
 		this.black = black;
-	}
-
-	/**
-     * Set the color to be used for pixels below the lower threshold.
-     * @return the color
-     * @see #setBlack
-     */
-	public int getBlack() {
-		return black;
 	}
 
 	public int filterRGB(int x, int y, int rgb) {
