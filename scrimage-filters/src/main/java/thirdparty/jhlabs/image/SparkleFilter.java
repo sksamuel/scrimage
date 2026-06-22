@@ -35,40 +35,14 @@ public class SparkleFilter extends PointFilter {
 	public SparkleFilter() {
 	}
 
-	public void setColor(int color) {
-		this.color = color;
-	}
-
-	public int getColor() {
-		return color;
-	}
-
-	public void setRandomness(int randomness) {
-		this.randomness = randomness;
-	}
-
-	public int getRandomness() {
-		return randomness;
-	}
-
 	/**
 	 * Set the amount of sparkle.
 	 * @param amount the amount
      * min-value 0
      * max-value 1
-     * @see #getAmount
 	 */
 	public void setAmount(int amount) {
 		this.amount = amount;
-	}
-
-	/**
-	 * Get the amount of sparkle.
-	 * @return the amount
-     * @see #setAmount
-	 */
-	public int getAmount() {
-		return amount;
 	}
 
 	public void setRays(int rays) {
@@ -79,19 +53,9 @@ public class SparkleFilter extends PointFilter {
 	 * Set the radius of the effect.
 	 * @param radius the radius
      * min-value 0
-     * @see #getRadius
 	 */
 	public void setRadius(int radius) {
 		this.radius = radius;
-	}
-
-	/**
-	 * Get the radius of the effect.
-	 * @return the radius
-     * @see #setRadius
-	 */
-	public int getRadius() {
-		return radius;
 	}
 
 	public void setDimensions(int width, int height) {
@@ -111,16 +75,8 @@ public class SparkleFilter extends PointFilter {
 		this.centreX = centreX;
 	}
 
-	public int getCentreX() {
-		return centreX;
-	}
-
 	public void setCentreY(int centreY) {
 		this.centreY = centreY;
-	}
-
-	public int getCentreY() {
-		return centreY;
 	}
 
 	public int filterRGB(int x, int y, int rgb) {
