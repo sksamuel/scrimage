@@ -132,18 +132,6 @@ public class Gradient extends ArrayColormap implements Cloneable {
 	}
 	
     /**
-     * Copy one Gradient into another.
-     * @param g the Gradient to copy into
-     */
-	public void copyTo(Gradient g) {
-		g.numKnots = numKnots;
-		g.map = (int[])map.clone();
-		g.xKnots = (int[])xKnots.clone();
-		g.yKnots = (int[])yKnots.clone();
-		g.knotTypes = (byte[])knotTypes.clone();
-	}
-	
-    /**
      * Set a knot color.
      * @param n the knot index
      * @param color the color
@@ -166,38 +154,6 @@ public class Gradient extends ArrayColormap implements Cloneable {
 	public int getNumKnots() {
 		return numKnots;
 	}
-	 
-    /**
-     * Set a knot color.
-     * @param n the knot index
-     * @param color the color
-     * @see #getKnot
-     */
-	public void setKnot(int n, int color) {
-		yKnots[n] = color;
-		rebuildGradient();
-	}
-	
-    /**
-     * Get a knot color.
-     * @param n the knot index
-     * @return the knot color
-     * @see #setKnot
-     */
-	public int getKnot(int n) {
-		return yKnots[n];
-	}
-
-    /**
-     * Set a knot type.
-     * @param n the knot index
-     * @param type the type
-     * @see #getKnotType
-     */
-	public void setKnotType(int n, int type) {
-		knotTypes[n] = (byte)((knotTypes[n] & ~COLOR_MASK) | type);
-		rebuildGradient();
-	}
 	
     /**
      * Get a knot type.
@@ -207,17 +163,6 @@ public class Gradient extends ArrayColormap implements Cloneable {
      */
 	public int getKnotType(int n) {
 		return (byte)(knotTypes[n] & COLOR_MASK);
-	}
-	
-    /**
-     * Set a knot blend type.
-     * @param n the knot index
-     * @param type the knot blend type
-     * @see #getKnotBlend
-     */
-	public void setKnotBlend(int n, int type) {
-		knotTypes[n] = (byte)((knotTypes[n] & ~BLEND_MASK) | type);
-		rebuildGradient();
 	}
 	
     /**
@@ -256,25 +201,6 @@ public class Gradient extends ArrayColormap implements Cloneable {
 		knotTypes[numKnots-1] = (byte)type;
 		numKnots++;
 		sortKnots();
-		rebuildGradient();
-	}
-	
-    /**
-     * Remove a knot.
-     * @param n the knot index
-     * @see #addKnot
-     */
-	public void removeKnot(int n) {
-		if (numKnots <= 4)
-			return;
-		if (n < numKnots-1) {
-			System.arraycopy(xKnots, n+1, xKnots, n, numKnots-n-1);
-			System.arraycopy(yKnots, n+1, yKnots, n, numKnots-n-1);
-			System.arraycopy(knotTypes, n+1, knotTypes, n, numKnots-n-1);
-		}
-		numKnots--;
-		if (xKnots[1] > 0)
-			xKnots[1] = 0;
 		rebuildGradient();
 	}
 	
@@ -332,18 +258,6 @@ public class Gradient extends ArrayColormap implements Cloneable {
 	public void splitSpan(int n) {
 		int x = (xKnots[n] + xKnots[n+1])/2;
 		addKnot(x, getColor(x/256.0f), knotTypes[n]);
-		rebuildGradient();
-	}
-
-    /**
-     * Set a knot position.
-     * @param n the knot index
-     * @param x the knot position
-     * @see #setKnotPosition
-     */
-	public void setKnotPosition(int n, int x) {
-		xKnots[n] = ImageMath.clamp(x, 0, 255);
-		sortKnots();
 		rebuildGradient();
 	}
 
@@ -475,26 +389,6 @@ public class Gradient extends ArrayColormap implements Cloneable {
 		xKnots[1] = 0;
 		xKnots[numKnots-2] = 255;
 		xKnots[numKnots-1] = 256;
-		sortKnots();
-		rebuildGradient();
-	}
-
-    /**
-     * Mutate the gradient.
-     * @param amount the amount in the range zero to one
-     */
-	public void mutate(float amount) {
-		for (int i = 0; i < numKnots; i++) {
-			int rgb = yKnots[i];
-			int r = ((rgb >> 16) & 0xff);
-			int g = ((rgb >> 8) & 0xff);
-			int b = (rgb & 0xff);
-			r = PixelUtils.clamp( (int)(r + amount * 255 * (Math.random()-0.5)) );
-			g = PixelUtils.clamp( (int)(g + amount * 255 * (Math.random()-0.5)) );
-			b = PixelUtils.clamp( (int)(b + amount * 255 * (Math.random()-0.5)) );
-			yKnots[i] = 0xff000000 | (r << 16) | (g << 8) | b;
-			knotTypes[i] = RGB|SPLINE;
-		}
 		sortKnots();
 		rebuildGradient();
 	}
