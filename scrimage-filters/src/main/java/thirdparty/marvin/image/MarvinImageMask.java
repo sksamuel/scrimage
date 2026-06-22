@@ -57,26 +57,6 @@ public class MarvinImageMask {
     }
 
     /**
-     * Add a point to the mask.
-     *
-     * @param x
-     * @param y
-     */
-    public void addPoint(int x, int y) {
-        arrMask[x][y] = true;
-    }
-
-    /**
-     * Remove point from the mask.
-     *
-     * @param x
-     * @param y
-     */
-    public void removePoint(int x, int y) {
-        arrMask[x][y] = false;
-    }
-
-    /**
      * Clear the mask for a new selection
      */
     public void clear() {
