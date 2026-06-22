@@ -39,109 +39,33 @@ public class GlintFilter extends AbstractBufferedImageOp {
 	/**
      * Set the threshold value.
      * @param threshold the threshold value
-     * @see #getThreshold
      */
 	public void setThreshold( float threshold ) {
 		this.threshold = threshold;
 	}
 	
 	/**
-     * Get the threshold value.
-     * @return the threshold value
-     * @see #setThreshold
-     */
-	public float getThreshold() {
-		return threshold;
-	}
-	
-	/**
 	 * Set the amount of glint.
 	 * @param amount the amount (min-value 0, max-value 1)
-     * @see #getAmount
 	 */
 	public void setAmount( float amount ) {
 		this.amount = amount;
 	}
 	
 	/**
-	 * Get the amount of glint.
-	 * @return the amount
-     * @see #setAmount
-	 */
-	public float getAmount() {
-		return amount;
-	}
-	
-	/**
      * Set the length of the stars.
      * @param length the length
-     * @see #getLength
      */
 	public void setLength( int length ) {
 		this.length = length;
 	}
 	
 	/**
-     * Get the length of the stars.
-     * @return the length
-     * @see #setLength
-     */
-	public int getLength() {
-		return length;
-	}
-	
-	/**
      * Set the blur that is applied before thresholding.
      * @param blur the blur radius
-     * @see #getBlur
      */
 	public void setBlur(float blur) {
 		this.blur = blur;
-	}
-
-	/**
-     * Set the blur that is applied before thresholding.
-     * @return the blur radius
-     * @see #setBlur
-     */
-	public float getBlur() {
-		return blur;
-	}
-	
-	/**
-     * Set whether to render the stars and the image or only the stars.
-     * @param glintOnly true to render only stars
-     * @see #getGlintOnly
-     */
-	public void setGlintOnly(boolean glintOnly) {
-		this.glintOnly = glintOnly;
-	}
-
-	/**
-     * Get whether to render the stars and the image or only the stars.
-     * @return true to render only stars
-     * @see #setGlintOnly
-     */
-	public boolean getGlintOnly() {
-		return glintOnly;
-	}
-	
-    /**
-     * Set the colormap to be used for the filter.
-     * @param colormap the colormap
-     * @see #getColormap
-     */
-	public void setColormap(Colormap colormap) {
-		this.colormap = colormap;
-	}
-
-    /**
-     * Get the colormap to be used for the filter.
-     * @return the colormap
-     * @see #setColormap
-     */
-	public Colormap getColormap() {
-		return colormap;
 	}
 	
     public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
