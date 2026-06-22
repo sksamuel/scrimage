@@ -41,15 +41,6 @@ public class GlowFilter extends GaussianFilter {
 		this.amount = amount;
 	}
 
-	/**
-	 * Get the amount of glow.
-	 * @return the amount
-     * @see #setAmount
-	 */
-	public float getAmount() {
-		return amount;
-	}
-
     public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
         int width = src.getWidth();
         int height = src.getHeight();
