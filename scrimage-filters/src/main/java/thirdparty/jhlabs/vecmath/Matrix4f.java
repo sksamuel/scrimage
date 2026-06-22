@@ -135,42 +135,6 @@ public class Matrix4f {
 		m33 = 1.0f;
 	}
 
-	public void mul( Matrix4f m ) {
-		float tm00 = m00;
-		float tm01 = m01;
-		float tm02 = m02;
-		float tm03 = m03;
-		float tm10 = m10;
-		float tm11 = m11;
-		float tm12 = m12;
-		float tm13 = m13;
-		float tm20 = m20;
-		float tm21 = m21;
-		float tm22 = m22;
-		float tm23 = m23;
-		float tm30 = m30;
-		float tm31 = m31;
-		float tm32 = m32;
-		float tm33 = m33;
-
-		m00 = tm00*m.m00 + tm10*m.m01 + tm20*m.m02 + tm30*m.m03;
-		m01 = tm01*m.m00 + tm11*m.m01 + tm21*m.m02 + tm31*m.m03;
-		m02 = tm02*m.m00 + tm12*m.m01 + tm22*m.m02 + tm32*m.m03;
-		m03 = tm03*m.m00 + tm13*m.m01 + tm23*m.m02 + tm33*m.m03;
-		m10 = tm00*m.m10 + tm10*m.m11 + tm20*m.m12 + tm30*m.m13;
-		m11 = tm01*m.m10 + tm11*m.m11 + tm21*m.m12 + tm31*m.m13;
-		m12 = tm02*m.m10 + tm12*m.m11 + tm22*m.m12 + tm32*m.m13;
-		m13 = tm03*m.m10 + tm13*m.m11 + tm23*m.m12 + tm33*m.m13;
-		m20 = tm00*m.m20 + tm10*m.m21 + tm20*m.m22 + tm30*m.m23;
-		m21 = tm01*m.m20 + tm11*m.m21 + tm21*m.m22 + tm31*m.m23;
-		m22 = tm02*m.m20 + tm12*m.m21 + tm22*m.m22 + tm32*m.m23;
-		m23 = tm03*m.m20 + tm13*m.m21 + tm23*m.m22 + tm33*m.m23;
-		m30 = tm00*m.m30 + tm10*m.m31 + tm20*m.m32 + tm30*m.m33;
-		m31 = tm01*m.m30 + tm11*m.m31 + tm21*m.m32 + tm31*m.m33;
-		m32 = tm02*m.m30 + tm12*m.m31 + tm22*m.m32 + tm32*m.m33;
-		m33 = tm03*m.m30 + tm13*m.m31 + tm23*m.m32 + tm33*m.m33;
-	}
-
 	public void invert() {
 		Matrix4f t = new Matrix4f( this );
 		invert( t );
