@@ -45,125 +45,25 @@ public class KaleidoscopeFilter extends TransformFilter {
     * Set the number of sides of the kaleidoscope.
     *
     * @param sides the number of sides
-    * @see #getSides
     */
    public void setSides(int sides) {
       this.sides = sides;
    }
 
-   /**
-    * Get the number of sides of the kaleidoscope.
-    *
-    * @return the number of sides
-    * @see #setSides
-    */
-   public int getSides() {
-      return sides;
-   }
-
-   /**
-    * Set the angle of the kaleidoscope.
-    *
-    * @param angle the angle of the kaleidoscope.
-    * @see #getAngle
-    */
    public void setAngle(float angle) {
       this.angle = angle;
    }
 
-   /**
-    * Get the angle of the kaleidoscope.
-    *
-    * @return the angle of the kaleidoscope.
-    * @see #setAngle
-    */
-   public float getAngle() {
-      return angle;
-   }
-
-   public void setAngle2(float angle2) {
-      this.angle2 = angle2;
-   }
-
-   /**
-    * Set the centre of the effect in the X direction as a proportion of the image size.
-    *
-    * @param centreX the center
-    * @see #getCentreX
-    */
    public void setCentreX(float centreX) {
       this.centreX = centreX;
    }
 
-   /**
-    * Get the centre of the effect in the X direction as a proportion of the image size.
-    *
-    * @return the center
-    * @see #setCentreX
-    */
-   public float getCentreX() {
-      return centreX;
-   }
-
-   /**
-    * Set the centre of the effect in the Y direction as a proportion of the image size.
-    *
-    * @param centreY the center
-    * @see #getCentreY
-    */
    public void setCentreY(float centreY) {
       this.centreY = centreY;
    }
 
-   /**
-    * Get the centre of the effect in the Y direction as a proportion of the image size.
-    *
-    * @return the center
-    * @see #setCentreY
-    */
-   public float getCentreY() {
-      return centreY;
-   }
-
-   /**
-    * Set the centre of the effect as a proportion of the image size.
-    *
-    * @param centre the center
-    * @see #getCentre
-    */
-   public void setCentre(Point2D centre) {
-      this.centreX = (float) centre.getX();
-      this.centreY = (float) centre.getY();
-   }
-
-   /**
-    * Get the centre of the effect as a proportion of the image size.
-    *
-    * @return the center
-    * @see #setCentre
-    */
-   public Point2D getCentre() {
-      return new Point2D.Float(centreX, centreY);
-   }
-
-   /**
-    * Set the radius of the effect.
-    *
-    * @param radius the radius
-    * @see #getRadius
-    */
    public void setRadius(float radius) {
       this.radius = radius;
-   }
-
-   /**
-    * Get the radius of the effect.
-    *
-    * @return the radius
-    * @see #setRadius
-    */
-   public float getRadius() {
-      return radius;
    }
 
    public BufferedImage filter(BufferedImage src, BufferedImage dst) {
