@@ -72,16 +72,8 @@ public class EdgeFilter extends WholeImageFilter {
 	public EdgeFilter() {
 	}
 
-	public void setVEdgeMatrix(float[] vEdgeMatrix) {
-		this.vEdgeMatrix = vEdgeMatrix;
-	}
-
 	public float[] getVEdgeMatrix() {
 		return vEdgeMatrix;
-	}
-
-	public void setHEdgeMatrix(float[] hEdgeMatrix) {
-		this.hEdgeMatrix = hEdgeMatrix;
 	}
 
 	public float[] getHEdgeMatrix() {
