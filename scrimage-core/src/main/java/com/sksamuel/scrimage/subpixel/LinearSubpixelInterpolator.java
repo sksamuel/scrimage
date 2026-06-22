@@ -90,9 +90,9 @@ public class LinearSubpixelInterpolator implements SubpixelInterpolator {
 
         // Un-premultiply: divide the alpha-weighted colour sums by the summed
         // alpha-weight. When the combined alpha is zero the result is fully clear.
-        int alpha = (int) Math.round(sumA);
         if (sumA == 0)
             return PixelTools.argb(0, 0, 0, 0);
+        int alpha = (int) Math.round(sumA);
         return PixelTools.argb(
                 alpha,
                 (int) Math.round(sumR / sumA),
