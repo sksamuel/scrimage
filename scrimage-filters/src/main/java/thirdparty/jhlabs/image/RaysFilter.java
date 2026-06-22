@@ -37,7 +37,6 @@ public class RaysFilter extends MotionBlurOp {
 	/**
      * Set the opacity of the rays.
      * @param opacity the opacity.
-     * @see #getOpacity
      */
 	public void setOpacity(float opacity) {
 		this.opacity = opacity;
@@ -46,7 +45,6 @@ public class RaysFilter extends MotionBlurOp {
 	/**
      * Set the threshold value.
      * @param threshold the threshold value
-     * @see #getThreshold
      */
 	public void setThreshold( float threshold ) {
 		this.threshold = threshold;
@@ -55,7 +53,6 @@ public class RaysFilter extends MotionBlurOp {
 	/**
      * Set the strength of the rays.
      * @param strength the strength.
-     * @see #getStrength
      */
 	public void setStrength( float strength ) {
 		this.strength = strength;
