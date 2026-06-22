@@ -30,7 +30,6 @@ public class ChromeFilter extends LightFilter {
 	 * @param amount the amount
      * min-value 0
      * max-value 1
-     * @see #getAmount
 	 */
 	public void setAmount(float amount) {
 		this.amount = amount;
@@ -41,7 +40,6 @@ public class ChromeFilter extends LightFilter {
 	 * @param exposure the exposure
      * min-value 0
      * max-value 1
-     * @see #getExposure
 	 */
 	public void setExposure(float exposure) {
 		this.exposure = exposure;

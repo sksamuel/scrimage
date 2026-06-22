@@ -64,7 +64,6 @@ public class RippleFilter extends TransformFilter {
      * Set the amplitude of ripple in the X direction.
      *
      * @param xAmplitude the amplitude (in pixels).
-     * @see #getXAmplitude
      */
     public void setXAmplitude(float xAmplitude) {
         this.xAmplitude = xAmplitude;
@@ -74,7 +73,6 @@ public class RippleFilter extends TransformFilter {
      * Set the wavelength of ripple in the X direction.
      *
      * @param xWavelength the wavelength (in pixels).
-     * @see #getXWavelength
      */
     public void setXWavelength(float xWavelength) {
         this.xWavelength = xWavelength;
@@ -84,7 +82,6 @@ public class RippleFilter extends TransformFilter {
      * Set the amplitude of ripple in the Y direction.
      *
      * @param yAmplitude the amplitude (in pixels).
-     * @see #getYAmplitude
      */
     public void setYAmplitude(float yAmplitude) {
         this.yAmplitude = yAmplitude;
@@ -94,7 +91,6 @@ public class RippleFilter extends TransformFilter {
      * Set the wavelength of ripple in the Y direction.
      *
      * @param yWavelength the wavelength (in pixels).
-     * @see #getYWavelength
      */
     public void setYWavelength(float yWavelength) {
         this.yWavelength = yWavelength;
@@ -105,7 +101,6 @@ public class RippleFilter extends TransformFilter {
      * Set the wave type.
      *
      * @param waveType the type.
-     * @see #getWaveType
      */
     public void setWaveType(int waveType) {
         this.waveType = waveType;

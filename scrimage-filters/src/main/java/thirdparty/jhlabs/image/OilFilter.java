@@ -33,7 +33,6 @@ public class OilFilter extends WholeImageFilter {
      * Set the range of the effect in pixels.
      *
      * @param range the range
-     * @see #getRange
      */
     public void setRange(int range) {
         this.range = range;
@@ -43,7 +42,6 @@ public class OilFilter extends WholeImageFilter {
      * Set the number of levels for the effect.
      *
      * @param levels the number of levels
-     * @see #getLevels
      */
     public void setLevels(int levels) {
         this.levels = levels;

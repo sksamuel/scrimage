@@ -52,7 +52,6 @@ public class CausticsFilter extends WholeImageFilter {
 	/**
      * Specifies the turbulence of the texture.
      * @param turbulence the turbulence of the texture.
-     * @see #getTurbulence
      */
 	public void setTurbulence(float turbulence) {
 		this.turbulence = turbulence;
@@ -61,7 +60,6 @@ public class CausticsFilter extends WholeImageFilter {
 	/**
 	 * Set the amount of effect.
 	 * @param amount the amount
-     * @see #getAmount
 	 */
 	public void setAmount(float amount) {
 		this.amount = amount;
@@ -70,7 +68,6 @@ public class CausticsFilter extends WholeImageFilter {
 	/**
 	 * Set the time. Use this to animate the effect.
 	 * @param time the time
-     * @see #getTime
 	 */
 	public void setTime(float time) {
 		this.time = time;
@@ -79,7 +76,6 @@ public class CausticsFilter extends WholeImageFilter {
 	/**
 	 * Set the number of samples per pixel. More samples means better quality, but slower rendering.
 	 * @param samples the number of samples
-     * @see #getSamples
 	 */
 	public void setSamples(int samples) {
 		this.samples = samples;
@@ -88,7 +84,6 @@ public class CausticsFilter extends WholeImageFilter {
 	/**
 	 * Set the background color.
 	 * @param c the color
-     * @see #getBgColor
 	 */
 	public void setBgColor(int c) {
 		bgColor = c;

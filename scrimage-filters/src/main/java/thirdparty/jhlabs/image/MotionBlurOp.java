@@ -54,7 +54,6 @@ public class MotionBlurOp extends AbstractBufferedImageOp {
 	/**
      * Specifies the angle of blur.
      * @param angle the angle of blur.
-     * @see #getAngle
      */
 	public void setAngle( float angle ) {
 		this.angle = angle;
@@ -63,7 +62,6 @@ public class MotionBlurOp extends AbstractBufferedImageOp {
 	/**
      * Set the distance of blur.
      * @param distance the distance of blur.
-     * @see #getDistance
      */
 	public void setDistance( float distance ) {
 		this.distance = distance;
@@ -72,7 +70,6 @@ public class MotionBlurOp extends AbstractBufferedImageOp {
 	/**
      * Set the blur rotation.
      * @param rotation the angle of rotation.
-     * @see #getRotation
      */
 	public void setRotation( float rotation ) {
 		this.rotation = rotation;
@@ -81,7 +78,6 @@ public class MotionBlurOp extends AbstractBufferedImageOp {
 	/**
      * Set the blur zoom.
      * @param zoom the zoom factor.
-     * @see #getZoom
      */
 	public void setZoom( float zoom ) {
 		this.zoom = zoom;

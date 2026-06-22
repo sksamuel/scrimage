@@ -32,7 +32,6 @@ public class PosterizeFilter extends PointFilter {
 	/**
      * Set the number of levels in the output image.
      * @param numLevels the number of levels
-     * @see #getNumLevels
      */
     public void setNumLevels(int numLevels) {
 		this.numLevels = numLevels;
