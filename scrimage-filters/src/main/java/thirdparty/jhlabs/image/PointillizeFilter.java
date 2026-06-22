@@ -32,24 +32,12 @@ public class PointillizeFilter extends CellularFilter {
         this.edgeThickness = edgeThickness;
     }
 
-    public float getEdgeThickness() {
-        return edgeThickness;
-    }
-
     public void setFadeEdges(boolean fadeEdges) {
         this.fadeEdges = fadeEdges;
     }
 
-    public boolean getFadeEdges() {
-        return fadeEdges;
-    }
-
     public void setEdgeColor(int edgeColor) {
         this.edgeColor = edgeColor;
-    }
-
-    public int getEdgeColor() {
-        return edgeColor;
     }
 
     public void setFuzziness(float fuzziness) {
