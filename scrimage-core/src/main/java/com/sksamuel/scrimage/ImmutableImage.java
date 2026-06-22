@@ -812,6 +812,12 @@ public class ImmutableImage extends MutableImage {
     */
    public RGBColor[] quantize(int colours) {
       MMCQ.CMap cmap = ColorThief.getColorMap(this.awt(), colours);
+      // ColorThief returns null when it cannot build a colour map, e.g. an image whose only
+      // colour is (near) white, which its default white-ignoring extractor discards entirely,
+      // leaving no pixels to quantize. Treat that as an empty palette rather than NPEing.
+      if (cmap == null) {
+         return new RGBColor[0];
+      }
       return Arrays.stream(cmap.palette()).map(RGBColor::fromRGB).toArray(RGBColor[]::new);
    }
 
