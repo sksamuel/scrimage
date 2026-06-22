@@ -26,6 +26,12 @@ public class SparkleFilter extends BufferedOpFilter {
     private final int amount;
 
     public SparkleFilter(int x, int y, int rays, int radius, int amount) {
+        // jhlabs SparkleFilter indexes rayLengths[i % rays] for every pixel,
+        // so rays == 0 throws ArithmeticException (/ by zero) and rays < 0
+        // allocates a negative-length array. Reject up front, mirroring the
+        // input validation in the SmearFilter and OilFilter wrappers.
+        if (rays < 1)
+            throw new IllegalArgumentException("rays must be >= 1, got " + rays);
         this.x = x;
         this.y = y;
         this.rays = rays;
