@@ -43,15 +43,6 @@ public class GainFilter extends TransferFilter {
 	}
 
     /**
-     * Get the gain.
-     * @return the gain
-     * @see #setGain
-     */
-	public float getGain() {
-		return gain;
-	}
-
-    /**
      * Set the bias.
      * @param bias the bias
      * min-value: 0
@@ -61,15 +52,6 @@ public class GainFilter extends TransferFilter {
 	public void setBias(float bias) {
 		this.bias = bias;
 		initialized = false;
-	}
-
-    /**
-     * Get the bias.
-     * @return the bias
-     * @see #setBias
-     */
-	public float getBias() {
-		return bias;
 	}
 
 	public String toString() {
