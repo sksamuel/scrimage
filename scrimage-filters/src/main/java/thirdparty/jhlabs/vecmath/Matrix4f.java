@@ -255,88 +255,10 @@ public class Matrix4f {
 		v.z = z;
 	}
 
-	public void setTranslation( Vector3f v ) {
-		m30 = v.x;
-		m31 = v.y;
-		m32 = v.z;
-	}
-
 	public void set( float scale ) {
 		m00 = scale;
 		m11 = scale;
 		m22 = scale;
-	}
-
-	public void rotX( float angle ) {
-		float s = (float)Math.sin( angle );
-		float c = (float)Math.cos( angle );
-		m00 = 1.0f;
-		m01 = 0.0f;
-		m02 = 0.0f;
-		m03 = 0.0f;
-
-		m10 = 0.0f;
-		m11 = c;
-		m12 = s;
-		m13 = 0.0f;
-
-		m20 = 0.0f;
-		m21 = -s;
-		m22 = c;
-		m23 = 0.0f;
-
-		m30 = 0.0f;
-		m31 = 0.0f;
-		m32 = 0.0f;
-		m33 = 1.0f;
-	}
-
-	public void rotY( float angle ) {
-		float s = (float)Math.sin( angle );
-		float c = (float)Math.cos( angle );
-		m00 = c;
-		m01 = 0.0f;
-		m02 = -s;
-		m03 = 0.0f;
-
-		m10 = 0.0f;
-		m11 = 1.0f;
-		m12 = 0.0f;
-		m13 = 0.0f;
-
-		m20 = s;
-		m21 = 0.0f;
-		m22 = c;
-		m23 = 0.0f;
-
-		m30 = 0.0f;
-		m31 = 0.0f;
-		m32 = 0.0f;
-		m33 = 1.0f;
-	}
-
-	public void rotZ( float angle ) {
-		float s = (float)Math.sin( angle );
-		float c = (float)Math.cos( angle );
-		m00 = c;
-		m01 = s;
-		m02 = 0.0f;
-		m03 = 0.0f;
-
-		m10 = -s;
-		m11 = c;
-		m12 = 0.0f;
-		m13 = 0.0f;
-
-		m20 = 0.0f;
-		m21 = 0.0f;
-		m22 = 1.0f;
-		m23 = 0.0f;
-
-		m30 = 0.0f;
-		m31 = 0.0f;
-		m32 = 0.0f;
-		m33 = 1.0f;
 	}
 /*
 	void rotate(float angle, float x, float y, float z) {
