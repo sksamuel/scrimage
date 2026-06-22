@@ -59,21 +59,10 @@ public class GaussianFilter extends ConvolveFilter {
      * @param radius the radius of the blur in pixels.
      * min-value 0
      * max-value 100+
-     * @see #getRadius
      */
     public void setRadius(float radius) {
         this.radius = radius;
         kernel = makeKernel(radius);
-    }
-
-    /**
-     * Get the radius of the kernel.
-     *
-     * @return the radius
-     * @see #setRadius
-     */
-    public float getRadius() {
-        return radius;
     }
 
     public BufferedImage filter(BufferedImage src, BufferedImage dst) {
