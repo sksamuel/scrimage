@@ -46,15 +46,28 @@ public class PngReader implements ImageReader {
       int[] matrix = new int[(int) pixelCount];
 
       if (pngr.imgInfo.indexed) {
+         ar.com.hjg.pngj.chunks.PngChunkPLTE plte = pngr.getMetadata().getPLTE();
+         // The tRNS chunk carries per-palette-entry alpha for indexed PNGs.
+         // When present, palette2rgb unpacks 4 channels (RGBA) so the entry's
+         // alpha is honoured; previously it was passed null and every pixel was
+         // forced to alpha 255, silently dropping palette transparency.
+         ar.com.hjg.pngj.chunks.PngChunkTRNS trns = pngr.getMetadata().getTRNS();
          int[] pixels = null;
          for (int row = 0; row < h; row++) {
             ImageLineInt scanline = (ImageLineInt) pngr.readRow();
             if (bitDepth < 8)
                ImageLineHelper.scaleUp(scanline);
-            pixels = ImageLineHelper.palette2rgb(scanline, pngr.getMetadata().getPLTE(), null, pixels);
             int rowOffset = row * w;
-            for (int x = 0, k = 0; x < w; x++, k += 3) {
-               matrix[rowOffset + x] = PixelTools.argb(255, pixels[k], pixels[k + 1], pixels[k + 2]);
+            if (trns == null) {
+               pixels = ImageLineHelper.palette2rgb(scanline, plte, pixels); // 3 channels (RGB)
+               for (int x = 0, k = 0; x < w; x++, k += 3) {
+                  matrix[rowOffset + x] = PixelTools.argb(255, pixels[k], pixels[k + 1], pixels[k + 2]);
+               }
+            } else {
+               pixels = ImageLineHelper.palette2rgb(scanline, plte, trns, pixels); // 4 channels (RGBA)
+               for (int x = 0, k = 0; x < w; x++, k += 4) {
+                  matrix[rowOffset + x] = PixelTools.argb(pixels[k + 3], pixels[k], pixels[k + 1], pixels[k + 2]);
+               }
             }
          }
       } else {
