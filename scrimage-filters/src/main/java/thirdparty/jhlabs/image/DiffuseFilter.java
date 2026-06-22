@@ -42,16 +42,6 @@ public class DiffuseFilter extends TransformFilter {
         this.scale = scale;
     }
 
-    /**
-     * Returns the scale of the texture.
-     *
-     * @return the scale of the texture.
-     * @see #setScale
-     */
-    public float getScale() {
-        return scale;
-    }
-
     protected void transformInverse(int x, int y, float[] out) {
         int angle = (int) (Math.random() * 255);
         float distance = (float) Math.random();
