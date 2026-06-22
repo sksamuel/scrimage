@@ -65,21 +65,5 @@ public abstract class BinaryFilter extends WholeImageFilter {
 		return colormap;
 	}
 
-	public void setNewColor(int newColor) {
-		this.newColor = newColor;
-	}
-
-	public int getNewColor() {
-		return newColor;
-	}
-
-	public void setBlackFunction(BinaryFunction blackFunction) {
-		this.blackFunction = blackFunction;
-	}
-
-	public BinaryFunction getBlackFunction() {
-		return blackFunction;
-	}
-
 }
 
