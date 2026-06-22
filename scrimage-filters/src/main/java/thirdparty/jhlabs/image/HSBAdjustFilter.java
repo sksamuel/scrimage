@@ -38,16 +38,8 @@ public class HSBAdjustFilter extends PointFilter {
 		this.hFactor = hFactor;
 	}
 	
-	public float getHFactor() {
-		return hFactor;
-	}
-	
 	public void setSFactor( float sFactor ) {
 		this.sFactor = sFactor;
-	}
-	
-	public float getSFactor() {
-		return sFactor;
 	}
 	
 	public void setBFactor( float bFactor ) {
