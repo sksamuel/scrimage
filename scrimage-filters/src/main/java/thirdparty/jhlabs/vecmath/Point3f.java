@@ -60,11 +60,4 @@ public class Point3f extends Tuple3f {
 		return dx*dx+dy*dy+dz*dz;
 	}
 
-	public float distance( Point3f p ) {
-		float dx = x-p.x;
-		float dy = y-p.y;
-		float dz = z-p.z;
-		return (float)Math.sqrt( dx*dx+dy*dy+dz*dz );
-	}
-
 }
