@@ -71,15 +71,6 @@ public class GammaFilter extends TransferFilter {
 		setGamma(gamma, gamma, gamma);
 	}
 	
-    /**
-     * Get the gamma level.
-     * @return the gamma level for all RGB channels
-     * @see #setGamma
-     */
-	public float getGamma() {
-		return rGamma;
-	}
-	
     protected void initialize() {
 		rTable = makeTable(rGamma);
 
