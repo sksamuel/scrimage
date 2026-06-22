@@ -35,16 +35,8 @@ public class RGBAdjustFilter extends PointFilter {
 		this.rFactor = 1+rFactor;
 	}
 	
-	public float getRFactor() {
-		return rFactor-1;
-	}
-	
 	public void setGFactor( float gFactor ) {
 		this.gFactor = 1+gFactor;
-	}
-	
-	public float getGFactor() {
-		return gFactor-1;
 	}
 	
 	public void setBFactor( float bFactor ) {
