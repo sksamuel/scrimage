@@ -49,15 +49,6 @@ public class OpacityFilter extends PointFilter {
 		opacity24 = opacity << 24;
 	}
 	
-	/**
-	 * Get the opacity setting.
-	 * @return the opacity
-     * @see #setOpacity
-	 */
-	public int getOpacity() {
-		return opacity;
-	}
-	
 	public int filterRGB(int x, int y, int rgb) {
 		if ((rgb & 0xff000000) != 0)
 			return (rgb & 0xffffff) | opacity24;
