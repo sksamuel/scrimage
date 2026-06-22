@@ -159,7 +159,6 @@ public class Gradient extends ArrayColormap implements Cloneable {
      * Get a knot type.
      * @param n the knot index
      * @return the knot type
-     * @see #setKnotType
      */
 	public int getKnotType(int n) {
 		return (byte)(knotTypes[n] & COLOR_MASK);
@@ -169,7 +168,6 @@ public class Gradient extends ArrayColormap implements Cloneable {
      * Get a knot blend type.
      * @param n the knot index
      * @return the knot blend type
-     * @see #setKnotBlend
      */
 	public byte getKnotBlend(int n) {
 		return (byte)(knotTypes[n] & BLEND_MASK);
@@ -180,7 +178,6 @@ public class Gradient extends ArrayColormap implements Cloneable {
      * @param x the knot position
      * @param color the color
      * @param type the knot type
-     * @see #removeKnot
      */
 	public void addKnot(int x, int color, int type) {
 		int[] nx = new int[numKnots+1];
@@ -265,7 +262,6 @@ public class Gradient extends ArrayColormap implements Cloneable {
      * Get a knot position.
      * @param n the knot index
      * @return the knot position
-     * @see #setKnotPosition
      */
 	public int getKnotPosition(int n) {
 		return xKnots[n];

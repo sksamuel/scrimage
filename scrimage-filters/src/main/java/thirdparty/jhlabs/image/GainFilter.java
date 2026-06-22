@@ -35,7 +35,6 @@ public class GainFilter extends TransferFilter {
      * @param gain the gain
      * min-value: 0
      * max-value: 1
-     * @see #getGain
      */
 	public void setGain(float gain) {
 		this.gain = gain;
@@ -47,7 +46,6 @@ public class GainFilter extends TransferFilter {
      * @param bias the bias
      * min-value: 0
      * max-value: 1
-     * @see #getBias
      */
 	public void setBias(float bias) {
 		this.bias = bias;

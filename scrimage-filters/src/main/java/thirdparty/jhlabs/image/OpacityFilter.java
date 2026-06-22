@@ -42,7 +42,6 @@ public class OpacityFilter extends PointFilter {
 	/**
 	 * Set the opacity.
 	 * @param opacity the opacity (alpha) in the range 0..255
-     * @see #getOpacity
 	 */
 	public void setOpacity(int opacity) {
 		this.opacity = opacity;

@@ -53,7 +53,6 @@ public class GammaFilter extends TransferFilter {
      * @param rGamma the gamma level for the red channel
      * @param gGamma the gamma level for the blue channel
      * @param bGamma the gamma level for the green channel
-     * @see #getGamma
      */
 	public void setGamma(float rGamma, float gGamma, float bGamma) {
 		this.rGamma = rGamma;
@@ -65,7 +64,6 @@ public class GammaFilter extends TransferFilter {
     /**
      * Set the gamma level.
      * @param gamma the gamma level for all RGB channels
-     * @see #getGamma
      */
 	public void setGamma(float gamma) {
 		setGamma(gamma, gamma, gamma);

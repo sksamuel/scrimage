@@ -51,7 +51,6 @@ public class TritoneFilter extends PointFilter {
     /**
      * Set the shadow color.
      * @param shadowColor the shadow color
-     * @see #getShadowColor
      */
 	public void setShadowColor( int shadowColor ) {
 		this.shadowColor = shadowColor;

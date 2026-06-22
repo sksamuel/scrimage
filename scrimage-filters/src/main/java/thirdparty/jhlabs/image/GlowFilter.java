@@ -35,7 +35,6 @@ public class GlowFilter extends GaussianFilter {
 	 * @param amount the amount
      * min-value 0
      * max-value 1
-     * @see #getAmount
 	 */
 	public void setAmount( float amount ) {
 		this.amount = amount;
