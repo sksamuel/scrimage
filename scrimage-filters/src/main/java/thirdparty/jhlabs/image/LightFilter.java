@@ -115,14 +115,6 @@ public class LightFilter extends WholeImageFilter {
       return bumpFunction;
    }
 
-   public void setBumpHeight(float bumpHeight) {
-      this.bumpHeight = bumpHeight;
-   }
-
-   public float getBumpHeight() {
-      return bumpHeight;
-   }
-
    public void setBumpSoftness(float bumpSoftness) {
       this.bumpSoftness = bumpSoftness;
    }
@@ -177,14 +169,6 @@ public class LightFilter extends WholeImageFilter {
 
    public int getBumpSource() {
       return bumpSource;
-   }
-
-   public void setDiffuseColor(int diffuseColor) {
-      material.diffuseColor = diffuseColor;
-   }
-
-   public int getDiffuseColor() {
-      return material.diffuseColor;
    }
 
    public void addLight(Light light) {
