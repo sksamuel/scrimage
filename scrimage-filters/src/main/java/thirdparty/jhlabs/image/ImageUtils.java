@@ -26,23 +26,6 @@ import java.awt.image.*;
 public abstract class ImageUtils {
 	
 	private static BufferedImage backgroundImage = null;
-	
-	/**
-	 * Returns a *copy* of a subimage of image. This avoids the performance problems associated with BufferedImage.getSubimage.
-     * @param image the image
-     * @param x the x position
-     * @param y the y position
-     * @param w the width
-     * @param h the height
-     * @return the subimage
-	 */
-	public static BufferedImage getSubimage( BufferedImage image, int x, int y, int w, int h ) {
-		BufferedImage newImage = new BufferedImage( w, h, BufferedImage.TYPE_INT_ARGB );
-		Graphics2D g = newImage.createGraphics();
-		g.drawRenderedImage( image, AffineTransform.getTranslateInstance(-x, -y) );
-		g.dispose();
-		return newImage;
-	}
 
 	/**
 	 * A convenience method for getting ARGB pixels from an image. This tries to avoid the performance
