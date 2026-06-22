@@ -32,37 +32,9 @@ public abstract class BinaryFilter extends WholeImageFilter {
 	 * Set the number of iterations the effect is performed.
 	 * @param iterations the number of iterations
      * min-value 0
-     * @see #getIterations
 	 */
 	public void setIterations(int iterations) {
 		this.iterations = iterations;
-	}
-
-	/**
-	 * Get the number of iterations the effect is performed.
-	 * @return the number of iterations
-     * @see #setIterations
-	 */
-	public int getIterations() {
-		return iterations;
-	}
-
-    /**
-     * Set the colormap to be used for the filter.
-     * @param colormap the colormap
-     * @see #getColormap
-     */
-	public void setColormap(Colormap colormap) {
-		this.colormap = colormap;
-	}
-
-    /**
-     * Get the colormap to be used for the filter.
-     * @return the colormap
-     * @see #setColormap
-     */
-	public Colormap getColormap() {
-		return colormap;
 	}
 
 	public void setNewColor(int newColor) {
