@@ -22,6 +22,13 @@ public class PixelateFilter extends BufferedOpFilter {
     private final int blockSize;
 
     public PixelateFilter(int blockSize) {
+        // jhlabs BlockFilter steps the row/column loops by blockSize and
+        // allocates new int[blockSize * blockSize]. blockSize == 0 spins
+        // forever (y += 0) and later divides by zero; blockSize < 0 throws
+        // NegativeArraySizeException / runs degenerate loops. Reject up front,
+        // mirroring the input validation in the SmearFilter/OilFilter wrappers.
+        if (blockSize < 1)
+            throw new IllegalArgumentException("blockSize must be >= 1, got " + blockSize);
         this.blockSize = blockSize;
     }
 
