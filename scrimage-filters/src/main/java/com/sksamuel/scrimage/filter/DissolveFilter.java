@@ -20,18 +20,29 @@ import java.awt.image.BufferedImageOp;
 public class DissolveFilter extends BufferedOpFilter {
 
    private final float density;
+   private final float softness;
 
    /**
     * @param density the density in the range 0 to 1.
     */
    public DissolveFilter(float density) {
+      this(density, 0f);
+   }
+
+   /**
+    * @param density  the density in the range 0 to 1.
+    * @param softness the softness of the dissolve in the range 0 to 1 (jhlabs default 0).
+    */
+   public DissolveFilter(float density, float softness) {
       this.density = density;
+      this.softness = softness;
    }
 
    @Override
    public BufferedImageOp op() {
       thirdparty.jhlabs.image.DissolveFilter op = new thirdparty.jhlabs.image.DissolveFilter();
       op.setDensity(density);
+      op.setSoftness(softness);
       return op;
    }
 
