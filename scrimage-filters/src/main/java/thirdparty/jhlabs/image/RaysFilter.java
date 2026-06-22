@@ -44,30 +44,12 @@ public class RaysFilter extends MotionBlurOp {
 	}
 
 	/**
-     * Get the opacity of the rays.
-     * @return the opacity.
-     * @see #setOpacity
-     */
-	public float getOpacity() {
-		return opacity;
-	}
-
-	/**
      * Set the threshold value.
      * @param threshold the threshold value
      * @see #getThreshold
      */
 	public void setThreshold( float threshold ) {
 		this.threshold = threshold;
-	}
-	
-	/**
-     * Get the threshold value.
-     * @return the threshold value
-     * @see #setThreshold
-     */
-	public float getThreshold() {
-		return threshold;
 	}
 	
 	/**
@@ -78,52 +60,11 @@ public class RaysFilter extends MotionBlurOp {
 	public void setStrength( float strength ) {
 		this.strength = strength;
 	}
-	
-	/**
-     * Get the strength of the rays.
-     * @return the strength.
-     * @see #setStrength
-     */
-	public float getStrength() {
-		return strength;
-	}
-	
-	/**
-     * Set whether to render only the rays.
-     * @param raysOnly true to render rays only.
-     * @see #getRaysOnly
-     */
+
 	public void setRaysOnly(boolean raysOnly) {
 		this.raysOnly = raysOnly;
 	}
 
-	/**
-     * Get whether to render only the rays.
-     * @return true to render rays only.
-     * @see #setRaysOnly
-     */
-	public boolean getRaysOnly() {
-		return raysOnly;
-	}
-
-    /**
-     * Set the colormap to be used for the filter.
-     * @param colormap the colormap
-     * @see #getColormap
-     */
-	public void setColormap(Colormap colormap) {
-		this.colormap = colormap;
-	}
-	
-    /**
-     * Get the colormap to be used for the filter.
-     * @return the colormap
-     * @see #setColormap
-     */
-	public Colormap getColormap() {
-		return colormap;
-	}
-	
     public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
         int width = src.getWidth();
         int height = src.getHeight();
