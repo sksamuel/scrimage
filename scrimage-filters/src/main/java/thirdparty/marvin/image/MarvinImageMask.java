@@ -57,19 +57,6 @@ public class MarvinImageMask {
     }
 
     /**
-     * Clear the mask for a new selection
-     */
-    public void clear() {
-        if (arrMask != null) {
-            for (int y = 0; y < height; y++) {
-                for (int x = 0; x < width; x++) {
-                    arrMask[x][y] = false;
-                }
-            }
-        }
-    }
-
-    /**
      * @return Mask Array.
      */
     public boolean[][] getMaskArray() {
