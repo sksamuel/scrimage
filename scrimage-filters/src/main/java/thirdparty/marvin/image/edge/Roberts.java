@@ -28,6 +28,10 @@ public class Roberts extends MarvinAbstractImagePlugin {
                       MarvinAttributes attrOut,
                       MarvinImageMask mask,
                       boolean previewMode) {
+    // Start from a blank canvas: the convolution passes accumulate onto
+    // imageOut, which MarvinFilter seeds as a copy of the input.
+    Convolution.clearRGB(imageOut);
+
     convolution.matrix = matrixRobertsX;
     convolution.process(imageIn, imageOut, null, mask, previewMode);
 
