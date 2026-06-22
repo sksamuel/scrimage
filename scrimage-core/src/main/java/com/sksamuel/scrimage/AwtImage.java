@@ -148,12 +148,13 @@ public class AwtImage {
          }
          return pixels;
       } else {
-         Pixel[] pixels = new Pixel[count()];
-         int index = 0;
-         for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-               pixels[index++] = new Pixel(x, y, awt().getRGB(x, y));
-            }
+         // Non int-backed buffers (eg TYPE_BYTE_GRAY, TYPE_3BYTE_BGR, TYPE_4BYTE_ABGR):
+         // a single bulk getRGB converts scanline-at-a-time internally, which is far
+         // faster than invoking the colour-model conversion per pixel.
+         int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+         Pixel[] pixels = new Pixel[argb.length];
+         for (int index = 0; index < argb.length; index++) {
+            pixels[index] = new Pixel(index % width, index / width, argb[index]);
          }
          return pixels;
       }
@@ -421,7 +422,10 @@ public class AwtImage {
          throw new IllegalArgumentException(
             "Patch (" + x + "," + y + " " + patchWidth + "x" + patchHeight + ") falls outside image bounds " + width + "x" + height);
       }
-      return patchFrom(pixels(), x, y, patchWidth, patchHeight);
+      // Read only the requested region rather than materialising every pixel in
+      // the image; pixels(x, y, w, h) returns the patch in the same row-major
+      // order, with the same absolute coordinates, as patchFrom would extract.
+      return pixels(x, y, patchWidth, patchHeight);
    }
 
    // Internal helper, callers (this::patch, this::patches) are responsible
