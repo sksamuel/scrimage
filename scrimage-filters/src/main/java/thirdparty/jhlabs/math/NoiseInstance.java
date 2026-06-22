@@ -49,22 +49,6 @@ public class NoiseInstance implements Function1D, Function2D, Function3D {
      * @param octaves number of octaves of turbulence
      * @return turbulence value at (x,y)
      */
-    public float turbulence2(float x, float y, float octaves) {
-        float t = 0.0f;
-
-        for (float f = 1.0f; f <= octaves; f *= 2)
-            t += Math.abs(noise2(f * x, f * y)) / f;
-        return t;
-    }
-
-    /**
-     * Compute turbulence using Perlin noise.
-     *
-     * @param x       the x value
-     * @param y       the y value
-     * @param octaves number of octaves of turbulence
-     * @return turbulence value at (x,y)
-     */
     public float turbulence3(float x, float y, float z, float octaves) {
         float t = 0.0f;
 
