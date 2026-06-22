@@ -31,9 +31,16 @@ public class Polygon implements Drawable {
 
    @Override
    public void draw(RichGraphics2D g) {
-      int[] xs = points.stream().mapToInt(p -> p.x).toArray();
-      int[] ys = points.stream().mapToInt(p -> p.y).toArray();
-      g.drawPolygon(xs, ys, points.size());
+      int n = points.size();
+      int[] xs = new int[n];
+      int[] ys = new int[n];
+      int i = 0;
+      for (java.awt.Point p : points) {
+         xs[i] = p.x;
+         ys[i] = p.y;
+         i++;
+      }
+      g.drawPolygon(xs, ys, n);
    }
 
    public FilledPolygon toFilled() {
