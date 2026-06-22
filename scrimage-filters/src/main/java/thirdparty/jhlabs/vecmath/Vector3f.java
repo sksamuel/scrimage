@@ -49,10 +49,6 @@ public class Vector3f extends Tuple3f {
 		this.z = t.z;
 	}
 
-	public float angle( Vector3f v ) {
-		return (float)Math.acos( dot(v) / (length()*v.length()) );
-	}
-
 	public float dot( Vector3f v ) {
 		return v.x * x + v.y * y + v.z * z;
 	}
