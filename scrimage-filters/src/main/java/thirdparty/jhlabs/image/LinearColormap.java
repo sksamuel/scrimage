@@ -42,22 +42,6 @@ public class LinearColormap implements Colormap {
 	}
 
 	/**
-	 * Get the first color.
-	 * @return the color corresponding to value 0 in the colormap
-	 */
-	public int getColor1() {
-		return color1;
-	}
-
-	/**
-	 * Get the second color.
-	 * @return the color corresponding to value 1 in the colormap
-	 */
-	public int getColor2() {
-		return color2;
-	}
-
-	/**
 	 * Convert a value in the range 0..1 to an RGB color.
 	 * @param v a value in the range 0..1
 	 * @return an RGB color
