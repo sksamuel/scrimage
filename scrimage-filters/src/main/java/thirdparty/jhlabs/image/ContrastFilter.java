@@ -43,15 +43,6 @@ public class ContrastFilter extends TransferFilter {
 	}
 
     /**
-     * Get the filter brightness.
-     * @return the brightness in the range 0 to 1
-     * @see #setBrightness
-     */
-	public float getBrightness() {
-		return brightness;
-	}
-
-    /**
      * Set the filter contrast.
      * @param contrast the contrast in the range 0 to 1
      * min-value 0
@@ -61,15 +52,6 @@ public class ContrastFilter extends TransferFilter {
 	public void setContrast(float contrast) {
 		this.contrast = contrast;
 		initialized = false;
-	}
-
-    /**
-     * Get the filter contrast.
-     * @return the contrast in the range 0 to 1
-     * @see #setContrast
-     */
-	public float getContrast() {
-		return contrast;
 	}
 
 	public String toString() {
