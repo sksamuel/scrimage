@@ -39,26 +39,6 @@ public class BlockFilter extends AbstractBufferedImageOp {
 		this.blockSize = blockSize;
 	}
 
-	/**
-	 * Set the pixel block size.
-	 * @param blockSize the number of pixels along each block edge
-     * min-value 1
-     * max-value 100+
-     * @see #getBlockSize
-	 */
-	public void setBlockSize(int blockSize) {
-		this.blockSize = blockSize;
-	}
-
-	/**
-	 * Get the pixel block size.
-	 * @return the number of pixels along each block edge
-     * @see #setBlockSize
-	 */
-	public int getBlockSize() {
-		return blockSize;
-	}
-
     public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
         int width = src.getWidth();
         int height = src.getHeight();
