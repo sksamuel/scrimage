@@ -82,29 +82,6 @@ public class ImageMath {
    }
 
    /**
-    * The step function. Returns 0 below a threshold, 1 above.
-    *
-    * @param a the threshold position
-    * @param x the input parameter
-    * @return the output value - 0 or 1
-    */
-   public static float step(float a, float x) {
-      return (x < a) ? 0.0f : 1.0f;
-   }
-
-   /**
-    * The pulse function. Returns 1 between two thresholds, 0 outside.
-    *
-    * @param a the lower threshold position
-    * @param b the upper threshold position
-    * @param x the input parameter
-    * @return the output value - 0 or 1
-    */
-   public static float pulse(float a, float b, float x) {
-      return (x < a || x >= b) ? 0.0f : 1.0f;
-   }
-
-   /**
     * A smoothed step function. A cubic function is used to smooth the step between two thresholds.
     *
     * @param a the lower threshold position
@@ -499,101 +476,6 @@ public class ImageMath {
       }
 
       return v;
-   }
-
-   /**
-    * An implementation of Fant's resampling algorithm.
-    *
-    * @param source the source pixels
-    * @param dest   the destination pixels
-    * @param length the length of the scanline to resample
-    * @param offset the start offset into the arrays
-    * @param stride the offset between pixels in consecutive rows
-    * @param out    an array of output positions for each pixel
-    */
-   public static void resample(int[] source, int[] dest, int length, int offset, int stride, float[] out) {
-      int i, j;
-      float sizfac;
-      float inSegment;
-      float outSegment;
-      int a, r, g, b, nextA, nextR, nextG, nextB;
-      float aSum, rSum, gSum, bSum;
-      float[] in;
-      int srcIndex = offset;
-      int destIndex = offset;
-      int lastIndex = source.length;
-      int rgb;
-
-      in = new float[length + 2];
-      i = 0;
-      for (j = 0; j < length; j++) {
-         while (out[i + 1] < j)
-            i++;
-         in[j] = i + (float) (j - out[i]) / (out[i + 1] - out[i]);
-//			in[j] = ImageMath.clamp( in[j], 0, length-1 );
-      }
-      in[length] = length;
-      in[length + 1] = length;
-
-      inSegment = 1.0f;
-      outSegment = in[1];
-      sizfac = outSegment;
-      aSum = rSum = gSum = bSum = 0.0f;
-      rgb = source[srcIndex];
-      a = (rgb >> 24) & 0xff;
-      r = (rgb >> 16) & 0xff;
-      g = (rgb >> 8) & 0xff;
-      b = rgb & 0xff;
-      srcIndex += stride;
-      rgb = source[srcIndex];
-      nextA = (rgb >> 24) & 0xff;
-      nextR = (rgb >> 16) & 0xff;
-      nextG = (rgb >> 8) & 0xff;
-      nextB = rgb & 0xff;
-      srcIndex += stride;
-      i = 1;
-
-      while (i <= length) {
-         float aIntensity = inSegment * a + (1.0f - inSegment) * nextA;
-         float rIntensity = inSegment * r + (1.0f - inSegment) * nextR;
-         float gIntensity = inSegment * g + (1.0f - inSegment) * nextG;
-         float bIntensity = inSegment * b + (1.0f - inSegment) * nextB;
-         if (inSegment < outSegment) {
-            aSum += (aIntensity * inSegment);
-            rSum += (rIntensity * inSegment);
-            gSum += (gIntensity * inSegment);
-            bSum += (bIntensity * inSegment);
-            outSegment -= inSegment;
-            inSegment = 1.0f;
-            a = nextA;
-            r = nextR;
-            g = nextG;
-            b = nextB;
-            if (srcIndex < lastIndex)
-               rgb = source[srcIndex];
-            nextA = (rgb >> 24) & 0xff;
-            nextR = (rgb >> 16) & 0xff;
-            nextG = (rgb >> 8) & 0xff;
-            nextB = rgb & 0xff;
-            srcIndex += stride;
-         } else {
-            aSum += (aIntensity * outSegment);
-            rSum += (rIntensity * outSegment);
-            gSum += (gIntensity * outSegment);
-            bSum += (bIntensity * outSegment);
-            dest[destIndex] =
-               ((int) Math.min(aSum / sizfac, 255) << 24) |
-                  ((int) Math.min(rSum / sizfac, 255) << 16) |
-                  ((int) Math.min(gSum / sizfac, 255) << 8) |
-                  (int) Math.min(bSum / sizfac, 255);
-            destIndex += stride;
-            aSum = rSum = gSum = bSum = 0.0f;
-            inSegment -= outSegment;
-            outSegment = in[i + 1] - in[i];
-            sizfac = outSegment;
-            i++;
-         }
-      }
    }
 
    /**
