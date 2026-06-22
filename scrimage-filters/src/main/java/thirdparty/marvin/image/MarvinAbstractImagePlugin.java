@@ -2,8 +2,6 @@ package thirdparty.marvin.image;
 
 public abstract class MarvinAbstractImagePlugin extends MarvinAbstractPlugin implements MarvinImagePlugin {
 
-  private boolean valid;
-
   public void process(MarvinImage imgIn,
                       MarvinImage imgOut,
                       MarvinImageMask mask) {

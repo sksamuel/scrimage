@@ -27,7 +27,6 @@ import java.util.Random;
 public class CausticsFilter extends WholeImageFilter {
 
 	private float scale = 32;
-	private float angle = 0.0f;
 	private int brightness = 10;
 	private float amount = 1.0f;
 	private float turbulence = 1.0f;
@@ -286,41 +285,6 @@ public class CausticsFilter extends WholeImageFilter {
 			}
 		}
 		return pixels;
-	}
-
-	private static int add(int rgb, float brightness) {
-		int r = (rgb >> 16) & 0xff;
-		int g = (rgb >> 8) & 0xff;
-		int b = rgb & 0xff;
-		r += brightness;
-		g += brightness;
-		b += brightness;
-		if (r > 255)
-			r = 255;
-		if (g > 255)
-			g = 255;
-		if (b > 255)
-			b = 255;
-		return 0xff000000 | (r << 16) | (g << 8) | b;
-	}
-
-	private static int add(int rgb, float brightness, int c) {
-		int r = (rgb >> 16) & 0xff;
-		int g = (rgb >> 8) & 0xff;
-		int b = rgb & 0xff;
-		if (c == 2)
-			r += brightness;
-		else if (c == 1)
-			g += brightness;
-		else
-			b += brightness;
-		if (r > 255)
-			r = 255;
-		if (g > 255)
-			g = 255;
-		if (b > 255)
-			b = 255;
-		return 0xff000000 | (r << 16) | (g << 8) | b;
 	}
 
 	private float turbulence2(float x, float y, float time, float octaves) {
