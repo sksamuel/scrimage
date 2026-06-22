@@ -98,15 +98,6 @@ public class ArrayColormap implements Colormap, Cloneable {
       return map[n];
    }
 
-   public void setColorInterpolated(int index, int firstIndex, int lastIndex, int color) {
-      int firstColor = map[firstIndex];
-      int lastColor = map[lastIndex];
-      for (int i = firstIndex; i <= index; i++)
-         map[i] = ImageMath.mixColors((float) (i - firstIndex) / (index - firstIndex), firstColor, color);
-      for (int i = index; i < lastIndex; i++)
-         map[i] = ImageMath.mixColors((float) (i - index) / (lastIndex - index), color, lastColor);
-   }
-
    /**
     * Set a range of the colormap, interpolating between two colors.
     *
