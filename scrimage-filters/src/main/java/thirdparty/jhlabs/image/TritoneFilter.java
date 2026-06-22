@@ -75,27 +75,11 @@ public class TritoneFilter extends PointFilter {
 	}
 
     /**
-     * Get the mid color.
-     * @return the mid color
-     */
-	public int getMidColor() {
-		return midColor;
-	}
-
-    /**
      * Set the high color.
      * @param highColor the high color
      */
 	public void setHighColor( int highColor ) {
 		this.highColor = highColor;
-	}
-
-    /**
-     * Get the high color.
-     * @return the high color
-     */
-	public int getHighColor() {
-		return highColor;
 	}
 
 
