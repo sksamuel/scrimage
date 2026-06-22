@@ -138,62 +138,6 @@ public class CellularFilter extends WholeImageFilter implements Function2D, Clon
 		return angle;
 	}
 
-	public void setCoefficient(int i, float v) {
-		coefficients[i] = v;
-	}
-
-	public float getCoefficient(int i) {
-		return coefficients[i];
-	}
-
-	public void setAngleCoefficient(float angleCoefficient) {
-		this.angleCoefficient = angleCoefficient;
-	}
-
-	public float getAngleCoefficient() {
-		return angleCoefficient;
-	}
-
-	public void setGradientCoefficient(float gradientCoefficient) {
-		this.gradientCoefficient = gradientCoefficient;
-	}
-
-	public float getGradientCoefficient() {
-		return gradientCoefficient;
-	}
-
-	public void setF1( float v ) {
-		coefficients[0] = v;
-	}
-
-	public float getF1() {
-		return coefficients[0];
-	}
-
-	public void setF2( float v ) {
-		coefficients[1] = v;
-	}
-
-	public float getF2() {
-		return coefficients[1];
-	}
-
-	public void setF3( float v ) {
-		coefficients[2] = v;
-	}
-
-	public float getF3() {
-		return coefficients[2];
-	}
-
-	public void setF4( float v ) {
-		coefficients[3] = v;
-	}
-
-	public float getF4() {
-		return coefficients[3];
-	}
-
     /**
      * Set the colormap to be used for the filter.
      * @param colormap the colormap
@@ -222,18 +166,6 @@ public class CellularFilter extends WholeImageFilter implements Function2D, Clon
 
 	public void setGridType(int gridType) {
 		this.gridType = gridType;
-	}
-
-	public int getGridType() {
-		return gridType;
-	}
-
-	public void setDistancePower(float distancePower) {
-		this.distancePower = distancePower;
-	}
-
-	public float getDistancePower() {
-		return distancePower;
 	}
 
 	/**
