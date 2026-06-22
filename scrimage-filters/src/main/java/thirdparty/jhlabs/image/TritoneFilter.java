@@ -58,15 +58,6 @@ public class TritoneFilter extends PointFilter {
 	}
 
     /**
-     * Get the shadow color.
-     * @return the shadow color
-     * @see #setShadowColor
-     */
-	public int getShadowColor() {
-		return shadowColor;
-	}
-
-    /**
      * Set the mid color.
      * @param midColor the mid color
      */
