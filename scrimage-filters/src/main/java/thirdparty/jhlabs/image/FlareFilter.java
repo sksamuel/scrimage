@@ -45,14 +45,6 @@ public class FlareFilter extends PointFilter {
         setRadius(50.0f);
     }
 
-    public void setColor(int color) {
-        this.color = color;
-    }
-
-    public int getColor() {
-        return color;
-    }
-
     public void setRingWidth(float ringWidth) {
         this.ringWidth = ringWidth;
     }
@@ -69,13 +61,13 @@ public class FlareFilter extends PointFilter {
         this.rayAmount = rayAmount;
     }
 
+    public void setColor(int color) {
+        this.color = color;
+    }
+
     public void setCentre(Point2D centre) {
         this.centreX = (float) centre.getX();
         this.centreY = (float) centre.getY();
-    }
-
-    public Point2D getCentre() {
-        return new Point2D.Float(centreX, centreY);
     }
 
     /**
@@ -83,20 +75,9 @@ public class FlareFilter extends PointFilter {
      *
      * @param radius the radius
      * min-value 0
-     * @see #getRadius
      */
     public void setRadius(float radius) {
         this.radius = radius;
-    }
-
-    /**
-     * Get the radius of the effect.
-     *
-     * @return the radius
-     * @see #setRadius
-     */
-    public float getRadius() {
-        return radius;
     }
 
     public void setDimensions(int width, int height) {
