@@ -309,8 +309,8 @@ public final class BlendComposite implements Composite {
                   @Override
                   public void blend(int[] src, int[] dst, int[] result) {
                      result[0] = dst[0];
-                     result[1] = src[1];
-                     result[2] = dst[2];
+                     result[1] = dst[1];
+                     result[2] = src[2];
                      result[3] = Math.min(255, src[3] + dst[3]);
                   }
                };
@@ -409,8 +409,8 @@ public final class BlendComposite implements Composite {
                   @Override
                   public void blend(int[] src, int[] dst, int[] result) {
                      result[0] = dst[0];
-                     result[1] = dst[1];
-                     result[2] = src[2];
+                     result[1] = src[1];
+                     result[2] = dst[2];
                      result[3] = Math.min(255, src[3] + dst[3]);
                   }
                };
