@@ -129,14 +129,6 @@ public class Tuple4f {
 		w = -t.w;
 	}
 
-	public void interpolate( Tuple4f t, float alpha ) {
-		float a = 1-alpha;
-		x = a*x + alpha*t.x;
-		y = a*y + alpha*t.y;
-		z = a*z + alpha*t.z;
-		w = a*w + alpha*t.w;
-	}
-
 	public void scale( float s ) {
 		x *= s;
 		y *= s;
