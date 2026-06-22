@@ -55,14 +55,6 @@ public class EmbossFilter extends WholeImageFilter {
 	public float getBumpHeight() {
 		return width45 / 3;
 	}
-
-	public void setEmboss(boolean emboss) {
-		this.emboss = emboss;
-	}
-	
-	public boolean getEmboss() {
-		return emboss;
-	}
 	
 	protected int[] filterPixels( int width, int height, int[] inPixels, Rectangle transformedSpace ) {
 		int index = 0;
