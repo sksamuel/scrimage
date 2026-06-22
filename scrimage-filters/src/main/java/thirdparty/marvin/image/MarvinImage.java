@@ -90,10 +90,6 @@ public class MarvinImage implements Cloneable {
    }
 
 
-   public int getComponents() {
-      return numComponents;
-   }
-
    public MarvinImage crop(int x, int y, int w, int h) {
       return (new MarvinImage(image.getSubimage(x, y, w, h)));
    }
@@ -115,14 +111,6 @@ public class MarvinImage implements Cloneable {
       }
    }
 
-   public void clearImage(int color) {
-      for (int y = 0; y < height; y++) {
-         for (int x = 0; x < width; x++) {
-            setIntColor(x, y, color);
-         }
-      }
-   }
-
    /**
     * Gets the type
     */
@@ -134,18 +122,7 @@ public class MarvinImage implements Cloneable {
       return colorModel;
    }
 
-   public void setColorModel(int cm) {
-      colorModel = cm;
-      allocColorArray();
-   }
-
    //@todo remove ambiguity between Type and FormatName
-   /*
-    * @return image format name
-    */
-   public String getFormatName() {
-      return formatName;
-   }
 
    public void setDimension(int w, int h) {
       image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
@@ -280,10 +257,6 @@ public class MarvinImage implements Cloneable {
       return (image.getHeight());
    }
 
-   public boolean isValidPosition(int x, int y) {
-      return x >= 0 && x < image.getWidth() && y >= 0 && y < getHeight();
-   }
-
    public void setIntColor(int x, int y, int alpha, int color) {
       arrIntColor[((y * image.getWidth() + x))] = (alpha << 24) + color;
    }
@@ -338,41 +311,6 @@ public class MarvinImage implements Cloneable {
 
    public BufferedImage getBufferedImage() {
       return image;
-   }
-
-   public BufferedImage getBufferedImageNoAlpha() {
-
-      // Only for RGB images
-      if (colorModel == COLOR_MODEL_RGB) {
-         int pixels = width * height;
-         int[] pixelData = new int[pixels];
-         for (int i = 0; i < pixels; i++) {
-            pixelData[i] = arrIntColor[i] & 0x00FFFFFF;
-         }
-         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-         image.setRGB(0, 0, width, height, pixelData, 0, width);
-         return image;
-      }
-      return null;
-   }
-
-   /**
-    * Limits the color value between 0 and 255.
-    *
-    * @return int - the color value
-    */
-   public int limit8bitsColor(int color) {
-
-      if (color > 255) {
-         color = 255;
-         return (color);
-      }
-
-      if (color < 0) {
-         color = 0;
-         return (color);
-      }
-      return color;
    }
 
    /**
@@ -433,17 +371,6 @@ public class MarvinImage implements Cloneable {
       // return the value for all channel
       return (rgb);
 
-   }
-
-   /**
-    * Return a new instance of the BufferedImage
-    *
-    * @return BufferedImage
-    */
-   public BufferedImage getNewImageInstance() {
-      BufferedImage buf = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
-      buf.setData(image.getData());
-      return buf;
    }
 
    /**
@@ -518,68 +445,6 @@ public class MarvinImage implements Cloneable {
       MarvinImage.copyColorArray(this, newMarvinImg);
       newMarvinImg.update();
       return newMarvinImg;
-   }
-
-   /**
-    * Multiple of gradient windwos per masc relation of x y
-    *
-    * @return int[]
-    */
-   public double multi8p(int x, int y, double masc) {
-      int aR = getIntComponent0(x - 1, y - 1);
-      int bR = getIntComponent0(x - 1, y);
-      int cR = getIntComponent0(x - 1, y + 1);
-      int aG = getIntComponent1(x - 1, y - 1);
-      int bG = getIntComponent1(x - 1, y);
-      int cG = getIntComponent1(x - 1, y + 1);
-      int aB = getIntComponent1(x - 1, y - 1);
-      int bB = getIntComponent1(x - 1, y);
-      int cB = getIntComponent1(x - 1, y + 1);
-
-
-      int dR = getIntComponent0(x, y - 1);
-      int eR = getIntComponent0(x, y);
-      int fR = getIntComponent0(x, y + 1);
-      int dG = getIntComponent1(x, y - 1);
-      int eG = getIntComponent1(x, y);
-      int fG = getIntComponent1(x, y + 1);
-      int dB = getIntComponent1(x, y - 1);
-      int eB = getIntComponent1(x, y);
-      int fB = getIntComponent1(x, y + 1);
-
-
-      int gR = getIntComponent0(x + 1, y - 1);
-      int hR = getIntComponent0(x + 1, y);
-      int iR = getIntComponent0(x + 1, y + 1);
-      int gG = getIntComponent1(x + 1, y - 1);
-      int hG = getIntComponent1(x + 1, y);
-      int iG = getIntComponent1(x + 1, y + 1);
-      int gB = getIntComponent1(x + 1, y - 1);
-      int hB = getIntComponent1(x + 1, y);
-      int iB = getIntComponent1(x + 1, y + 1);
-
-      double rgb;
-
-      rgb = ((aR * masc) + (bR * masc) + (cR * masc) +
-         (dR * masc) + (eR * masc) + (fR * masc) +
-         (gR * masc) + (hR * masc) + (iR * masc));
-
-      return (rgb);
-
-   }
-
-   public int boundRGB(int rgb) {
-
-      if (rgb > 255) {
-         rgb = 255;
-         return (rgb);
-      }
-
-      if (rgb < 0) {
-         rgb = 0;
-         return (rgb);
-      }
-      return rgb;
    }
 
    /**
