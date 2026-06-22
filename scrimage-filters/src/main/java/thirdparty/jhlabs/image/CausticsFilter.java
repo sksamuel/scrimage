@@ -50,57 +50,12 @@ public class CausticsFilter extends WholeImageFilter {
     }
 
 	/**
-	 * Specifies the scale of the texture.
-	 * @param scale the scale of the texture.
-     * @see #getScale
-     */
-	public void setScale(float scale) {
-		this.scale = scale;
-	}
-
-	/**
-     * Returns the scale of the texture.
-     * @return the scale of the texture.
-     * @see #setScale
-     */
-	public float getScale() {
-		return scale;
-	}
-
-	/**
-     * Set the brightness.
-     * @param brightness the brightness.
-     * @see #getBrightness
-     */
-	public void setBrightness(int brightness) {
-		this.brightness = brightness;
-	}
-
-	/**
-     * Get the brightness.
-     * @return the brightness.
-     * @see #setBrightness
-     */
-	public int getBrightness() {
-		return brightness;
-	}
-
-	/**
      * Specifies the turbulence of the texture.
      * @param turbulence the turbulence of the texture.
      * @see #getTurbulence
      */
 	public void setTurbulence(float turbulence) {
 		this.turbulence = turbulence;
-	}
-
-	/**
-     * Returns the turbulence of the effect.
-     * @return the turbulence of the effect.
-     * @see #setTurbulence
-     */
-	public float getTurbulence() {
-		return turbulence;
 	}
 
 	/**
@@ -113,48 +68,12 @@ public class CausticsFilter extends WholeImageFilter {
 	}
 
 	/**
-	 * Get the amount of effect.
-	 * @return the amount
-     * @see #setAmount
-	 */
-	public float getAmount() {
-		return amount;
-	}
-
-	/**
-	 * Set the dispersion.
-	 * @param dispersion the dispersion
-     * @see #getDispersion
-	 */
-	public void setDispersion(float dispersion) {
-		this.dispersion = dispersion;
-	}
-
-	/**
-	 * Get the dispersion.
-	 * @return the dispersion
-     * @see #setDispersion
-	 */
-	public float getDispersion() {
-		return dispersion;
-	}
-
-	/**
 	 * Set the time. Use this to animate the effect.
 	 * @param time the time
      * @see #getTime
 	 */
 	public void setTime(float time) {
 		this.time = time;
-	}
-
-	/**
-	 * Set the time.
-	 * @return the time
-     * @see #setTime
-	 */
-	public float getTime() {
-		return time;
 	}
 
 	/**
@@ -167,30 +86,12 @@ public class CausticsFilter extends WholeImageFilter {
 	}
 
 	/**
-	 * Get the number of samples per pixel.
-	 * @return the number of samples
-     * @see #setSamples
-	 */
-	public int getSamples() {
-		return samples;
-	}
-
-	/**
 	 * Set the background color.
 	 * @param c the color
      * @see #getBgColor
 	 */
 	public void setBgColor(int c) {
 		bgColor = c;
-	}
-
-	/**
-	 * Get the background color.
-	 * @return the color
-     * @see #setBgColor
-	 */
-	public int getBgColor() {
-		return bgColor;
 	}
 
 	protected int[] filterPixels( int width, int height, int[] inPixels, Rectangle transformedSpace ) {
