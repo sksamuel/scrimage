@@ -82,14 +82,6 @@ public class Quat4f extends Tuple4f {
 	}
 */
 
-	public void normalize() {
-		float d = 1.0f/( x*x+y*y+z*z+w*w );
-		x *= d;
-		y *= d;
-		z *= d;
-		w *= d;
-	}
-
 /*
 	public void mul( Quat4f q ) {
 		Quat4f q3 = new Quat4f();
