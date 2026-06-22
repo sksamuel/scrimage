@@ -43,18 +43,6 @@ public class RGBAdjustFilter extends PointFilter {
 		this.bFactor = 1+bFactor;
 	}
 	
-	public float getBFactor() {
-		return bFactor-1;
-	}
-
-	public int[] getLUT() {
-		int[] lut = new int[256];
-		for ( int i = 0; i < 256; i++ ) {
-			lut[i] = filterRGB( 0, 0, (i << 24) | (i << 16) | (i << 8) | i );
-		}
-		return lut;
-	}
-	
 	public int filterRGB(int x, int y, int rgb) {
 		int a = rgb & 0xff000000;
 		int r = (rgb >> 16) & 0xff;
