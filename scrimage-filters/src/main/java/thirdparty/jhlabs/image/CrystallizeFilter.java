@@ -34,24 +34,12 @@ public class CrystallizeFilter extends CellularFilter {
 		this.edgeThickness = edgeThickness;
 	}
 
-	public float getEdgeThickness() {
-		return edgeThickness;
-	}
-
 	public void setFadeEdges(boolean fadeEdges) {
 		this.fadeEdges = fadeEdges;
 	}
 
-	public boolean getFadeEdges() {
-		return fadeEdges;
-	}
-
 	public void setEdgeColor(int edgeColor) {
 		this.edgeColor = edgeColor;
-	}
-
-	public int getEdgeColor() {
-		return edgeColor;
 	}
 
 	public int getPixel(int x, int y, int[] inPixels, int width, int height) {

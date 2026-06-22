@@ -23,8 +23,17 @@ public class CrystallizeFilter extends BufferedOpFilter {
     private final double edgeThickness;
     private final int edgeColor;
     private final double randomness;
+    private final boolean fadeEdges;
 
     public CrystallizeFilter(double scale, double edgeThickness, int edgeColor, double randomness) {
+        this(scale, edgeThickness, edgeColor, randomness, false);
+    }
+
+    /**
+     * @param fadeEdges when true, cell edges are faded between neighbouring cells rather than
+     *                  drawn in {@code edgeColor}.
+     */
+    public CrystallizeFilter(double scale, double edgeThickness, int edgeColor, double randomness, boolean fadeEdges) {
         if (!(scale > 0))
             throw new IllegalArgumentException("scale must be > 0, got " + scale);
         // The jhlabs implementation computes `f = (f2 - f1) / edgeThickness`
@@ -38,6 +47,7 @@ public class CrystallizeFilter extends BufferedOpFilter {
         this.edgeThickness = edgeThickness;
         this.edgeColor = edgeColor;
         this.randomness = randomness;
+        this.fadeEdges = fadeEdges;
     }
 
     public CrystallizeFilter() {
@@ -51,6 +61,7 @@ public class CrystallizeFilter extends BufferedOpFilter {
         op.setEdgeThickness((float) edgeThickness);
         op.setScale((float) scale);
         op.setRandomness((float) randomness);
+        op.setFadeEdges(fadeEdges);
         return op;
     }
 }
