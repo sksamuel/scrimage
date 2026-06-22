@@ -104,14 +104,6 @@ public class ImageFunction2D implements Function2D {
 		}
 		return alpha ? ((pixels[iy*width+ix] >> 24) & 0xff) / 255.0f : PixelUtils.brightness(pixels[iy*width+ix]) / 255.0f;
 	}
-	
-	public void setEdgeAction(int edgeAction) {
-		this.edgeAction = edgeAction;
-	}
-
-	public int getEdgeAction() {
-		return edgeAction;
-	}
 
 	public int getWidth() {
 		return width;
