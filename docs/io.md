@@ -94,7 +94,7 @@ For example, to save an image as a PNG to a file:
     ```java
     ImmutableImage image = ... // some image
     // write out to a file
-    image.output(PngWriter.Default, new File("/home/sam/spaghetti.png"));
+    image.output(PngWriter.MaxCompression, new File("/home/sam/spaghetti.png"));
     ```
 
 === "Kotlin"
@@ -102,7 +102,7 @@ For example, to save an image as a PNG to a file:
     ```kotlin
     val image = ... // some image
     // write out to a file
-    image.output(PngWriter.Default, File("/home/sam/spaghetti.png"))
+    image.output(PngWriter.MaxCompression, File("/home/sam/spaghetti.png"))
     ```
 
 === "Scala"
@@ -110,7 +110,7 @@ For example, to save an image as a PNG to a file:
     ```scala
     val image = ... // some image
     // write out to a file
-    image.output(PngWriter.Default, new File("/home/sam/spaghetti.png"))
+    image.output(PngWriter.MaxCompression, new File("/home/sam/spaghetti.png"))
     ```
 
 
