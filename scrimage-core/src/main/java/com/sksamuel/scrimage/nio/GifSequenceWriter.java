@@ -70,7 +70,10 @@ public class GifSequenceWriter extends AbstractGifWriter {
       try {
          ImageWriteParam imageWriteParam = writer.getDefaultWriteParam();
 
-         ImageTypeSpecifier imageTypeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(images[0].awt().getType());
+         // createFromRenderedImage rather than createFromBufferedImageType: the latter throws
+         // IllegalArgumentException for TYPE_CUSTOM (type 0), which is what the JDK PNG reader
+         // returns for 16-bit per channel PNGs — so such frames could never be written to a gif.
+         ImageTypeSpecifier imageTypeSpecifier = ImageTypeSpecifier.createFromRenderedImage(images[0].awt());
          IIOMetadata imageMetaData = writer.getDefaultImageMetadata(imageTypeSpecifier, imageWriteParam);
 
          String metaFormatName = imageMetaData.getNativeMetadataFormatName();
