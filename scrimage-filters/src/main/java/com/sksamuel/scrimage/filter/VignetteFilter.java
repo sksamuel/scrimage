@@ -43,6 +43,13 @@ public class VignetteFilter implements Filter {
         if (!(blur >= 0 && blur <= 1)) {
             throw new IllegalArgumentException("blur must be in [0, 1]; got " + blur);
         }
+        // end scales the radius of the RadialGradientPaint (image.radius() * end),
+        // which requires a radius strictly greater than zero. Without this check,
+        // end <= 0 surfaced at apply time as a cryptic "Radius must be greater
+        // than zero" from RadialGradientPaint.
+        if (!(end > 0 && end <= 1)) {
+            throw new IllegalArgumentException("end must be in (0, 1]; got " + end);
+        }
         this.start = start;
         this.end = end;
         this.blur = blur;
