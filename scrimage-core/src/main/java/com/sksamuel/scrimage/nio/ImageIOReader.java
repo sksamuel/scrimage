@@ -26,7 +26,10 @@ public class ImageIOReader implements ImageReader {
       this.readers = readers;
    }
 
-   private ImmutableImage tryLoad(javax.imageio.ImageReader reader, ImageInputStream iis, Rectangle rectangle) throws IOException {
+   private ImmutableImage tryLoad(javax.imageio.ImageReader reader,
+                                  ImageInputStream iis,
+                                  Rectangle rectangle,
+                                  boolean ownsReader) throws IOException {
       try {
          // Rewind the stream to the start before each reader attempt. The same
          // ImageInputStream is reused across multiple readers in read(...)'s
@@ -66,7 +69,18 @@ public class ImageIOReader implements ImageReader {
          //  The contract for javax.imageio.ImageReader is that you must call reader.dispose() when done.
          //  That method triggers the JNI dispose call which runs the corresponding free() on those native structs.
          //  Without it, the memory is permanently leaked for the lifetime of the JVM process.
-         reader.dispose();
+         //
+         //  However, we must only dispose readers that we created ourselves (via ImageIO.getImageReaders,
+         //  which mints fresh instances on every call). Caller-supplied readers are reused across read()
+         //  calls, and a disposed reader throws IllegalStateException("Attempting to use reader after
+         //  dispose()") on any subsequent use — making the loader single-use. For those we reset() instead,
+         //  which returns the reader to its initial state (releasing the input stream reference) while
+         //  keeping it usable; releasing its native resources is the caller's responsibility.
+         if (ownsReader) {
+            reader.dispose();
+         } else {
+            reader.reset();
+         }
       }
    }
 
@@ -81,8 +95,12 @@ public class ImageIOReader implements ImageReader {
          throw new IOException("No ImageInputStream supported this image format");
 
       try {
+         // Readers minted by ImageIO.getImageReaders are fresh instances owned by us and must be
+         // disposed after use. Caller-supplied readers are owned by the caller and are reused on
+         // every read() call, so they must not be disposed here.
+         boolean ownsReaders = readers.isEmpty();
          Iterator<javax.imageio.ImageReader> iter;
-         if (readers.isEmpty())
+         if (ownsReaders)
             iter = ImageIO.getImageReaders(iis);
          else
             iter = readers.iterator();
@@ -90,7 +108,7 @@ public class ImageIOReader implements ImageReader {
          List<String> attempts = new ArrayList<>();
          while (iter.hasNext()) {
             try {
-               return tryLoad(iter.next(), iis, rectangle);
+               return tryLoad(iter.next(), iis, rectangle, ownsReaders);
             } catch (Exception e) {
                attempts.add(e.getMessage());
             }
