@@ -27,7 +27,7 @@ image.zoom(1.3)
 
 ```kotlin
 // zoom with a specified scale method.
-image.scaleToHeight(200, Scalemethod.FastScale)
+image.zoom(1.3, ScaleMethod.FastScale)
 ```
 
 ![zoom](images/zoom_fastscale.jpg)
