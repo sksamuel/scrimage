@@ -218,9 +218,16 @@ public class PixelTools {
     */
    public static int replaceTransparencyWithColor(int pixel, int colorRed, int colorGreen, int colorBlue, int colorAlpha) {
       int a = alpha(pixel);
-      int r = (red(pixel) * a + colorRed * colorAlpha * (255 - a) / 255) / 255;
-      int g = (green(pixel) * a + colorGreen * colorAlpha * (255 - a) / 255) / 255;
-      int b = (blue(pixel) * a + colorBlue * colorAlpha * (255 - a) / 255) / 255;
-      return argb(255, r, g, b);
+      // SrcOver composite of the pixel over the replacement colour. The premultiplied
+      // channel sums must be divided by the composite alpha (not by 255, which would
+      // darken the result whenever the replacement colour is translucent), and the
+      // composite alpha must be kept rather than forced opaque. All terms are kept on
+      // a common 255*255 scale so that no channel can exceed 255 through truncation.
+      int aNum = 255 * a + colorAlpha * (255 - a); // composite alpha scaled by 255
+      if (aNum == 0) return argb(0, 0, 0, 0);
+      int r = (255 * red(pixel) * a + colorRed * colorAlpha * (255 - a)) / aNum;
+      int g = (255 * green(pixel) * a + colorGreen * colorAlpha * (255 - a)) / aNum;
+      int b = (255 * blue(pixel) * a + colorBlue * colorAlpha * (255 - a)) / aNum;
+      return argb(aNum / 255, r, g, b);
    }
 }
