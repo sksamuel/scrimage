@@ -23,8 +23,8 @@ frames, delay per frame and so on.
 
     ```kotlin
     val gif = AnimatedGifReader.read(ImageSource.of(...))
-    val firstFrame = gif.frames().first()
-    val lastFrame = gif.frames().last()
+    val firstFrame = gif.frames.first()
+    val lastFrame = gif.frames.last()
     ```
 
 === "Scala"
@@ -45,21 +45,21 @@ and the AWT image type we want the images to be created with.
 === "Java"
 
     ```java
-    StreamingGifWriter writer = new StreamingGifWriter(Duration.ofSeconds(2), true);
+    StreamingGifWriter writer = new StreamingGifWriter(Duration.ofSeconds(2), true, false);
     GifStream gif = writer.prepareStream("/path/to/gif.gif", BufferedImage.TYPE_INT_ARGB);
     ```
 
 === "Kotlin"
 
     ```kotlin
-    val writer = StreamingGifWriter(Duration.ofSeconds(2), true)
+    val writer = StreamingGifWriter(Duration.ofSeconds(2), true, false)
     val gif = writer.prepareStream("/path/to/gif.gif", BufferedImage.TYPE_INT_ARGB)
     ```
 
 === "Scala"
 
     ```scala
-    val writer = new StreamingGifWriter(Duration.ofSeconds(2), true)
+    val writer = new StreamingGifWriter(Duration.ofSeconds(2), true, false)
     val gif = writer.prepareStream("/path/to/gif.gif", BufferedImage.TYPE_INT_ARGB)
     ```
 
@@ -72,10 +72,10 @@ gif.writeFrame(image1);
 gif.writeFrame(imageN);
 ```
 
-Finally, we close the stream by invoking finish, and the data is finalized to the output stream or path.
+Finally, we close the stream by invoking close, and the data is finalized to the output stream or path.
 
 ```
-gif.finish();
+gif.close();
 ```
 
 !!! note
