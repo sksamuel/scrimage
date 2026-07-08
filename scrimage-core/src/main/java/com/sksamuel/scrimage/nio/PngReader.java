@@ -72,7 +72,23 @@ public class PngReader implements ImageReader {
          }
       } else {
          for (int row = 0; row < h; row++) {
-            int[] scanline = ((ImageLineInt) pngr.readRow()).getScanline();
+            ImageLineInt line = (ImageLineInt) pngr.readRow();
+            // pngj returns raw sample values, but PixelTools.argb expects 0-255 per channel:
+            // - bit depths 1/2/4 (grayscale only) arrive unscaled (a 1-bit white pixel is 1,
+            //   not 255) and must be scaled up. Note scaleUp is an explicit no-op for indexed
+            //   lines, so it only has effect here in the non-indexed branch.
+            // - bit depth 16 arrives as 0-65535, so keep the high byte of each sample;
+            //   previously the low byte was kept (via the & 0xFF in PixelTools.argb),
+            //   decoding e.g. a uniform 0x8000 mid-grey as black.
+            if (bitDepth < 8) {
+               ImageLineHelper.scaleUp(line);
+            }
+            int[] scanline = line.getScanline();
+            if (bitDepth == 16) {
+               for (int i = 0; i < scanline.length; i++) {
+                  scanline[i] >>= 8;
+               }
+            }
             int rowOffset = row * w;
             switch (channels) {
                case 1:
