@@ -158,6 +158,28 @@ public class StreamingGifWriter extends AbstractGifWriter {
 
          @Override
          public GifStream writeFrame(ImmutableImage image) throws IOException {
+            return writeFrame(image, null, null);
+         }
+
+         @Override
+         public GifStream writeFrame(ImmutableImage image, Duration delay) throws IOException {
+            return writeFrame(image, delay, null);
+         }
+
+         @Override
+         public GifStream writeFrame(ImmutableImage image, DisposeMethod disposeMethod) throws IOException {
+            return writeFrame(image, null, disposeMethod);
+         }
+
+         @Override
+         public GifStream writeFrame(ImmutableImage image, Duration delay, DisposeMethod disposalMethod) throws IOException {
+            // All overloads funnel through here so that per-frame delay/dispose overrides and the
+            // compressed transparency-diff always compose. Previously the override overloads wrote the
+            // frame directly, which (a) leaked the overridden GraphicControlExtension attributes into
+            // every later frame (the shared imageMetaData was mutated and never restored), and (b) in
+            // compressed mode skipped the diff and the `last` snapshot update, so the next plain frame
+            // diffed against a stale image and zeroed pixels that should have been visible.
+            setGraphicControlExtensionAttributes(delay, disposalMethod);
             if (compressed && last != null) {
                // Copy the input so we don't mutate the caller's image when zero-filling
                // pixels that match the previous frame (the diff step below).
@@ -199,33 +221,18 @@ public class StreamingGifWriter extends AbstractGifWriter {
             return this;
          }
 
-         @Override
-         public GifStream writeFrame(ImmutableImage image, Duration delay) throws IOException {
-            return writeFrame(image, delay, null);
-         }
-
-         @Override
-         public GifStream writeFrame(ImmutableImage image, DisposeMethod disposeMethod) throws IOException {
-            return writeFrame(image, null, disposeMethod);
-         }
-
-         @Override
-         public GifStream writeFrame(ImmutableImage image, Duration delay, DisposeMethod disposalMethod) throws IOException {
-            setOverriddenGraphicControlExtensionAttributes(delay, disposalMethod);
-            writer.writeToSequence(new IIOImage(image.awt(), null, imageMetaData), imageWriteParam);
-            return this;
-         }
-
-         private void setOverriddenGraphicControlExtensionAttributes(Duration delay, DisposeMethod disposeMethod)
+         private void setGraphicControlExtensionAttributes(Duration delay, DisposeMethod disposeMethod)
             throws IIOInvalidTreeException {
+            // Both attributes are always written, falling back to the writer's defaults when no
+            // override is given. The shared imageMetaData instance carries the attributes of the
+            // previously written frame, so writing only the non-null overrides would let a
+            // per-frame override leak into every subsequent frame.
             IIOMetadataNode rootOverride = (IIOMetadataNode) imageMetaData.getAsTree(metaFormatName);
             IIOMetadataNode graphicsControlExtensionNodeOverride = getNode(rootOverride, "GraphicControlExtension");
-            if (delay != null) {
-               graphicsControlExtensionNodeOverride.setAttribute("delayTime", (delay.toMillis() / 10L) + "");
-            }
-            if (disposeMethod != null) {
-               graphicsControlExtensionNodeOverride.setAttribute("disposalMethod", disposeMethod.getDisposeMethodValue());
-            }
+            Duration effectiveDelay = delay == null ? frameDelay : delay;
+            graphicsControlExtensionNodeOverride.setAttribute("delayTime", (effectiveDelay.toMillis() / 10L) + "");
+            DisposeMethod effectiveDispose = disposeMethod == null ? DisposeMethod.NONE : disposeMethod;
+            graphicsControlExtensionNodeOverride.setAttribute("disposalMethod", effectiveDispose.getDisposeMethodValue());
             imageMetaData.setFromTree(metaFormatName, rootOverride);
          }
 
