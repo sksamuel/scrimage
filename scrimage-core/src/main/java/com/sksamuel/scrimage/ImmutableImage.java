@@ -1508,6 +1508,14 @@ public class ImmutableImage extends MutableImage {
     * @return a new Image resampled to the given target width and height
     */
    private ImmutableImage resample(ResampleFilter filter, int targetWidth, int targetHeight) {
+      // ResampleOp rejects targets smaller than 3x3 and sources smaller than the filter
+      // support — geometries that arise from extreme aspect ratios (e.g. fit/max/bound
+      // or cover on a 1x1000 image). Fall back to nearest-neighbour instead of throwing.
+      // canResample mirrors doFilter's exact validation, so this only triggers where
+      // resampling previously crashed.
+      if (!ResampleOp.canResample(filter, width, height, targetWidth, targetHeight)) {
+         return scaleTo(targetWidth, targetHeight, ScaleMethod.FastScale);
+      }
       ResampleOp resampleOp = new ResampleOp(filter, targetWidth, targetHeight);
       if (!awt().getColorModel().hasAlpha())
          return op(resampleOp);

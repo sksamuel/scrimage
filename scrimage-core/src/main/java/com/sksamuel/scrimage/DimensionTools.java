@@ -64,9 +64,12 @@ public class DimensionTools {
       // 60000 × 50000 source against a 60000 maxWidth produces
       // 60000 * 50000 = 3e9, overflowing int and flipping the sign,
       // selecting the wrong scale branch).
+      // Clamp the derived dimension to at least 1: for aspect ratios more extreme than
+      // the target's (e.g. a 1x1000 source fitted into 100x100) the division floors to 0,
+      // which is not a valid image dimension (mirrors the clamps in resizeTo*/scaleTo*).
       if ((long) maxWidth * source.getY() < (long) maxHeight * source.getX())
-         return new Dimension(maxWidth, (int) ((long) source.getY() * maxWidth / source.getX()));
+         return new Dimension(maxWidth, Math.max(1, (int) ((long) source.getY() * maxWidth / source.getX())));
       else
-         return new Dimension((int) ((long) source.getX() * maxHeight / source.getY()), maxHeight);
+         return new Dimension(Math.max(1, (int) ((long) source.getX() * maxHeight / source.getY())), maxHeight);
    }
 }
