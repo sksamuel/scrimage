@@ -539,6 +539,41 @@ public class ImmutableImage extends MutableImage {
    }
 
    /**
+    * Returns a new image where every pixel is the result of applying the given transform
+    * to the corresponding pixel of this image. The transform receives the pixel offset
+    * (row major, offset = y * width + x) and the packed ARGB value, and returns the new
+    * packed ARGB value.
+    * <p>
+    * Because the transform is written to every pixel of the target, there is no need to
+    * copy this image's raster first — the pixels are read from this image, transformed,
+    * and bulk-written into a blank image of the same type, saving a full-image memory
+    * pass compared to copy()-then-mutate-in-place.
+    * <p>
+    * Palette-based images (IndexColorModel) are the exception: a blank palette-based
+    * image gets the default palette rather than this image's palette, so for those the
+    * copy() based path is kept and the ARGB values are read back from the copy, exactly
+    * as the mutate-in-place path did. The same applies to TYPE_CUSTOM (type 0) images,
+    * where copy() converts to TYPE_INT_ARGB via Graphics2D and reading from the source
+    * is not guaranteed to be bit-identical to reading from that conversion.
+    */
+   private ImmutableImage transformPixels(java.util.function.IntBinaryOperator transform) {
+      final ImmutableImage target;
+      final int[] argb;
+      if (getType() == 0 || awt().getColorModel() instanceof java.awt.image.IndexColorModel) {
+         target = copy();
+         argb = target.awt().getRGB(0, 0, width, height, null, 0, width);
+      } else {
+         target = blank().associateMetadata(metadata);
+         argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      }
+      for (int i = 0; i < argb.length; i++) {
+         argb[i] = transform.applyAsInt(i, argb[i]);
+      }
+      target.awt().setRGB(0, 0, width, height, argb, 0, width);
+      return target;
+   }
+
+   /**
     * Apply the given image with this image using the given composite.
     * The original image is unchanged.
     *
@@ -562,9 +597,14 @@ public class ImmutableImage extends MutableImage {
     * @return a new Image with the contrast adjusted by the given factor
     */
    public ImmutableImage contrast(double factor) {
-      ImmutableImage target = copy();
-      target.contrastInPlace(factor);
-      return target;
+      // Same per-pixel maths as MutableImage.contrastInPlace, but routed through
+      // transformPixels so the redundant full-raster copy is skipped.
+      return transformPixels((offset, p) -> {
+         int r = PixelTools.truncate((factor * (PixelTools.red(p) - 128)) + 128);
+         int g = PixelTools.truncate((factor * (PixelTools.green(p) - 128)) + 128);
+         int b = PixelTools.truncate((factor * (PixelTools.blue(p) - 128)) + 128);
+         return PixelTools.argb(PixelTools.alpha(p), r, g, b);
+      });
    }
 
    /**
@@ -1329,9 +1369,10 @@ public class ImmutableImage extends MutableImage {
     * @return a new ImmutableImage with transparency replaced by the given color
     */
    public ImmutableImage removeTransparency(Color color) {
-      ImmutableImage target = copy();
-      target.replaceTransparencyInPlace(color);
-      return target;
+      // Same per-pixel maths as MutableImage.replaceTransparencyInPlace, but routed
+      // through transformPixels so the redundant full-raster copy is skipped.
+      int cr = color.getRed(), cg = color.getGreen(), cb = color.getBlue(), ca = color.getAlpha();
+      return transformPixels((offset, p) -> PixelTools.replaceTransparencyWithColor(p, cr, cg, cb, ca));
    }
 
    /**
@@ -1946,9 +1987,9 @@ public class ImmutableImage extends MutableImage {
     * @return a new Image with the mapper function applied to each pixel
     */
    public ImmutableImage map(Function<Pixel, Color> mapper) {
-      ImmutableImage target = copy();
-      target.mapInPlace(mapper);
-      return target;
+      // Same per-pixel application as MutableImage.mapInPlace, but routed through
+      // transformPixels so the redundant full-raster copy is skipped.
+      return transformPixels((offset, p) -> mapper.apply(new Pixel(offset % width, offset / width, p)).getRGB());
    }
 
    /**
@@ -1983,23 +2024,16 @@ public class ImmutableImage extends MutableImage {
       // The previous map((Pixel) -> Color) routed through mapInPlace and
       // allocated three objects per pixel: an RGBColor (toColor), a Grayscale
       // (method.toGrayscale), and a java.awt.Color (.awt()) — plus a Pixel
-      // wrapper inside mapInPlace. Inline a bulk get/setRGB and only the
-      // RGBColor + Grayscale allocations remain (GrayscaleMethod's interface
-      // requires a Color in / Grayscale out).
-      ImmutableImage target = copy();
-      int w = target.width;
-      int h = target.height;
-      int[] argb = target.awt().getRGB(0, 0, w, h, null, 0, w);
-      for (int i = 0; i < argb.length; i++) {
-         int p = argb[i];
+      // wrapper inside mapInPlace. Via transformPixels only the RGBColor +
+      // Grayscale allocations remain (GrayscaleMethod's interface requires
+      // a Color in / Grayscale out), and the redundant raster copy is skipped.
+      return transformPixels((offset, p) -> {
          int r = (p >> 16) & 0xFF;
          int g = (p >> 8) & 0xFF;
          int b = p & 0xFF;
          int a = (p >>> 24) & 0xFF;
          Grayscale gray = method.toGrayscale(new RGBColor(r, g, b, a));
-         argb[i] = (gray.alpha << 24) | (gray.gray << 16) | (gray.gray << 8) | gray.gray;
-      }
-      target.awt().setRGB(0, 0, w, h, argb, 0, w);
-      return target;
+         return (gray.alpha << 24) | (gray.gray << 16) | (gray.gray << 8) | gray.gray;
+      });
    }
 }
