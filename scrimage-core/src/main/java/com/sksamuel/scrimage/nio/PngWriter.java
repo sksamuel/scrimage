@@ -80,7 +80,12 @@ public class PngWriter implements ImageWriter {
                   break;
                default:
                   param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-                  param.setCompressionQuality((9 - compressionLevel) / 8.0f);
+                  // The JDK PNG writer maps quality back to a deflate level as
+                  // 9 - round(9 * quality), so dividing by 9 makes our level N a
+                  // deflate level N. The previous /8 mapping sent level 1 to
+                  // quality 1.0 = deflate level 0 (stored), so MinCompression
+                  // wrote fully uncompressed files, identical to NoCompression.
+                  param.setCompressionQuality((9 - compressionLevel) / 9.0f);
                   break;
             }
          }
