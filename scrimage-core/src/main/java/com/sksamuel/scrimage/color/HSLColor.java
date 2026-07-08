@@ -33,7 +33,8 @@ public class HSLColor implements Color {
     }
 
     private static void requireInRange(String component, float value, float bound) {
-        if (value < 0 || value > bound)
+        // negated form so that NaN, for which all comparisons are false, is also rejected
+        if (!(value >= 0 && value <= bound))
             throw new IllegalArgumentException(
                     "HSLColor " + component + " must be in [0, " + bound + "] but was " + value);
     }

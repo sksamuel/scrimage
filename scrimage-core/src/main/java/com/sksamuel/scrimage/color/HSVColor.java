@@ -33,7 +33,8 @@ public class HSVColor implements Color {
    }
 
    private static void requireInRange(String component, float value, float max) {
-      if (value < 0 || value > max)
+      // negated form so that NaN, for which all comparisons are false, is also rejected
+      if (!(value >= 0 && value <= max))
          throw new IllegalArgumentException(
             "HSVColor " + component + " component must be in [0, " + max + "] but was " + value);
    }
