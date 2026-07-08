@@ -2,7 +2,7 @@
 
 Scrimage is available on maven central. There are several modules.
 
-One is the `scrimage-core` library which is required. The others are `scrimage-filters`, `scrimage-formats-extra`, `scrimage-webp`.
+One is the `scrimage-core` library which is required. The others are `scrimage-filters`, `scrimage-formats-extra`, `scrimage-webp`, `scrimage-hash`.
 
 They are split into several modules because the image filters is a large jar, and most people just want the basic resize/scale/load/save functionality.
 
