@@ -14,7 +14,7 @@ with a background color so that it precisely matches the input dimensions.
 The difference between this and [cover](cover.md) is that cover will also return an image with the specified dimensions, but
 will size the image to ensure there is no background padding required, but potentially losing some of the source image.
 
-To use, invoke with the target dimenions and optionally, a background color (defaults to Color.WHITE),
+To use, invoke with the target dimenions and optionally, a background color (defaults to transparent),
 a scale method (defaults to ScaleMethod.Bicubic), and the position of the source image in the
 target (defaults to Position.Center).
 
