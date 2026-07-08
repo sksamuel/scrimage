@@ -70,12 +70,15 @@ public interface Color {
    }
 
    /**
-    * Returns the average of this Color merged with another Color.
-    * Takes into account alpha and returns the average as an RGB value.
+    * Returns the result of compositing this Color over the other Color using a
+    * Porter-Duff SrcOver alpha blend — not an arithmetic mean of the channels.
+    * As a consequence, if this colour is fully opaque it completely occludes the
+    * other colour, since SrcOver of an opaque source over any destination yields
+    * the source.
     * <p>
     * See https://stackoverflow.com/questions/1944095/how-to-mix-two-argb-pixels
     *
-    * @return the alpha-weighted average of this colour and the other colour as an RGBColor
+    * @return the SrcOver blend of this colour over the other colour as an RGBColor
     */
    default RGBColor average(Color other) {
       RGBColor c1 = this.toRGB();
