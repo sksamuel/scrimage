@@ -55,7 +55,7 @@ image.scale(0.5) // keeps aspect ratio, applies factor to width and height
 ### Scale Algorithms
 
 Each scale operation has a `ScaleMethod` parameter that allows us to specify the algorithm to be used when
-performing the scale. Options are `FastScale`, `Lanczos3`, `BSpline`, `Bilinear`, `Bicubic`. Bicucbic is the default.
+performing the scale. Options are `FastScale`, `Lanczos3`, `BSpline`, `Bilinear`, `Bicubic`, `Progressive`. Bicubic is the default.
 
 Here is the same image scaled using each of the algorithms. Click on the image to see the full size.
 
