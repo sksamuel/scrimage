@@ -22,6 +22,13 @@ public class GaussianBlurFilter extends BufferedOpFilter {
     private final int radius;
 
     public GaussianBlurFilter(int radius) {
+        // A negative radius only blew up at apply time, as a cryptic
+        // NegativeArraySizeException from GaussianFilter.makeKernel.
+        // Fail fast with a clear message instead. Radius 0 is a safe
+        // no-op and remains allowed.
+        if (radius < 0) {
+            throw new IllegalArgumentException("radius must be >= 0; got " + radius);
+        }
         this.radius = radius;
     }
 
