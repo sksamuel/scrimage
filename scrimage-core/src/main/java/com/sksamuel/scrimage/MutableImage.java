@@ -64,10 +64,23 @@ public class MutableImage extends AwtImage {
       WritableRaster raster = awt().getRaster();
       DataBuffer buffer = raster.getDataBuffer();
       if (buffer instanceof DataBufferInt) {
-         Object colorElements = awt().getColorModel().getDataElements(target, null);
-         if (colorElements instanceof int[] && ((int[]) colorElements).length == 1) {
-            Arrays.fill(((DataBufferInt) buffer).getData(), ((int[]) colorElements)[0]);
-            return;
+         DataBufferInt intbuffer = (DataBufferInt) buffer;
+         int[] data = intbuffer.getData();
+         // Arrays.fill on the backing array is only valid when the raster maps
+         // 1:1 onto the buffer. A sub-image view (BufferedImage.getSubimage)
+         // shares the parent's buffer with a translated origin and the parent's
+         // scanline stride, so filling the whole array would corrupt parent
+         // pixels outside the view.
+         boolean mapsOneToOne = raster.getSampleModelTranslateX() == 0
+            && raster.getSampleModelTranslateY() == 0
+            && intbuffer.getOffset() == 0
+            && data.length == width * height;
+         if (mapsOneToOne) {
+            Object colorElements = awt().getColorModel().getDataElements(target, null);
+            if (colorElements instanceof int[] && ((int[]) colorElements).length == 1) {
+               Arrays.fill(data, ((int[]) colorElements)[0]);
+               return;
+            }
          }
       }
       // Generic fallback: build the packed-ARGB row once and bulk setRGB it.
