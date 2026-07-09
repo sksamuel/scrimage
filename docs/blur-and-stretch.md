@@ -9,25 +9,25 @@ Basically this guide shows one possible way to achieve it using basic `Image` op
 You just need to:
 1. scale image to desired dimensions to make a foreground, e.g. using `scaleToRatio`.
 In code below this step is omitted for simplicity: `val fgImage = image`
-2. scale image using [cover](https://github.com/sksamuel/scrimage/blob/master/guide/cover.md) and apply some blur via `filter` to make a background
+2. scale image using [cover](cover.md) and apply some blur via `filter` to make a background
 3. complete process by putting foreground on top of background using `overlay`
 
 ```scala
 import java.nio.file.Paths
 
-import com.sksamuel.scrimage.{Image, ScaleMethod}
+import com.sksamuel.scrimage.{ImmutableImage, Position, ScaleMethod}
 import com.sksamuel.scrimage.filter.LensBlurFilter
 
-val image = Image.fromPath(Paths.get("examples", "images", "lanzarote_small.jpeg"))
+val image = ImmutableImage.loader().fromPath(Paths.get("examples", "images", "lanzarote_small.jpeg"))
 val filter = new LensBlurFilter(12f, 2f, 255f, 10)
 // for simplicity of example source image is not scaled
 val fgImage = image
 val targetWidth = fgImage.width * 2
 val targetHeight = fgImage.height
 image
-  .cover(targetWidth, targetHeight, ScaleMethod.FastScale)
+  .cover(targetWidth, targetHeight, ScaleMethod.FastScale, Position.Center)
   .filter(filter)
-  .overlay(fgImage, x = (targetWidth - fgImage.width) / 2, y = (targetHeight - fgImage.height) / 2)
+  .overlay(fgImage, (targetWidth - fgImage.width) / 2, (targetHeight - fgImage.height) / 2)
 ```
 
 Compare original and result:
