@@ -568,6 +568,55 @@ public class ImmutableImage extends MutableImage {
    }
 
    /**
+    * Returns a new image with the colours inverted (photographic negative). Each of the red, green
+    * and blue channels is replaced by 255 minus its value; the alpha channel is left unchanged.
+    *
+    * @return a new inverted Image
+    */
+   public ImmutableImage invert() {
+      ImmutableImage target = copy();
+      int w = target.width;
+      int h = target.height;
+      int[] argb = target.awt().getRGB(0, 0, w, h, null, 0, w);
+      for (int i = 0; i < argb.length; i++) {
+         // keep the alpha byte, invert the low 24 (RGB) bits
+         argb[i] = (argb[i] & 0xFF000000) | (~argb[i] & 0x00FFFFFF);
+      }
+      target.awt().setRGB(0, 0, w, h, argb, 0, w);
+      return target;
+   }
+
+   /**
+    * Returns a new image with gamma correction applied to the red, green and blue channels.
+    * The alpha channel is left unchanged. A gamma of 1.0 leaves the image unchanged, values
+    * greater than 1.0 brighten the midtones and values below 1.0 darken them.
+    *
+    * @param gamma the gamma level to apply to all RGB channels
+    * @return a new gamma-corrected Image
+    */
+   public ImmutableImage gamma(double gamma) {
+      int[] table = new int[256];
+      for (int i = 0; i < 256; i++) {
+         int v = (int) (255.0 * Math.pow(i / 255.0, 1.0 / gamma) + 0.5);
+         table[i] = Math.min(v, 255);
+      }
+      ImmutableImage target = copy();
+      int w = target.width;
+      int h = target.height;
+      int[] argb = target.awt().getRGB(0, 0, w, h, null, 0, w);
+      for (int i = 0; i < argb.length; i++) {
+         int p = argb[i];
+         int a = p & 0xFF000000;
+         int r = table[(p >> 16) & 0xFF];
+         int g = table[(p >> 8) & 0xFF];
+         int b = table[p & 0xFF];
+         argb[i] = a | (r << 16) | (g << 8) | b;
+      }
+      target.awt().setRGB(0, 0, w, h, argb, 0, w);
+      return target;
+   }
+
+   /**
     * Convenience method for cover(targetWidth, targetHeight, ScaleMethod.Bicubic, Position.Center)
     *
     * @return a new Image scaled to cover the given dimensions
@@ -1977,6 +2026,17 @@ public class ImmutableImage extends MutableImage {
 
    public ImmutableImage transform(Transform transform) throws IOException {
       return transform.apply(this);
+   }
+
+   /**
+    * Returns a grayscale copy of this image using the default {@link GrayscaleMethod#LUMA}
+    * method (Rec. 709 perceived luminance). For other weighting schemes use
+    * {@link #toGrayscale(GrayscaleMethod)}.
+    *
+    * @return a new grayscale Image
+    */
+   public ImmutableImage toGrayscale() {
+      return toGrayscale(GrayscaleMethod.LUMA);
    }
 
    public ImmutableImage toGrayscale(GrayscaleMethod method) {
