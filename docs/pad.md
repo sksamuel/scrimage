@@ -4,7 +4,7 @@ Pad
 Resizes the canvas by adding a number of pixels around the edges in a given color.
 This is the opposite of the [trim](trim.md) operation.
 
-Pad can add pixels uniformly around all edges using `pad(k)` or on a specified edge only, using `padLeft(k)` and so on.
+Pad can add pixels uniformly around all edges using `pad(k, color)` or on a specified edge only, using `padLeft(k)` and so on.
 
 
 
