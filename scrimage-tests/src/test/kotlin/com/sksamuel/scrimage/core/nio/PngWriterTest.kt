@@ -6,9 +6,12 @@ import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.nio.PngReader
 import com.sksamuel.scrimage.nio.PngWriter
 import io.kotest.core.spec.style.WordSpec
+import io.kotest.matchers.ints.shouldBeLessThan
+import io.kotest.matchers.ints.shouldBeLessThanOrEqual
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldStartWith
 import org.apache.commons.io.IOUtils
+import java.awt.Color
 
 class PngWriterTest : WordSpec({
 
@@ -54,6 +57,26 @@ class PngWriterTest : WordSpec({
       "valid boundary compression levels 0 and 9 are accepted" {
          original.bytes(PngWriter(0)).size shouldBe original.bytes(PngWriter.NoCompression).size
          original.bytes(PngWriter(9)).size shouldBe original.bytes(PngWriter.MaxCompression).size
+      }
+      // Regression test: the level -> quality mapping divided by 8, so level 1 mapped to
+      // quality 1.0, which the JDK PNG writer turns back into deflate level 0 (stored) —
+      // MinCompression wrote fully uncompressed files, identical to NoCompression.
+      "MinCompression actually compresses, unlike NoCompression" {
+         val image = ImmutableImage.filled(100, 100, Color.RED)
+         val none = image.bytes(PngWriter.NoCompression).size
+         val min = image.bytes(PngWriter.MinCompression).size
+         val max = image.bytes(PngWriter.MaxCompression).size
+         // a single colour image is highly compressible: even deflate level 1
+         // must beat an uncompressed file by an order of magnitude
+         (min * 10) shouldBeLessThan none
+         max shouldBeLessThanOrEqual min
+      }
+      "every explicit compression level compresses relative to NoCompression" {
+         val image = ImmutableImage.filled(100, 100, Color.RED)
+         val none = image.bytes(PngWriter.NoCompression).size
+         for (level in 1..9) {
+            image.bytes(PngWriter(level)).size shouldBeLessThan none
+         }
       }
    }
 
