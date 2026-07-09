@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferInt;
+import java.awt.image.IndexColorModel;
 import java.awt.image.RescaleOp;
 import java.awt.image.WritableRaster;
 import java.util.Arrays;
@@ -108,6 +109,23 @@ public class MutableImage extends AwtImage {
     * Mutates this image by scaling all pixel values by the given factor (brightness in other words).
     */
    public void rescaleInPlace(double factor) {
+      if (awt().getColorModel() instanceof IndexColorModel) {
+         // RescaleOp rejects palette-based images ("Rescaling cannot be performed on an
+         // indexed image"), and GIFs / PNG-8s load as TYPE_BYTE_INDEXED by default.
+         // Scale the unpacked ARGB values instead, like contrastInPlace; setRGB maps each
+         // result back to the nearest palette entry. Alpha is left untouched, matching
+         // RescaleOp's single-factor behavior.
+         int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+         for (int i = 0; i < argb.length; i++) {
+            int p = argb[i];
+            int r = PixelTools.truncate(factor * PixelTools.red(p));
+            int g = PixelTools.truncate(factor * PixelTools.green(p));
+            int b = PixelTools.truncate(factor * PixelTools.blue(p));
+            argb[i] = PixelTools.argb(PixelTools.alpha(p), r, g, b);
+         }
+         awt().setRGB(0, 0, width, height, argb, 0, width);
+         return;
+      }
       RescaleOp rescale = new RescaleOp((float) factor, 0f,
          new RenderingHints(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY));
       rescale.filter(awt(), awt());
