@@ -114,6 +114,32 @@ public class ResampleOp extends AdvancedResizeOp {
     return out;
   }
 
+  /**
+   * The maximum number of source contributors per destination pixel for the given axis
+   * geometry. Extracted from createSubSampling so canResample can share the exact formula.
+   */
+  private static int numContributors(ResampleFilter filter, int srcSize, int dstSize) {
+    float scale = (float) dstSize / (float) srcSize;
+    final float fwidth = filter.getSamplingRadius();
+    if (scale < 1.0f) {
+      return (int) Math.ceil((fwidth / scale) * 2.0f) + 2;
+    } else {
+      return (int) Math.ceil(fwidth * 2.0f) + 2;
+    }
+  }
+
+  /**
+   * Returns true if doFilter can resample the given geometry: the target must be at
+   * least 3x3 and the source must be at least as large as the filter support on each
+   * axis. Callers can use this to fall back to another scaler instead of triggering
+   * the RuntimeExceptions thrown by doFilter.
+   */
+  public static boolean canResample(ResampleFilter filter, int srcWidth, int srcHeight, int dstWidth, int dstHeight) {
+    if (dstWidth < 3 || dstHeight < 3) return false;
+    return srcWidth >= numContributors(filter, srcWidth, dstWidth)
+      && srcHeight >= numContributors(filter, srcHeight, dstHeight);
+  }
+
   static SubSamplingData createSubSampling(ResampleFilter filter,
                                            int srcSize,
                                            int dstSize) {
@@ -134,7 +160,7 @@ public class ResampleOp extends AdvancedResizeOp {
       // contributors. The previous "(int)(width*2 + 2)" pad truncated and was one short for certain
       // scale factors (e.g. resampling a 121px axis down to 3px), letting the final contributor write
       // into the next destination row/column's segment and corrupting both. Size from the true window.
-      numContributors = (int) Math.ceil(width * 2.0f) + 2;
+      numContributors = numContributors(filter, srcSize, dstSize);
       arrWeight = new float[dstSize * numContributors];
       arrPixel = new int[dstSize * numContributors];
 
@@ -186,7 +212,7 @@ public class ResampleOp extends AdvancedResizeOp {
       // See the downscale branch: the window [floor(center-fwidth), ceil(center+fwidth)] can hold up
       // to ceil(2*fwidth) + 2 contributors, so size the segment to that to avoid spilling into the
       // next destination row/column.
-      numContributors = (int) Math.ceil(fwidth * 2.0f) + 2;
+      numContributors = numContributors(filter, srcSize, dstSize);
       arrWeight = new float[dstSize * numContributors];
       arrPixel = new int[dstSize * numContributors];
       //
