@@ -628,7 +628,10 @@ public class AwtImage {
       int neww = (int) Math.floor(width * cos + height * sin),
          newh = (int) Math.floor(height * cos + width * sin);
 
-      BufferedImage rotated = ImmutableImage.filled(neww, newh, bgcolor, getType()).awt();
+      // TYPE_CUSTOM (0) cannot be passed to the BufferedImage constructor;
+      // fall back to ARGB like blank()/empty()/fromAwt() do.
+      int type = getType() == BufferedImage.TYPE_CUSTOM ? BufferedImage.TYPE_INT_ARGB : getType();
+      BufferedImage rotated = ImmutableImage.filled(neww, newh, bgcolor, type).awt();
       Graphics2D graphic = rotated.createGraphics();
       try {
          graphic.translate((neww - width) / 2.0, (newh - height) / 2.0);

@@ -26,7 +26,10 @@ public class AwtNearestNeighbourScale implements Scale {
             dst[k++] = src[srcRow + (int) (x * xRatio)];
          }
       }
-      BufferedImage target = new BufferedImage(w, h, in.getType());
+      // TYPE_CUSTOM (0) cannot be passed to the BufferedImage constructor
+      // (e.g. 16-bit PNGs decode to a custom type); fall back to ARGB.
+      int type = in.getType() == BufferedImage.TYPE_CUSTOM ? BufferedImage.TYPE_INT_ARGB : in.getType();
+      BufferedImage target = new BufferedImage(w, h, type);
       target.setRGB(0, 0, w, h, dst, 0, w);
       return target;
    }
