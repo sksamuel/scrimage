@@ -33,5 +33,5 @@ specify the type of the copy as well.
 image.copy()
 
 // copy with the data duplicated, and the raster using the specified type
-ImmutableImage.copy(BufferedImage.TYPE_4BYTE_ABGR)
+image.copy(BufferedImage.TYPE_4BYTE_ABGR)
 ```
