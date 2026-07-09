@@ -19,7 +19,7 @@ Or you can place them on your classpath at `/webp_binaries/{osName}/dwebp` or `/
 The directory set by the system property is always searched first.
 
 
-`{osName}` must be one of `window`, `linux`, `mac`. ie `/webp_binaries/window/cwebp`.
+`{osName}` must be one of `window` (or `windows`), `linux`, `mac` (Intel) or `mac_arm64` (Apple Silicon). ie `/webp_binaries/window/cwebp`.
 
 or just place your binaries into `/webp_binaries/dwebp` or `/webp_binaries/cwebp` or `/webp_binaries/gif2webp`.
 then scrimage will use `/webp_binaries/{binary}` regardless of the binaries which is in os specific directory.
@@ -42,7 +42,7 @@ The writer is configurable with options for compression quality, compression met
 If want to change Animated Gif to webp, you should be able to read animated file by using by `AnimatedGifReader` as normal :
 
 ```java
-AnimatedGifReader.read(ImageSource.of(File("animated.gif"));
+AnimatedGifReader.read(ImageSource.of(new File("animated.gif")));
 ```
 
 And write out AnimatedGif using the Gif2WebpWriter, eg.
