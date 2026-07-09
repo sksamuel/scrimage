@@ -39,4 +39,13 @@ class HSLColorTest : StringSpec({
       shouldThrow<IllegalArgumentException> { HSLColor(0f, 0f, 0f, -0.1f) }
       shouldThrow<IllegalArgumentException> { HSLColor(0f, 0f, 0f, 1.1f) }
    }
+
+   // NaN compares false against any bound, so a naive `value < 0 || value > bound` check
+   // lets it through and toRGB() silently produces a garbage colour.
+   "rejects NaN components" {
+      shouldThrow<IllegalArgumentException> { HSLColor(Float.NaN, 0f, 0f, 0f) }
+      shouldThrow<IllegalArgumentException> { HSLColor(0f, Float.NaN, 0f, 0f) }
+      shouldThrow<IllegalArgumentException> { HSLColor(0f, 0f, Float.NaN, 0f) }
+      shouldThrow<IllegalArgumentException> { HSLColor(0f, 0f, 0f, Float.NaN) }
+   }
 })

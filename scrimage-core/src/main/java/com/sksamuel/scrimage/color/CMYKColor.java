@@ -30,7 +30,8 @@ public class CMYKColor implements Color {
     }
 
     private static void requireInRange(String component, float value) {
-        if (value < 0 || value > 1f)
+        // negated form so that NaN, for which all comparisons are false, is also rejected
+        if (!(value >= 0 && value <= 1f))
             throw new IllegalArgumentException(
                 "CMYKColor " + component + " component must be in [0, 1] but was " + value);
     }
