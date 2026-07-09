@@ -739,6 +739,15 @@ public class AwtImage {
    }
 
    /**
+    * Returns the per-channel distribution of pixel values across this image.
+    *
+    * @return a {@link Histogram} describing this image.
+    */
+   public Histogram histogram() {
+      return new Histogram(this);
+   }
+
+   /**
     * Returns true if all the pixels on this image are a single color.
     *
     * @param color the color to test pixels against
