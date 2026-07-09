@@ -71,10 +71,10 @@ The orientation tag is a commonly used tag, so there is a function to specifical
 if defined (sometimes, eg on Sony cameras, it is defined more than once!).
 
 
-These helper methods are found in the `OrientationTools` class.
-
 For example:
 
 ```
-OrientationTools.imageOrientationsOf(image.metadata);
+image.getMetadata().getOrientation();
 ```
+
+Further helper methods, such as `requiresReorientation` and `reorient`, are found in the `OrientationTools` class.
