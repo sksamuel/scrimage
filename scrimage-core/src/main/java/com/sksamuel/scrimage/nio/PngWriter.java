@@ -68,7 +68,10 @@ public class PngWriter implements ImageWriter {
    @Override
    public void write(AwtImage image, ImageMetadata metadata, OutputStream out) throws IOException {
 
-      ImageTypeSpecifier type = ImageTypeSpecifier.createFromBufferedImageType(image.getType());
+      // createFromRenderedImage rather than createFromBufferedImageType: the latter throws
+      // IllegalArgumentException for TYPE_CUSTOM (type 0), which is what the JDK PNG reader
+      // returns for 16-bit per channel PNGs — so such images could never be written back out.
+      ImageTypeSpecifier type = ImageTypeSpecifier.createFromRenderedImage(image.awt());
       javax.imageio.ImageWriter writer = ImageIO.getImageWriters(type, "png").next();
       try (ImageOutputStream ios = ImageIO.createImageOutputStream(out)) {
          ImageWriteParam param = writer.getDefaultWriteParam();
