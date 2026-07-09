@@ -70,7 +70,7 @@ public class RGBColor implements Color {
 
    /**
     * Returns as an int the value of this color.
-    * The RGB and alpha components are packed as rgba.
+    * The alpha and RGB components are packed as ARGB.
     * Use toARGBInt() for clarity.
     *
     * @return the packed ARGB integer value of this color
@@ -110,8 +110,8 @@ public class RGBColor implements Color {
    }
 
    /**
-    * Returns a conversion of this color into a CYMK color.
-    * If this colour is already a CYMK then the same instance will be returned.
+    * Returns a conversion of this color into a CMYK color.
+    * If this colour is already a CMYK then the same instance will be returned.
     *
     * @return this color converted to a CMYKColor
     */

@@ -3,10 +3,10 @@ package com.sksamuel.scrimage.color;
 /**
  * Hue/Saturation/Lightness
  * <p>
- * The hue component should be between0.0and360.0
- * The saturation component should be between0.0and1.0
- * The lightness component should be between0.0and1.0
- * The alpha component should be between0.0and1.0
+ * The hue component should be between 0.0 and 360.0
+ * The saturation component should be between 0.0 and 1.0
+ * The lightness component should be between 0.0 and 1.0
+ * The alpha component should be between 0.0 and 1.0
  */
 public class HSLColor implements Color {
 

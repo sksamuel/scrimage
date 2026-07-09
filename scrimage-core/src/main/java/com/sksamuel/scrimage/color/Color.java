@@ -15,8 +15,8 @@ public interface Color {
    RGBColor toRGB();
 
    /**
-    * Returns a conversion of this color into a CYMK color.
-    * If this colour is already a CYMK then the same instance will be returned.
+    * Returns a conversion of this color into a CMYK color.
+    * If this colour is already a CMYK then the same instance will be returned.
     *
     * @return this colour as a CMYKColor
     */
