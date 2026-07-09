@@ -24,8 +24,8 @@ such as [drewnoakes/metadata-extractor](https://github.com/drewnoakes/metadata-e
 
 ### Creation methods
 
-Creation methods create a new image by specifying the dimensions. They can start with a specified colour using [fill](fill.md) or undefined using [blank](blank.md).
-An image can be created by [copying](copy.md) an existing image.
+Creation methods create a new image by specifying the dimensions. They can start with a specified colour using [fill](fill.md) or undefined using [blank](create.md).
+An image can be created by [copying](create.md) an existing image.
 
 ### Input / Output
 
@@ -62,66 +62,59 @@ Read more details [here](metadata.md).
 
 Reading an image, scaling it to 50% using the Bicubic method, and writing out as PNG
 ```kotlin
-val in = ... // input stream
-val out = ... // output stream
-ImmutableImage.loader().fromStream(in).scale(0.5, Bicubic).output(out) // an implicit PNG writer is in scope by default
+val input = ... // input stream
+val file = ... // output file
+ImmutableImage.loader().fromStream(input).scale(0.5, ScaleMethod.Bicubic).output(PngWriter.MaxCompression, file)
 ```
 
 Reading an image from a java File, applying a blur filter, then flipping it on the horizontal axis, then writing out as a Jpeg
 ```kotlin
 val inFile = ... // input File
 val outFile = ... // output File
-ImmutableImage.loader().fromFile(inFile).filter(BlurFilter).flipX.output(outFile)(JpegWriter()) // specified Jpeg
+ImmutableImage.loader().fromFile(inFile).filter(BlurFilter()).flipX().output(JpegWriter(), outFile)
 ```
 
 Padding an image with a 20 pixel border around the edges in red
 ```kotlin
-val in = ... // input stream
-val out = ... // output stream
-ImmutableImage.loader().fromStream(in).pad(20, Color.Red)
+val input = ... // input stream
+ImmutableImage.loader().fromStream(input).pad(20, Color.RED)
 ```
 
 Enlarging the canvas of an image without scaling the image. Note: the resize methods change the canvas size,
 and the scale methods are used to scale/resize the actual image. This terminology is consistent with Photoshop.
 ```kotlin
-val in = ... // input stream
-val out = ... // output stream
-ImmutableImage.loader().fromStream(in).resize(600,400)
+val input = ... // input stream
+ImmutableImage.loader().fromStream(input).resizeTo(600, 400)
 ```
 
 Scaling an image to a specific size using a fast non-smoothed scale
 ```kotlin
-val in = ... // input stream
-val out = ... // output stream
-ImmutableImage.loader().fromStream(in).scaleTo(300, 200, FastScale)
+val input = ... // input stream
+ImmutableImage.loader().fromStream(input).scaleTo(300, 200, ScaleMethod.FastScale)
 ```
 
 Writing out a heavily compressed Jpeg thumbnail
 ```kotlin
-implicit val writer = JpegWriter().withCompression(50)
-val in = ... // input stream
-val out = ... // output stream
-ImmutableImage.loader().fromStream(in).fit(180,120).output(new File("image.jpeg"))
+val writer = JpegWriter().withCompression(50)
+val input = ... // input stream
+ImmutableImage.loader().fromStream(input).fit(180, 120).output(writer, File("image.jpeg"))
 ```
 
 Printing the sizes and ratio of the image
 ```kotlin
-val in = ... // input stream
-val out = ... // output stream
-val image = ImmutableImage.loader().fromStream(in)
-println("Width: ${image.width} Height: ${image.height} Ratio: ${image.ratio}")
+val input = ... // input stream
+val image = ImmutableImage.loader().fromStream(input)
+println("Width: ${image.width} Height: ${image.height} Ratio: ${image.ratio()}")
 ```
 
 Converting a byte array in JPEG to a byte array in PNG
 ```kotlin
-val in : Array[Byte] = ... // array of bytes in JPEG say
-val out = Image(in).write // default is PNG
-val out2 = ImmutableImage.loader().fromBytes(in).bytes) // an implicit PNG writer is in scope by default with max compression
+val input: ByteArray = ... // array of bytes in JPEG say
+val output = ImmutableImage.loader().fromBytes(input).bytes(PngWriter.MaxCompression)
 ```
 
-Coverting an input stream to a PNG with no compression
+Converting an input stream to a PNG with no compression
 ```kotlin
-implicit val writer = PngWriter.NoCompression
-val in : InputStream = ... // some input stream
-val out = ImmutableImage.loader().fromStream(in).stream
+val input: InputStream = ... // some input stream
+val output = ImmutableImage.loader().fromStream(input).bytes(PngWriter.NoCompression)
 ```
