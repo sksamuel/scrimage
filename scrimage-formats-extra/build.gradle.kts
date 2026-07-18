@@ -15,7 +15,7 @@ dependencies {
    implementation("com.twelvemonkeys.imageio:imageio-sgi:3.13.1")
    implementation("com.twelvemonkeys.imageio:imageio-psd:3.13.1")
    implementation("com.twelvemonkeys.imageio:imageio-pict:3.14.0")
-   implementation("com.twelvemonkeys.imageio:imageio-batik:3.13.1")
+   implementation("com.twelvemonkeys.imageio:imageio-batik:3.14.0")
    // imageio-batik delegates SVG rasterization to Apache Batik, which it declares as a
    // provided dependency, so it must be added explicitly.
    implementation("org.apache.xmlgraphics:batik-transcoder:1.19")
