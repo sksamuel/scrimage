@@ -36,73 +36,9 @@ public class ColorHalftoneFilter extends AbstractBufferedImageOp {
 	 * @param dotRadius the number of pixels along each block edge
      * min-value 1
      * max-value 100+
-     * @see #getdotRadius
 	 */
 	public void setdotRadius( float dotRadius ) {
 		this.dotRadius = dotRadius;
-	}
-
-	/**
-	 * Get the pixel block size.
-	 * @return the number of pixels along each block edge
-     * @see #setdotRadius
-	 */
-	public float getdotRadius() {
-		return dotRadius;
-	}
-
-	/**
-	 * Get the cyan screen angle.
-	 * @return the cyan screen angle (in radians)
-     * @see #setCyanScreenAngle
-	 */
-	public float getCyanScreenAngle() {
-		return cyanScreenAngle;
-	}
-
-	/**
-	 * Set the cyan screen angle.
-	 * @param cyanScreenAngle the cyan screen angle (in radians)
-     * @see #getCyanScreenAngle
-	 */
-	public void setCyanScreenAngle( float cyanScreenAngle ) {
-		this.cyanScreenAngle = cyanScreenAngle;
-	}
-
-	/**
-	 * Get the magenta screen angle.
-	 * @return the magenta screen angle (in radians)
-     * @see #setMagentaScreenAngle
-	 */
-	public float getMagentaScreenAngle() {
-		return magentaScreenAngle;
-	}
-
-	/**
-	 * Set the magenta screen angle.
-	 * @param magentaScreenAngle the magenta screen angle (in radians)
-     * @see #getMagentaScreenAngle
-	 */
-	public void setMagentaScreenAngle( float magentaScreenAngle ) {
-		this.magentaScreenAngle = magentaScreenAngle;
-	}
-
-	/**
-	 * Get the yellow screen angle.
-	 * @return the yellow screen angle (in radians)
-     * @see #setYellowScreenAngle
-	 */
-	public float getYellowScreenAngle() {
-		return yellowScreenAngle;
-	}
-
-	/**
-	 * Set the yellow screen angle.
-	 * @param yellowScreenAngle the yellow screen angle (in radians)
-     * @see #getYellowScreenAngle
-	 */
-	public void setYellowScreenAngle( float yellowScreenAngle ) {
-		this.yellowScreenAngle = yellowScreenAngle;
 	}
 
     public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
