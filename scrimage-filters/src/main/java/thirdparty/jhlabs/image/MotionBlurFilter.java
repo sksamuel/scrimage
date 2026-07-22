@@ -54,109 +54,33 @@ public class MotionBlurFilter extends AbstractBufferedImageOp {
 	/**
      * Specifies the angle of blur.
      * @param angle the angle of blur.
-     * @see #getAngle
      */
 	public void setAngle( float angle ) {
 		this.angle = angle;
 	}
 
 	/**
-     * Returns the angle of blur.
-     * @return the angle of blur.
-     * @see #setAngle
-     */
-	public float getAngle() {
-		return angle;
-	}
-
-	/**
      * Set the distance of blur.
      * @param distance the distance of blur.
-     * @see #getDistance
      */
 	public void setDistance( float distance ) {
 		this.distance = distance;
 	}
 
 	/**
-     * Get the distance of blur.
-     * @return the distance of blur.
-     * @see #setDistance
-     */
-	public float getDistance() {
-		return distance;
-	}
-
-	/**
      * Set the blur rotation.
      * @param rotation the angle of rotation.
-     * @see #getRotation
      */
 	public void setRotation( float rotation ) {
 		this.rotation = rotation;
 	}
 
 	/**
-     * Get the blur rotation.
-     * @return the angle of rotation.
-     * @see #setRotation
-     */
-	public float getRotation() {
-		return rotation;
-	}
-
-	/**
      * Set the blur zoom.
      * @param zoom the zoom factor.
-     * @see #getZoom
      */
 	public void setZoom( float zoom ) {
 		this.zoom = zoom;
-	}
-
-	/**
-     * Get the blur zoom.
-     * @return the zoom factor.
-     * @see #setZoom
-     */
-	public float getZoom() {
-		return zoom;
-	}
-
-	/**
-     * Set whether to wrap at the image edges.
-     * @param wrapEdges true if it should wrap.
-     * @see #getWrapEdges
-     */
-	public void setWrapEdges(boolean wrapEdges) {
-		this.wrapEdges = wrapEdges;
-	}
-
-	/**
-     * Get whether to wrap at the image edges.
-     * @return true if it should wrap.
-     * @see #setWrapEdges
-     */
-	public boolean getWrapEdges() {
-		return wrapEdges;
-	}
-
-    /**
-     * Set whether to premultiply the alpha channel.
-     * @param premultiplyAlpha true to premultiply the alpha
-     * @see #getPremultiplyAlpha
-     */
-	public void setPremultiplyAlpha( boolean premultiplyAlpha ) {
-		this.premultiplyAlpha = premultiplyAlpha;
-	}
-
-    /**
-     * Get whether to premultiply the alpha channel.
-     * @return true to premultiply the alpha
-     * @see #setPremultiplyAlpha
-     */
-	public boolean getPremultiplyAlpha() {
-		return premultiplyAlpha;
 	}
 
     public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
