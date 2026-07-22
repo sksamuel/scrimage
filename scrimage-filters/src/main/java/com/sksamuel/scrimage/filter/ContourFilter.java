@@ -20,9 +20,18 @@ import java.awt.image.BufferedImageOp;
 public class ContourFilter extends BufferedOpFilter {
 
     private final int levels;
+    private final float offset;
 
     public ContourFilter(int levels) {
+        this(levels, 0f);
+    }
+
+    /**
+     * @param offset the contour offset (jhlabs default 0)
+     */
+    public ContourFilter(int levels, float offset) {
         this.levels = levels;
+        this.offset = offset;
     }
 
     public ContourFilter() {
@@ -33,6 +42,7 @@ public class ContourFilter extends BufferedOpFilter {
     public BufferedImageOp op() {
         thirdparty.jhlabs.image.ContourFilter op = new thirdparty.jhlabs.image.ContourFilter();
         op.setLevels(levels);
+        op.setOffset(offset);
         return op;
     }
 }
