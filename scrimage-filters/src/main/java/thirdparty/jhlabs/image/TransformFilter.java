@@ -86,37 +86,9 @@ public abstract class TransformFilter extends AbstractBufferedImageOp {
     /**
      * Set the action to perform for pixels off the edge of the image.
      * @param edgeAction one of ZERO, CLAMP or WRAP
-     * @see #getEdgeAction
      */
 	public void setEdgeAction(int edgeAction) {
 		this.edgeAction = edgeAction;
-	}
-
-    /**
-     * Get the action to perform for pixels off the edge of the image.
-     * @return one of ZERO, CLAMP or WRAP
-     * @see #setEdgeAction
-     */
-	public int getEdgeAction() {
-		return edgeAction;
-	}
-	
-    /**
-     * Set the type of interpolation to perform.
-     * @param interpolation one of NEAREST_NEIGHBOUR or BILINEAR
-     * @see #getInterpolation
-     */
-	public void setInterpolation(int interpolation) {
-		this.interpolation = interpolation;
-	}
-
-    /**
-     * Get the type of interpolation to perform.
-     * @return one of NEAREST_NEIGHBOUR or BILINEAR
-     * @see #setInterpolation
-     */
-	public int getInterpolation() {
-		return interpolation;
 	}
 	
     /**
