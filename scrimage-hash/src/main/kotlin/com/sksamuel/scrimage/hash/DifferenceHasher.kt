@@ -2,6 +2,7 @@ package com.sksamuel.scrimage.hash
 
 import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.color.GrayscaleMethod
+import com.sksamuel.scrimage.pixels.PixelTools
 
 class DifferenceHasher(private val cols: Int, private val rows: Int) {
 
@@ -22,10 +23,22 @@ class DifferenceHasher(private val cols: Int, private val rows: Int) {
       // byte of 0xFF, making the int negative, so on inputs with
       // varying source alpha the dhash sorted by alpha rather than
       // brightness and produced a perceptually meaningless hash.
-      return r.rows()
-         .flatMap { row ->
-            row.toList().windowed(2).map { if (it.first().red() < it.last().red()) 1 else 0 }
+      // Fetch the packed ARGB ints once as a flat row-major array and compare
+      // adjacent pixels with plain index arithmetic. This avoids materialising
+      // a Pixel object per pixel (rows()) plus the per-row List/windowed
+      // intermediate allocations of the previous implementation, while
+      // producing exactly the same bits.
+      val argb = r.argbints()
+      val bits = ArrayList<Int>((cols - 1) * rows)
+      for (y in 0 until rows) {
+         val offset = y * cols
+         for (x in 0 until cols - 1) {
+            val left = PixelTools.red(argb[offset + x])
+            val right = PixelTools.red(argb[offset + x + 1])
+            bits.add(if (left < right) 1 else 0)
          }
+      }
+      return bits
    }
 
 }
