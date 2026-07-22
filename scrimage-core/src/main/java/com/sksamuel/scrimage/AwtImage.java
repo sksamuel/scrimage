@@ -15,6 +15,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferInt;
+import java.awt.image.Raster;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -127,36 +128,43 @@ public class AwtImage {
     * @return an array of the image's pixels
     */
    public Pixel[] pixels() {
-      DataBuffer buffer = awt().getRaster().getDataBuffer();
+      Raster raster = awt().getRaster();
+      DataBuffer buffer = raster.getDataBuffer();
       if (buffer instanceof DataBufferInt) {
          DataBufferInt intbuffer = (DataBufferInt) buffer;
          int[] data = intbuffer.getData();
-         int index = 0;
-         Pixel[] pixels = new Pixel[data.length];
-         if (awt().getType() == BufferedImage.TYPE_INT_ARGB) {
-            while (index < data.length) {
+         // Indexing the backing array directly is only valid when the raster
+         // maps 1:1 onto the buffer. A sub-image view (BufferedImage.getSubimage)
+         // shares the parent's buffer with a translated origin and the parent's
+         // scanline stride, but still reports the parent's type, so raw indexing
+         // would return the wrong pixels (and the wrong number of them).
+         boolean mapsOneToOne = raster.getSampleModelTranslateX() == 0
+            && raster.getSampleModelTranslateY() == 0
+            && intbuffer.getOffset() == 0
+            && data.length == width * height;
+         if (mapsOneToOne && awt().getType() == BufferedImage.TYPE_INT_ARGB) {
+            Pixel[] pixels = new Pixel[data.length];
+            for (int index = 0; index < data.length; index++) {
                pixels[index] = new Pixel(index % width, index / width, data[index]);
-               index++;
             }
-         } else if (awt().getType() == BufferedImage.TYPE_INT_RGB) {
-            while (index < data.length) {
+            return pixels;
+         } else if (mapsOneToOne && awt().getType() == BufferedImage.TYPE_INT_RGB) {
+            Pixel[] pixels = new Pixel[data.length];
+            for (int index = 0; index < data.length; index++) {
                pixels[index] = new Pixel(index % width, index / width, data[index] | 0xFF000000);
-               index++;
             }
-         } else {
-            throw new RuntimeException("Unsupported image type " + awt().getType());
+            return pixels;
          }
-         return pixels;
-      } else {
-         Pixel[] pixels = new Pixel[count()];
-         int index = 0;
-         for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-               pixels[index++] = new Pixel(x, y, awt().getRGB(x, y));
-            }
-         }
-         return pixels;
+         // Sub-raster layouts and other int-packed types (TYPE_INT_BGR,
+         // TYPE_INT_ARGB_PRE, ...) fall through to getRGB below, which
+         // converts correctly via the colour model.
       }
+      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      Pixel[] pixels = new Pixel[argb.length];
+      for (int i = 0; i < argb.length; i++) {
+         pixels[i] = new Pixel(i % width, i / width, argb[i]);
+      }
+      return pixels;
    }
 
    /**
