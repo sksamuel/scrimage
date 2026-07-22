@@ -95,75 +95,11 @@ public class ConvolveFilter extends AbstractBufferedImageOp {
 	}
 
     /**
-     * Set the convolution kernel.
-     * @param kernel the kernel
-     * @see #getKernel
-     */
-	public void setKernel(Kernel kernel) {
-		this.kernel = kernel;
-	}
-
-    /**
-     * Get the convolution kernel.
-     * @return the kernel
-     * @see #setKernel
-     */
-	public Kernel getKernel() {
-		return kernel;
-	}
-
-    /**
      * Set the action to perfomr for pixels off the image edges.
      * @param edgeAction the action
-     * @see #getEdgeAction
      */
 	public void setEdgeAction(int edgeAction) {
 		this.edgeAction = edgeAction;
-	}
-
-    /**
-     * Get the action to perfomr for pixels off the image edges.
-     * @return the action
-     * @see #setEdgeAction
-     */
-	public int getEdgeAction() {
-		return edgeAction;
-	}
-
-    /**
-     * Set whether to convolve the alpha channel.
-     * @param useAlpha true to convolve the alpha
-     * @see #getUseAlpha
-     */
-	public void setUseAlpha( boolean useAlpha ) {
-		this.alpha = useAlpha;
-	}
-
-    /**
-     * Get whether to convolve the alpha channel.
-     * @return true to convolve the alpha
-     * @see #setUseAlpha
-     */
-	public boolean getUseAlpha() {
-		return alpha;
-	}
-
-    /**
-     * Set whether to premultiply the alpha channel.
-     * @param premultiplyAlpha true to premultiply the alpha
-     * @see #getPremultiplyAlpha
-     */
-	public void setPremultiplyAlpha( boolean premultiplyAlpha ) {
-		this.premultiplyAlpha = premultiplyAlpha;
-	}
-
-    /**
-     * Get whether to premultiply the alpha channel.
-     * @return true to premultiply the alpha
-     * @see #setPremultiplyAlpha
-     */
-	public boolean getPremultiplyAlpha() {
-		return premultiplyAlpha;
 	}
 
     public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
