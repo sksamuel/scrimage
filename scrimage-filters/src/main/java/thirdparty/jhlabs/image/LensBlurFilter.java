@@ -246,13 +246,21 @@ public class LensBlurFilter extends AbstractBufferedImageOp {
                 fft.transform2D(ar[0], ar[1], cols, rows, false);
                 fft.transform2D(gb[0], gb[1], cols, rows, false);
 
-                // Convert back to RGB pixels, with quadrant remapping
-                int row_flip = w >> 1;
-                int col_flip = h >> 1;
+                // Convert back to RGB pixels, with quadrant remapping (fftshift).
+                // The tile is rows (h) high by cols (w) wide and need not be square
+                // once tileWidth/tileHeight are clamped to the image size, so the
+                // row index must flip by half the rows and iterate over h, while the
+                // column index flips by half the cols. The previous code used w for
+                // both (and iterated y < w), which indexed past the w*h buffers and
+                // threw ArrayIndexOutOfBoundsException on wider-than-tall images (and
+                // silently corrupted taller-than-wide ones). For a square tile (the
+                // common large-image case) this is identical to the old behaviour.
+                int row_flip = h >> 1;
+                int col_flip = w >> 1;
                 int index = 0;
 
                 //FIXME-don't bother converting pixels off image edges
-                for (int y = 0; y < w; y++) {
+                for (int y = 0; y < h; y++) {
                     int ym = y ^ row_flip;
                     int yi = ym * cols;
                     for (int x = 0; x < w; x++) {
