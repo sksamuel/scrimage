@@ -30,24 +30,10 @@ public class ErodeFilter extends BinaryFilter {
 		newColor = 0xffffffff;
 	}
 
-	/**
-	 * Set the threshold - the number of neighbouring pixels for dilation to occur.
-	 * @param threshold the new threshold
-     * @see #getThreshold
-	 */
 	public void setThreshold(int threshold) {
 		this.threshold = threshold;
 	}
-	
-	/**
-	 * Return the threshold - the number of neighbouring pixels for dilation to occur.
-	 * @return the current threshold
-     * @see #setThreshold
-	 */
-	public int getThreshold() {
-		return threshold;
-	}
-	
+
 	protected int[] filterPixels( int width, int height, int[] inPixels, Rectangle transformedSpace ) {
 		int[] outPixels = new int[width * height];
 
