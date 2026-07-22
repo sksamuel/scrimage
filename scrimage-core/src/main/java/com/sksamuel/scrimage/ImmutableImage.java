@@ -1228,6 +1228,30 @@ public class ImmutableImage extends MutableImage {
       return padWith(x, y, w - width - x, h - height - y, color);
    }
 
+   /**
+    * Returns a square version of this image by padding the shorter side, centring the existing
+    * image within the new canvas. The added area is transparent. An image that is already square
+    * is returned unchanged in size.
+    *
+    * @return a new square Image.
+    */
+   public ImmutableImage toSquare() {
+      return toSquare(Colors.Transparent.awt());
+   }
+
+   /**
+    * Returns a square version of this image by padding the shorter side with the given colour,
+    * centring the existing image within the new canvas. An image that is already square is
+    * returned unchanged in size.
+    *
+    * @param color the background colour for the padded area.
+    * @return a new square Image.
+    */
+   public ImmutableImage toSquare(Color color) {
+      int size = Math.max(width, height);
+      return padTo(size, size, color);
+   }
+
    public ImmutableImage padWith(int left, int top, int right, int bottom) {
       return padWith(left, top, right, bottom, Colors.Transparent.awt());
    }
