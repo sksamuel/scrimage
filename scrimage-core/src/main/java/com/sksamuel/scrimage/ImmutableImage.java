@@ -1362,7 +1362,10 @@ public class ImmutableImage extends MutableImage {
    }
 
    public ImmutableImage scaleToWidth(int targetWidth, ScaleMethod scaleMethod, boolean keepAspectRatio) {
-      int targetHeight = keepAspectRatio ? (int) (targetWidth / (double) width * height) : height;
+      // Clamp the derived height to at least 1: for an extreme aspect ratio (e.g. a 1000x1
+      // image scaled to width 1) the integer arithmetic floors to 0, which then fails
+      // creating a 0-height image. Mirrors the clamp in resizeToWidth.
+      int targetHeight = keepAspectRatio ? Math.max(1, (int) (targetWidth / (double) width * height)) : height;
       return scaleTo(targetWidth, targetHeight, scaleMethod);
    }
 
@@ -1404,7 +1407,10 @@ public class ImmutableImage extends MutableImage {
     * @return a new Image that is the result of scaling this image
     */
    public ImmutableImage scaleToHeight(int targetHeight, ScaleMethod scaleMethod, boolean keepAspectRatio) {
-      int targetWidth = keepAspectRatio ? (int) (targetHeight / (double) height * width) : width;
+      // Clamp the derived width to at least 1: for an extreme aspect ratio (e.g. a 1x1000
+      // image scaled to height 1) the integer arithmetic floors to 0, which then fails
+      // creating a 0-width image. Mirrors the clamp in resizeToHeight.
+      int targetWidth = keepAspectRatio ? Math.max(1, (int) (targetHeight / (double) height * width)) : width;
       return scaleTo(targetWidth, targetHeight, scaleMethod);
    }
 
