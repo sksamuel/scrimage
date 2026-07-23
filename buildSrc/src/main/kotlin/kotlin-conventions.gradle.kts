@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-   implementation("org.jetbrains.kotlin:kotlin-stdlib:2.4.0")
+   implementation("org.jetbrains.kotlin:kotlin-stdlib:2.4.10")
 }
 
 kotlin {
