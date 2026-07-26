@@ -22,7 +22,7 @@ or
 new HSLColor(100f, 0.5f, 0.3f, 1f).toRGB();
 ```
 
-When you want to create a colour to pass to a scrimage function, you can convert the Scrimage color type to an AWT color type via the `toAwt()` method.
+When you want to create a colour to pass to a scrimage function, you can convert the Scrimage color type to an AWT color type via the `awt()` or `toAWT()` methods.
 
 You can retrieve the `average()` color value from  `color`.
 
