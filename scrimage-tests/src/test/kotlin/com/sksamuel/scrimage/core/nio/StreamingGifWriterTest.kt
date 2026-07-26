@@ -2,6 +2,7 @@
 
 package com.sksamuel.scrimage.core.nio
 
+import com.sksamuel.scrimage.DisposeMethod
 import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.color.RGBColor
 import com.sksamuel.scrimage.nio.AnimatedGifReader
@@ -12,6 +13,7 @@ import io.kotest.core.spec.style.wordSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import org.apache.commons.io.IOUtils
+import java.awt.Color
 import java.awt.image.BufferedImage
 import java.awt.image.DataBufferByte
 import java.awt.image.DataBufferInt
@@ -203,6 +205,71 @@ class StreamingGifWriterTest : WordSpec({
          decoded.getFrame(0).height shouldBe h
          decoded.getFrame(1).width shouldBe w
          decoded.getFrame(1).height shouldBe h
+      }
+
+      "not leak a per-frame delay override into later frames" {
+         // The delay overload used to mutate the shared frame metadata without ever
+         // restoring the default, so every frame after an override inherited it:
+         // 2000/100/100 instead of 2000/100/2000.
+         val writer = StreamingGifWriter().withFrameDelay(Duration.ofSeconds(2))
+         val output = ByteArrayOutputStream()
+         val stream = writer.prepareStream(output, BufferedImage.TYPE_INT_ARGB)
+         stream.writeFrame(bird)
+         stream.writeFrame(bird.flipX(), Duration.ofMillis(100))
+         stream.writeFrame(bird.flipY())
+         stream.close()
+
+         val decoded = AnimatedGifReader.read(ImageSource.of(output.toByteArray()))
+         decoded.frameCount shouldBe 3
+         decoded.getDelay(0) shouldBe Duration.ofMillis(2000)
+         decoded.getDelay(1) shouldBe Duration.ofMillis(100)
+         decoded.getDelay(2) shouldBe Duration.ofMillis(2000)
+      }
+
+      "not leak a per-frame dispose method override into later frames" {
+         // Same leak as the delay override: a dispose method override stuck for
+         // all subsequent frames instead of reverting to the default "none".
+         val writer = StreamingGifWriter()
+         val output = ByteArrayOutputStream()
+         val stream = writer.prepareStream(output, BufferedImage.TYPE_INT_ARGB)
+         stream.writeFrame(bird, DisposeMethod.RESTORE_TO_BACKGROUND_COLOR)
+         stream.writeFrame(bird.flipX())
+         stream.close()
+
+         val decoded = AnimatedGifReader.read(ImageSource.of(output.toByteArray()))
+         decoded.frameCount shouldBe 2
+         decoded.getDisposeMethod(0) shouldBe DisposeMethod.RESTORE_TO_BACKGROUND_COLOR
+         // GifSequenceReader normalises the discretionary disposal code 0 ("none") to
+         // 1 ("doNotDispose"), so a default frame decodes as DO_NOT_DISPOSE. Before the
+         // fix this frame decoded as RESTORE_TO_BACKGROUND_COLOR, leaked from frame 0.
+         decoded.getDisposeMethod(1) shouldBe DisposeMethod.DO_NOT_DISPOSE
+      }
+
+      "apply the compressed diff and update the last-frame snapshot on override overloads" {
+         // In compressed mode the delay/dispose overloads used to write the frame
+         // directly, skipping the transparency diff and the `last` snapshot update.
+         // The next plain writeFrame then diffed against a stale frame: for
+         // red/blue(50ms)/red the third frame's pixels all matched the stale red
+         // snapshot, were zeroed, and the decoder showed blue where red belonged.
+         val red = ImmutableImage.filled(20, 20, Color.RED, BufferedImage.TYPE_INT_ARGB)
+         val blue = ImmutableImage.filled(20, 20, Color.BLUE, BufferedImage.TYPE_INT_ARGB)
+
+         val writer = StreamingGifWriter().withCompression(true).withFrameDelay(Duration.ofSeconds(2))
+         val output = ByteArrayOutputStream()
+         val stream = writer.prepareStream(output, BufferedImage.TYPE_INT_ARGB)
+         stream.writeFrame(red)
+         stream.writeFrame(blue, Duration.ofMillis(50))
+         stream.writeFrame(red)
+         stream.close()
+
+         val decoded = AnimatedGifReader.read(ImageSource.of(output.toByteArray()))
+         decoded.frameCount shouldBe 3
+         decoded.getFrame(0).pixel(10, 10).argb shouldBe Color.RED.rgb
+         decoded.getFrame(1).pixel(10, 10).argb shouldBe Color.BLUE.rgb
+         decoded.getFrame(2).pixel(10, 10).argb shouldBe Color.RED.rgb
+         decoded.getDelay(0) shouldBe Duration.ofMillis(2000)
+         decoded.getDelay(1) shouldBe Duration.ofMillis(50)
+         decoded.getDelay(2) shouldBe Duration.ofMillis(2000)
       }
 
       "not mutate caller's ImmutableImage in compressed mode" {
