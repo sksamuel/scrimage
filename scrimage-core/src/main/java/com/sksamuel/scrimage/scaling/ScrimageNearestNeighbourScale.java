@@ -3,6 +3,7 @@ package com.sksamuel.scrimage.scaling;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferInt;
+import java.awt.image.Raster;
 
 public class ScrimageNearestNeighbourScale implements Scale {
 
@@ -15,14 +16,30 @@ public class ScrimageNearestNeighbourScale implements Scale {
         // this method with no useful context. ImmutableImage.scaleTo
         // guards this for its callers but the class is public so a
         // direct user can still land here.
-        DataBuffer inBuf = in.getRaster().getDataBuffer();
+        Raster raster = in.getRaster();
+        DataBuffer inBuf = raster.getDataBuffer();
         if (!(inBuf instanceof DataBufferInt))
             throw new IllegalArgumentException(
                 "ScrimageNearestNeighbourScale requires an int-buffer BufferedImage, got "
                     + inBuf.getClass().getSimpleName() + " (image type " + in.getType() + ")");
 
+        DataBufferInt intBuf = (DataBufferInt) inBuf;
+        int[] pixels = intBuf.getData();
+
+        // Indexing the backing array directly is only valid when the raster
+        // maps 1:1 onto the buffer. A sub-image view (BufferedImage.getSubimage)
+        // shares the parent's buffer with a translated origin and the parent's
+        // scanline stride, so raw indexing would read the wrong pixels.
+        // Delegate those to the getRGB/setRGB based implementation, which
+        // handles any raster layout.
+        boolean mapsOneToOne = raster.getSampleModelTranslateX() == 0
+            && raster.getSampleModelTranslateY() == 0
+            && intBuf.getOffset() == 0
+            && pixels.length == in.getWidth() * in.getHeight();
+        if (!mapsOneToOne)
+            return new AwtNearestNeighbourScale().scale(in, w, h);
+
         BufferedImage out = new BufferedImage(w, h, in.getType());
-        int[] pixels = ((DataBufferInt) inBuf).getData();
         int[] newpixels = ((DataBufferInt) out.getRaster().getDataBuffer()).getData();
 
         int n = 0;
