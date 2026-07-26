@@ -35,36 +35,8 @@ public class ContourFilter extends WholeImageFilter {
 		this.levels = levels;
 	}
 
-	public float getLevels() {
-		return levels;
-	}
-
-	/**
-     * Specifies the scale of the contours.
-     * @param scale the scale of the contours.
-     * min-value 0
-     * max-value 1
-     * @see #getScale
-     */
-	public void setScale( float scale ) {
-		this.scale = scale;
-	}
-
-	/**
-     * Returns the scale of the contours.
-     * @return the scale of the contours.
-     * @see #setScale
-     */
-	public float getScale() {
-		return scale;
-	}
-
 	public void setOffset( float offset ) {
 		this.offset = offset;
-	}
-
-	public float getOffset() {
-		return offset;
 	}
 
 	public void setContourColor( int contourColor ) {
