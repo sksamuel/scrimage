@@ -74,6 +74,29 @@ class CopyPrecisionTest : FunSpec({
       converted.pixel(0, 0).alpha() shouldBe 255
    }
 
+   // The same-type copyData fast path must not be combined with a target created via
+   // new BufferedImage(w, h, type): for palette-based types that target gets the *default*
+   // palette, and copyData copies raw palette indices, so every pixel is remapped through
+   // the wrong palette. The target must reuse the source's own IndexColorModel.
+   test("copy preserves colors for palette-based images (GIF, TYPE_BYTE_INDEXED)") {
+      val original = ImmutableImage.loader().fromStream(javaClass.getResourceAsStream("/github174.gif"))
+      original.awt().type shouldBe BufferedImage.TYPE_BYTE_INDEXED
+      val copy = original.copy()
+      copy.awt().type shouldBe BufferedImage.TYPE_BYTE_INDEXED
+      copy.argbints() shouldBe original.argbints()
+   }
+
+   test("copy preserves colors for an indexed image with a custom palette") {
+      val palette = intArrayOf(0xFF112233.toInt(), 0xFF446688.toInt(), 0xFFAABBCC.toInt(), 0xFF010203.toInt())
+      val icm = java.awt.image.IndexColorModel(8, 4, palette, 0, false, -1, java.awt.image.DataBuffer.TYPE_BYTE)
+      val buf = BufferedImage(4, 4, BufferedImage.TYPE_BYTE_INDEXED, icm)
+      for (y in 0 until 4) for (x in 0 until 4) buf.setRGB(x, y, palette[(x + y) % 4])
+      val original = ImmutableImage.wrapAwt(buf)
+      val copy = original.copy()
+      copy.awt().type shouldBe BufferedImage.TYPE_BYTE_INDEXED
+      copy.argbints() shouldBe original.argbints()
+   }
+
    test("copy preserves channels for TYPE_4BYTE_ABGR with non-255 alpha") {
       // Same precision invariant must hold for non-int-buffer image types.
       val buf = BufferedImage(2, 2, BufferedImage.TYPE_4BYTE_ABGR)

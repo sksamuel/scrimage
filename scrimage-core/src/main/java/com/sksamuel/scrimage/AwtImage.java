@@ -13,8 +13,10 @@ import com.sksamuel.scrimage.subpixel.LinearSubpixelInterpolator;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferInt;
+import java.awt.image.IndexColorModel;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -539,23 +541,40 @@ public class AwtImage {
     * @return a new, non-shared, BufferedImage with the same data as this Image.
     */
    public BufferedImage toNewBufferedImage(int type) {
-      BufferedImage target = new BufferedImage(width, height, type);
       if (awt.getType() == type) {
          // Same type — copy the raster data directly. Going through
          // Graphics2D.drawImage would composite via SrcOver, which
          // premultiplies alpha and rounds away ±1 from each colour channel
          // when alpha doesn't divide 255 cleanly.
+         BufferedImage target = sameTypeCopyTarget(type);
          awt.copyData(target.getRaster());
+         return target;
       } else {
          // Type conversion — Graphics2D handles the colour-space conversion.
+         BufferedImage target = new BufferedImage(width, height, type);
          Graphics2D g2 = (Graphics2D) target.getGraphics();
          try {
             g2.drawImage(awt, 0, 0, null);
          } finally {
             g2.dispose();
          }
+         return target;
       }
-      return target;
+   }
+
+   /**
+    * Creates the target for a same-type raster copy. For palette-based types
+    * (TYPE_BYTE_INDEXED, TYPE_BYTE_BINARY) the target must reuse the source's own
+    * IndexColorModel: new BufferedImage(width, height, type) would get the *default*
+    * palette, and copyData copies raw palette indices, so every pixel would be
+    * remapped through the wrong palette.
+    */
+   private BufferedImage sameTypeCopyTarget(int type) {
+      ColorModel cm = awt.getColorModel();
+      if (cm instanceof IndexColorModel) {
+         return new BufferedImage(cm, cm.createCompatibleWritableRaster(width, height), cm.isAlphaPremultiplied(), null);
+      }
+      return new BufferedImage(width, height, type);
    }
 
    /**
@@ -795,22 +814,24 @@ public class AwtImage {
     */
    public AwtImage clone(int imageType) {
       if (imageType <= 0) throw new IllegalArgumentException("Image type must be > 0");
-      BufferedImage target = new BufferedImage(awt.getWidth(null), awt.getHeight(null), imageType);
       if (awt.getType() == imageType) {
          // Same type — copy the raster data directly. Going through
          // Graphics2D.drawImage would composite via SrcOver, which
          // premultiplies alpha and rounds away ±1 from each colour channel
          // when alpha doesn't divide 255 cleanly.
+         BufferedImage target = sameTypeCopyTarget(imageType);
          awt.copyData(target.getRaster());
+         return new AwtImage(target);
       } else {
          // Type conversion — Graphics2D handles the colour-space conversion.
+         BufferedImage target = new BufferedImage(awt.getWidth(null), awt.getHeight(null), imageType);
          Graphics g2 = target.getGraphics();
          try {
             g2.drawImage(awt, 0, 0, null);
          } finally {
             g2.dispose();
          }
+         return new AwtImage(target);
       }
-      return new AwtImage(target);
    }
 }
