@@ -4,7 +4,7 @@ Format Detection
 If you are interested in detecting the format of an image (which you don't need to do when simply loading an image,
  as Scrimage will figure it out for you) then you can use the `FormatDetector`.
 
-The detector recognises PNG, JPEG and GIF.
+The detector recognises PNG, JPEG, GIF and WebP.
 
 This method does not need to load all bytes, only the initial few bytes to determine what the format is.
 
