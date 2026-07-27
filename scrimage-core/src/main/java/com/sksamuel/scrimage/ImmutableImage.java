@@ -816,6 +816,64 @@ public class ImmutableImage extends MutableImage {
    }
 
    /**
+    * Returns a new image representing the absolute per-channel difference between this image and the
+    * other. Identical pixels become black; the greater the difference in a channel, the brighter that
+    * channel is in the result. The result is fully opaque (differences in alpha are not visualised).
+    *
+    * @param other another image, which must have the same dimensions as this image.
+    * @return a new Image showing the difference between the two images.
+    * @throws IllegalArgumentException if the images have different dimensions.
+    */
+   public ImmutableImage diff(ImmutableImage other) {
+      requireSameDimensions(other, "diff");
+      int[] a = awt().getRGB(0, 0, width, height, null, 0, width);
+      int[] b = other.awt().getRGB(0, 0, width, height, null, 0, width);
+      int[] out = new int[a.length];
+      for (int i = 0; i < a.length; i++) {
+         int dr = Math.abs(((a[i] >> 16) & 0xFF) - ((b[i] >> 16) & 0xFF));
+         int dg = Math.abs(((a[i] >> 8) & 0xFF) - ((b[i] >> 8) & 0xFF));
+         int db = Math.abs((a[i] & 0xFF) - (b[i] & 0xFF));
+         out[i] = 0xFF000000 | (dr << 16) | (dg << 8) | db;
+      }
+      ImmutableImage target = ImmutableImage.create(width, height, CANONICAL_DATA_TYPE);
+      target.awt().setRGB(0, 0, width, height, out, 0, width);
+      return target;
+   }
+
+   /**
+    * Returns the root mean square error between this image and the other, computed over the red, green
+    * and blue channels and normalised to the range 0.0 (the images are pixel-identical) to 1.0 (every
+    * channel of every pixel differs by the maximum of 255). This is a measure of dissimilarity: the
+    * smaller the value, the more alike the two images are. Alpha is not considered.
+    *
+    * @param other another image, which must have the same dimensions as this image.
+    * @return the normalised RMSE in the range [0.0, 1.0].
+    * @throws IllegalArgumentException if the images have different dimensions.
+    */
+   public double rmse(ImmutableImage other) {
+      requireSameDimensions(other, "rmse");
+      int[] a = awt().getRGB(0, 0, width, height, null, 0, width);
+      int[] b = other.awt().getRGB(0, 0, width, height, null, 0, width);
+      double sum = 0.0;
+      for (int i = 0; i < a.length; i++) {
+         int dr = ((a[i] >> 16) & 0xFF) - ((b[i] >> 16) & 0xFF);
+         int dg = ((a[i] >> 8) & 0xFF) - ((b[i] >> 8) & 0xFF);
+         int db = (a[i] & 0xFF) - (b[i] & 0xFF);
+         sum += (double) dr * dr + (double) dg * dg + (double) db * db;
+      }
+      double mse = sum / (a.length * 3.0);
+      return Math.sqrt(mse) / 255.0;
+   }
+
+   private void requireSameDimensions(ImmutableImage other, String op) {
+      if (other.width != width || other.height != height) {
+         throw new IllegalArgumentException(String.format(
+            "Cannot %s images of different dimensions: %dx%d vs %dx%d",
+            op, width, height, other.width, other.height));
+      }
+   }
+
+   /**
     * Applies an affine transform in place.
     *
     * @return the BufferedImage resulting from applying the affine transform
