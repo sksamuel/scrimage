@@ -47,10 +47,6 @@ public class SmearFilter extends WholeImageFilter {
 		this.shape = shape;
 	}
 
-	public int getShape() {
-		return shape;
-	}
-
 	public void setDistance(int distance) {
 		this.distance = distance;
 	}
@@ -61,10 +57,6 @@ public class SmearFilter extends WholeImageFilter {
 
 	public void setScatter(float scatter) {
 		this.scatter = scatter;
-	}
-
-	public float getScatter() {
-		return scatter;
 	}
 
 	/**
@@ -78,16 +70,8 @@ public class SmearFilter extends WholeImageFilter {
 		this.mix = mix;
 	}
 
-	public float getMix() {
-		return mix;
-	}
-
 	public void setFadeout(int fadeout) {
 		this.fadeout = fadeout;
-	}
-
-	public int getFadeout() {
-		return fadeout;
 	}
 
 

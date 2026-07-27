@@ -25,8 +25,16 @@ public class SmearFilter extends BufferedOpFilter {
     private final float scatter;
     private final int distance;
     private final float mix;
+    private final int fadeout;
 
     public SmearFilter(SmearType smearType, float angle, float density, float scatter, int distance, float mix) {
+        this(smearType, angle, density, scatter, distance, mix, 0);
+    }
+
+    /**
+     * @param fadeout fades the smeared shapes out towards their edges (jhlabs default 0).
+     */
+    public SmearFilter(SmearType smearType, float angle, float density, float scatter, int distance, float mix, int fadeout) {
         if (smearType == null)
             throw new IllegalArgumentException("smearType must not be null");
         // The jhlabs implementation does `nextInt() % distance` in the
@@ -45,6 +53,7 @@ public class SmearFilter extends BufferedOpFilter {
         this.scatter = scatter;
         this.distance = distance;
         this.mix = mix;
+        this.fadeout = fadeout;
     }
 
     public SmearFilter(SmearType smearType) {
@@ -59,6 +68,7 @@ public class SmearFilter extends BufferedOpFilter {
         op.setScatter(scatter);
         op.setDistance(distance);
         op.setMix(mix);
+        op.setFadeout(fadeout);
         switch (smearType) {
             case Circles:
                 op.setShape(thirdparty.jhlabs.image.SmearFilter.CIRCLES);
