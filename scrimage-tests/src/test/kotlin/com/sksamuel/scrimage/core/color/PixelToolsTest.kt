@@ -114,4 +114,60 @@ class PixelToolsTest : FunSpec({
       PixelTools.blue(scaled) shouldBe 67
    }
 
+   // Regression: replaceTransparencyWithColor divided the premultiplied SrcOver
+   // channel sums by 255 instead of by the composite alpha, and forced the output
+   // alpha to 255. With a translucent replacement colour this darkened the result:
+   // a fully transparent pixel replaced with 50%-alpha red came back as opaque
+   // (128, 0, 0) instead of half-transparent pure red (255, 0, 0, 128).
+   test("replaceTransparencyWithColor composites a translucent colour without darkening") {
+      val transparent = Pixel(0, 0, 0, 0, 0, 0)
+      val result = PixelTools.replaceTransparencyWithColor(transparent, Color(255, 0, 0, 128))
+      result.alpha() shouldBe 128
+      result.red() shouldBe 255
+      result.green() shouldBe 0
+      result.blue() shouldBe 0
+   }
+
+   test("replaceTransparencyWithColor blends a semi-transparent pixel with a translucent colour using the composite alpha") {
+      // white at 50% alpha over red at 50% alpha:
+      // aOut = 128 + 128 * 127 / 255 = 191
+      val semiWhite = Pixel(0, 0, 255, 255, 255, 128)
+      val result = PixelTools.replaceTransparencyWithColor(semiWhite, Color(255, 0, 0, 128))
+      result.alpha() shouldBe 191
+      // red channel: (255*128 + 255*128*127/255) / 191 = 255
+      result.red() shouldBe 255
+      // green/blue: 255*128 / 191 = 170
+      result.green() shouldBe 170
+      result.blue() shouldBe 170
+   }
+
+   test("replaceTransparencyWithColor returns fully transparent black when both alphas are zero") {
+      val transparent = Pixel(0, 0, 10, 20, 30, 0)
+      val result = PixelTools.replaceTransparencyWithColor(transparent, Color(255, 0, 0, 0))
+      result.argb shouldBe 0
+   }
+
+   test("replaceTransparencyWithColor with an opaque colour behaves as before") {
+      // fully transparent pixel -> exactly the replacement colour, opaque
+      val transparent = Pixel(0, 0, 0, 0, 0, 0)
+      val replaced = PixelTools.replaceTransparencyWithColor(transparent, Color(12, 34, 56, 255))
+      replaced.alpha() shouldBe 255
+      replaced.red() shouldBe 12
+      replaced.green() shouldBe 34
+      replaced.blue() shouldBe 56
+
+      // semi-transparent pixel -> the original formula's blend, opaque:
+      // channel = (c * a + colorC * (255 - a)) / 255
+      val semi = Pixel(0, 0, 200, 100, 50, 128)
+      val blended = PixelTools.replaceTransparencyWithColor(semi, Color(10, 20, 30, 255))
+      blended.alpha() shouldBe 255
+      blended.red() shouldBe (200 * 128 + 10 * 127) / 255
+      blended.green() shouldBe (100 * 128 + 20 * 127) / 255
+      blended.blue() shouldBe (50 * 128 + 30 * 127) / 255
+
+      // opaque pixel -> unchanged
+      val opaque = Pixel(0, 0, 1, 2, 3, 255)
+      PixelTools.replaceTransparencyWithColor(opaque, Color(255, 255, 255, 255)).argb shouldBe opaque.argb
+   }
+
 })
