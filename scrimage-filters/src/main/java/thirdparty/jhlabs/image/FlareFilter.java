@@ -89,8 +89,6 @@ public class FlareFilter extends PointFilter {
     }
 
     public int filterRGB(int x, int y, int rgb) {
-        Noise noise = new Noise();
-
         float dx = x - icentreX;
         float dy = y - icentreY;
         float distance = (float) Math.sqrt(dx * dx + dy * dy);
@@ -113,7 +111,7 @@ public class FlareFilter extends PointFilter {
         a += ring;
 
         float angle = (float) Math.atan2(dx, dy) + ImageMath.PI;
-        angle = (ImageMath.mod(angle / ImageMath.PI * 17 + 1.0f + noise.noise1(angle * 10), 1.0f) - 0.5f) * 2;
+        angle = (ImageMath.mod(angle / ImageMath.PI * 17 + 1.0f + Noise.noise1(angle * 10), 1.0f) - 0.5f) * 2;
         angle = Math.abs(angle);
         angle = (float) Math.pow(angle, 5.0);
 
