@@ -67,14 +67,6 @@ public class ContourFilter extends WholeImageFilter {
 		return offset;
 	}
 
-	public void setContourColor( int contourColor ) {
-		this.contourColor = contourColor;
-	}
-
-	public int getContourColor() {
-		return contourColor;
-	}
-
 	protected int[] filterPixels( int width, int height, int[] inPixels, Rectangle transformedSpace ) {
 		int index = 0;
 		short[][] r = new short[3][width];
