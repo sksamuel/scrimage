@@ -12,7 +12,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -400,7 +399,7 @@ public class GifSequenceReader {
          // every decoded frame is larger than the file it came from, so buffering it
          // costs nothing meaningful.
          try {
-            in = new BufferedInputStream(new ByteArrayInputStream(readFully(is)));
+            in = new BufferedInputStream(new ByteArrayInputStream(is.readAllBytes()));
             readHeader();
             if (!err()) {
                readContents();
@@ -422,19 +421,6 @@ public class GifSequenceReader {
          status = STATUS_OPEN_ERROR;
       }
       return status;
-   }
-
-   /**
-    * Reads the given stream to exhaustion.
-    */
-   private static byte[] readFully(InputStream is) throws IOException {
-      ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-      byte[] chunk = new byte[8192];
-      int read;
-      while ((read = is.read(chunk)) != -1) {
-         buffer.write(chunk, 0, read);
-      }
-      return buffer.toByteArray();
    }
 
    /**
