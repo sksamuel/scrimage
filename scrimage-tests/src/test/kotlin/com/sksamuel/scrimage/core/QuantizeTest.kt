@@ -21,6 +21,12 @@ class QuantizeTest : FunSpec() {
          }
       }
 
+      test("quantize of an all-white image returns an empty palette instead of NPE") {
+         // ColorThief's default extractor ignores white, so an all-white image leaves no
+         // pixels to quantize and getColorMap returns null. quantize must not dereference it.
+         ImmutableImage.filled(10, 10, Color.WHITE).quantize(2).size shouldBe 0
+      }
+
       test("quantize 16") {
 
          image.quantize(16).map { it.toHex() } shouldBe listOf(
