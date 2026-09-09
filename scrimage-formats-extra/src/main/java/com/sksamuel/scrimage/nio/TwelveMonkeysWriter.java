@@ -9,6 +9,7 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.stream.ImageOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Iterator;
 
 abstract class TwelveMonkeysWriter implements ImageWriter {
 
@@ -16,7 +17,13 @@ abstract class TwelveMonkeysWriter implements ImageWriter {
 
     @Override
     public void write(AwtImage image, ImageMetadata metadata, OutputStream out) throws IOException {
-        javax.imageio.ImageWriter writer = ImageIO.getImageWritersByFormatName(format()).next();
+        Iterator<javax.imageio.ImageWriter> writers = ImageIO.getImageWritersByFormatName(format());
+        if (!writers.hasNext()) {
+            throw new IOException(
+               "No ImageIO encoder is available for format '" + format() + "'. " +
+                  "Some formats (such as PCX and SGI) are read-only: the TwelveMonkeys plugin provides a decoder but no encoder.");
+        }
+        javax.imageio.ImageWriter writer = writers.next();
         try (ImageOutputStream ios = ImageIO.createImageOutputStream(out)) {
             ImageWriteParam params = writer.getDefaultWriteParam();
             writer.setOutput(ios);
