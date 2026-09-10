@@ -11,6 +11,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -108,6 +109,28 @@ public class GifSequenceReader {
    protected static final int MaxStackSize = 4096;
    // max decoder pixel stack size
 
+   /**
+    * The largest array the JVM will allocate, allowing for the header words some
+    * VMs reserve. Any pixel count above this cannot be allocated at all.
+    */
+   private static final long MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
+
+   /**
+    * The default maximum number of pixels (width * height) accepted for the logical
+    * screen, and for any single frame, before a GIF is rejected as malformed.
+    *
+    * Every frame is materialised as a TYPE_INT_ARGB BufferedImage, so a frame costs
+    * four bytes per pixel; this default therefore caps a single frame at roughly
+    * 358MB. It is the same limit Pillow has long used for its decompression bomb
+    * check, and is far above any real world animated GIF, whose frames are measured
+    * in megapixels rather than gigapixels.
+    *
+    * @see #setMaxPixels(long)
+    */
+   public static final long DEFAULT_MAX_PIXELS = 89_478_485L;
+
+   private long maxPixels = DEFAULT_MAX_PIXELS;
+
    // LZW decoder working arrays
    protected short[] prefix;
    protected byte[] suffix;
@@ -116,6 +139,31 @@ public class GifSequenceReader {
 
    protected List<GifFrame> frames; // frames read from current file
    protected int frameCount;
+
+   /**
+    * Returns the maximum number of pixels accepted for the logical screen or for a
+    * single frame.
+    */
+   public long getMaxPixels() {
+      return maxPixels;
+   }
+
+   /**
+    * Sets the maximum number of pixels (width * height) accepted for the logical
+    * screen, and for any single frame. A GIF declaring more than this is rejected
+    * with STATUS_FORMAT_ERROR rather than the allocation being attempted, which
+    * stops a tiny crafted file from exhausting the heap.
+    *
+    * Raise this only if you have a genuine need to decode unusually large GIFs and
+    * have sized the heap to match.
+    *
+    * @param maxPixels the new limit, which must be positive
+    */
+   public void setMaxPixels(long maxPixels) {
+      if (maxPixels < 1)
+         throw new IllegalArgumentException("maxPixels must be positive but was " + maxPixels);
+      this.maxPixels = maxPixels;
+   }
 
    static class GifFrame {
       public GifFrame(BufferedImage im, int del, int disposeMethod) {
@@ -208,7 +256,7 @@ public class GifSequenceReader {
          if (lastImage != null) {
             int[] prev =
                ((DataBufferInt) lastImage.getRaster().getDataBuffer()).getData();
-            System.arraycopy(prev, 0, dest, 0, width * height);
+            System.arraycopy(prev, 0, dest, 0, dest.length);
             // copy pixels
 
             if (lastDispose == 2) {
@@ -331,27 +379,7 @@ public class GifSequenceReader {
     * @return read status code (0 = no errors)
     */
    public int read(BufferedInputStream is) {
-      init();
-      if (is != null) {
-         in = is;
-         readHeader();
-         if (!err()) {
-            readContents();
-            if (frameCount < 0) {
-               status = STATUS_FORMAT_ERROR;
-            }
-         }
-         // Only close if we actually had a stream — the null branch
-         // sets STATUS_OPEN_ERROR and used to fall through to is.close()
-         // which then NPE'd, defeating the null check.
-         try {
-            is.close();
-         } catch (IOException e) {
-         }
-      } else {
-         status = STATUS_OPEN_ERROR;
-      }
-      return status;
+      return read((InputStream) is);
    }
 
    /**
@@ -363,17 +391,28 @@ public class GifSequenceReader {
    public int read(InputStream is) {
       init();
       if (is != null) {
-         if (!(is instanceof BufferedInputStream))
-            is = new BufferedInputStream(is);
-         in = (BufferedInputStream) is;
-         readHeader();
-         if (!err()) {
-            readContents();
-            if (frameCount < 0) {
-               status = STATUS_FORMAT_ERROR;
+         // Buffer the whole source up front so that in.available() reports exactly how
+         // many bytes are left. A stream that has not been fully buffered - a socket,
+         // say - reports only what happens to have arrived, and remainingBytes() is
+         // what stops a frame from declaring more pixels than the compressed data
+         // could possibly expand to. The caller already holds the encoded GIF, and
+         // every decoded frame is larger than the file it came from, so buffering it
+         // costs nothing meaningful.
+         try {
+            in = new BufferedInputStream(new ByteArrayInputStream(is.readAllBytes()));
+            readHeader();
+            if (!err()) {
+               readContents();
+               if (frameCount < 0) {
+                  status = STATUS_FORMAT_ERROR;
+               }
             }
+         } catch (IOException e) {
+            status = STATUS_OPEN_ERROR;
          }
-         // Only close if we actually had a stream — see read(BufferedInputStream).
+         // Only close if we actually had a stream — the null branch
+         // sets STATUS_OPEN_ERROR and used to fall through to is.close()
+         // which then NPE'd, defeating the null check.
          try {
             is.close();
          } catch (IOException e) {
@@ -542,6 +581,48 @@ public class GifSequenceReader {
          pixels[i] = 0; // clear missing pixels
       }
 
+   }
+
+   /**
+    * Returns true if the given declared dimensions can be decoded: both must be
+    * positive, and the resulting pixel count must fit both the configured maximum
+    * and the largest array the JVM can allocate.
+    *
+    * A truncated stream makes readShort return -1, so dimensions can legitimately
+    * arrive negative, and 65535x65535 overflows an int to a negative pixel count -
+    * both of which previously reached new byte[npix] as a NegativeArraySizeException.
+    */
+   private boolean acceptableDimensions(int w, int h) {
+      if (w <= 0 || h <= 0)
+         return false;
+      long pixels = (long) w * (long) h;
+      return pixels <= maxPixels && pixels <= MAX_ARRAY_SIZE;
+   }
+
+   /**
+    * Returns the number of bytes left in the (fully buffered) input, or 0 if that
+    * cannot be determined.
+    */
+   private int remainingBytes() {
+      try {
+         return Math.max(in.available(), 0);
+      } catch (IOException e) {
+         return 0;
+      }
+   }
+
+   /**
+    * Returns true if the compressed data still in the stream could plausibly expand
+    * to the given number of pixels.
+    *
+    * An LZW code here is at most 12 bits wide, so a byte carries two thirds of a
+    * code, and a single code expands to at most MaxStackSize pixels. The true
+    * ceiling is therefore about 2730 pixels per byte; using MaxStackSize leaves
+    * generous headroom while still rejecting the pathological case of a handful of
+    * bytes claiming billions of pixels.
+    */
+   private boolean plausiblePixelCount(long npix) {
+      return npix <= (long) remainingBytes() * MaxStackSize;
    }
 
    /**
@@ -730,6 +811,13 @@ public class GifSequenceReader {
       iw = readShort();
       ih = readShort();
 
+      // As for the logical screen, an unusable or absurd frame rectangle is rejected
+      // before anything is sized from it.
+      if (!acceptableDimensions(iw, ih)) {
+         status = STATUS_FORMAT_ERROR;
+         return;
+      }
+
       int packed = read();
       lctFlag = (packed & 0x80) != 0; // 1 - local color table flag
       interlace = (packed & 0x40) != 0; // 2 - interlace flag
@@ -750,6 +838,15 @@ public class GifSequenceReader {
          return; // bail before dereferencing act below (a malformed GIF with
                  // no global/local colour table and the transparency flag set
                  // would otherwise NPE here rather than report a format error)
+      }
+
+      // A frame cannot contain more pixels than the compressed bytes left in the
+      // stream could expand to. Checking this before decodeImageData allocates
+      // new byte[iw * ih] is what stops a 35 byte file that declares a 65535x32767
+      // frame from demanding a 2GB buffer.
+      if (!plausiblePixelCount((long) iw * (long) ih)) {
+         status = STATUS_FORMAT_ERROR;
+         return;
       }
 
       // transIndex is read as an unsigned byte (0-255) but the active colour
@@ -793,6 +890,15 @@ public class GifSequenceReader {
       // logical screen size
       width = readShort();
       height = readShort();
+
+      // Reject an unusable logical screen before the colour table is read, rather
+      // than carrying it as far as new BufferedImage(width, height) in readImage,
+      // where it either throws a raw IllegalArgumentException or, for a crafted
+      // 65535x32767 screen, tries to allocate 8.6GB.
+      if (!acceptableDimensions(width, height)) {
+         status = STATUS_FORMAT_ERROR;
+         return;
+      }
 
       // packed fields
       int packed = read();
