@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-   implementation("com.twelvemonkeys.imageio:imageio-core:3.14.0")
+   implementation("com.twelvemonkeys.imageio:imageio-core:3.15.2")
    implementation("com.twelvemonkeys.imageio:imageio-jpeg:3.14.0")
    implementation("com.drewnoakes:metadata-extractor:2.21.0")
    implementation("commons-io:commons-io:2.22.0")
