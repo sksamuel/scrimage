@@ -12,7 +12,7 @@ dependencies {
    implementation("com.twelvemonkeys.imageio:imageio-tiff:3.14.0")
    implementation("com.twelvemonkeys.imageio:imageio-bmp:3.14.0")
    implementation("com.twelvemonkeys.imageio:imageio-iff:3.14.0")
-   implementation("com.twelvemonkeys.imageio:imageio-sgi:3.14.0")
+   implementation("com.twelvemonkeys.imageio:imageio-sgi:3.15.2")
    implementation("com.twelvemonkeys.imageio:imageio-psd:3.14.0")
    implementation("com.twelvemonkeys.imageio:imageio-pict:3.14.0")
    implementation("com.twelvemonkeys.imageio:imageio-batik:3.14.0")
