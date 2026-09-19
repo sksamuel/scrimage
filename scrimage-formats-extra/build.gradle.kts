@@ -7,7 +7,7 @@ plugins {
 dependencies {
    api(project(":scrimage-core"))
    implementation("com.twelvemonkeys.imageio:imageio-pcx:3.14.0")
-   implementation("com.twelvemonkeys.imageio:imageio-pnm:3.14.0")
+   implementation("com.twelvemonkeys.imageio:imageio-pnm:3.15.2")
    implementation("com.twelvemonkeys.imageio:imageio-tga:3.14.0")
    implementation("com.twelvemonkeys.imageio:imageio-tiff:3.14.0")
    implementation("com.twelvemonkeys.imageio:imageio-bmp:3.14.0")
