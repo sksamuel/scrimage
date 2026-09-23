@@ -442,10 +442,13 @@ public class ImmutableImage extends MutableImage {
     * @return a new cropped Image with the matching rows and columns removed
     */
    public ImmutableImage autocrop(Color color, int colorTolerance) {
-      int x1 = AutocropOps.scanright(color, height, width, 0, pixelExtractor(), colorTolerance);
-      int x2 = AutocropOps.scanleft(color, height, width - 1, pixelExtractor(), colorTolerance);
-      int y1 = AutocropOps.scandown(color, height, width, 0, pixelExtractor(), colorTolerance);
-      int y2 = AutocropOps.scanup(color, width, height - 1, pixelExtractor(), colorTolerance);
+      // Bulk-fetch the whole image once and scan over the int[] rather than
+      // allocating a Pixel[] per column/row strip via pixelExtractor().
+      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      int x1 = AutocropOps.scanright(color, width, height, 0, argb, colorTolerance);
+      int x2 = AutocropOps.scanleft(color, width, height, width - 1, argb, colorTolerance);
+      int y1 = AutocropOps.scandown(color, width, height, 0, argb, colorTolerance);
+      int y2 = AutocropOps.scanup(color, width, height, height - 1, argb, colorTolerance);
       // If every column matches the crop colour, scanright walks all the way
       // to width and scanleft all the way to 0 (and likewise for rows). The
       // "nothing to crop" subimage(x1, y1, x2-x1+1, ...) call would then have
