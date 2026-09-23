@@ -644,8 +644,14 @@ public class AwtImage {
       double sin = Math.abs(Math.sin(angle.value)),
          cos = Math.abs(Math.cos(angle.value));
 
-      int neww = (int) Math.floor(width * cos + height * sin),
-         newh = (int) Math.floor(height * cos + width * sin);
+      // The rotated bounding box is real-valued and almost never integer.
+      // Math.floor truncated up to ~1 px from each axis, clipping the
+      // rotated content at the edges. Math.ceil rounds up so the canvas
+      // is just big enough to contain the rotated image — the exception
+      // being axis-aligned rotations (0/90/180/270°) where the math is
+      // exact and ceil = floor.
+      int neww = (int) Math.ceil(width * cos + height * sin),
+         newh = (int) Math.ceil(height * cos + width * sin);
 
       // TYPE_CUSTOM (0) cannot be passed to the BufferedImage constructor;
       // fall back to ARGB like blank()/empty()/fromAwt() do.
