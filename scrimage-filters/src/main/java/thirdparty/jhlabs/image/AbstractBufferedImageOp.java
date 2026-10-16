@@ -48,7 +48,10 @@ public abstract class AbstractBufferedImageOp implements BufferedImageOp, Clonea
 
 	/**
 	 * A convenience method for getting ARGB pixels from an image. This tries to avoid the performance
-	 * penalty of BufferedImage.getRGB unmanaging the image.
+	 * penalty of BufferedImage.getRGB unmanaging the image. The returned pixels are always
+	 * non-premultiplied ARGB: for TYPE_INT_RGB images, whose raw data elements carry no alpha
+	 * (0x00RRGGBB), the alpha byte is forced to 0xff so that alpha-aware filters treat the
+	 * pixels as opaque rather than fully transparent.
      * @param image   a BufferedImage object
      * @param x       the left edge of the pixel block
      * @param y       the right edge of the pixel block
@@ -60,8 +63,14 @@ public abstract class AbstractBufferedImageOp implements BufferedImageOp, Clonea
      */
 	public int[] getRGB( BufferedImage image, int x, int y, int width, int height, int[] pixels ) {
 		int type = image.getType();
-		if ( type == BufferedImage.TYPE_INT_ARGB || type == BufferedImage.TYPE_INT_RGB )
+		if ( type == BufferedImage.TYPE_INT_ARGB )
 			return (int [])image.getRaster().getDataElements( x, y, width, height, pixels );
+		if ( type == BufferedImage.TYPE_INT_RGB ) {
+			int[] result = (int [])image.getRaster().getDataElements( x, y, width, height, pixels );
+			for ( int i = 0; i < result.length; i++ )
+				result[i] |= 0xff000000;
+			return result;
+		}
 		return image.getRGB( x, y, width, height, pixels, 0, width );
     }
 
