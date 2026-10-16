@@ -22,6 +22,11 @@ public class JpegWriter implements ImageWriter {
    public static JpegWriter CompressionFromMetaData = new JpegWriter(-1, false);
    public static JpegWriter Default = new JpegWriter(80, false);
 
+   /**
+    * @param compression quality between 0 (full lossy compression) and 100 (best quality),
+    *                    or -1 to copy the quality from the image metadata
+    * @throws IllegalArgumentException if compression is outside -1..100
+    */
    public static JpegWriter compression(int compression) {
       return new JpegWriter(compression, false);
    }
@@ -29,7 +34,20 @@ public class JpegWriter implements ImageWriter {
    private final int compression;
    private final boolean progressive;
 
+   /**
+    * @param compression quality between 0 (full lossy compression) and 100 (best quality),
+    *                    or -1 to copy the quality from the image metadata
+    * @param progressive whether to write a progressive JPEG
+    * @throws IllegalArgumentException if compression is outside -1..100
+    */
    public JpegWriter(int compression, boolean progressive) {
+      // Validate up front, as PngWriter does. An out of range value used to fall into the
+      // MODE_COPY_FROM_METADATA branch in write() and silently encode at the JDK default
+      // quality rather than the quality the caller asked for.
+      if (compression < -1 || compression > 100) {
+         throw new IllegalArgumentException(
+            "JPEG compression must be between 0 and 100 (or -1 to copy from metadata), got " + compression);
+      }
       this.compression = compression;
       this.progressive = progressive;
    }
@@ -38,6 +56,11 @@ public class JpegWriter implements ImageWriter {
       this(80, false);
    }
 
+   /**
+    * @param compression quality between 0 (full lossy compression) and 100 (best quality),
+    *                    or -1 to copy the quality from the image metadata
+    * @throws IllegalArgumentException if compression is outside -1..100
+    */
    public JpegWriter withCompression(int compression) {
       return new JpegWriter(compression, progressive);
    }
