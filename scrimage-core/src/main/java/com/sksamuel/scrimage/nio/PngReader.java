@@ -71,8 +71,33 @@ public class PngReader implements ImageReader {
             }
          }
       } else {
+         // For greyscale (1 channel) and truecolor (3 channels) PNGs the tRNS chunk names a
+         // single sample value / RGB triple that is fully transparent (a colour key). The key
+         // is stored at the file's native bit depth, so it is compared against the raw samples
+         // below, before they are scaled up or reduced to 8 bits.
+         ar.com.hjg.pngj.chunks.PngChunkTRNS trns = pngr.getMetadata().getTRNS();
+         int keyGray = -1;
+         int[] keyRgb = null;
+         if (trns != null && channels == 1) {
+            keyGray = trns.getGray();
+         } else if (trns != null && channels == 3) {
+            keyRgb = trns.getRGB();
+         }
+         boolean[] keyed = (keyGray >= 0 || keyRgb != null) ? new boolean[w] : null;
          for (int row = 0; row < h; row++) {
             ImageLineInt line = (ImageLineInt) pngr.readRow();
+            if (keyed != null) {
+               int[] raw = line.getScanline();
+               if (keyRgb != null) {
+                  for (int x = 0, k = 0; x < w; x++, k += 3) {
+                     keyed[x] = raw[k] == keyRgb[0] && raw[k + 1] == keyRgb[1] && raw[k + 2] == keyRgb[2];
+                  }
+               } else {
+                  for (int x = 0; x < w; x++) {
+                     keyed[x] = raw[x] == keyGray;
+                  }
+               }
+            }
             // pngj returns raw sample values, but PixelTools.argb expects 0-255 per channel:
             // - bit depths 1/2/4 (grayscale only) arrive unscaled (a 1-bit white pixel is 1,
             //   not 255) and must be scaled up. Note scaleUp is an explicit no-op for indexed
@@ -94,7 +119,8 @@ public class PngReader implements ImageReader {
                case 1:
                   for (int x = 0, k = 0; x < w; x++, k += channels) {
                      int v = scanline[k];
-                     matrix[rowOffset + x] = PixelTools.argb(255, v, v, v); // greyscale no alpha
+                     int a = (keyed != null && keyed[x]) ? 0 : 255;
+                     matrix[rowOffset + x] = PixelTools.argb(a, v, v, v); // greyscale, alpha only from the tRNS key
                   }
                   break;
                case 2:
@@ -105,7 +131,8 @@ public class PngReader implements ImageReader {
                   break;
                case 3:
                   for (int x = 0, k = 0; x < w; x++, k += channels) {
-                     matrix[rowOffset + x] = PixelTools.argb(255, scanline[k], scanline[k + 1], scanline[k + 2]); // if no alpha then 255 is full opacity
+                     int a = (keyed != null && keyed[x]) ? 0 : 255;
+                     matrix[rowOffset + x] = PixelTools.argb(a, scanline[k], scanline[k + 1], scanline[k + 2]); // no alpha channel, so 255 unless the pixel matches the tRNS key
                   }
                   break;
                case 4:
