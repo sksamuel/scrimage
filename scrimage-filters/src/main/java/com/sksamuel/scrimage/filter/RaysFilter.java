@@ -15,8 +15,15 @@
  */
 package com.sksamuel.scrimage.filter;
 
+import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 
+/**
+ * Adds light rays emanating from the bright areas of an image. Wraps the JH Labs RaysFilter.
+ * <p>
+ * The rays are composited with an additive composite that reads four samples per pixel, so only
+ * TYPE_INT_ARGB is supported; other image types are converted first.
+ */
 public class RaysFilter extends BufferedOpFilter {
 
     private final float opacity;
@@ -62,6 +69,11 @@ public class RaysFilter extends BufferedOpFilter {
 
     public RaysFilter() {
         this(1.0f, 0, 0.5f);
+    }
+
+    @Override
+    public int[] types() {
+        return new int[]{BufferedImage.TYPE_INT_ARGB};
     }
 
     @Override
