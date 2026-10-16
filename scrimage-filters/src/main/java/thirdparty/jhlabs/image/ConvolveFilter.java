@@ -268,7 +268,7 @@ public class ConvolveFilter extends AbstractBufferedImageOp {
 					if (0 <= iy && iy < height)
 						ioffset = iy*width;
 					else if ( edgeAction == CLAMP_EDGES )
-						ioffset = y*width;
+						ioffset = ImageMath.clamp(iy, 0, height-1)*width;
 					else if ( edgeAction == WRAP_EDGES )
 						ioffset = ((iy+height) % height) * width;
 					else
@@ -281,7 +281,7 @@ public class ConvolveFilter extends AbstractBufferedImageOp {
 							int ix = x+col;
 							if (!(0 <= ix && ix < width)) {
 								if ( edgeAction == CLAMP_EDGES )
-									ix = x;
+									ix = ImageMath.clamp(ix, 0, width-1);
 								else if ( edgeAction == WRAP_EDGES )
 									ix = (x+width) % width;
 								else
