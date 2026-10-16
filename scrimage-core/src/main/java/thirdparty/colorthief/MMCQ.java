@@ -480,10 +480,16 @@ public class MMCQ {
       // Reverse to put the highest elements first into the color map
       Collections.reverse(pq);
 
-      // calculate the actual colors
+      // calculate the actual colors. A median cut on an image with fewer distinct
+      // colours than maxcolors leaves boxes holding no pixels at all; their avg()
+      // is a geometric midpoint that exists nowhere in the image, so drop them
+      // rather than report a phantom colour. The palette may therefore be
+      // smaller than maxcolors.
       CMap cmap = new CMap();
       for (VBox vb : pq) {
-         cmap.push(vb);
+         if (vb.count(false) > 0) {
+            cmap.push(vb);
+         }
       }
 
       return cmap;
