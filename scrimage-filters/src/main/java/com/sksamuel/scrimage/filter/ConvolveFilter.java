@@ -45,14 +45,24 @@ public class ConvolveFilter extends BufferedOpFilter {
     /**
      * Creates a convolution filter from a {@code kernelWidth} x {@code kernelHeight}
      * row-major matrix.
+     * <p>
+     * The convolution is centred on the kernel's middle tap, so both dimensions must be
+     * odd (1, 3, 5, ...). Even sizes have no centre tap and are rejected; previously they
+     * failed at apply time with an ArrayIndexOutOfBoundsException.
      *
-     * @param kernelWidth  the number of columns in the kernel
-     * @param kernelHeight the number of rows in the kernel
+     * @param kernelWidth  the number of columns in the kernel; must be positive and odd
+     * @param kernelHeight the number of rows in the kernel; must be positive and odd
      * @param matrix       the kernel weights, row by row (length must be width * height)
+     * @throws IllegalArgumentException if a dimension is not positive and odd, or the matrix
+     *                                  length does not match
      */
     public ConvolveFilter(int kernelWidth, int kernelHeight, float[] matrix) {
         if (kernelWidth <= 0 || kernelHeight <= 0)
             throw new IllegalArgumentException("kernel dimensions must be positive");
+        if (kernelWidth % 2 == 0 || kernelHeight % 2 == 0)
+            throw new IllegalArgumentException(
+                "kernel dimensions must be odd so the kernel has a centre tap; got "
+                    + kernelWidth + "x" + kernelHeight);
         if (matrix == null || matrix.length != kernelWidth * kernelHeight)
             throw new IllegalArgumentException(
                 "matrix length must be kernelWidth * kernelHeight (" + (kernelWidth * kernelHeight) + ")");
