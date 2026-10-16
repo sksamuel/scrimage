@@ -289,7 +289,9 @@ public class ColorThief {
     * <p>
     * For these types the stored int has the same ARGB bit layout that getRGB
     * returns, so the red/green/blue extraction (and white filtering) is identical
-    * to {@link #getPixelsSlow}; like that method it does not filter on alpha.
+    * to {@link #getPixelsSlow}. When the colour model has an alpha channel, pixels
+    * that are mostly transparent (alpha &lt; 125) are skipped, matching the
+    * TYPE_4BYTE_ABGR branch of {@link #getPixelsFast}.
     * Returns {@code null} (caller falls back to the slow path) if the raster is
     * not a single-bank, contiguous, zero-offset SinglePixelPackedSampleModel —
     * e.g. a sub-raster with a scanline stride wider than the image.
@@ -321,13 +323,16 @@ public class ColorThief {
       int numRegardedPixels = (pixelCount + quality - 1) / quality;
       int numUsedPixels = 0;
       int[][] res = new int[numRegardedPixels][];
+      boolean hasAlpha = sourceImage.getColorModel().hasAlpha();
 
       for (int i = 0; i < pixelCount; i += quality) {
          int rgb = data[i];
          int r = (rgb >> 16) & 0xFF;
          int g = (rgb >> 8) & 0xFF;
          int b = rgb & 0xFF;
-         if (!(ignoreWhite && r > 250 && g > 250 && b > 250)) {
+         // If pixel is mostly opaque (when the image has alpha) and not white
+         if ((!hasAlpha || ((rgb >>> 24) & 0xFF) >= 125)
+            && !(ignoreWhite && r > 250 && g > 250 && b > 250)) {
             res[numUsedPixels] = new int[]{r, g, b};
             numUsedPixels++;
          }
@@ -338,7 +343,9 @@ public class ColorThief {
 
    /**
     * Gets the image's pixels via BufferedImage.getRGB(..). Slow, but the fast method doesn't work
-    * for all color models.
+    * for all color models. When the colour model has an alpha channel, pixels that are mostly
+    * transparent (alpha &lt; 125) are skipped, matching the TYPE_4BYTE_ABGR branch of
+    * {@link #getPixelsFast}.
     *
     * @param sourceImage
     *            the source image
@@ -374,6 +381,7 @@ public class ColorThief {
       // buffer (i = row * width + col), so rgbAll[i] equals getRGB(i % width,
       // i / width).
       int[] rgbAll = sourceImage.getRGB(0, 0, width, height, null, 0, width);
+      boolean hasAlpha = sourceImage.getColorModel().hasAlpha();
 
       for (int i = 0; i < pixelCount; i += quality) {
          int rgb = rgbAll[i];
@@ -381,7 +389,9 @@ public class ColorThief {
          r = (rgb >> 16) & 0xFF;
          g = (rgb >> 8) & 0xFF;
          b = (rgb) & 0xFF;
-         if (!(ignoreWhite && r > 250 && g > 250 && b > 250)) {
+         // If pixel is mostly opaque (when the image has alpha) and not white
+         if ((!hasAlpha || ((rgb >>> 24) & 0xFF) >= 125)
+            && !(ignoreWhite && r > 250 && g > 250 && b > 250)) {
             res[numUsedPixels] = new int[] {r, g, b};
             numUsedPixels++;
          }
