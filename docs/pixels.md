@@ -3,8 +3,9 @@ Pixel Functions
 
 There are several functions available on `ImmutableImage` that operate at the pixel level.
 
-To return all pixels in an image, we can use `image.argb()` or `image.pixels()`. The former returns pixels as ARGB
-integer encodings, and the latter returns them as `Pixel` objects.
+To return all pixels in an image, we can use `image.argb()`, `image.argbints()` or `image.pixels()`. The first returns
+an `int[][]` with one `{a, r, g, b}` component array per pixel, the second returns the pixels as packed ARGB `int`s,
+and the last returns them as `Pixel` objects.
 
 `image.pixel(x,y)` returns the pixel at the given coordinates and `count()` returns the total number of pixels in the image.
 
