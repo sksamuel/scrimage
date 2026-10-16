@@ -73,6 +73,10 @@ public class StreamingGifWriter extends AbstractGifWriter {
       return new StreamingGifWriter(frameDelay, infiniteLoop, compressed);
    }
 
+   /**
+    * A sequence of frames being written to a GIF. Frames may be written until {@link #close()},
+    * after which {@code writeFrame} throws {@link IOException}. {@code close()} is idempotent.
+    */
    public interface GifStream extends AutoCloseable {
       GifStream writeFrame(ImmutableImage image) throws IOException;
 
@@ -155,6 +159,7 @@ public class StreamingGifWriter extends AbstractGifWriter {
       return new GifStream() {
 
          private ImmutableImage last = null;
+         private boolean closed = false;
 
          @Override
          public GifStream writeFrame(ImmutableImage image) throws IOException {
@@ -173,6 +178,9 @@ public class StreamingGifWriter extends AbstractGifWriter {
 
          @Override
          public GifStream writeFrame(ImmutableImage image, Duration delay, DisposeMethod disposalMethod) throws IOException {
+            if (closed) {
+               throw new IOException("stream is closed");
+            }
             // All overloads funnel through here so that per-frame delay/dispose overrides and the
             // compressed transparency-diff always compose. Previously the override overloads wrote the
             // frame directly, which (a) leaked the overridden GraphicControlExtension attributes into
@@ -238,6 +246,13 @@ public class StreamingGifWriter extends AbstractGifWriter {
 
          @Override
          public void close() throws IOException {
+            // Idempotent, as AutoCloseable asks. A second close used to call endWriteSequence
+            // on the disposed writer and then close the already closed ios, which surfaced as
+            // a NullPointerException from MemoryCacheImageOutputStream.
+            if (closed) {
+               return;
+            }
+            closed = true;
             try {
                writer.endWriteSequence();
             } finally {
