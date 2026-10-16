@@ -134,9 +134,15 @@ public class MMCQ {
          if (_avg == null || force) {
             int ntot = 0;
 
-            int rsum = 0;
-            int gsum = 0;
-            int bsum = 0;
+            // long accumulators: each cell contributes up to hval * 31.5 * MULT
+            // (MULT == 8), so for a VBox holding more than ~8.5M sampled pixels
+            // the running sum exceeds Integer.MAX_VALUE and an int would wrap to
+            // a garbage (possibly negative) channel value. The root VBoxes hold
+            // nearly all pixels, so a large enough image (reachable via the public
+            // ImmutableImage.quantize / ColorThief.getColorMap) triggers this.
+            long rsum = 0;
+            long gsum = 0;
+            long bsum = 0;
 
             int hval, i, j, k, histoindex;
 
@@ -154,8 +160,8 @@ public class MMCQ {
             }
 
             if (ntot > 0) {
-               _avg = new int[] {clampChannel(rsum / ntot), clampChannel(gsum / ntot),
-                  clampChannel(bsum / ntot)};
+               _avg = new int[] {clampChannel((int) (rsum / ntot)), clampChannel((int) (gsum / ntot)),
+                  clampChannel((int) (bsum / ntot))};
             } else {
                _avg = new int[] {clampChannel(MULT * (r1 + r2 + 1) / 2),
                   clampChannel(MULT * (g1 + g2 + 1) / 2), clampChannel(MULT * (b1 + b2 + 1) / 2)};
