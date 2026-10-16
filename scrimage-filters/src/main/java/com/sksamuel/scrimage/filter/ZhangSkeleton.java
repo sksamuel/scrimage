@@ -23,9 +23,11 @@ import thirdparty.jhlabs.image.PixelUtils;
  * algorithm (T. Y. Zhang and C. Y. Suen, "A fast parallel algorithm for
  * thinning digital patterns", CACM, March 1984, 236-239).
  * <p>
- * The image is first binarised: a pixel is treated as foreground when its
- * brightness is below {@code threshold} (default 128), i.e. dark shapes on a
- * lighter background. The foreground is then repeatedly thinned — boundary
+ * The image is first binarised: a pixel is treated as foreground when it is
+ * not fully transparent and its brightness is below {@code threshold}
+ * (default 128), i.e. dark shapes on a lighter or transparent background.
+ * Fully transparent pixels (alpha 0) are always background, whatever their
+ * colour bits. The foreground is then repeatedly thinned — boundary
  * pixels are stripped in two complementary sub-iterations per pass until no
  * more can be removed without breaking connectivity or eroding an endpoint.
  * <p>
@@ -47,7 +49,8 @@ public class ZhangSkeleton implements Filter {
 
    /**
     * @param threshold the brightness cut-off in [0, 255]; a pixel is foreground
-    *                  when its brightness is strictly below this value.
+    *                  when it has non-zero alpha and its brightness is strictly
+    *                  below this value.
     */
    public ZhangSkeleton(int threshold) {
       if (threshold < 0 || threshold > 255)
@@ -61,10 +64,13 @@ public class ZhangSkeleton implements Filter {
       int h = image.height;
       int[] argb = image.awt().getRGB(0, 0, w, h, null, 0, w);
 
-      // Binarise into 1 = foreground (dark), 0 = background.
+      // Binarise into 1 = foreground (dark and not fully transparent), 0 = background.
+      // The brightness of 0x00000000 is 0, so without the alpha test a
+      // transparent background would be treated as one solid dark shape.
       byte[] fg = new byte[w * h];
       for (int i = 0; i < argb.length; i++) {
-         fg[i] = (byte) (PixelUtils.brightness(argb[i]) < threshold ? 1 : 0);
+         int p = argb[i];
+         fg[i] = (byte) ((p >>> 24) != 0 && PixelUtils.brightness(p) < threshold ? 1 : 0);
       }
 
       thin(fg, w, h);
