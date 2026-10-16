@@ -504,10 +504,25 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Returns a new Image with the brightness adjusted.
+    * <p>
+    * Palette-based (IndexColorModel) images are returned as TYPE_INT_ARGB because a
+    * palette cannot represent the transformed colours.
     *
     * @return a new Image with the brightness adjusted by the given factor
     */
    public ImmutableImage brightness(double factor) {
+      if (awt().getColorModel() instanceof java.awt.image.IndexColorModel) {
+         // Same maths as MutableImage.rescaleInPlace's indexed branch (RescaleOp rejects
+         // palette-based images), but written to an ARGB target: writing back into the
+         // palette copy snapped every result to the nearest ORIGINAL colour, so the
+         // brightness change was lost. Alpha is left untouched like RescaleOp does.
+         return transformPixels((offset, p) -> {
+            int r = PixelTools.truncate(factor * PixelTools.red(p));
+            int g = PixelTools.truncate(factor * PixelTools.green(p));
+            int b = PixelTools.truncate(factor * PixelTools.blue(p));
+            return PixelTools.argb(PixelTools.alpha(p), r, g, b);
+         });
+      }
       ImmutableImage target = copy();
       target.rescaleInPlace(factor);
       return target;
@@ -549,19 +564,23 @@ public class ImmutableImage extends MutableImage {
     * and bulk-written into a blank image of the same type, saving a full-image memory
     * pass compared to copy()-then-mutate-in-place.
     * <p>
-    * Palette-based images (IndexColorModel) are the exception: a blank palette-based
-    * image gets the default palette rather than this image's palette, so for those the
-    * copy() based path is kept and the ARGB values are read back from the copy, exactly
-    * as the mutate-in-place path did. The same applies to TYPE_CUSTOM (type 0) images,
-    * where copy() converts to TYPE_INT_ARGB via Graphics2D and reading from the source
-    * is not guaranteed to be bit-identical to reading from that conversion.
+    * Palette-based images (IndexColorModel) are promoted to TYPE_INT_ARGB: a palette
+    * image can only store the entries of its palette, so writing transformed colours
+    * back into a same-palette target would snap every one of them to the nearest
+    * ORIGINAL colour (e.g. toGrayscale() of a palette with no gray produced no gray
+    * pixels at all). TYPE_CUSTOM (type 0) images keep the copy() based path, where
+    * copy() converts to TYPE_INT_ARGB via Graphics2D and reading from the source is
+    * not guaranteed to be bit-identical to reading from that conversion.
     */
    private ImmutableImage transformPixels(java.util.function.IntBinaryOperator transform) {
       final ImmutableImage target;
       final int[] argb;
-      if (getType() == 0 || awt().getColorModel() instanceof java.awt.image.IndexColorModel) {
+      if (getType() == 0) {
          target = copy();
          argb = target.awt().getRGB(0, 0, width, height, null, 0, width);
+      } else if (awt().getColorModel() instanceof java.awt.image.IndexColorModel) {
+         target = create(width, height, BufferedImage.TYPE_INT_ARGB).associateMetadata(metadata);
+         argb = awt().getRGB(0, 0, width, height, null, 0, width);
       } else {
          target = blank().associateMetadata(metadata);
          argb = awt().getRGB(0, 0, width, height, null, 0, width);
@@ -593,6 +612,9 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Returns a new Image with the contrast adjusted.
+    * <p>
+    * Palette-based (IndexColorModel) images are returned as TYPE_INT_ARGB because a
+    * palette cannot represent the transformed colours.
     *
     * @return a new Image with the contrast adjusted by the given factor
     */
@@ -610,26 +632,24 @@ public class ImmutableImage extends MutableImage {
    /**
     * Returns a new image with the colours inverted (photographic negative). Each of the red, green
     * and blue channels is replaced by 255 minus its value; the alpha channel is left unchanged.
+    * <p>
+    * Palette-based (IndexColorModel) images are returned as TYPE_INT_ARGB because a
+    * palette cannot represent the transformed colours.
     *
     * @return a new inverted Image
     */
    public ImmutableImage invert() {
-      ImmutableImage target = copy();
-      int w = target.width;
-      int h = target.height;
-      int[] argb = target.awt().getRGB(0, 0, w, h, null, 0, w);
-      for (int i = 0; i < argb.length; i++) {
-         // keep the alpha byte, invert the low 24 (RGB) bits
-         argb[i] = (argb[i] & 0xFF000000) | (~argb[i] & 0x00FFFFFF);
-      }
-      target.awt().setRGB(0, 0, w, h, argb, 0, w);
-      return target;
+      // keep the alpha byte, invert the low 24 (RGB) bits
+      return transformPixels((offset, p) -> (p & 0xFF000000) | (~p & 0x00FFFFFF));
    }
 
    /**
     * Returns a new image with gamma correction applied to the red, green and blue channels.
     * The alpha channel is left unchanged. A gamma of 1.0 leaves the image unchanged, values
     * greater than 1.0 brighten the midtones and values below 1.0 darken them.
+    * <p>
+    * Palette-based (IndexColorModel) images are returned as TYPE_INT_ARGB because a
+    * palette cannot represent the transformed colours.
     *
     * @param gamma the gamma level to apply to all RGB channels
     * @return a new gamma-corrected Image
@@ -640,20 +660,13 @@ public class ImmutableImage extends MutableImage {
          int v = (int) (255.0 * Math.pow(i / 255.0, 1.0 / gamma) + 0.5);
          table[i] = Math.min(v, 255);
       }
-      ImmutableImage target = copy();
-      int w = target.width;
-      int h = target.height;
-      int[] argb = target.awt().getRGB(0, 0, w, h, null, 0, w);
-      for (int i = 0; i < argb.length; i++) {
-         int p = argb[i];
+      return transformPixels((offset, p) -> {
          int a = p & 0xFF000000;
          int r = table[(p >> 16) & 0xFF];
          int g = table[(p >> 8) & 0xFF];
          int b = table[p & 0xFF];
-         argb[i] = a | (r << 16) | (g << 8) | b;
-      }
-      target.awt().setRGB(0, 0, w, h, argb, 0, w);
-      return target;
+         return a | (r << 16) | (g << 8) | b;
+      });
    }
 
    /**
@@ -786,6 +799,9 @@ public class ImmutableImage extends MutableImage {
    /**
     * Creates a copy of this image with the given filter applied.
     * The original (this) image is unchanged.
+    * <p>
+    * Palette-based (IndexColorModel) images are returned as TYPE_INT_ARGB because a
+    * palette cannot represent the transformed colours.
     *
     * @param filter the filter to apply. See com.sksamuel.scrimage.Filter.
     * @return A new image with the given filter applied.
@@ -802,6 +818,12 @@ public class ImmutableImage extends MutableImage {
          for (int t : types) {
             if (t == currentType) { canUseCurrent = true; break; }
          }
+      }
+      // A palette-based copy can only store its palette's colours, so every pixel the
+      // filter writes (via setRGB) would be snapped to the nearest ORIGINAL colour.
+      if (canUseCurrent && awt().getColorModel() instanceof java.awt.image.IndexColorModel) {
+         canUseCurrent = false;
+         types = new int[]{BufferedImage.TYPE_INT_ARGB};
       }
       ImmutableImage target = canUseCurrent ? copy() : copy(types[0]);
       filter.apply(target);
@@ -1502,6 +1524,9 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Returns a new ImmutableImage with transparency replaced with the given color.
+    * <p>
+    * Palette-based (IndexColorModel) images are returned as TYPE_INT_ARGB because a
+    * palette cannot represent the transformed colours.
     *
     * @return a new ImmutableImage with transparency replaced by the given color
     */
@@ -2133,6 +2158,9 @@ public class ImmutableImage extends MutableImage {
     * Maps the pixels of this image into another image by applying the given function to each pixel.
     * <p>
     * The function accepts a pixel being transformed and returns a new (or same) color.
+    * <p>
+    * Palette-based (IndexColorModel) images are returned as TYPE_INT_ARGB because a
+    * palette cannot represent the transformed colours.
     *
     * @param mapper the function to transform pixel x,y with existing value p into new pixel value p' (p prime)
     * @return a new Image with the mapper function applied to each pixel
@@ -2175,6 +2203,9 @@ public class ImmutableImage extends MutableImage {
     * Returns a grayscale copy of this image using the default {@link GrayscaleMethod#LUMA}
     * method (Rec. 709 perceived luminance). For other weighting schemes use
     * {@link #toGrayscale(GrayscaleMethod)}.
+    * <p>
+    * Palette-based (IndexColorModel) images are returned as TYPE_INT_ARGB because a
+    * palette cannot represent the transformed colours.
     *
     * @return a new grayscale Image
     */
@@ -2182,6 +2213,14 @@ public class ImmutableImage extends MutableImage {
       return toGrayscale(GrayscaleMethod.LUMA);
    }
 
+   /**
+    * Returns a grayscale copy of this image using the given {@link GrayscaleMethod}.
+    * <p>
+    * Palette-based (IndexColorModel) images are returned as TYPE_INT_ARGB because a
+    * palette cannot represent the transformed colours.
+    *
+    * @return a new grayscale Image
+    */
    public ImmutableImage toGrayscale(GrayscaleMethod method) {
       // The previous map((Pixel) -> Color) routed through mapInPlace and
       // allocated three objects per pixel: an RGBColor (toColor), a Grayscale
