@@ -7,10 +7,21 @@ import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.stream.ImageOutputStream;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class TiffWriter extends TwelveMonkeysWriter {
+
+   // The TwelveMonkeys TIFF encoder throws IllegalArgumentException("Not implemented for data
+   // type: 1") for 16-bit packed RGB. 1-bit and 16-bit grayscale are encoded natively.
+   private static final Set<Integer> UNSUPPORTED_TYPES = new HashSet<>(Arrays.asList(
+      BufferedImage.TYPE_USHORT_565_RGB,
+      BufferedImage.TYPE_USHORT_555_RGB
+   ));
 
    // see https://download.java.net/media/jai-imageio/javadoc/1.1/com/sun/media/imageio/plugins/tiff/TIFFImageWriteParam.html
    private final String compressionType;
@@ -44,6 +55,11 @@ public class TiffWriter extends TwelveMonkeysWriter {
    }
 
    @Override
+   protected Set<Integer> unsupportedTypes() {
+      return UNSUPPORTED_TYPES;
+   }
+
+   @Override
    public void write(AwtImage image, ImageMetadata metadata, OutputStream out) throws IOException {
       javax.imageio.ImageWriter writer = ImageIO.getImageWritersByFormatName(format()).next();
       try (ImageOutputStream ios = ImageIO.createImageOutputStream(out)) {
@@ -55,7 +71,7 @@ public class TiffWriter extends TwelveMonkeysWriter {
          }
 
          writer.setOutput(ios);
-         writer.write(null, new IIOImage(image.awt(), null, null), params);
+         writer.write(null, new IIOImage(normalise(image).awt(), null, null), params);
       } finally {
          writer.dispose();
       }
