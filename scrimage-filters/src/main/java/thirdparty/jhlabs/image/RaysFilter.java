@@ -124,6 +124,13 @@ public class RaysFilter extends MotionBlurOp {
 		if ( !raysOnly ) {
 			g.setComposite( AlphaComposite.SrcOver );
 			g.drawRenderedImage( src, null );
+		} else {
+			// dst may be the source image itself (callers are allowed to pass dst == src),
+			// so skipping the draw above is not enough: clear dst to opaque black so the
+			// output contains only the rays.
+			g.setComposite( AlphaComposite.Src );
+			g.setColor( Color.BLACK );
+			g.fillRect( 0, 0, width, height );
 		}
 		g.setComposite( MiscComposite.getInstance( MiscComposite.ADD, opacity ) );
 		g.drawRenderedImage( rays, null );
