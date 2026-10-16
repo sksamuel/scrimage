@@ -1,8 +1,6 @@
 package com.sksamuel.scrimage.nio.internal;
 
 import com.sksamuel.scrimage.DisposeMethod;
-import com.sksamuel.scrimage.ImmutableImage;
-import com.sksamuel.scrimage.nio.GifSequenceWriter;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -139,6 +137,7 @@ public class GifSequenceReader {
 
    protected List<GifFrame> frames; // frames read from current file
    protected int frameCount;
+   protected byte[] source; // the encoded GIF exactly as it was read
 
    /**
     * Returns the maximum number of pixels accepted for the logical screen or for a
@@ -349,27 +348,20 @@ public class GifSequenceReader {
    }
 
    /**
-    * Gets gif image bytes.
+    * Gets the gif image bytes exactly as they were read, so per-frame delays,
+    * disposal methods, loop count and any extensions are all preserved.
+    * Previously this re-encoded the decoded frames through GifSequenceWriter,
+    * which forced every frame's disposal to "none" and applied frame 0's delay
+    * to all frames.
     *
-    * @return GIF InputStream bytes
-    * @throws IOException
+    * @return a copy of the GIF bytes that were read
+    * @throws IOException if no GIF has been read
     */
    public byte[] bytes() throws IOException {
-      // Use the first frame's recorded delay rather than the parser's
-      // (now correctly reset-to-zero) leftover GCE state. GifSequenceWriter
-      // applies a single delay to every frame, so for uniform-delay GIFs
-      // (the common case) this preserves the source's playback timing.
-      // Previously this read the instance `delay` field, which only
-      // happened to hold the last frame's delay because resetFrame was
-      // shadowing rather than resetting it.
-      long frameDelayMs = frames.isEmpty() ? 0 : frames.get(0).delay;
-      return new GifSequenceWriter()
-         .withFrameDelay(frameDelayMs)
-         .withInfiniteLoop(loopCount == 0)
-         .bytes(frames.stream()
-            .map(frame -> frame.image)
-            .map(ImmutableImage::fromAwt)
-            .toArray(ImmutableImage[]::new));
+      if (source == null) {
+         throw new IOException("No GIF has been read");
+      }
+      return source.clone();
    }
 
    /**
@@ -399,7 +391,8 @@ public class GifSequenceReader {
          // every decoded frame is larger than the file it came from, so buffering it
          // costs nothing meaningful.
          try {
-            in = new BufferedInputStream(new ByteArrayInputStream(is.readAllBytes()));
+            source = is.readAllBytes();
+            in = new BufferedInputStream(new ByteArrayInputStream(source));
             readHeader();
             if (!err()) {
                readContents();
@@ -641,6 +634,7 @@ public class GifSequenceReader {
       frames = new ArrayList<>();
       gct = null;
       lct = null;
+      source = null;
    }
 
    /**
