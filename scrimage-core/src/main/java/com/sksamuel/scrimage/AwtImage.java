@@ -508,7 +508,7 @@ public class AwtImage {
     * Counts the number of pixels with the given colour.
     *
     * @param color the colour to detect.
-    * @return the number of pixels that matched the colour of the given pixel
+    * @return the number of pixels that match the given colour
     */
    public long count(Color color) {
       int target = color.getRGB();
@@ -541,7 +541,7 @@ public class AwtImage {
    /**
     * Returns a new AWT BufferedImage from this image.
     *
-    * @param type the type of buffered image to create, if not specified then defaults to the current image type
+    * @param type the type of buffered image to create. See BufferedImage.TYPE_*
     * @return a new, non-shared, BufferedImage with the same data as this Image.
     */
    public BufferedImage toNewBufferedImage(int type) {
