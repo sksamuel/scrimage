@@ -6,6 +6,6 @@ plugins {
 }
 
 dependencies {
-   implementation(project(":scrimage-core"))
+   api(project(":scrimage-core"))
    testImplementation(project(":scrimage-webp"))
 }

@@ -5,6 +5,6 @@ plugins {
 }
 
 dependencies {
-   implementation(project(":scrimage-core"))
+   api(project(":scrimage-core"))
    implementation("commons-io:commons-io:2.22.0")
 }
