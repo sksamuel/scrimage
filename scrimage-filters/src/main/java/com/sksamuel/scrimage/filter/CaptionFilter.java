@@ -29,7 +29,14 @@ public class CaptionFilter implements Filter {
     private final double captionAlpha;
     private final Padding padding;
 
+    /**
+     * @param textAlpha    the opacity of the caption text in [0, 1]
+     * @param captionAlpha the opacity of the caption background in [0, 1]
+     * @throws IllegalArgumentException if either alpha is outside [0, 1]
+     */
     public CaptionFilter(String text, Position position, Font font, Color textColor, double textAlpha, boolean antiAlias, boolean fullWidth, Color captionBackground, double captionAlpha, Padding padding) {
+        validateAlpha("textAlpha", textAlpha);
+        validateAlpha("captionAlpha", captionAlpha);
         this.text = text;
         this.position = position;
         this.x = -1;
@@ -44,7 +51,14 @@ public class CaptionFilter implements Filter {
         this.padding = padding;
     }
 
+    /**
+     * @param textAlpha    the opacity of the caption text in [0, 1]
+     * @param captionAlpha the opacity of the caption background in [0, 1]
+     * @throws IllegalArgumentException if either alpha is outside [0, 1]
+     */
     public CaptionFilter(String text, int x, int y, Font font, Color textColor, double textAlpha, boolean antiAlias, boolean fullWidth, Color captionBackground, double captionAlpha, Padding padding) {
+        validateAlpha("textAlpha", textAlpha);
+        validateAlpha("captionAlpha", captionAlpha);
         this.text = text;
         this.position = null;
         this.x = x;
@@ -57,6 +71,13 @@ public class CaptionFilter implements Filter {
         this.captionBackground = captionBackground;
         this.captionAlpha = captionAlpha;
         this.padding = padding;
+    }
+
+    // AlphaComposite.getInstance rejects alpha outside [0, 1]; validate up front so
+    // a bad value fails at construction rather than deep inside apply().
+    private static void validateAlpha(String name, double alpha) {
+        if (!(alpha >= 0 && alpha <= 1))
+            throw new IllegalArgumentException(name + " must be in [0, 1], got " + alpha);
     }
 
     @Override

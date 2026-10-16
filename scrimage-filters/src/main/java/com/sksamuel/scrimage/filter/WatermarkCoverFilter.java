@@ -18,7 +18,15 @@ public class WatermarkCoverFilter implements Filter {
     private final double alpha;
     private final Color color;
 
+    /**
+     * @param alpha the opacity of the watermark text in [0, 1]
+     * @throws IllegalArgumentException if alpha is outside [0, 1]
+     */
     public WatermarkCoverFilter(String text, Font font, boolean antiAlias, double alpha, Color color) {
+        // AlphaComposite.getInstance rejects alpha outside [0, 1]; validate here so
+        // a bad value fails at construction rather than deep inside apply().
+        if (!(alpha >= 0 && alpha <= 1))
+            throw new IllegalArgumentException("alpha must be in [0, 1], got " + alpha);
         this.text = text;
         this.font = font;
         this.antiAlias = antiAlias;
