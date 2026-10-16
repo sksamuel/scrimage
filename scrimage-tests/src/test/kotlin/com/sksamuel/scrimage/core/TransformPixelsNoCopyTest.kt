@@ -19,8 +19,10 @@ import java.awt.image.BufferedImage
  * from the source and bulk-write the transformed values into a blank image of the
  * same type, which must be bit-identical to the old copy-then-mutate path.
  *
- * Palette-based images (IndexColorModel) must keep the copy() based path: a blank
- * indexed image would get the default palette, not the source's palette.
+ * Palette-based images (IndexColorModel) are the exception: a palette can only store
+ * its own entries, so writing the transformed colours back into a same-palette copy
+ * snapped every result to the nearest ORIGINAL colour. Those are promoted to
+ * TYPE_INT_ARGB and must match the same op applied to copy(TYPE_INT_ARGB).
  *
  * These tests pin the new implementations against the old path, which is still
  * expressible as copy() + the (unchanged) MutableImage *InPlace methods.
@@ -67,14 +69,16 @@ class TransformPixelsNoCopyTest : FunSpec({
       return target
    }
 
+   // for palette-based images the reference is the old path applied to an ARGB copy,
+   // since the palette-typed copy could not hold the transformed colours
    listOf(
-      "ARGB" to ::argbFixture,
-      "indexed" to ::indexedFixture
-   ).forEach { (name, fixture) ->
+      "ARGB" to { argbFixture() to argbFixture() },
+      "indexed" to { indexedFixture().let { it to it.copy(BufferedImage.TYPE_INT_ARGB) } }
+   ).forEach { (name, fixtures) ->
 
       test("map matches the old copy-then-mapInPlace path ($name)") {
-         val image = fixture()
-         val old = image.copy()
+         val (image, reference) = fixtures()
+         val old = reference.copy()
          old.mapInPlace(mapper)
          val new = image.map(mapper)
          new.awt().type shouldBe old.awt().type
@@ -82,26 +86,26 @@ class TransformPixelsNoCopyTest : FunSpec({
       }
 
       test("contrast matches the old copy-then-contrastInPlace path ($name)") {
-         val image = fixture()
+         val (image, reference) = fixtures()
          for (factor in listOf(0.0, 0.5, 1.3, 2.0)) {
-            val old = image.copy()
+            val old = reference.copy()
             old.contrastInPlace(factor)
             argbOf(image.contrast(factor)) shouldBe argbOf(old)
          }
       }
 
       test("removeTransparency matches the old copy-then-replaceTransparencyInPlace path ($name)") {
-         val image = fixture()
+         val (image, reference) = fixtures()
          val color = Color(10, 200, 30, 255)
-         val old = image.copy()
+         val old = reference.copy()
          old.replaceTransparencyInPlace(color)
          argbOf(image.removeTransparency(color)) shouldBe argbOf(old)
       }
 
       test("toGrayscale matches the old copy-based path ($name)") {
-         val image = fixture()
+         val (image, reference) = fixtures()
          for (method in listOf(LumaGrayscale(), AverageGrayscale(), WeightedGrayscale())) {
-            argbOf(image.toGrayscale(method)) shouldBe argbOf(oldToGrayscale(image, method))
+            argbOf(image.toGrayscale(method)) shouldBe argbOf(oldToGrayscale(reference, method))
          }
       }
    }
@@ -116,10 +120,12 @@ class TransformPixelsNoCopyTest : FunSpec({
       argbOf(image) shouldBe before
    }
 
-   test("indexed images keep their type and palette (guard against blank() default palette)") {
+   test("indexed images are promoted to TYPE_INT_ARGB and keep their colours under an identity map") {
       val image = indexedFixture()
       val result = image.map { p -> p.toColor().awt() } // identity map
-      result.awt().type shouldBe BufferedImage.TYPE_BYTE_INDEXED
-      argbOf(result) shouldBe argbOf(image.copy())
+      result.awt().type shouldBe BufferedImage.TYPE_INT_ARGB
+      argbOf(result) shouldBe argbOf(image)
+      // the source is untouched and still palette-based
+      image.awt().type shouldBe BufferedImage.TYPE_BYTE_INDEXED
    }
 })
