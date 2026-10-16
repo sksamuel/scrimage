@@ -25,7 +25,19 @@ public class RippleFilter extends BufferedOpFilter {
     private final float xWavelength;
     private final float yWavelength;
 
+    /**
+     * @param xWavelength the wavelength of the horizontal ripple; must be greater than zero
+     * @param yWavelength the wavelength of the vertical ripple; must be greater than zero
+     * @throws IllegalArgumentException if either wavelength is not greater than zero
+     */
     public RippleFilter(RippleType rippleType, float xAmplitude, float yAmplitude, float xWavelength, float yWavelength) {
+        // The jhlabs implementation divides by the wavelengths when computing the
+        // inverse transform; zero (or NaN) turns every coordinate into NaN and the
+        // whole output silently becomes transparent black.
+        if (!(xWavelength > 0))
+            throw new IllegalArgumentException("xWavelength must be > 0, got " + xWavelength);
+        if (!(yWavelength > 0))
+            throw new IllegalArgumentException("yWavelength must be > 0, got " + yWavelength);
         this.rippleType = rippleType;
         this.xAmplitude = xAmplitude;
         this.yAmplitude = yAmplitude;
