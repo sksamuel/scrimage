@@ -15,9 +15,19 @@
  */
 package com.sksamuel.scrimage.filter;
 
+import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 
+/**
+ * Inverts the alpha channel of an image. The effect is entirely in the alpha channel, so only
+ * TYPE_INT_ARGB is supported; images without alpha are converted first.
+ */
 public class InvertAlphaFilter extends BufferedOpFilter {
+
+    @Override
+    public int[] types() {
+        return new int[]{BufferedImage.TYPE_INT_ARGB};
+    }
 
     @Override
     public BufferedImageOp op() {

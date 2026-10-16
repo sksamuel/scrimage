@@ -15,8 +15,13 @@
  */
 package com.sksamuel.scrimage.filter;
 
+import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 
+/**
+ * Randomly makes pixels transparent according to the given density. The effect is entirely in the
+ * alpha channel, so only TYPE_INT_ARGB is supported; images without alpha are converted first.
+ */
 public class DissolveFilter extends BufferedOpFilter {
 
    private final float density;
@@ -36,6 +41,11 @@ public class DissolveFilter extends BufferedOpFilter {
    public DissolveFilter(float density, float softness) {
       this.density = density;
       this.softness = softness;
+   }
+
+   @Override
+   public int[] types() {
+      return new int[]{BufferedImage.TYPE_INT_ARGB};
    }
 
    @Override
