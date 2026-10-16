@@ -40,9 +40,11 @@ public class OctTreeQuantizer implements Quantizer {
 		OctTreeNode[] leaf = new OctTreeNode[8];
 		boolean isLeaf;
 		int count;
-		int	totalRed;
-		int	totalGreen;
-		int	totalBlue;
+		// long: int totals overflow once a single colour covers more than
+		// 2^31 / 255 (about 8.4 million) pixels, e.g. a 3000x3000 uniform image.
+		long	totalRed;
+		long	totalGreen;
+		long	totalBlue;
 		int index;
 	}
 
@@ -242,9 +244,9 @@ public class OctTreeQuantizer implements Quantizer {
 		if (node.isLeaf) {
 			int count = node.count;
 			table[index] = 0xff000000 |
-				((node.totalRed/count) << 16) |
-				((node.totalGreen/count) << 8) |
-				node.totalBlue/count;
+				((int)(node.totalRed/count) << 16) |
+				((int)(node.totalGreen/count) << 8) |
+				(int)(node.totalBlue/count);
 			node.index = index++;
 		} else {
 			for (int i = 0; i < 8; i++) {
