@@ -167,7 +167,11 @@ public class ColorThief {
       switch (sourceImage.getType()) {
          case BufferedImage.TYPE_3BYTE_BGR:
          case BufferedImage.TYPE_4BYTE_ABGR:
-            pixelArray = getPixelsFast(sourceImage, quality, ignoreWhite);
+            // The byte fast path needs a tightly packed buffer; a sub-image view
+            // (BufferedImage.getSubimage) shares its parent's larger buffer, in
+            // which case it returns null and we fall back to the slow path.
+            int[][] fastBytes = getPixelsFast(sourceImage, quality, ignoreWhite);
+            pixelArray = (fastBytes != null) ? fastBytes : getPixelsSlow(sourceImage, quality, ignoreWhite);
             break;
 
          case BufferedImage.TYPE_INT_ARGB:
@@ -190,6 +194,10 @@ public class ColorThief {
    /**
     * Gets the image's pixels via BufferedImage.getRaster().getDataBuffer(). Fast, but doesn't work
     * for all color models.
+    * <p>
+    * Returns {@code null} (caller falls back to {@link #getPixelsSlow}) if the backing byte
+    * buffer is not exactly width * height * depth bytes long, e.g. for a sub-raster view
+    * created with BufferedImage.getSubimage that shares its parent's larger buffer.
     *
     * @param sourceImage
     *            the source image
@@ -200,7 +208,8 @@ public class ColorThief {
     * @param ignoreWhite
     *            if <code>true</code>, white pixels are ignored
     *
-    * @return an array of pixels (each an RGB int array)
+    * @return an array of pixels (each an RGB int array), or {@code null} if the raster layout
+    *         is not supported by this fast path
     */
    private static int[][] getPixelsFast(
       BufferedImage sourceImage,
@@ -227,9 +236,9 @@ public class ColorThief {
 
       int expectedDataLength = pixelCount * colorDepth;
       if (expectedDataLength != pixels.length) {
-         throw new IllegalArgumentException(
-            "(expectedDataLength = " + expectedDataLength + ") != (pixels.length = "
-               + pixels.length + ")");
+         // Sub-raster view (or otherwise padded buffer): the flat index arithmetic
+         // below would read the wrong pixels, so let the caller use the slow path.
+         return null;
       }
 
       // Store the RGB values in an array format suitable for quantize function
