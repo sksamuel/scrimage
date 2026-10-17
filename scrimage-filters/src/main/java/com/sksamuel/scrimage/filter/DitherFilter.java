@@ -27,9 +27,15 @@ public class DitherFilter extends BufferedOpFilter {
     }
 
     /**
-     * @param levels the number of dither levels per channel (jhlabs default 6).
+     * @param levels the number of dither levels per channel (jhlabs default 6); must be at least 2.
+     * @throws IllegalArgumentException if levels is less than 2. The jhlabs filter builds a lookup
+     *                                  table of {@code levels} entries spaced {@code 255 / (levels - 1)}
+     *                                  apart, so smaller values previously failed at apply time with
+     *                                  an ArithmeticException or ArrayIndexOutOfBoundsException.
      */
     public DitherFilter(int levels) {
+        if (levels < 2)
+            throw new IllegalArgumentException("levels must be at least 2; got " + levels);
         this.levels = levels;
     }
 
