@@ -24,7 +24,16 @@ public class SwimFilter extends BufferedOpFilter {
     private final float amount;
     private final float stretch;
 
+    /**
+     * @param stretch the stretch factor of the distortion; must be greater than zero
+     * @throws IllegalArgumentException if stretch is not greater than zero
+     */
     public SwimFilter(Random random, float amount, float stretch) {
+        // The jhlabs implementation divides by (scale * stretch) when computing the
+        // inverse transform; zero (or NaN) turns every coordinate into NaN and the
+        // whole output silently becomes transparent black.
+        if (!(stretch > 0))
+            throw new IllegalArgumentException("stretch must be > 0, got " + stretch);
         this.random = random;
         this.amount = amount;
         this.stretch = stretch;
