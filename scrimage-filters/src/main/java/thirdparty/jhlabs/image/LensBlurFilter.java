@@ -178,7 +178,7 @@ public class LensBlurFilter extends AbstractBufferedImageOp {
                     int j;
                     if (imageY < 0)
                         j = fy;
-                    else if (imageY > height)
+                    else if (imageY >= height)
                         j = fy + th - 1;
                     else
                         j = y;
@@ -188,7 +188,7 @@ public class LensBlurFilter extends AbstractBufferedImageOp {
                         int k;
                         if (imageX < 0)
                             k = fx;
-                        else if (imageX > width)
+                        else if (imageX >= width)
                             k = fx + tw - 1;
                         else
                             k = x;
@@ -265,18 +265,20 @@ public class LensBlurFilter extends AbstractBufferedImageOp {
                     int yi = ym * cols;
                     for (int x = 0; x < w; x++) {
                         int xm = yi + (x ^ col_flip);
-                        int a = (int) ar[0][xm];
-                        int r = (int) ar[1][xm];
-                        int g = (int) gb[0][xm];
-                        int b = (int) gb[1][xm];
+                        // Round rather than truncate: the inverse FFT returns values such as
+                        // 254.9997 for an exact 255, and a plain cast darkened every channel
+                        // (including alpha) by one level.
+                        int a = (int) (ar[0][xm] + 0.5f);
+                        int r = (int) (ar[1][xm] + 0.5f);
+                        int g = (int) (gb[0][xm] + 0.5f);
+                        int b = (int) (gb[1][xm] + 0.5f);
 
-                        // Clamp high pixels due to blooming
-                        if (r > 255)
-                            r = 255;
-                        if (g > 255)
-                            g = 255;
-                        if (b > 255)
-                            b = 255;
+                        // Clamp high pixels due to blooming, and clamp low pixels and alpha
+                        // too, as FFT ringing can leave small negative values.
+                        a = PixelUtils.clamp(a);
+                        r = PixelUtils.clamp(r);
+                        g = PixelUtils.clamp(g);
+                        b = PixelUtils.clamp(b);
                         int argb = (a << 24) | (r << 16) | (g << 8) | b;
                         rgb[index++] = argb;
                     }
