@@ -901,6 +901,9 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Returns the most n used colours in this image.
+    * <p>
+    * The returned palette holds at most n colours; an image with fewer distinct colours than
+    * requested yields a shorter palette rather than padding it with colours that do not occur.
     *
     * @param colours how many colours to quantize for.
     * @return an array of the most used colours in this image

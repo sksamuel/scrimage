@@ -76,7 +76,8 @@ public class ColorThief {
     * @param sourceImage
     *            the source image
     * @param colorCount
-    *            the size of the palette; the number of colors returned
+    *            the size of the palette; the maximum number of colors returned (fewer if the
+    *            image has fewer distinct colors)
     *
     * @return the palette as array of RGB arrays
     */
@@ -94,7 +95,8 @@ public class ColorThief {
     * @param sourceImage
     *            the source image
     * @param colorCount
-    *            the size of the palette; the number of colors returned
+    *            the size of the palette; the maximum number of colors returned (fewer if the
+    *            image has fewer distinct colors)
     * @param quality
     *            1 is the highest quality settings. 10 is the default. There is a trade-off between
     *            quality and speed. The bigger the number, the faster the palette generation but
@@ -124,7 +126,8 @@ public class ColorThief {
     * @param sourceImage
     *            the source image
     * @param colorCount
-    *            the size of the palette; the number of colors returned (minimum 2, maximum 256)
+    *            the size of the palette; the maximum number of colors returned (minimum 2,
+    *            maximum 256; fewer are returned if the image has fewer distinct colors)
     *
     * @return the color map
     */
@@ -138,7 +141,8 @@ public class ColorThief {
     * @param sourceImage
     *            the source image
     * @param colorCount
-    *            the size of the palette; the number of colors returned (minimum 2, maximum 256)
+    *            the size of the palette; the maximum number of colors returned (minimum 2,
+    *            maximum 256; fewer are returned if the image has fewer distinct colors)
     * @param quality
     *            1 is the highest quality settings. 10 is the default. There is a trade-off between
     *            quality and speed. The bigger the number, the faster the palette generation but
