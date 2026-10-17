@@ -631,10 +631,16 @@ public class ImmutableImage extends MutableImage {
     * The alpha channel is left unchanged. A gamma of 1.0 leaves the image unchanged, values
     * greater than 1.0 brighten the midtones and values below 1.0 darken them.
     *
-    * @param gamma the gamma level to apply to all RGB channels
+    * @param gamma the gamma level to apply to all RGB channels; must be a positive number
     * @return a new gamma-corrected Image
+    * @throws IllegalArgumentException if gamma is NaN, zero or negative.
     */
    public ImmutableImage gamma(double gamma) {
+      // Validate up front: the table is built from 1.0 / gamma, so zero gives Infinity,
+      // a negative value a negative exponent and NaN propagates - each silently turning
+      // the image solid black or white instead of failing fast on the bad input.
+      if (Double.isNaN(gamma) || gamma <= 0)
+         throw new IllegalArgumentException("Gamma must be a positive number but was " + gamma);
       int[] table = new int[256];
       for (int i = 0; i < 256; i++) {
          int v = (int) (255.0 * Math.pow(i / 255.0, 1.0 / gamma) + 0.5);
