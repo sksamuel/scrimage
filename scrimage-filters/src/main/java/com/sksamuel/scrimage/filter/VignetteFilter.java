@@ -65,7 +65,10 @@ public class VignetteFilter implements Filter {
         ImmutableImage target = image.blank();
         Graphics2D g2 = (Graphics2D) target.awt().getGraphics();
         try {
-            float radius = image.radius() * end;
+            // AwtImage.radius() truncates to an int, so a 1x1 image has radius 0
+            // (sqrt(0.5) -> 0) and RadialGradientPaint would throw "Radius must be
+            // greater than zero". Floor the gradient radius at one pixel.
+            float radius = Math.max(1f, image.radius() * end);
 
             final float fraction;
             if (start == 0) fraction = 0.01f;
