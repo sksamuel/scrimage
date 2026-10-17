@@ -1,5 +1,7 @@
 package com.sksamuel.scrimage.scaling;
 
+import com.sksamuel.scrimage.AwtImage;
+
 import java.awt.image.BufferedImage;
 
 public class AwtNearestNeighbourScale implements Scale {
@@ -29,7 +31,9 @@ public class AwtNearestNeighbourScale implements Scale {
       // TYPE_CUSTOM (0) cannot be passed to the BufferedImage constructor
       // (e.g. 16-bit PNGs decode to a custom type); fall back to ARGB.
       int type = in.getType() == BufferedImage.TYPE_CUSTOM ? BufferedImage.TYPE_INT_ARGB : in.getType();
-      BufferedImage target = new BufferedImage(w, h, type);
+      // Palette-based sources must keep their own palette, otherwise setRGB snaps
+      // every pixel to the default palette of a plain new BufferedImage(w, h, type).
+      BufferedImage target = AwtImage.compatibleTarget(in, w, h, type);
       target.setRGB(0, 0, w, h, dst, 0, w);
       return target;
    }

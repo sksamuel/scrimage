@@ -574,11 +574,34 @@ public class AwtImage {
     * remapped through the wrong palette.
     */
    private BufferedImage sameTypeCopyTarget(int type) {
-      ColorModel cm = awt.getColorModel();
+      return compatibleTarget(awt, width, height, type);
+   }
+
+   /**
+    * Creates a blank, uninitialized target image of the given dimensions that is
+    * compatible with the given source image, for operations that produce an image of
+    * the same type as the source (subimage, blank, rotate, nearest-neighbour scale, ...).
+    * <p>
+    * For most types this is simply new BufferedImage(w, h, type). Palette-based sources
+    * (IndexColorModel: TYPE_BYTE_INDEXED, TYPE_BYTE_BINARY) are the exception: that
+    * constructor would give the target Java's *default* palette (a 6x6x6 colour cube for
+    * TYPE_BYTE_INDEXED), and every colour subsequently written with setRGB would be snapped
+    * to the nearest default-palette entry. The target therefore reuses the source's own
+    * IndexColorModel, so colours taken from the source are stored exactly, and any other
+    * colour (e.g. a background) snaps to the nearest entry of the source's palette.
+    *
+    * @param source the image whose colour model the target must be compatible with
+    * @param w      the width of the target
+    * @param h      the height of the target
+    * @param type   the BufferedImage type to use for non palette-based sources; must not be TYPE_CUSTOM
+    * @return a new uninitialized BufferedImage
+    */
+   public static BufferedImage compatibleTarget(BufferedImage source, int w, int h, int type) {
+      ColorModel cm = source.getColorModel();
       if (cm instanceof IndexColorModel) {
-         return new BufferedImage(cm, cm.createCompatibleWritableRaster(width, height), cm.isAlphaPremultiplied(), null);
+         return new BufferedImage(cm, cm.createCompatibleWritableRaster(w, h), cm.isAlphaPremultiplied(), null);
       }
-      return new BufferedImage(width, height, type);
+      return new BufferedImage(w, h, type);
    }
 
    /**
@@ -654,7 +677,30 @@ public class AwtImage {
       // TYPE_CUSTOM (0) cannot be passed to the BufferedImage constructor;
       // fall back to ARGB like blank()/empty()/fromAwt() do.
       int type = getType() == BufferedImage.TYPE_CUSTOM ? BufferedImage.TYPE_INT_ARGB : getType();
+
+      if (awt.getColorModel() instanceof IndexColorModel) {
+         // Palette-based images must keep their own palette: a plain filled(..., type)
+         // target would get the default palette and remap every drawn pixel. Rendering
+         // with Graphics2D straight into a palette-based target is not exact either
+         // (Java2D dithers through a coarse inverse colour map), so rotate into an ARGB
+         // image first and copy the result back through setRGB, which maps each colour
+         // to its exact palette entry. Background colours that are not in the palette
+         // snap to the nearest source-palette entry.
+         BufferedImage argb = ImmutableImage.filled(neww, newh, bgcolor, BufferedImage.TYPE_INT_ARGB).awt();
+         rotateInto(argb, angle);
+         BufferedImage rotated = compatibleTarget(awt, neww, newh, type);
+         rotated.setRGB(0, 0, neww, newh, argb.getRGB(0, 0, neww, newh, null, 0, neww), 0, neww);
+         return rotated;
+      }
+
       BufferedImage rotated = ImmutableImage.filled(neww, newh, bgcolor, type).awt();
+      rotateInto(rotated, angle);
+      return rotated;
+   }
+
+   private void rotateInto(BufferedImage rotated, Radians angle) {
+      int neww = rotated.getWidth();
+      int newh = rotated.getHeight();
       Graphics2D graphic = rotated.createGraphics();
       try {
          graphic.translate((neww - width) / 2.0, (newh - height) / 2.0);
@@ -663,7 +709,6 @@ public class AwtImage {
       } finally {
          graphic.dispose();
       }
-      return rotated;
    }
 
    /**

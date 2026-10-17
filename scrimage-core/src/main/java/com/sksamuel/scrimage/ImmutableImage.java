@@ -465,13 +465,18 @@ public class ImmutableImage extends MutableImage {
     * If the source has BufferedImage.TYPE_CUSTOM (type 0) — which can't be
     * fed into a BufferedImage(width, height, type) constructor — falls back
     * to DEFAULT_DATA_TYPE, matching fromAwt's policy.
+    * <p>
+    * Palette-based (IndexColorModel) images keep their own palette: the blank image
+    * shares this image's IndexColorModel rather than getting Java's default palette,
+    * so colours of this image can be written to it exactly. Any other colour written to
+    * it snaps to the nearest entry of this image's palette.
     *
     * @return a new Image that is a clone of this image but with uninitialized data
     */
    public ImmutableImage blank() {
       int type = getType();
       if (type == 0) type = DEFAULT_DATA_TYPE;
-      return create(width, height, type);
+      return wrapAwt(AwtImage.compatibleTarget(awt(), width, height, type));
    }
 
    /**
@@ -1848,10 +1853,12 @@ public class ImmutableImage extends MutableImage {
       // Preserve the source image's type so cropping (and trim/autocrop/takeX,
       // which delegate here) doesn't silently promote e.g. a TYPE_INT_RGB image
       // to TYPE_INT_ARGB. TYPE_CUSTOM (0) can't be fed to the BufferedImage type
-      // constructor, so fall back to the default ARGB type for it.
+      // constructor, so fall back to the default ARGB type for it. Palette-based
+      // images must keep their own palette (compatibleTarget), otherwise setRGB
+      // would snap every pixel to the default palette.
       int type = awt().getType();
       if (type == BufferedImage.TYPE_CUSTOM) type = DEFAULT_DATA_TYPE;
-      ImmutableImage result = ImmutableImage.create(w, h, type);
+      ImmutableImage result = wrapAwt(AwtImage.compatibleTarget(awt(), w, h, type));
       result.awt().setRGB(0, 0, w, h, argb, 0, w);
       return result.associateMetadata(metadata);
    }
