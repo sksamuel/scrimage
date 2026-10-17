@@ -41,6 +41,13 @@ public class LaplaceFilter extends AbstractBufferedImageOp {
         if ( dst == null )
             dst = createCompatibleDestImage( src, null );
 
+        // Scratch buffer for the first pass. The original wrote the raw grey values into
+        // dst with setRGB and read them back with getRGB; that only round-trips when dst
+        // stores raw ints (TYPE_INT_ARGB / TYPE_INT_RGB). Through any other ColorModel
+        // (TYPE_3BYTE_BGR, TYPE_INT_BGR, ...) the grey landed in the blue channel with
+        // alpha forced to 0xff, so the second pass saw garbage and produced all black.
+        int[] grey = new int[width * height];
+
         int[] row1 = null;
         int[] row2 = null;
         int[] row3 = null;
@@ -79,17 +86,17 @@ public class LaplaceFilter extends AbstractBufferedImageOp {
                         gradient : (128 + gradient);
                 pixels[x] = r;
             }
-            setRGB( dst, 0, y, width, 1, pixels );
+            System.arraycopy( pixels, 0, grey, y*width, width );
             int[] t = row1; row1 = row2; row2 = row3; row3 = t;
         }
 
-        row1 = getRGB( dst, 0, 0, width, 1, row1 );
-        row2 = getRGB( dst, 0, 0, width, 1, row2 );
+        System.arraycopy( grey, 0, row1, 0, width );
+        System.arraycopy( grey, 0, row2, 0, width );
         // Seed row3 for the same single-row reason as the first pass.
-        row3 = getRGB( dst, 0, 0, width, 1, row3 );
+        System.arraycopy( grey, 0, row3, 0, width );
         for ( int y = 0; y < height; y++ ) {
             if ( y < height-1) {
-                row3 = getRGB( dst, 0, y+1, width, 1, row3 );
+                System.arraycopy( grey, (y+1)*width, row3, 0, width );
             }
             pixels[0] = pixels[width-1] = 0xff000000;//FIXME
             for ( int x = 1; x < width-1; x++ ) {
