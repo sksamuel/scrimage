@@ -116,14 +116,14 @@ public class GaussianFilter extends ConvolveFilter {
                             if (edgeAction == CLAMP_EDGES)
                                 ix = 0;
                             else if (edgeAction == WRAP_EDGES)
-                                ix = (x + width) % width;
+                                ix = ImageMath.mod(ix, width);
                             else
                                 continue; // ZERO_EDGES: out-of-bounds contributes nothing
                         } else if (ix >= width) {
                             if (edgeAction == CLAMP_EDGES)
                                 ix = width - 1;
                             else if (edgeAction == WRAP_EDGES)
-                                ix = (x + width) % width;
+                                ix = ImageMath.mod(ix, width);
                             else
                                 continue; // ZERO_EDGES: out-of-bounds contributes nothing
                         }
