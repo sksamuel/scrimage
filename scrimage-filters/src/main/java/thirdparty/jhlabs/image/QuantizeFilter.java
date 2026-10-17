@@ -76,7 +76,7 @@ public class QuantizeFilter extends WholeImageFilter {
 
 		if (!dither) {
 			for (int i = 0; i < count; i++)
-				outPixels[i] = table[quantizer.getIndexForColor(inPixels[i])];
+				outPixels[i] = (inPixels[i] & 0xff000000) | (table[quantizer.getIndexForColor(inPixels[i])] & 0xffffff);
 		} else {
 			int index = 0;
 			for (int y = 0; y < height; y++) {
@@ -93,7 +93,7 @@ public class QuantizeFilter extends WholeImageFilter {
 					int rgb1 = inPixels[index];
 					int rgb2 = table[quantizer.getIndexForColor(rgb1)];
 
-					outPixels[index] = rgb2;
+					outPixels[index] = (rgb1 & 0xff000000) | (rgb2 & 0xffffff);
 
 					int r1 = (rgb1 >> 16) & 0xff;
 					int g1 = (rgb1 >> 8) & 0xff;
@@ -127,7 +127,7 @@ public class QuantizeFilter extends WholeImageFilter {
 										r1 += er * w/sum;
 										g1 += eg * w/sum;
 										b1 += eb * w/sum;
-										inPixels[k] = (PixelUtils.clamp(r1) << 16) | (PixelUtils.clamp(g1) << 8) | PixelUtils.clamp(b1);
+										inPixels[k] = (rgb1 & 0xff000000) | (PixelUtils.clamp(r1) << 16) | (PixelUtils.clamp(g1) << 8) | PixelUtils.clamp(b1);
 									}
 								}
 							}
