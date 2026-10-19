@@ -873,6 +873,14 @@ public class GifSequenceReader {
 
       setPixels(); // transfer pixel data to image
 
+      // The graphic control extension is optional. When it is present with disposal 0
+      // readGraphicControlExt maps it to 1 (keep the previous canvas); do the same when
+      // it is absent, otherwise the next frame sees lastDispose == 0 and is composited
+      // onto a blank canvas instead of over this one.
+      if (dispose == 0) {
+         dispose = 1;
+      }
+
       frames.add(new GifFrame(image, delay, dispose)); // add image to frame list
 
       if (applyTransparency) {
