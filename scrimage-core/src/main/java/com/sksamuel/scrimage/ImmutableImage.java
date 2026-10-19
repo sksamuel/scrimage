@@ -119,7 +119,8 @@ public class ImmutableImage extends MutableImage {
     * If the param type is -1, then the source image type will be used, unless the source image
     * has type 0, in which case BufferedImage.TYPE_INT_ARGB will be used.
     *
-    * @param awt the source AWT Image
+    * @param awt  the source AWT Image
+    * @param type the AWT image type to copy into, or -1 (UNDERLYING_DATA_TYPE) to keep the source type
     * @return a new ImmutableImage
     */
    public static ImmutableImage fromAwt(BufferedImage awt, int type) {
@@ -187,7 +188,7 @@ public class ImmutableImage extends MutableImage {
     * This method will also attach metadata.
     *
     * @return a new ImmutableImage loaded from the given file
-    * @deprecated use ImmutableImage.loader().fromFile(file);
+    * @deprecated use ImmutableImage.loader().fromStream(in);
     */
    @Deprecated
    public static ImmutableImage fromFile(File file) throws IOException {
@@ -211,7 +212,7 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Create a new ImmutableImage that is the given width and height with no initialization.
-    * This will usually result in a default black background (all pixel data defaulting to zeroes)
+    * This will usually result in a transparent background (all pixel data defaulting to zeroes)
     * but that is not guaranteed.
     * The type of the image will be [ImmutableImage.DEFAULT_DATA_TYPE].
     *
@@ -225,12 +226,13 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Create a new ImmutableImage that is the given width and height and type with no initialization.
-    * This will usually result in a default black background (all pixel data defaulting to zeroes)
-    * but that is not guaranteed.
+    * This will usually result in all pixel data defaulting to zeroes (transparent for types with an
+    * alpha channel, black for opaque types) but that is not guaranteed.
     * The underlying image will have the type specified.
     *
     * @param width  the width of the new image
     * @param height the height of the new image
+    * @param type   the AWT image type to create. See BufferedImage.TYPE_*
     * @return the new Image with the given width and height
     */
    public static ImmutableImage create(int width, int height, int type) {
@@ -240,7 +242,7 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Create a new ImmutableImage that is the given dimension with no initialization.
-    * This will usually result in a default black background (all pixel data defaulting to zeroes)
+    * This will usually result in a transparent background (all pixel data defaulting to zeroes)
     * but that is not guaranteed.
     * The type of the image will be [ImmutableImage.DEFAULT_DATA_TYPE].
     *
@@ -253,7 +255,7 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Return a new ImmutableImage with the given width and height, with all pixels set to the supplied colour.
-    * The type of the image will be [ImmutableImage.CANONICAL_DATA_TYPE].
+    * The type of the image will be [ImmutableImage.DEFAULT_DATA_TYPE].
     *
     * @param width  the width of the new Image
     * @param height the height of the new Image
@@ -299,7 +301,7 @@ public class ImmutableImage extends MutableImage {
     *
     * @param in the stream to read the bytes from
     * @return a new Image
-    * @deprecated use ImmutableImage.loader().fromFile(file);
+    * @deprecated use ImmutableImage.loader().fromStream(in);
     */
    @Deprecated
    public static ImmutableImage fromStream(InputStream in) throws IOException {
@@ -316,7 +318,7 @@ public class ImmutableImage extends MutableImage {
     *
     * @param in the stream to read the bytes from
     * @return a new Image
-    * @deprecated use ImmutableImage.loader().fromFile(file);
+    * @deprecated use ImmutableImage.loader().fromStream(in);
     */
    @Deprecated
    public static ImmutableImage fromStream(InputStream in, int type) throws IOException {
@@ -330,7 +332,7 @@ public class ImmutableImage extends MutableImage {
     * Creates a new Image from the resource on the classpath.
     *
     * @return a new Image loaded from the classpath resource
-    * @deprecated use ImmutableImage.loader().fromResource(file);
+    * @deprecated use ImmutableImage.loader().fromResource(path);
     */
    @Deprecated
    public static ImmutableImage fromResource(String path) throws IOException {
@@ -339,7 +341,7 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * @return a new Image loaded from the classpath resource using the given image type
-    * @deprecated use ImmutableImage.loader().fromResource(file);
+    * @deprecated use ImmutableImage.loader().fromResource(path);
     */
    @Deprecated
    public static ImmutableImage fromResource(String path, int type) throws IOException {
@@ -349,7 +351,7 @@ public class ImmutableImage extends MutableImage {
    /**
     * Create a new Image from an array of pixels. The specified
     * width and height must match the number of pixels.
-    * The image's type will be CANONICAL_DATA_TYPE.
+    * The image's type will be DEFAULT_DATA_TYPE.
     *
     * @return a new Image
     */
@@ -381,7 +383,7 @@ public class ImmutableImage extends MutableImage {
     *
     * @param bytes the bytes from the format stream
     * @return a new Image
-    * @deprecated use ImmutableImage.loader().fromBytes(file);
+    * @deprecated use ImmutableImage.loader().fromBytes(bytes);
     */
    @Deprecated
    public static ImmutableImage parse(byte[] bytes) throws IOException {
@@ -399,7 +401,7 @@ public class ImmutableImage extends MutableImage {
     *
     * @param bytes the bytes from the format stream
     * @return a new Image
-    * @deprecated use ImmutableImage.loader().fromBytes(file);
+    * @deprecated use ImmutableImage.loader().fromBytes(bytes);
     */
    @Deprecated
    public static ImmutableImage parse(byte[] bytes, int type) throws IOException {
@@ -434,7 +436,7 @@ public class ImmutableImage extends MutableImage {
     * invoked with Color.WHITE then the image returned would have that 20 pixel row
     * removed.
     * <p>
-    * This method is useful when images have an abudance of a single colour around them.
+    * This method is useful when images have an abundance of a single colour around them.
     *
     * @param color          the color to match
     * @param colorTolerance the amount of tolerance to use when determining whether
@@ -493,8 +495,9 @@ public class ImmutableImage extends MutableImage {
     * This operation differs from max, in that max will scale an image up to be as large as it can be
     * inside the constraints. Bound will keep the image the same if its already within the constraints.
     *
-    * @param w the maximum width
-    * @param h the maximum height
+    * @param w           the maximum width
+    * @param h           the maximum height
+    * @param scaleMethod the type of scaling method to use if the image must be scaled down
     * @return the constrained image.
     */
    public ImmutableImage bound(int w, int h, ScaleMethod scaleMethod) {
@@ -577,7 +580,7 @@ public class ImmutableImage extends MutableImage {
     * Apply the given image with this image using the given composite.
     * The original image is unchanged.
     *
-    * @param composite   the composite to use. See com.sksamuel.scrimage.Composite.
+    * @param composite   the composite to use. See com.sksamuel.scrimage.composite.Composite.
     * @param applicative the image to apply with the composite.
     * @return A new image with the given image applied using the given composite.
     */
@@ -793,7 +796,7 @@ public class ImmutableImage extends MutableImage {
     * Creates a copy of this image with the given filter applied.
     * The original (this) image is unchanged.
     *
-    * @param filter the filter to apply. See com.sksamuel.scrimage.Filter.
+    * @param filter the filter to apply. See com.sksamuel.scrimage.filter.Filter.
     * @return A new image with the given filter applied.
     */
    public ImmutableImage filter(Filter filter) throws IOException {
@@ -1035,7 +1038,7 @@ public class ImmutableImage extends MutableImage {
     *
     * @param maxW the maximum width
     * @param maxH the maximum height
-    * @return A new image that is the result of the binding.
+    * @return A new image that is the result of the bounding.
     */
    public ImmutableImage max(int maxW, int maxH, ScaleMethod scaleMethod) {
       Dimension dimensions = DimensionTools.dimensionsToFit(new Dimension(maxW, maxH), new Dimension(width, height));
@@ -1048,6 +1051,18 @@ public class ImmutableImage extends MutableImage {
    }
 
    /**
+    * Returns a new image that is the result of overlaying the given image over this image
+    * with its (0,0) coordinate placed at (0,0) of this image.
+    * This is a convenience method for calling overlay(overlayImage, 0, 0).
+    *
+    * @param overlayImage the image to overlay
+    * @return a new Image with the given image overlaid.
+    */
+   public ImmutableImage overlay(AwtImage overlayImage) {
+      return overlay(overlayImage, 0, 0);
+   }
+
+   /**
     * Returns a new image that is the result of overlaying the given image over this image.
     * That is, the existing image ends up being "under" the image parameter.
     * The x / y parameters determine where the (0,0) coordinate of the overlay should be placed.
@@ -1055,12 +1070,11 @@ public class ImmutableImage extends MutableImage {
     * If the image to render exceeds the boundaries of the source image, then the excess
     * pixels will be ignored.
     *
+    * @param overlayImage the image to overlay
+    * @param x            the x coordinate in this image at which to place the overlay's (0,0)
+    * @param y            the y coordinate in this image at which to place the overlay's (0,0)
     * @return a new Image with the given image overlaid.
     */
-   public ImmutableImage overlay(AwtImage overlayImage) {
-      return overlay(overlayImage, 0, 0);
-   }
-
    public ImmutableImage overlay(AwtImage overlayImage, int x, int y) {
       ImmutableImage target = copy();
       target.overlayInPlace(overlayImage.awt(), x, y);
@@ -1085,7 +1099,7 @@ public class ImmutableImage extends MutableImage {
     *
     * @param scaleFactor the scaleFactor. 1 retains original size. 0.5 is half. 2 double. etc
     * @param position    where to position the original image after the canvas size change. Defaults to centre.
-    * @param background  the color to use for expande background areas.
+    * @param background  the color to use for expanded background areas.
     * @return a new Image that is the result of resizing the canvas.
     */
    public ImmutableImage resize(double scaleFactor, Position position, Color background) {
@@ -1098,7 +1112,7 @@ public class ImmutableImage extends MutableImage {
     *
     * @param scaleFactor the scaleFactor. 1 retains original size. 0.5 is half. 2 double. etc
     * @param position    where to position the original image after the canvas size change. Defaults to centre.
-    * @param background  the color to use for expande background areas.
+    * @param background  the color to use for expanded background areas.
     * @param imageType   the AWT image type to create. See BufferedImage.TYPE_*
     * @return a new Image that is the result of resizing the canvas.
     */
@@ -1240,6 +1254,7 @@ public class ImmutableImage extends MutableImage {
     * Resize will resize the canvas, it will not scale the image.
     * This is like a "canvas resize" in Photoshop.
     *
+    * @param targetHeight the height of the new canvas; the width is derived to keep the original aspect ratio
     * @return a new Image that is the result of resizing the canvas.
     */
    public ImmutableImage resizeToHeight(int targetHeight) {
@@ -1250,7 +1265,9 @@ public class ImmutableImage extends MutableImage {
     * Resize will resize the canvas, it will not scale the image.
     * This is like a "canvas resize" in Photoshop.
     *
-    * @param position where to position the original image after the canvas size change
+    * @param targetHeight the height of the new canvas; the width is derived to keep the original aspect ratio
+    * @param position     where to position the original image after the canvas size change
+    * @param background   the color to use for expanded background areas
     * @return a new Image that is the result of resizing the canvas.
     */
    public ImmutableImage resizeToHeight(int targetHeight, Position position, Color background) {
@@ -1261,8 +1278,10 @@ public class ImmutableImage extends MutableImage {
     * Resize will resize the canvas, it will not scale the image.
     * This is like a "canvas resize" in Photoshop.
     *
-    * @param position  where to position the original image after the canvas size change
-    * @param imageType the AWT image type to create. See BufferedImage.TYPE_*
+    * @param targetHeight the height of the new canvas; the width is derived to keep the original aspect ratio
+    * @param position     where to position the original image after the canvas size change
+    * @param background   the color to use for expanded background areas
+    * @param imageType    the AWT image type to create. See BufferedImage.TYPE_*
     * @return a new Image that is the result of resizing the canvas.
     */
    public ImmutableImage resizeToHeight(int targetHeight, Position position, Color background, int imageType) {
@@ -1276,6 +1295,7 @@ public class ImmutableImage extends MutableImage {
     * Resize will resize the canvas, it will not scale the image.
     * This is like a "canvas resize" in Photoshop.
     *
+    * @param targetWidth the width of the new canvas; the height is derived to keep the original aspect ratio
     * @return a new Image that is the result of resizing the canvas.
     */
    public ImmutableImage resizeToWidth(int targetWidth) {
@@ -1286,7 +1306,9 @@ public class ImmutableImage extends MutableImage {
     * Resize will resize the canvas, it will not scale the image.
     * This is like a "canvas resize" in Photoshop.
     *
-    * @param position where to position the original image after the canvas size change
+    * @param targetWidth the width of the new canvas; the height is derived to keep the original aspect ratio
+    * @param position    where to position the original image after the canvas size change
+    * @param background  the color to use for expanded background areas
     * @return a new Image that is the result of resizing the canvas.
     */
    public ImmutableImage resizeToWidth(int targetWidth, Position position, Color background) {
@@ -1297,8 +1319,10 @@ public class ImmutableImage extends MutableImage {
     * Resize will resize the canvas, it will not scale the image.
     * This is like a "canvas resize" in Photoshop.
     *
-    * @param position  where to position the original image after the canvas size change
-    * @param imageType the AWT image type to create. See BufferedImage.TYPE_*
+    * @param targetWidth the width of the new canvas; the height is derived to keep the original aspect ratio
+    * @param position    where to position the original image after the canvas size change
+    * @param background  the color to use for expanded background areas
+    * @param imageType   the AWT image type to create. See BufferedImage.TYPE_*
     * @return a new Image that is the result of resizing the canvas.
     */
    public ImmutableImage resizeToWidth(int targetWidth, Position position, Color background, int imageType) {
@@ -1485,7 +1509,7 @@ public class ImmutableImage extends MutableImage {
 
    /**
     * Creates a new Image by adding k columns of pixels to the right.
-    * This is a convenience method for calling padWith(0,0,k,0,color).
+    * This is a convenience method for calling padWith(0,0,k,0,Transparent).
     *
     * @param k the number of columns to pad by
     * @return the new Image
@@ -1519,7 +1543,7 @@ public class ImmutableImage extends MutableImage {
    }
 
    /**
-    * Convenience method for scaleToWidth(targetWith, scaleMethod)
+    * Convenience method for scaleToWidth(targetWidth, ScaleMethod.Bicubic)
     *
     * @return a new Image scaled to the given target width
     */
@@ -1641,7 +1665,7 @@ public class ImmutableImage extends MutableImage {
     *
     * @param targetWidth  the target width
     * @param targetHeight the target height
-    * @param scaleMethod  the type of scaling method to use. Defaults to SmoothScale
+    * @param scaleMethod  the type of scaling method to use. Defaults to Bicubic
     * @return a new Image that is the result of scaling this image
     */
    public ImmutableImage scaleTo(int targetWidth,
@@ -1997,7 +2021,7 @@ public class ImmutableImage extends MutableImage {
     * @param top    the number of pixels to trim from the top
     * @param right  the number of pixels to trim from the right
     * @param bottom the number of pixels to trim from the bottom
-    * @return a new Image with the dimensions width-trim*2, height-trim*2
+    * @return a new Image with the dimensions width-left-right, height-top-bottom
     */
    public ImmutableImage trim(int left, int top, int right, int bottom) {
       // Validate up front so the caller gets a useful diagnostic (which
