@@ -921,6 +921,8 @@ public class ImmutableImage extends MutableImage {
     * other. Identical pixels become black; the greater the difference in a channel, the brighter that
     * channel is in the result. The result is fully opaque (differences in alpha are not visualised).
     *
+    * The result keeps this image's metadata, like the other derived-image operations.
+    *
     * @param other another image, which must have the same dimensions as this image.
     * @return a new Image showing the difference between the two images.
     * @throws IllegalArgumentException if the images have different dimensions.
@@ -936,9 +938,9 @@ public class ImmutableImage extends MutableImage {
          int db = Math.abs((a[i] & 0xFF) - (b[i] & 0xFF));
          out[i] = 0xFF000000 | (dr << 16) | (dg << 8) | db;
       }
-      ImmutableImage target = ImmutableImage.create(width, height, CANONICAL_DATA_TYPE);
+      ImmutableImage target = ImmutableImage.create(width, height, DEFAULT_DATA_TYPE);
       target.awt().setRGB(0, 0, width, height, out, 0, width);
-      return target;
+      return target.associateMetadata(metadata);
    }
 
    /**
