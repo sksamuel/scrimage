@@ -762,12 +762,7 @@ public class ImmutableImage extends MutableImage {
       ImmutableImage target = blank();
       Painter temp = painter;
       if (painter instanceof LinearGradient) {
-         LinearGradient linear = (LinearGradient) painter;
-         if (linear.getX1() == Integer.MIN_VALUE && linear.getX2() == Integer.MAX_VALUE) {
-            temp = new LinearGradient(0, 0, linear.getColor1(), width, 0, linear.getColor2());
-         } else if (linear.getY1() == Integer.MIN_VALUE && linear.getY2() == Integer.MAX_VALUE) {
-            temp = new LinearGradient(0, 0, linear.getColor1(), 0, height, linear.getColor2());
-         }
+         temp = ((LinearGradient) painter).resolve(width, height);
       }
       Painter finalTemp = temp;
       target.toCanvas().drawInPlace(new FilledRect(0, 0, width, height, g2 -> g2.setPainter(finalTemp)));

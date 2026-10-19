@@ -1,5 +1,6 @@
 package com.sksamuel.scrimage.graphics;
 
+import com.sksamuel.scrimage.canvas.painters.LinearGradient;
 import com.sksamuel.scrimage.canvas.painters.Painter;
 
 import java.awt.BasicStroke;
@@ -31,9 +32,32 @@ import java.util.Map;
 public class RichGraphics2D extends Graphics2D {
 
    private final Graphics2D g2;
+   private final int width;
+   private final int height;
 
+   /**
+    * Wraps a Graphics2D whose target size is unknown. Painters whose extent
+    * depends on the image size (LinearGradient.horizontal / vertical) cannot be
+    * resolved and are passed to the delegate as-is; prefer
+    * {@link #RichGraphics2D(Graphics2D, int, int)} when the size is known.
+    */
    public RichGraphics2D(Graphics2D g2) {
+      this(g2, -1, -1);
+   }
+
+   /**
+    * Wraps a Graphics2D that draws onto a surface of the given size, so that
+    * size-relative painters passed to {@link #setPainter(Painter)} can be
+    * resolved against it.
+    *
+    * @param g2     the delegate
+    * @param width  the width of the surface being drawn onto
+    * @param height the height of the surface being drawn onto
+    */
+   public RichGraphics2D(Graphics2D g2, int width, int height) {
       this.g2 = g2;
+      this.width = width;
+      this.height = height;
    }
 
    /*
@@ -64,8 +88,18 @@ public class RichGraphics2D extends Graphics2D {
       g2.setColor(color.awt());
    }
 
+   /**
+    * Sets the paint from the given painter. If the surface size is known (see
+    * {@link #RichGraphics2D(Graphics2D, int, int)}) a LinearGradient created via
+    * horizontal()/vertical() is resolved to span that surface; otherwise the
+    * painter's paint is used unchanged.
+    */
    public void setPainter(Painter painter) {
-      g2.setPaint(painter.paint());
+      Painter resolved = painter;
+      if (painter instanceof LinearGradient && width > 0 && height > 0) {
+         resolved = ((LinearGradient) painter).resolve(width, height);
+      }
+      g2.setPaint(resolved.paint());
    }
 
    public void setAntiAlias(boolean on) {

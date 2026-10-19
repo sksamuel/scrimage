@@ -64,6 +64,30 @@ public class LinearGradient implements Painter {
       this.color2 = color2;
    }
 
+   /**
+    * Resolves the "span the whole image" sentinel coordinates used by
+    * {@link #horizontal} and {@link #vertical} against a concrete image size.
+    * <p>
+    * A horizontal gradient becomes (0,0) to (width,0) and a vertical gradient
+    * becomes (0,0) to (0,height). A gradient constructed with explicit
+    * coordinates is returned unchanged. Callers that know the size of the
+    * surface being painted (ImmutableImage.fill, RichGraphics2D) must call this
+    * before {@link #paint()}, otherwise AWT receives a GradientPaint spanning
+    * Integer.MIN_VALUE..Integer.MAX_VALUE and renders a solid mid colour.
+    *
+    * @param width  the width of the surface being painted
+    * @param height the height of the surface being painted
+    * @return a LinearGradient with concrete coordinates
+    */
+   public LinearGradient resolve(int width, int height) {
+      if (x1 == Integer.MIN_VALUE && x2 == Integer.MAX_VALUE) {
+         return new LinearGradient(0, 0, color1, width, 0, color2);
+      } else if (y1 == Integer.MIN_VALUE && y2 == Integer.MAX_VALUE) {
+         return new LinearGradient(0, 0, color1, 0, height, color2);
+      }
+      return this;
+   }
+
    @Override
    public Paint paint() {
       return new GradientPaint(x1, y1, color1, x2, y2, color2);
