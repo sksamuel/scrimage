@@ -8,7 +8,8 @@ compliance with licenses and / or attribution - see file headers), and either wr
 
 !!! note
 
-    These filters require the `scrimage-filters` module to be added to your build.
+    These filters require the `scrimage-filters` module to be added to your build, with the exception of
+    `dominant_gradient` (`DominantGradientFilter`), which is part of `scrimage-core`.
 
 Applying a filter returns a new image. The original image is unmodified.
 Some filters have options which can be set when creating the filters.
@@ -163,3 +164,6 @@ Click on the small images to see an enlarged example.
 | watermark_stamp | <a href='https://raw.github.com/sksamuel/scrimage/master/examples/filters/chinese_lantern_original_large.jpeg'><img width='300' src='https://raw.github.com/sksamuel/scrimage/master/examples/filters/chinese_lantern_original_small.png'></a> | <a href='https://raw.github.com/sksamuel/scrimage/master/examples/filters/chinese_lantern_watermark_stamp_large.jpeg'><img width='300' src='https://raw.github.com/sksamuel/scrimage/master/examples/filters/chinese_lantern_watermark_stamp_small.png'></a> |
 | willow | <a href='https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_original_large.jpeg'><img width='300' src='https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_original_small.png'></a> | <a href='https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_willow_large.jpeg'><img width='300' src='https://raw.github.com/sksamuel/scrimage/master/examples/filters/bird_willow_small.png'></a> |
 | xpro_ii | <a href='https://raw.github.com/sksamuel/scrimage/master/examples/filters/colosseum_original_large.jpeg'><img width='300' src='https://raw.github.com/sksamuel/scrimage/master/examples/filters/colosseum_original_small.png'></a> | <a href='https://raw.github.com/sksamuel/scrimage/master/examples/filters/colosseum_xpro_ii_large.jpeg'><img width='300' src='https://raw.github.com/sksamuel/scrimage/master/examples/filters/colosseum_xpro_ii_small.png'></a> |
+
+The following filters in `scrimage-filters` do not have an example image yet: `ConvolveFilter` (apply an arbitrary
+convolution kernel), `ShearFilter` (shear along the x and y axes) and `ZhangSkeleton` (Zhang-Suen thinning).
