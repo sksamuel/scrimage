@@ -118,6 +118,11 @@ public class WebpWriter implements ImageWriter {
     * The compression level affects the trade-off between file size and compression time.
     * Values range from 0 (fastest, least compression) to 9 (slowest, highest compression).
     * Throws an {@code IllegalArgumentException} if the value is out of range.
+    * <p>
+    * The compression level is a lossless preset, so a writer with z set always produces a
+    * lossless image. If {@link #withQ(int)} or {@link #withM(int)} are also used, cwebp
+    * replaces the preset's quality/method with the explicit values, but the output stays
+    * lossless.
     */
    public WebpWriter withZ(int z) {
       if (z < 0) throw new IllegalArgumentException("z must be between 0 and 9");

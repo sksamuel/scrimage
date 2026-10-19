@@ -98,7 +98,11 @@ public class CWebpHandler extends WebpHandler {
             commands.add("-z");
             commands.add(z + "");
          }
-         if (lossless) {
+         // -z is a lossless preset, but cwebp documents that -q/-m "invalidate the effect of
+         // this option": without an explicit -lossless, "-z 9 -q 80" silently produces a plain
+         // lossy q80 file. Emitting -lossless whenever z is set keeps the output lossless
+         // (-z N and -z N -lossless are byte-identical, so z-only output is unchanged).
+         if (lossless || z >= 0) {
             commands.add("-lossless");
          }
          if (withoutAlpha) {
