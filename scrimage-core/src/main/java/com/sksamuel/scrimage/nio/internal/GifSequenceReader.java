@@ -286,7 +286,11 @@ public class GifSequenceReader {
       for (int i = 0; i < ih; i++) {
          int line = i;
          if (interlace) {
-            if (iline >= ih) {
+            // Keep advancing passes until one yields a row inside the frame. For frames
+            // shorter than 5 rows a pass can be empty (pass 2 = rows 4,12,.. for ih <= 4;
+            // pass 3 = rows 2,6,.. for ih <= 2); advancing only one pass per source row
+            // consumed a row for the empty pass and wrote it past the frame's edge.
+            while (iline >= ih && pass < 4) {
                pass++;
                switch (pass) {
                   case 2 :
