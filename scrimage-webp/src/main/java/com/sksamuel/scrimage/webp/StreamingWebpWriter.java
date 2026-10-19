@@ -67,7 +67,7 @@ public class StreamingWebpWriter {
                               boolean lossless,
                               int q,
                               int m) {
-      this.frameDelay = frameDelay;
+      this.frameDelay = validateDelay(frameDelay);
       this.infiniteLoop = infiniteLoop;
       this.lossless = lossless;
       this.q = q;
@@ -75,7 +75,24 @@ public class StreamingWebpWriter {
    }
 
    /**
+    * img2webp requires a strictly positive frame duration in whole milliseconds.
+    * Validating up front gives the caller an immediate IllegalArgumentException
+    * instead of either an opaque img2webp failure at close() (zero delay:
+    * "Invalid negative duration (0)") or a silently substituted 100 ms default
+    * (negative delay, which Img2WebpHandler drops).
+    */
+   private static Duration validateDelay(Duration delay) {
+      if (delay == null || delay.toMillis() <= 0) {
+         throw new IllegalArgumentException("frame delay must be at least 1 ms, was " + delay);
+      }
+      return delay;
+   }
+
+   /**
     * Default delay used by {@link WebpStream#writeFrame(ImmutableImage)}.
+    * Must be at least 1 ms.
+    *
+    * @throws IllegalArgumentException if the delay is null or shorter than 1 ms
     */
    public StreamingWebpWriter withFrameDelay(Duration delay) {
       return new StreamingWebpWriter(delay, infiniteLoop, lossless, q, m);
@@ -126,7 +143,10 @@ public class StreamingWebpWriter {
       WebpStream writeFrame(ImmutableImage image) throws IOException;
 
       /**
-       * Writes the given frame with an explicit display duration.
+       * Writes the given frame with an explicit display duration, which must be
+       * at least 1 ms.
+       *
+       * @throws IllegalArgumentException if the delay is null or shorter than 1 ms
        */
       WebpStream writeFrame(ImmutableImage image, Duration delay) throws IOException;
 
@@ -177,6 +197,9 @@ public class StreamingWebpWriter {
          @Override
          public WebpStream writeFrame(ImmutableImage image, Duration delay) throws IOException {
             if (closed) throw new IOException("WebpStream is already closed");
+            // validate before encoding the frame so a rejected delay never
+            // leaves a temp PNG behind
+            validateDelay(delay);
             // PngWriter is the lossless format img2webp ingests directly
             // without re-encoding. NoCompression keeps writeFrame fast since
             // these PNGs are intermediates that get discarded at close().
