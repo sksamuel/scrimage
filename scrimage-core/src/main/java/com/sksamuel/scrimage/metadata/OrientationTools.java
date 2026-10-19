@@ -64,7 +64,7 @@ public class OrientationTools {
    static Set<Orientation> imageOrientationsOf(ImageMetadata metadata) {
 
       Tag[] tags = Arrays.stream(metadata.getDirectories())
-         .filter(dir -> dir.getName().equals(EXIF_IFD0_DIR_NAME))
+         .filter(dir -> EXIF_IFD0_DIR_NAME.equals(dir.getName())) // Directory names may be null
          .findFirst()
          .map(Directory::getTags)
          .orElseGet(() -> new Tag[0]);
@@ -84,7 +84,7 @@ public class OrientationTools {
             .collect(Collectors.toCollection(LinkedHashSet::new));
       } else {
          return tag274s.stream()
-            .filter(t -> t.getName().toLowerCase().equals("orientation"))
+            .filter(t -> "orientation".equalsIgnoreCase(t.getName())) // Tag names may be null
             .map(OrientationTools::fromTag)
             .collect(Collectors.toCollection(LinkedHashSet::new));
       }
