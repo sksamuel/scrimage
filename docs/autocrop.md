@@ -19,7 +19,7 @@ image.autocrop(Color.WHITE)
 
 or to remove a background of a custom color you could do:
 ```kotlin
-image.autocrop(new RGBColor(255, 235, 10).awt())
+image.autocrop(RGBColor(255, 235, 10).awt())
 ```
 
 
@@ -30,7 +30,7 @@ Using this image as our input:
 ![source image](images/autocrop_before.png)
 
 ```kotlin
-image.autocrop(new RGBColor(255, 107, 0).awt())
+image.autocrop(RGBColor(255, 107, 0).awt())
 ```
 
 ![source image](images/autocrop_after.png)
