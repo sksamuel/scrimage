@@ -42,7 +42,7 @@ image.translate(120, 80)
 
 ```kotlin
  // translate in negative directions with specified bg
-image.translate(120, -80, Color.RED)
+image.translate(-120, -80, Color.RED)
 ```
 
 ![image](images/translate_-120_-80.jpg)
