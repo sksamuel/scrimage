@@ -17,22 +17,37 @@ package com.sksamuel.scrimage.filter;
 
 import java.awt.image.BufferedImageOp;
 
-import static com.sksamuel.scrimage.filter.EdgeAction.ZeroEdges;
+import static com.sksamuel.scrimage.filter.EdgeAction.ClampEdges;
 
+/**
+ * Sharpens an image using the unsharp-mask technique. Wraps the JH Labs UnsharpFilter.
+ */
 public class UnsharpFilter extends BufferedOpFilter {
 
     private final float amount;
     private final int threshold;
     private final EdgeAction edgeAction;
 
+    /**
+     * @param amount     the amount of sharpening, 0 to 1 (jhlabs default 0.5)
+     * @param threshold  the minimum difference for a pixel to be sharpened (jhlabs default 1)
+     * @param edgeAction how the blur pass treats pixels beyond the image edge
+     */
     public UnsharpFilter(float amount, int threshold, EdgeAction edgeAction) {
         this.amount = amount;
         this.threshold = threshold;
         this.edgeAction = edgeAction;
     }
 
+    /**
+     * Creates an UnsharpFilter with amount 0.5, threshold 1 and {@link EdgeAction#ClampEdges}.
+     * <p>
+     * Clamp is the edge handling this filter has always effectively used: the previous default
+     * was declared as ZeroEdges, but the underlying op ignored the setting and clamped, so the
+     * default output is unchanged.
+     */
     public UnsharpFilter() {
-        this(0.5f, 1, ZeroEdges);
+        this(0.5f, 1, ClampEdges);
     }
 
     @Override
