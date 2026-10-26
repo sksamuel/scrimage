@@ -6,8 +6,19 @@ import thirdparty.romainguy.BlendComposite;
 import thirdparty.romainguy.BlendingMode;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class BackgroundBlendFilter implements Filter {
+
+    /**
+     * The background is composited with {@link BlendComposite}, which requires an int-backed
+     * raster and reads alpha from the raw data elements (0 for TYPE_INT_RGB / TYPE_INT_BGR),
+     * so only TYPE_INT_ARGB is supported; other images are converted first.
+     */
+    @Override
+    public int[] types() {
+        return new int[]{BufferedImage.TYPE_INT_ARGB};
+    }
 
     @Override
     public void apply(ImmutableImage image) {

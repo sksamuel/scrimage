@@ -58,7 +58,11 @@ class PipelineFilterTypeConversionTest : FunSpec({
       val pipeline = TestPipeline()
       val types = pipeline.types().toList()
       types.contains(BufferedImage.TYPE_INT_ARGB) shouldBe true
-      types.contains(BufferedImage.TYPE_INT_RGB) shouldBe true
+      // TYPE_INT_RGB is deliberately NOT listed: BlendComposite-based steps
+      // (BackgroundBlendFilter / VignetteFilter in NashvilleFilter) read alpha
+      // from the raw data elements, which is 0 for TYPE_INT_RGB, so on that
+      // type they silently contributed nothing.
+      types.contains(BufferedImage.TYPE_INT_RGB) shouldBe false
       // size > 0 is the actual contract; before the fix it was empty
       types.size shouldBeGreaterThan 0
    }

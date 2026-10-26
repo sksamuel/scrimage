@@ -21,6 +21,7 @@ import thirdparty.romainguy.BlendingMode;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 public class VignetteFilter implements Filter {
@@ -94,6 +95,16 @@ public class VignetteFilter implements Filter {
         return target;
     }
 
+
+    /**
+     * The vignette is composited with {@link BlendComposite}, which requires an int-backed
+     * raster and reads alpha from the raw data elements (0 for TYPE_INT_RGB / TYPE_INT_BGR),
+     * so only TYPE_INT_ARGB is supported; other images are converted first.
+     */
+    @Override
+    public int[] types() {
+        return new int[]{BufferedImage.TYPE_INT_ARGB};
+    }
 
     @Override
     public void apply(ImmutableImage image) throws IOException {
