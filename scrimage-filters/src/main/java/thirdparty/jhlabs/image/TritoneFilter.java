@@ -45,7 +45,10 @@ public class TritoneFilter extends PointFilter {
     }
 
 	public int filterRGB( int x, int y, int rgb ) {
-        return lut[ PixelUtils.brightness( rgb ) ];
+        // Preserve the source alpha: the LUT colours carry whatever alpha the
+        // configured tone colours had (0 for 24-bit ints), which must not
+        // replace the pixel's own transparency.
+        return (rgb & 0xff000000) | (lut[ PixelUtils.brightness( rgb ) ] & 0xffffff);
 	}
 
     /**
