@@ -2,10 +2,15 @@ package com.sksamuel.scrimage.filter;
 
 import com.sksamuel.scrimage.ImmutableImage;
 
+import java.awt.image.BufferedImage;
+
 /**
  * Returns a new ImmutableImage with the given alpha mask applied to this image.
  * The channel is an int which indicates which argb channel to use from the mask image.
  * For example to use the red channel set channel to 1 (0123 = argb)
+ * <p>
+ * The effect is entirely in the alpha channel, so only TYPE_INT_ARGB is supported; images
+ * without alpha are converted first.
  */
 public class AlphaMaskFilter implements Filter {
 
@@ -27,6 +32,11 @@ public class AlphaMaskFilter implements Filter {
       }
       this.mask = mask;
       this.channel = channel;
+   }
+
+   @Override
+   public int[] types() {
+      return new int[]{BufferedImage.TYPE_INT_ARGB};
    }
 
    @Override
