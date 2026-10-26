@@ -34,8 +34,11 @@ class BrightnessIndexedTest : FunSpec({
       val brightened = original.brightness(1.5)
       brightened.width shouldBe 20
       brightened.height shouldBe 20
-      // 102 * 1.5 = 153, quantized to the nearest default-palette entry
+      // 102 * 1.5 = 153 exactly: palette-based images are promoted to TYPE_INT_ARGB,
+      // so the result is no longer quantized to the nearest default-palette entry
       (brightened.pixel(10, 10).red() > 102) shouldBe true
+      brightened.pixel(10, 10).red() shouldBe 153
+      brightened.awt().type shouldBe BufferedImage.TYPE_INT_ARGB
    }
 
    test("brightness works on an indexed image loaded from a GIF") {
