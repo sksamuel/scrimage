@@ -433,9 +433,12 @@ public class GifSequenceReader {
    public int read(String name) {
       status = STATUS_OK;
       try {
-         name = name.trim().toLowerCase();
-         if ((name.indexOf("file:") >= 0) ||
-            (name.indexOf(":/") > 0)) {
+         name = name.trim();
+         // Only the scheme check is case insensitive; the path itself must keep its case or
+         // a file called MixedCase.GIF cannot be opened on a case-sensitive filesystem.
+         String lower = name.toLowerCase();
+         if ((lower.indexOf("file:") >= 0) ||
+            (lower.indexOf(":/") > 0)) {
             URL url = new URL(name);
             in = new BufferedInputStream(url.openStream());
          } else {
