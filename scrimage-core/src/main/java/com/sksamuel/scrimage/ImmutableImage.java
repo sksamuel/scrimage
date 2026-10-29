@@ -284,10 +284,15 @@ public class ImmutableImage extends MutableImage {
          Arrays.fill(((DataBufferInt) buffer).getData(), ((int[]) colorElements)[0]);
          return target;
       }
-      for (int h = 0; h < height; h++) {
-         for (int w = 0; w < width; w++) {
-            targetRaster.setDataElements(w, h, colorElements);
-         }
+      if (width <= 0 || height <= 0) return target;
+      // Fill the first row pixel by pixel, then replicate that row's data elements:
+      // one bulk setDataElements per row instead of one call per pixel.
+      for (int w = 0; w < width; w++) {
+         targetRaster.setDataElements(w, 0, colorElements);
+      }
+      Object row = targetRaster.getDataElements(0, 0, width, 1, null);
+      for (int h = 1; h < height; h++) {
+         targetRaster.setDataElements(0, h, width, 1, row);
       }
       return target;
    }
