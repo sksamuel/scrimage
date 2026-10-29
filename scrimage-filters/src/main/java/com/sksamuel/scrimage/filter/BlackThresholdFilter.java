@@ -1,6 +1,7 @@
 package com.sksamuel.scrimage.filter;
 
 import com.sksamuel.scrimage.ImmutableImage;
+import com.sksamuel.scrimage.pixels.FastRgb;
 import thirdparty.jhlabs.image.PixelUtils;
 
 /**
@@ -29,13 +30,13 @@ public class BlackThresholdFilter implements Filter {
       int threshold = (int) ((255 * thresholdPercentage) / 100.0);
       int w = image.width;
       int h = image.height;
-      int[] argb = image.awt().getRGB(0, 0, w, h, null, 0, w);
+      int[] argb = FastRgb.getRGB(image.awt(), 0, 0, w, h);
       for (int i = 0; i < argb.length; i++) {
          int p = argb[i];
          if (PixelUtils.brightness(p) < threshold) {
             argb[i] = p & 0xff000000;
          }
       }
-      image.awt().setRGB(0, 0, w, h, argb, 0, w);
+      FastRgb.setRGB(image.awt(), 0, 0, w, h, argb);
    }
 }

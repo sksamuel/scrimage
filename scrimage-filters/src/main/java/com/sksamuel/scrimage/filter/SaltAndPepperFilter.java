@@ -1,6 +1,7 @@
 package com.sksamuel.scrimage.filter;
 
 import com.sksamuel.scrimage.ImmutableImage;
+import com.sksamuel.scrimage.pixels.FastRgb;
 
 public class SaltAndPepperFilter implements Filter {
 
@@ -29,7 +30,7 @@ public class SaltAndPepperFilter implements Filter {
       // produced 50% pepper but only 25% salt.
       int w = img.width;
       int h = img.height;
-      int[] argb = img.awt().getRGB(0, 0, w, h, null, 0, w);
+      int[] argb = FastRgb.getRGB(img.awt(), 0, 0, w, h);
       for (int i = 0; i < argb.length; i++) {
          double r = Math.random();
          if (r < pepper) {
@@ -38,6 +39,6 @@ public class SaltAndPepperFilter implements Filter {
             argb[i] = OPAQUE_WHITE;
          }
       }
-      img.awt().setRGB(0, 0, w, h, argb, 0, w);
+      FastRgb.setRGB(img.awt(), 0, 0, w, h, argb);
    }
 }

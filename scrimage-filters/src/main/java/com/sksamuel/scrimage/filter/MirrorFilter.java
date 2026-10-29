@@ -16,6 +16,7 @@
 package com.sksamuel.scrimage.filter;
 
 import com.sksamuel.scrimage.ImmutableImage;
+import com.sksamuel.scrimage.pixels.FastRgb;
 
 /**
  * A filter that mirrors (flips) the image left to right, so the leftmost column
@@ -27,7 +28,7 @@ public class MirrorFilter implements Filter {
    public void apply(ImmutableImage image) {
       int w = image.width;
       int h = image.height;
-      int[] argb = image.awt().getRGB(0, 0, w, h, null, 0, w);
+      int[] argb = FastRgb.getRGB(image.awt(), 0, 0, w, h);
       int half = w / 2;
       for (int y = 0; y < h; y++) {
          int row = y * w;
@@ -39,6 +40,6 @@ public class MirrorFilter implements Filter {
             argb[right] = tmp;
          }
       }
-      image.awt().setRGB(0, 0, w, h, argb, 0, w);
+      FastRgb.setRGB(image.awt(), 0, 0, w, h, argb);
    }
 }

@@ -1,6 +1,7 @@
 package com.sksamuel.scrimage;
 
 import com.sksamuel.scrimage.color.RGBColor;
+import com.sksamuel.scrimage.pixels.FastRgb;
 import com.sksamuel.scrimage.pixels.Pixel;
 import com.sksamuel.scrimage.pixels.PixelTools;
 
@@ -36,7 +37,7 @@ public class MutableImage extends AwtImage {
     * @param mapper the function to transform pixel x,y with existing value p into new pixel value p' (p prime)
     */
    public void mapInPlace(Function<Pixel, Color> mapper) {
-      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      int[] argb = FastRgb.getRGB(awt(), 0, 0, width, height);
       int i = 0;
       for (int y = 0; y < height; y++) {
          for (int x = 0; x < width; x++) {
@@ -44,16 +45,16 @@ public class MutableImage extends AwtImage {
             i++;
          }
       }
-      awt().setRGB(0, 0, width, height, argb, 0, width);
+      FastRgb.setRGB(awt(), 0, 0, width, height, argb);
    }
 
    public void replaceTransparencyInPlace(java.awt.Color color) {
-      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      int[] argb = FastRgb.getRGB(awt(), 0, 0, width, height);
       int cr = color.getRed(), cg = color.getGreen(), cb = color.getBlue(), ca = color.getAlpha();
       for (int i = 0; i < argb.length; i++) {
          argb[i] = PixelTools.replaceTransparencyWithColor(argb[i], cr, cg, cb, ca);
       }
-      awt().setRGB(0, 0, width, height, argb, 0, width);
+      FastRgb.setRGB(awt(), 0, 0, width, height, argb);
    }
 
    /**
@@ -89,7 +90,7 @@ public class MutableImage extends AwtImage {
       // raster.setDataElements per pixel.
       int[] argb = new int[width * height];
       Arrays.fill(argb, target);
-      awt().setRGB(0, 0, width, height, argb, 0, width);
+      FastRgb.setRGB(awt(), 0, 0, width, height, argb);
    }
 
    /**
@@ -128,7 +129,7 @@ public class MutableImage extends AwtImage {
          // Scale the unpacked ARGB values instead, like contrastInPlace; setRGB maps each
          // result back to the nearest palette entry. Alpha is left untouched, matching
          // RescaleOp's single-factor behavior.
-         int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+         int[] argb = FastRgb.getRGB(awt(), 0, 0, width, height);
          for (int i = 0; i < argb.length; i++) {
             int p = argb[i];
             int r = PixelTools.truncate(factor * PixelTools.red(p));
@@ -136,7 +137,7 @@ public class MutableImage extends AwtImage {
             int b = PixelTools.truncate(factor * PixelTools.blue(p));
             argb[i] = PixelTools.argb(PixelTools.alpha(p), r, g, b);
          }
-         awt().setRGB(0, 0, width, height, argb, 0, width);
+         FastRgb.setRGB(awt(), 0, 0, width, height, argb);
          return;
       }
       RescaleOp rescale = new RescaleOp((float) factor, 0f,
@@ -145,7 +146,7 @@ public class MutableImage extends AwtImage {
    }
 
    public void contrastInPlace(double factor) {
-      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      int[] argb = FastRgb.getRGB(awt(), 0, 0, width, height);
       for (int i = 0; i < argb.length; i++) {
          int p = argb[i];
          int r = PixelTools.truncate((factor * (PixelTools.red(p) - 128)) + 128);
@@ -153,6 +154,6 @@ public class MutableImage extends AwtImage {
          int b = PixelTools.truncate((factor * (PixelTools.blue(p) - 128)) + 128);
          argb[i] = PixelTools.argb(PixelTools.alpha(p), r, g, b);
       }
-      awt().setRGB(0, 0, width, height, argb, 0, width);
+      FastRgb.setRGB(awt(), 0, 0, width, height, argb);
    }
 }

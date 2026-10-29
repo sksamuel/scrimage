@@ -1,4 +1,5 @@
 package com.sksamuel.scrimage.scaling;
+import com.sksamuel.scrimage.pixels.FastRgb;
 
 import java.awt.image.BufferedImage;
 
@@ -15,7 +16,7 @@ public class AwtNearestNeighbourScale implements Scale {
       // because getRGB / setRGB round-trip cleanly through the colour model.
       int srcW = in.getWidth();
       int srcH = in.getHeight();
-      int[] src = in.getRGB(0, 0, srcW, srcH, null, 0, srcW);
+      int[] src = FastRgb.getRGB(in, 0, 0, srcW, srcH);
       int[] dst = new int[w * h];
       double xRatio = (double) srcW / w;
       double yRatio = (double) srcH / h;
@@ -30,7 +31,7 @@ public class AwtNearestNeighbourScale implements Scale {
       // (e.g. 16-bit PNGs decode to a custom type); fall back to ARGB.
       int type = in.getType() == BufferedImage.TYPE_CUSTOM ? BufferedImage.TYPE_INT_ARGB : in.getType();
       BufferedImage target = new BufferedImage(w, h, type);
-      target.setRGB(0, 0, w, h, dst, 0, w);
+      FastRgb.setRGB(target, 0, 0, w, h, dst);
       return target;
    }
 }

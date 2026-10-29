@@ -2,6 +2,7 @@ package com.sksamuel.scrimage.filter.instagram;
 
 import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.filter.Filter;
+import com.sksamuel.scrimage.pixels.FastRgb;
 
 import java.util.List;
 
@@ -37,7 +38,7 @@ public abstract class InstagramFilter implements Filter {
    public void apply(ImmutableImage image) {
       int w = image.width;
       int h = image.height;
-      int[] px = image.awt().getRGB(0, 0, w, h, null, 0, w);
+      int[] px = FastRgb.getRGB(image.awt(), 0, 0, w, h);
       float[] rgb = new float[3];
       for (int i = 0; i < px.length; i++) {
          int argb = px[i];
@@ -53,6 +54,6 @@ public abstract class InstagramFilter implements Filter {
       if (overlay != null) {
          overlay.apply(px, w, h);
       }
-      image.awt().setRGB(0, 0, w, h, px, 0, w);
+      FastRgb.setRGB(image.awt(), 0, 0, w, h, px);
    }
 }

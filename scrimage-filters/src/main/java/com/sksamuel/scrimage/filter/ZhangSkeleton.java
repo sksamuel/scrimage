@@ -16,6 +16,7 @@
 package com.sksamuel.scrimage.filter;
 
 import com.sksamuel.scrimage.ImmutableImage;
+import com.sksamuel.scrimage.pixels.FastRgb;
 import thirdparty.jhlabs.image.PixelUtils;
 
 /**
@@ -62,7 +63,7 @@ public class ZhangSkeleton implements Filter {
    public void apply(ImmutableImage image) {
       int w = image.width;
       int h = image.height;
-      int[] argb = image.awt().getRGB(0, 0, w, h, null, 0, w);
+      int[] argb = FastRgb.getRGB(image.awt(), 0, 0, w, h);
 
       // Binarise into 1 = foreground (dark and not fully transparent), 0 = background.
       // The brightness of 0x00000000 is 0, so without the alpha test a
@@ -79,7 +80,7 @@ public class ZhangSkeleton implements Filter {
       for (int i = 0; i < argb.length; i++) {
          argb[i] = fg[i] != 0 ? 0xff000000 : 0xffffffff;
       }
-      image.awt().setRGB(0, 0, w, h, argb, 0, w);
+      FastRgb.setRGB(image.awt(), 0, 0, w, h, argb);
    }
 
    private static void thin(byte[] fg, int w, int h) {

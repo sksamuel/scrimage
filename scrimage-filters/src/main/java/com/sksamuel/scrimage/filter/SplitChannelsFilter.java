@@ -16,6 +16,7 @@
 package com.sksamuel.scrimage.filter;
 
 import com.sksamuel.scrimage.ImmutableImage;
+import com.sksamuel.scrimage.pixels.FastRgb;
 
 /**
  * Keeps or removes individual colour channels. Each of the red, green and blue
@@ -41,7 +42,7 @@ public class SplitChannelsFilter implements Filter {
    public void apply(ImmutableImage image) {
       int w = image.width;
       int h = image.height;
-      int[] argb = image.awt().getRGB(0, 0, w, h, null, 0, w);
+      int[] argb = FastRgb.getRGB(image.awt(), 0, 0, w, h);
       // Preserve alpha; keep each colour channel only if its flag is set.
       int mask = 0xFF000000
          | (red ? 0x00FF0000 : 0)
@@ -50,6 +51,6 @@ public class SplitChannelsFilter implements Filter {
       for (int i = 0; i < argb.length; i++) {
          argb[i] &= mask;
       }
-      image.awt().setRGB(0, 0, w, h, argb, 0, w);
+      FastRgb.setRGB(image.awt(), 0, 0, w, h, argb);
    }
 }

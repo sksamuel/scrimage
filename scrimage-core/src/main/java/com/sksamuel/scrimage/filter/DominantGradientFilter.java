@@ -3,6 +3,7 @@ package com.sksamuel.scrimage.filter;
 import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.canvas.painters.LinearGradient;
 import com.sksamuel.scrimage.color.RGBColor;
+import com.sksamuel.scrimage.pixels.FastRgb;
 
 import java.io.IOException;
 
@@ -32,7 +33,7 @@ public class DominantGradientFilter implements Filter {
          .fill(LinearGradient.vertical(top.awt(), bottom.awt()));
       int w = image.width;
       int h = image.height;
-      int[] pixels = gradient.awt().getRGB(0, 0, w, h, null, 0, w);
-      image.awt().setRGB(0, 0, w, h, pixels, 0, w);
+      int[] pixels = FastRgb.getRGB(gradient.awt(), 0, 0, w, h);
+      FastRgb.setRGB(image.awt(), 0, 0, w, h, pixels);
    }
 }
