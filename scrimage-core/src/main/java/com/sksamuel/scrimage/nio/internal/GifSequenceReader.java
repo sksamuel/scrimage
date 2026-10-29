@@ -487,6 +487,14 @@ public class GifSequenceReader {
       //  Initialize GIF data stream decoder.
 
       data_size = read();
+      // GIF LZW codes are at most 12 bits wide, so the minimum code size must be at
+      // most 11 (the spec allows 2..8). prefix/suffix hold MaxStackSize (4096) entries;
+      // a larger code size would index past them and escape as an
+      // ArrayIndexOutOfBoundsException rather than a format error.
+      if (data_size < 1 || data_size > 11) {
+         status = STATUS_FORMAT_ERROR;
+         return;
+      }
       clear = 1 << data_size;
       end_of_information = clear + 1;
       available = clear + 2;
