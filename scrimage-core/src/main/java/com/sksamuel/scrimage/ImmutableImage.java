@@ -511,11 +511,14 @@ public class ImmutableImage extends MutableImage {
     * @return a new Image with the brightness adjusted by the given factor
     */
    public ImmutableImage brightness(double factor) {
-      if (awt().getColorModel() instanceof java.awt.image.IndexColorModel) {
-         // Same maths as MutableImage.rescaleInPlace's indexed branch (RescaleOp rejects
-         // palette-based images), but written to an ARGB target: writing back into the
-         // palette copy snapped every result to the nearest ORIGINAL colour, so the
-         // brightness change was lost. Alpha is left untouched like RescaleOp does.
+      if (awt().getColorModel() instanceof java.awt.image.IndexColorModel || awt().isAlphaPremultiplied()) {
+         // Same maths as MutableImage.rescaleInPlace's getRGB branch (RescaleOp rejects
+         // palette-based images), but palette images are written to an ARGB target: writing
+         // back into the palette copy snapped every result to the nearest ORIGINAL colour,
+         // so the brightness change was lost. Alpha is left untouched like RescaleOp does.
+         // Premultiplied images also take this path (keeping their type): RescaleOp scales
+         // the raw premultiplied samples and clamps them at 255 rather than at alpha, so a
+         // translucent pixel's colour wrapped around when un-premultiplied.
          return transformPixels((offset, p) -> {
             int r = PixelTools.truncate(factor * PixelTools.red(p));
             int g = PixelTools.truncate(factor * PixelTools.green(p));

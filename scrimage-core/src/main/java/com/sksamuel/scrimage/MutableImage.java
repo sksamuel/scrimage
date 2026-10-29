@@ -122,9 +122,12 @@ public class MutableImage extends AwtImage {
     * Mutates this image by scaling all pixel values by the given factor (brightness in other words).
     */
    public void rescaleInPlace(double factor) {
-      if (awt().getColorModel() instanceof IndexColorModel) {
+      if (awt().getColorModel() instanceof IndexColorModel || awt().isAlphaPremultiplied()) {
          // RescaleOp rejects palette-based images ("Rescaling cannot be performed on an
          // indexed image"), and GIFs / PNG-8s load as TYPE_BYTE_INDEXED by default.
+         // On premultiplied images RescaleOp scales the raw premultiplied samples and
+         // clamps them at 255 instead of at alpha, so translucent colours wrapped around
+         // (e.g. red 200 at alpha 128 times 1.5 came back as 43).
          // Scale the unpacked ARGB values instead, like contrastInPlace; setRGB maps each
          // result back to the nearest palette entry. Alpha is left untouched, matching
          // RescaleOp's single-factor behavior.
