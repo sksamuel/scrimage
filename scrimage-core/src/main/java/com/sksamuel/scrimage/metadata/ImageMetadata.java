@@ -28,6 +28,11 @@ public class ImageMetadata {
          return fromMetadata(ImageMetadataReader.readMetadata(new ByteArrayInputStream(source.read())));
       } catch (ImageProcessingException e) {
          return ImageMetadata.empty;
+      } catch (RuntimeException e) {
+         // metadata-extractor can throw unchecked exceptions on malformed segments. Metadata is
+         // loaded alongside the pixels by ImmutableImageLoader (on by default), so a corrupt
+         // metadata block must not stop an otherwise decodable image from loading.
+         return ImageMetadata.empty;
       }
    }
 
@@ -66,12 +71,31 @@ public class ImageMetadata {
 
    public static ImageMetadata fromMetadata(Metadata metadata) {
       Directory[] dirs = StreamSupport.stream(metadata.getDirectories().spliterator(), false).map(dir -> {
-         Tag[] tags = dir.getTags().stream().map(tag ->
-            new Tag(tag.getTagName(), tag.getTagType(), dir.getString(tag.getTagType()), tag.getDescription())
-         ).toArray(Tag[]::new);
+         Tag[] tags = dir.getTags().stream().map(tag -> {
+            String rawValue = safely(() -> dir.getString(tag.getTagType()));
+            // Descriptions are decoded lazily by metadata-extractor and can throw on a malformed
+            // value (e.g. IccDescriptor.getTagDataString throws StringIndexOutOfBoundsException
+            // for a corrupt ICC tag offset). One bad tag used to abort the whole metadata load,
+            // and with it ImmutableImageLoader; fall back to the raw value for that tag instead.
+            String description;
+            try {
+               description = tag.getDescription();
+            } catch (RuntimeException e) {
+               description = rawValue;
+            }
+            return new Tag(tag.getTagName(), tag.getTagType(), rawValue, description);
+         }).toArray(Tag[]::new);
          return new Directory(dir.getName(), tags);
       }).toArray(Directory[]::new);
       return new ImageMetadata(dirs);
+   }
+
+   private static String safely(java.util.function.Supplier<String> f) {
+      try {
+         return f.get();
+      } catch (RuntimeException e) {
+         return null;
+      }
    }
 
    private final Directory[] directories;
