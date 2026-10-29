@@ -51,4 +51,19 @@ class ColoursDistinctTest : FunSpec({
          RGBColor(0, 0, 0, 0)
       )
    }
+   test("colours matches a reference distinct set on an image with hundreds of thousands of colours") {
+      // enough distinct values to force the internal primitive set to grow several times,
+      // with duplicates and the packed value 0 (transparent black) included
+      val rnd = java.util.Random(42)
+      val w = 700
+      val h = 500
+      val argb = IntArray(w * h) { if (it % 3 == 0) rnd.nextInt(1000) else rnd.nextInt() }
+      argb[17] = 0
+      val awt = java.awt.image.BufferedImage(w, h, java.awt.image.BufferedImage.TYPE_INT_ARGB)
+      awt.setRGB(0, 0, w, h, argb, 0, w)
+      val expected = argb.toSet().map { RGBColor.fromARGBInt(it) }.toSet()
+      val colours = ImmutableImage.wrapAwt(awt).colours()
+      colours.size shouldBe expected.size
+      colours shouldBe expected
+   }
 })
