@@ -23,6 +23,9 @@ import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -62,10 +65,26 @@ public class GifWriter implements ImageWriter {
 
             try (MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream(out)) {
                 writer.setOutput(output);
-                writer.write(null, new IIOImage(image.awt(), null, null), params);
+                writer.write(null, new IIOImage(detached(image.awt()), null, null), params);
             }
         } finally {
             writer.dispose();
         }
+    }
+
+    /**
+     * The JDK GIF writer's write() path ignores a raster's translation and reads single band
+     * byte rasters (TYPE_BYTE_INDEXED, TYPE_BYTE_GRAY, 8-bit palettes) from the parent's origin,
+     * so a sub-raster view, such as one from BufferedImage.getSubimage, was encoded with the
+     * wrong pixels. Copy such views into a fresh image with the same colour model first.
+     */
+    private static BufferedImage detached(BufferedImage image) {
+        WritableRaster raster = image.getRaster();
+        if (raster.getParent() == null && raster.getSampleModelTranslateX() == 0 && raster.getSampleModelTranslateY() == 0)
+            return image;
+        ColorModel cm = image.getColorModel();
+        WritableRaster copy = cm.createCompatibleWritableRaster(image.getWidth(), image.getHeight());
+        copy.setRect(-raster.getMinX(), -raster.getMinY(), raster);
+        return new BufferedImage(cm, copy, cm.isAlphaPremultiplied(), null);
     }
 }
