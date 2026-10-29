@@ -11,8 +11,6 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferInt;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -189,42 +187,29 @@ public class StreamingGifWriter extends AbstractGifWriter {
             // diffed against a stale image and zeroed pixels that should have been visible.
             setGraphicControlExtensionAttributes(delay, disposalMethod);
             if (compressed && last != null) {
-               // Copy the input so we don't mutate the caller's image when zero-filling
-               // pixels that match the previous frame (the diff step below).
-               ImmutableImage work = image.copy();
-               DataBuffer workBuffer = work.awt().getRaster().getDataBuffer();
-               DataBuffer lastBuffer = last.awt().getRaster().getDataBuffer();
-               if (workBuffer instanceof DataBufferInt && lastBuffer instanceof DataBufferInt) {
-                  int[] workData = ((DataBufferInt) workBuffer).getData();
-                  int[] lastData = ((DataBufferInt) lastBuffer).getData();
-                  int n = Math.min(workData.length, lastData.length);
-                  for (int i = 0; i < n; i++) {
+               // Diff whole ARGB pixels and blank the unchanged ones to fully transparent, so the
+               // previous frame shows through. This used to zero raw buffer elements of the frame's
+               // own type, which only works for TYPE_INT_ARGB: for byte-backed types it zeroed single
+               // channel bytes (an opaque TYPE_4BYTE_ABGR pixel whose colour changed but whose alpha
+               // byte matched became transparent, showing the old colour), and for types without
+               // alpha a zeroed pixel is opaque black rather than transparent.
+               // copy(TYPE_INT_ARGB) always yields a fresh int buffer, so the caller's image is
+               // never mutated.
+               ImmutableImage work = image.copy(TYPE_INT_ARGB);
+               if (work.width == last.width && work.height == last.height) {
+                  int[] workData = ((DataBufferInt) work.awt().getRaster().getDataBuffer()).getData();
+                  int[] lastData = ((DataBufferInt) last.awt().getRaster().getDataBuffer()).getData();
+                  for (int i = 0; i < workData.length; i++) {
                      if (workData[i] == lastData[i]) {
                         workData[i] = 0;
-                     }
-                  }
-               } else if (workBuffer instanceof DataBufferByte && lastBuffer instanceof DataBufferByte) {
-                  byte[] workData = ((DataBufferByte) workBuffer).getData();
-                  byte[] lastData = ((DataBufferByte) lastBuffer).getData();
-                  int n = Math.min(workData.length, lastData.length);
-                  for (int i = 0; i < n; i++) {
-                     if (workData[i] == lastData[i]) {
-                        workData[i] = 0;
-                     }
-                  }
-               } else {
-                  int size = workBuffer.getSize();
-                  for (int i = 0; i < size; i++) {
-                     if (workBuffer.getElem(i) == lastBuffer.getElem(i)) {
-                        workBuffer.setElem(i, 0);
                      }
                   }
                }
-               last = image.copy();
+               last = image.copy(TYPE_INT_ARGB);
                writer.writeToSequence(new IIOImage(work.awt(), null, imageMetaData), imageWriteParam);
             } else {
                writer.writeToSequence(new IIOImage(image.awt(), null, imageMetaData), imageWriteParam);
-               last = image.copy();
+               if (compressed) last = image.copy(TYPE_INT_ARGB);
             }
             return this;
          }
