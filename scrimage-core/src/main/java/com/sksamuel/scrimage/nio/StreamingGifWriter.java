@@ -126,6 +126,12 @@ public class StreamingGifWriter extends AbstractGifWriter {
          String metaFormatName = imageMetaData.getNativeMetadataFormatName();
 
          IIOMetadataNode root = (IIOMetadataNode) imageMetaData.getAsTree(metaFormatName);
+         // For a palette image type (e.g. TYPE_BYTE_INDEXED) the default metadata carries that
+         // type's palette (the JDK default 6x6x6 cube) as a LocalColorTable. This one metadata
+         // object is passed with every frame, and the writer would emit that table for each of
+         // them, so every frame's indices were decoded against the wrong palette. Without it
+         // the writer derives each frame's colour table from the frame itself.
+         removeLocalColorTable(root);
          populateGraphicsControlNode(root, frameDelay);
          populateCommentsNode(root);
          if (infiniteLoop)
@@ -146,6 +152,14 @@ public class StreamingGifWriter extends AbstractGifWriter {
             if (ios != null) ios.close();
          }
          throw e;
+      }
+   }
+
+   private static void removeLocalColorTable(IIOMetadataNode root) {
+      for (int i = root.getLength() - 1; i >= 0; i--) {
+         if ("LocalColorTable".equals(root.item(i).getNodeName())) {
+            root.removeChild(root.item(i));
+         }
       }
    }
 
