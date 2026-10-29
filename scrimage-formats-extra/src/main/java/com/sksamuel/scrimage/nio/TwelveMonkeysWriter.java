@@ -9,6 +9,8 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.stream.ImageOutputStream;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
@@ -37,18 +39,50 @@ abstract class TwelveMonkeysWriter implements ImageWriter {
      * drawn into {@code TYPE_INT_RGB} ({@code TYPE_INT_ARGB} when the colour model has alpha).
      */
     protected AwtImage normalise(AwtImage image) {
-        if (!unsupportedTypes().contains(image.awt().getType())) {
-            return image;
+        BufferedImage awt = image.awt();
+        // Some TwelveMonkeys encoders (PNM, TGA, TIFF, PICT) read the backing DataBuffer
+        // directly and ignore a raster's origin and parent stride, so a sub-image view
+        // (BufferedImage.getSubimage) was written as the top-left of its PARENT image.
+        // Copy such views into a standalone raster of the same colour model first.
+        if (!mapsOneToOne(awt.getRaster())) {
+            awt = standaloneCopy(awt);
         }
-        int target = image.awt().getColorModel().hasAlpha() ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
+        if (!unsupportedTypes().contains(awt.getType())) {
+            return awt == image.awt() ? image : new AwtImage(awt);
+        }
+        int target = awt.getColorModel().hasAlpha() ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
         BufferedImage copy = new BufferedImage(image.width, image.height, target);
         Graphics2D g2 = copy.createGraphics();
         try {
-            g2.drawImage(image.awt(), 0, 0, null);
+            g2.drawImage(awt, 0, 0, null);
         } finally {
             g2.dispose();
         }
         return new AwtImage(copy);
+    }
+
+    /**
+     * Returns true if the raster covers its whole DataBuffer from the start, i.e. it is not a
+     * view into a larger raster.
+     */
+    private static boolean mapsOneToOne(WritableRaster raster) {
+        return raster.getParent() == null
+            && raster.getSampleModelTranslateX() == 0
+            && raster.getSampleModelTranslateY() == 0
+            && raster.getSampleModel().getWidth() == raster.getWidth()
+            && raster.getSampleModel().getHeight() == raster.getHeight()
+            && raster.getDataBuffer().getOffset() == 0;
+    }
+
+    /**
+     * Copies the image's samples into a fresh raster with the same colour model, so the type,
+     * bit depth and palette are kept exactly.
+     */
+    private static BufferedImage standaloneCopy(BufferedImage image) {
+        ColorModel cm = image.getColorModel();
+        WritableRaster raster = image.getRaster().createCompatibleWritableRaster(image.getWidth(), image.getHeight());
+        image.copyData(raster);
+        return new BufferedImage(cm, raster, cm.isAlphaPremultiplied(), null);
     }
 
     @Override
