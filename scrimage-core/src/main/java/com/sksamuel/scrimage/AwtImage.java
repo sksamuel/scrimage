@@ -23,11 +23,11 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * Wraps an AWT BufferedImage with some basic helper functions related to sizes, pixels etc.
@@ -499,9 +499,66 @@ public class AwtImage {
     */
    public Set<RGBColor> colours() {
       // Dedupe the packed ints first so RGBColor is only allocated once per
-      // distinct colour, rather than once per pixel.
+      // distinct colour, rather than once per pixel. A primitive open-addressing
+      // set is used instead of IntStream.distinct(), which boxes every pixel.
       int[] argb = argbints();
-      return Arrays.stream(argb).distinct().mapToObj(RGBColor::fromARGBInt).collect(Collectors.toSet());
+      int[] distinct = distinctInts(argb);
+      Set<RGBColor> colours = new HashSet<>(Math.max(16, (int) (distinct.length / 0.75f) + 1));
+      for (int v : distinct) colours.add(RGBColor.fromARGBInt(v));
+      return colours;
+   }
+
+   /**
+    * Returns the distinct values of the given array, in no particular order.
+    */
+   private static int[] distinctInts(int[] values) {
+      // Power-of-two table, initially sized for up to 64k distinct colours and
+      // doubled as needed (load factor <= 0.5). 0 marks an empty slot, so the
+      // value 0 itself is tracked separately.
+      int capacity = 1 << 17;
+      int[] table = new int[capacity];
+      int mask = capacity - 1;
+      int size = 0;
+      boolean hasZero = false;
+      for (int v : values) {
+         if (v == 0) {
+            hasZero = true;
+            continue;
+         }
+         int i = mix(v) & mask;
+         while (true) {
+            int t = table[i];
+            if (t == v) break;
+            if (t == 0) {
+               table[i] = v;
+               size++;
+               if (size * 2 > capacity) {
+                  capacity <<= 1;
+                  int[] bigger = new int[capacity];
+                  mask = capacity - 1;
+                  for (int old : table) {
+                     if (old == 0) continue;
+                     int j = mix(old) & mask;
+                     while (bigger[j] != 0) j = (j + 1) & mask;
+                     bigger[j] = old;
+                  }
+                  table = bigger;
+               }
+               break;
+            }
+            i = (i + 1) & mask;
+         }
+      }
+      int[] out = new int[size + (hasZero ? 1 : 0)];
+      int k = 0;
+      for (int t : table) if (t != 0) out[k++] = t;
+      if (hasZero) out[k] = 0;
+      return out;
+   }
+
+   private static int mix(int v) {
+      int h = v * 0x9E3779B9;
+      return h ^ (h >>> 16);
    }
 
    /**
