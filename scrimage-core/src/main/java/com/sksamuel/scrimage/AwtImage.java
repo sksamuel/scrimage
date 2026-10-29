@@ -588,12 +588,20 @@ public class AwtImage {
     * If the source has BufferedImage.TYPE_CUSTOM (type 0) — which can't be
     * fed back into the BufferedImage(width, height, type) constructor —
     * falls back to TYPE_INT_ARGB, matching ImmutableImage.fromAwt's policy.
+    * <p>
+    * Palette-based images (TYPE_BYTE_INDEXED, TYPE_BYTE_BINARY) keep this image's own
+    * IndexColorModel, so colours of this image can be written to the new image exactly;
+    * new BufferedImage(width, height, type) alone would get Java's default palette.
     *
     * @return a new uninitialized AwtImage with the same dimensions
     */
    public AwtImage empty() {
       int type = awt.getType();
       if (type == 0) type = BufferedImage.TYPE_INT_ARGB;
+      ColorModel cm = awt.getColorModel();
+      if ((type == BufferedImage.TYPE_BYTE_INDEXED || type == BufferedImage.TYPE_BYTE_BINARY) && cm instanceof IndexColorModel) {
+         return new AwtImage(new BufferedImage(width, height, type, (IndexColorModel) cm));
+      }
       return new AwtImage(new BufferedImage(width, height, type));
    }
 
