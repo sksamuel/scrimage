@@ -809,6 +809,12 @@ public class GifSequenceReader {
       readLSD();
       if (gctFlag && !err()) {
          gct = readColorTable(gctSize);
+         // readColorTable returns null (and flags a format error) when the file ends inside
+         // the table; dereferencing it escaped AnimatedGifReader as a NullPointerException.
+         if (gct == null || err()) {
+            status = STATUS_FORMAT_ERROR;
+            return;
+         }
          bgColor = gct[bgIndex];
       }
    }
