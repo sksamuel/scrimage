@@ -15,15 +15,22 @@ public class AwtNearestNeighbourScale implements Scale {
       // because getRGB / setRGB round-trip cleanly through the colour model.
       int srcW = in.getWidth();
       int srcH = in.getHeight();
-      int[] src = in.getRGB(0, 0, srcW, srcH, null, 0, srcW);
       int[] dst = new int[w * h];
       double xRatio = (double) srcW / w;
       double yRatio = (double) srcH / h;
+      // Only fetch the source rows that are actually sampled: a downscale reads
+      // h rows rather than converting the whole source image to ARGB.
+      int[] srcRow = new int[srcW];
+      int lastSy = -1;
       int k = 0;
       for (int y = 0; y < h; y++) {
-         int srcRow = ((int) (y * yRatio)) * srcW;
+         int sy = (int) (y * yRatio);
+         if (sy != lastSy) {
+            in.getRGB(0, sy, srcW, 1, srcRow, 0, srcW);
+            lastSy = sy;
+         }
          for (int x = 0; x < w; x++) {
-            dst[k++] = src[srcRow + (int) (x * xRatio)];
+            dst[k++] = srcRow[(int) (x * xRatio)];
          }
       }
       // TYPE_CUSTOM (0) cannot be passed to the BufferedImage constructor
