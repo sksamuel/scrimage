@@ -131,6 +131,17 @@ public class GifSequenceReader {
 
    private long maxPixels = DEFAULT_MAX_PIXELS;
 
+   /**
+    * The maximum number of pixels decoded across ALL frames, or 0 to derive it from the
+    * input size, see {@link #setMaxTotalPixels(long)}.
+    */
+   private long maxTotalPixels = 0;
+
+   // length of the encoded GIF being read, used to derive the default total pixel budget
+   private long inputLength;
+   // logical screen pixels materialised so far (one full-screen ARGB image per frame)
+   private long decodedPixels;
+
    // LZW decoder working arrays
    protected short[] prefix;
    protected byte[] suffix;
@@ -163,6 +174,39 @@ public class GifSequenceReader {
       if (maxPixels < 1)
          throw new IllegalArgumentException("maxPixels must be positive but was " + maxPixels);
       this.maxPixels = maxPixels;
+   }
+
+   /**
+    * Returns the maximum number of pixels decoded across all frames, or 0 if the limit
+    * is derived from the input size (the default).
+    */
+   public long getMaxTotalPixels() {
+      return maxTotalPixels;
+   }
+
+   /**
+    * Sets the maximum number of pixels (logical screen width * height, summed over every
+    * frame) that may be decoded from one GIF. Every frame is materialised as a full
+    * logical-screen TYPE_INT_ARGB image, so this bounds the memory held by the decoded
+    * frames, which {@link #setMaxPixels(long)} alone does not: a few hundred bytes of 1x1
+    * frames on a large logical screen would otherwise demand gigabytes.
+    *
+    * By default (0) the budget is derived from the input: {@link #getMaxPixels()} plus
+    * MaxStackSize (4096) pixels per encoded byte, the same expansion bound used to reject
+    * implausible individual frames.
+    *
+    * @param maxTotalPixels the new limit, which must be positive, or 0 to restore the default
+    */
+   public void setMaxTotalPixels(long maxTotalPixels) {
+      if (maxTotalPixels < 0)
+         throw new IllegalArgumentException("maxTotalPixels must not be negative but was " + maxTotalPixels);
+      this.maxTotalPixels = maxTotalPixels;
+   }
+
+   private long totalPixelBudget() {
+      if (maxTotalPixels > 0) return maxTotalPixels;
+      long perByte = inputLength > Long.MAX_VALUE / MaxStackSize ? Long.MAX_VALUE : inputLength * MaxStackSize;
+      return perByte > Long.MAX_VALUE - maxPixels ? Long.MAX_VALUE : maxPixels + perByte;
    }
 
    static class GifFrame {
@@ -399,7 +443,9 @@ public class GifSequenceReader {
          // every decoded frame is larger than the file it came from, so buffering it
          // costs nothing meaningful.
          try {
-            in = new BufferedInputStream(new ByteArrayInputStream(is.readAllBytes()));
+            byte[] bytes = is.readAllBytes();
+            inputLength = bytes.length;
+            in = new BufferedInputStream(new ByteArrayInputStream(bytes));
             readHeader();
             if (!err()) {
                readContents();
@@ -649,6 +695,7 @@ public class GifSequenceReader {
    protected void init() {
       status = STATUS_OK;
       frameCount = 0;
+      decodedPixels = 0;
       frames = new ArrayList<>();
       gct = null;
       lct = null;
@@ -859,6 +906,17 @@ public class GifSequenceReader {
          status = STATUS_FORMAT_ERROR;
          return;
       }
+
+      // Every frame, however small its own rectangle, is materialised as a full logical
+      // screen image below, so the per-frame checks above do not bound the total: a few
+      // hundred bytes of 1x1 frames on a 4000x4000 screen demanded 64MB each and exhausted
+      // the heap. Charge each frame's screen against a budget for the whole GIF.
+      long screenPixels = (long) width * (long) height;
+      if (screenPixels > totalPixelBudget() - decodedPixels) {
+         status = STATUS_FORMAT_ERROR;
+         return;
+      }
+      decodedPixels += screenPixels;
 
       // transIndex is read as an unsigned byte (0-255) but the active colour
       // table may hold fewer entries, so guard the index before indexing it.
