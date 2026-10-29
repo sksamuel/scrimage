@@ -5,6 +5,7 @@ import com.sksamuel.scrimage.format.Format;
 import com.sksamuel.scrimage.format.FormatDetector;
 import com.sksamuel.scrimage.metadata.ImageMetadata;
 import com.sksamuel.scrimage.metadata.OrientationTools;
+import com.sksamuel.scrimage.pixels.FastRgb;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -284,7 +285,7 @@ public class ImmutableImageLoader {
             argb[i] = (a << 24) | (r << 16) | (g << 8) | b;
          }
       }
-      buffered.setRGB(0, 0, width, height, argb, 0, width);
+      FastRgb.setRGB(buffered, 0, 0, width, height, argb);
 
       return ImmutableImage.wrapAwt(buffered);
    }

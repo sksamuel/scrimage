@@ -1,5 +1,7 @@
 package com.sksamuel.scrimage;
 
+import com.sksamuel.scrimage.pixels.FastRgb;
+
 /**
  * The distribution of channel values across all pixels of an image.
  * <p>
@@ -21,7 +23,7 @@ public class Histogram {
     * @param image the image to analyse
     */
    public Histogram(AwtImage image) {
-      int[] argb = image.awt().getRGB(0, 0, image.width, image.height, null, 0, image.width);
+      int[] argb = FastRgb.getRGB(image.awt(), 0, 0, image.width, image.height);
       for (int p : argb) {
          int a = (p >>> 24) & 0xFF;
          int r = (p >> 16) & 0xFF;

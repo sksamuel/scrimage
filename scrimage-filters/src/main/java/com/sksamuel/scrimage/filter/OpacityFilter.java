@@ -16,6 +16,7 @@
 package com.sksamuel.scrimage.filter;
 
 import com.sksamuel.scrimage.ImmutableImage;
+import com.sksamuel.scrimage.pixels.FastRgb;
 
 public class OpacityFilter implements Filter {
 
@@ -29,7 +30,7 @@ public class OpacityFilter implements Filter {
    public void apply(ImmutableImage image) {
       int w = image.width;
       int h = image.height;
-      int[] argb = image.awt().getRGB(0, 0, w, h, null, 0, w);
+      int[] argb = FastRgb.getRGB(image.awt(), 0, 0, w, h);
       for (int i = 0; i < argb.length; i++) {
          int p = argb[i];
          int a = (p >>> 24) & 0xFF;
@@ -45,7 +46,7 @@ public class OpacityFilter implements Filter {
          int nb = clamp((int) (b + (255 - b) * amount));
          argb[i] = (a << 24) | (nr << 16) | (ng << 8) | nb;
       }
-      image.awt().setRGB(0, 0, w, h, argb, 0, w);
+      FastRgb.setRGB(image.awt(), 0, 0, w, h, argb);
    }
 
    private static int clamp(int value) {

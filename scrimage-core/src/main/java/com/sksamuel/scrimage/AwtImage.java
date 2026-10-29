@@ -4,6 +4,7 @@ import com.sksamuel.scrimage.angles.Radians;
 import com.sksamuel.scrimage.color.RGBColor;
 import com.sksamuel.scrimage.nio.ImageWriter;
 import com.sksamuel.scrimage.nio.WriteContext;
+import com.sksamuel.scrimage.pixels.FastRgb;
 import com.sksamuel.scrimage.pixels.Pixel;
 import com.sksamuel.scrimage.pixels.PixelTools;
 import com.sksamuel.scrimage.scaling.AwtNearestNeighbourScale;
@@ -115,7 +116,7 @@ public class AwtImage {
     * @return an array of the image's colors as RGBColor
     */
    public RGBColor[] colors() {
-      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      int[] argb = FastRgb.getRGB(awt(), 0, 0, width, height);
       RGBColor[] colors = new RGBColor[argb.length];
       for (int i = 0; i < argb.length; i++) {
          colors[i] = RGBColor.fromARGBInt(argb[i]);
@@ -153,7 +154,7 @@ public class AwtImage {
          // Non int-backed buffers (eg TYPE_BYTE_GRAY, TYPE_3BYTE_BGR, TYPE_4BYTE_ABGR):
          // a single bulk getRGB converts scanline-at-a-time internally, which is far
          // faster than invoking the colour-model conversion per pixel.
-         int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+         int[] argb = FastRgb.getRGB(awt(), 0, 0, width, height);
          Pixel[] pixels = new Pixel[argb.length];
          for (int index = 0; index < argb.length; index++) {
             pixels[index] = new Pixel(index % width, index / width, argb[index]);
@@ -185,7 +186,7 @@ public class AwtImage {
          public Pixel next() {
             if (!hasNext()) throw new java.util.NoSuchElementException();
             if (argb == null) {
-               argb = awt.getRGB(0, 0, width, height, null, 0, width);
+               argb = FastRgb.getRGB(awt, 0, 0, width, height);
             }
             int x = k % width;
             int y = k / width;
@@ -260,7 +261,7 @@ public class AwtImage {
     * @param fn a function that accepts a pixel
     */
    public void forEach(Consumer<Pixel> fn) {
-      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      int[] argb = FastRgb.getRGB(awt(), 0, 0, width, height);
       int i = 0;
       for (int y = 0; y < height; y++) {
          for (int x = 0; x < width; x++) {
@@ -282,7 +283,7 @@ public class AwtImage {
     * @return an array of rows, each an array of pixels
     */
    public Pixel[][] rows() {
-      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      int[] argb = FastRgb.getRGB(awt(), 0, 0, width, height);
       Pixel[][] pixels = new Pixel[height][width];
       int i = 0;
       for (int y = 0; y < height; y++) {
@@ -308,7 +309,7 @@ public class AwtImage {
     */
    public boolean contains(Color color) {
       int target = color.getRGB();
-      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      int[] argb = FastRgb.getRGB(awt(), 0, 0, width, height);
       for (int v : argb) {
          if (v == target) return true;
       }
@@ -322,7 +323,7 @@ public class AwtImage {
     * @return true if p holds for at least one pixel
     */
    public boolean exists(Predicate<Pixel> p) {
-      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      int[] argb = FastRgb.getRGB(awt(), 0, 0, width, height);
       int i = 0;
       for (int y = 0; y < height; y++) {
          for (int x = 0; x < width; x++) {
@@ -359,7 +360,7 @@ public class AwtImage {
     * @return an array containing an array for each ARGB components in that order.
     */
    public int[][] argb() {
-      int[] packed = awt().getRGB(0, 0, width, height, null, 0, width);
+      int[] packed = FastRgb.getRGB(awt(), 0, 0, width, height);
       int[][] result = new int[packed.length][];
       for (int i = 0; i < packed.length; i++) {
          int p = packed[i];
@@ -374,7 +375,7 @@ public class AwtImage {
     * @return an array containing the packed ARGB int for each pixel.
     */
    public int[] argbints() {
-      return awt().getRGB(0, 0, width, height, null, 0, width);
+      return FastRgb.getRGB(awt(), 0, 0, width, height);
    }
 
    public int[] rgb(int x, int y) {
@@ -383,7 +384,7 @@ public class AwtImage {
    }
 
    public int[][] rgb() {
-      int[] packed = awt().getRGB(0, 0, width, height, null, 0, width);
+      int[] packed = FastRgb.getRGB(awt(), 0, 0, width, height);
       int[][] result = new int[packed.length][];
       for (int i = 0; i < packed.length; i++) {
          int p = packed[i];
@@ -406,7 +407,7 @@ public class AwtImage {
     * @return an Array of pixels for the region
     */
    public Pixel[] pixels(int x, int y, int w, int h) {
-      int[] argb = awt().getRGB(x, y, w, h, null, 0, w);
+      int[] argb = FastRgb.getRGB(awt(), x, y, w, h);
       Pixel[] pixels = new Pixel[w * h];
       int k = 0;
       for (int dy = 0; dy < h; dy++) {
@@ -512,7 +513,7 @@ public class AwtImage {
     */
    public long count(Color color) {
       int target = color.getRGB();
-      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      int[] argb = FastRgb.getRGB(awt(), 0, 0, width, height);
       long n = 0;
       for (int v : argb) {
          if (v == target) n++;
@@ -527,7 +528,7 @@ public class AwtImage {
     * @return the number of pixels that evaluated true
     */
    public long count(Predicate<Pixel> p) {
-      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      int[] argb = FastRgb.getRGB(awt(), 0, 0, width, height);
       long n = 0;
       int i = 0;
       for (int y = 0; y < height; y++) {
@@ -604,7 +605,7 @@ public class AwtImage {
       // hashed object-by-object). Consistent with equals() which compares
       // the same bulk getRGB int[]s — equal images still produce equal
       // hash codes.
-      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      int[] argb = FastRgb.getRGB(awt(), 0, 0, width, height);
       int result = 31 * width + height;
       return 31 * result + Arrays.hashCode(argb);
    }
@@ -614,8 +615,8 @@ public class AwtImage {
       if (other instanceof AwtImage) {
          AwtImage that = (AwtImage) other;
          if (this.width != that.width || this.height != that.height) return false;
-         int[] a = this.awt().getRGB(0, 0, width, height, null, 0, width);
-         int[] b = that.awt().getRGB(0, 0, that.width, that.height, null, 0, that.width);
+         int[] a = FastRgb.getRGB(this.awt(), 0, 0, width, height);
+         int[] b = FastRgb.getRGB(that.awt(), 0, 0, that.width, that.height);
          return Arrays.equals(a, b);
       }
       return false;
@@ -672,7 +673,7 @@ public class AwtImage {
     * @return true if the predicate holds for every pixel
     */
    public boolean forAll(Predicate<Pixel> predicate) {
-      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      int[] argb = FastRgb.getRGB(awt(), 0, 0, width, height);
       int i = 0;
       for (int y = 0; y < height; y++) {
          for (int x = 0; x < width; x++) {
@@ -733,7 +734,7 @@ public class AwtImage {
     * @return the SrcOver-blend reduction of every pixel in the image
     */
    public RGBColor average() {
-      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      int[] argb = FastRgb.getRGB(awt(), 0, 0, width, height);
       // Sequential SrcOver-blend reduce, mirroring Color.average(Color other).
       // We carry running int channel values through the loop, avoiding an
       // RGBColor allocation per pixel that the previous Stream-based reduce
@@ -781,7 +782,7 @@ public class AwtImage {
     */
    public boolean isFilled(Color color) {
       int target = color.getRGB();
-      int[] argb = awt().getRGB(0, 0, width, height, null, 0, width);
+      int[] argb = FastRgb.getRGB(awt(), 0, 0, width, height);
       for (int v : argb) {
          if (v != target) return false;
       }

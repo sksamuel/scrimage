@@ -31,6 +31,7 @@ import com.sksamuel.scrimage.filter.Filter;
 import com.sksamuel.scrimage.metadata.ImageMetadata;
 import com.sksamuel.scrimage.metadata.OrientationTools;
 import com.sksamuel.scrimage.nio.*;
+import com.sksamuel.scrimage.pixels.FastRgb;
 import com.sksamuel.scrimage.pixels.Pixel;
 import com.sksamuel.scrimage.pixels.PixelTools;
 import com.sksamuel.scrimage.pixels.PixelsExtractor;
@@ -371,7 +372,7 @@ public class ImmutableImage extends MutableImage {
       for (int i = 0; i < pixels.length; i++) {
          argb[i] = pixels[i].toARGBInt();
       }
-      image.awt().setRGB(0, 0, w, h, argb, 0, w);
+      FastRgb.setRGB(image.awt(), 0, 0, w, h, argb);
       return image;
    }
 
@@ -577,18 +578,18 @@ public class ImmutableImage extends MutableImage {
       final int[] argb;
       if (getType() == 0) {
          target = copy();
-         argb = target.awt().getRGB(0, 0, width, height, null, 0, width);
+         argb = FastRgb.getRGB(target.awt(), 0, 0, width, height);
       } else if (awt().getColorModel() instanceof java.awt.image.IndexColorModel) {
          target = create(width, height, BufferedImage.TYPE_INT_ARGB).associateMetadata(metadata);
-         argb = awt().getRGB(0, 0, width, height, null, 0, width);
+         argb = FastRgb.getRGB(awt(), 0, 0, width, height);
       } else {
          target = blank().associateMetadata(metadata);
-         argb = awt().getRGB(0, 0, width, height, null, 0, width);
+         argb = FastRgb.getRGB(awt(), 0, 0, width, height);
       }
       for (int i = 0; i < argb.length; i++) {
          argb[i] = transform.applyAsInt(i, argb[i]);
       }
-      target.awt().setRGB(0, 0, width, height, argb, 0, width);
+      FastRgb.setRGB(target.awt(), 0, 0, width, height, argb);
       return target;
    }
 
@@ -951,8 +952,8 @@ public class ImmutableImage extends MutableImage {
     */
    public ImmutableImage diff(ImmutableImage other) {
       requireSameDimensions(other, "diff");
-      int[] a = awt().getRGB(0, 0, width, height, null, 0, width);
-      int[] b = other.awt().getRGB(0, 0, width, height, null, 0, width);
+      int[] a = FastRgb.getRGB(awt(), 0, 0, width, height);
+      int[] b = FastRgb.getRGB(other.awt(), 0, 0, width, height);
       int[] out = new int[a.length];
       for (int i = 0; i < a.length; i++) {
          int dr = Math.abs(((a[i] >> 16) & 0xFF) - ((b[i] >> 16) & 0xFF));
@@ -961,7 +962,7 @@ public class ImmutableImage extends MutableImage {
          out[i] = 0xFF000000 | (dr << 16) | (dg << 8) | db;
       }
       ImmutableImage target = ImmutableImage.create(width, height, DEFAULT_DATA_TYPE);
-      target.awt().setRGB(0, 0, width, height, out, 0, width);
+      FastRgb.setRGB(target.awt(), 0, 0, width, height, out);
       return target.associateMetadata(metadata);
    }
 
@@ -977,8 +978,8 @@ public class ImmutableImage extends MutableImage {
     */
    public double rmse(ImmutableImage other) {
       requireSameDimensions(other, "rmse");
-      int[] a = awt().getRGB(0, 0, width, height, null, 0, width);
-      int[] b = other.awt().getRGB(0, 0, width, height, null, 0, width);
+      int[] a = FastRgb.getRGB(awt(), 0, 0, width, height);
+      int[] b = FastRgb.getRGB(other.awt(), 0, 0, width, height);
       double sum = 0.0;
       for (int i = 0; i < a.length; i++) {
          int dr = ((a[i] >> 16) & 0xFF) - ((b[i] >> 16) & 0xFF);
@@ -1748,7 +1749,7 @@ public class ImmutableImage extends MutableImage {
       if (!awt().getColorModel().hasAlpha())
          return op(resampleOp);
 
-      int[] src = awt().getRGB(0, 0, width, height, null, 0, width);
+      int[] src = FastRgb.getRGB(awt(), 0, 0, width, height);
       boolean hasTransparency = false;
       for (int p : src) {
          if (((p >>> 24) & 0xFF) != 0xFF) {
@@ -1770,14 +1771,14 @@ public class ImmutableImage extends MutableImage {
          prem[i] = (a << 24) | (r << 16) | (g << 8) | bl;
       }
       ImmutableImage premul = ImmutableImage.create(width, height, BufferedImage.TYPE_INT_ARGB);
-      premul.awt().setRGB(0, 0, width, height, prem, 0, width);
+      FastRgb.setRGB(premul.awt(), 0, 0, width, height, prem);
 
       BufferedImage scaled = resampleOp.filter(premul.awt(), null);
 
       // Un-premultiply: colour = colour' * 255 / alpha (alpha == 0 → fully clear).
       int sw = scaled.getWidth();
       int sh = scaled.getHeight();
-      int[] out = scaled.getRGB(0, 0, sw, sh, null, 0, sw);
+      int[] out = FastRgb.getRGB(scaled, 0, 0, sw, sh);
       for (int i = 0; i < out.length; i++) {
          int p = out[i];
          int a = (p >>> 24) & 0xFF;
@@ -1791,7 +1792,7 @@ public class ImmutableImage extends MutableImage {
          out[i] = (a << 24) | (r << 16) | (g << 8) | bl;
       }
       ImmutableImage result = ImmutableImage.create(sw, sh, DEFAULT_DATA_TYPE);
-      result.awt().setRGB(0, 0, sw, sh, out, 0, sw);
+      FastRgb.setRGB(result.awt(), 0, 0, sw, sh, out);
       return result.associateMetadata(metadata);
    }
 
@@ -1830,7 +1831,7 @@ public class ImmutableImage extends MutableImage {
       // pixels, rather than constructing a fresh interpolator (each issuing
       // scalar getRGB calls) for every output cell via the inherited
       // subpixel(x, y).
-      int[] sourcePixels = awt().getRGB(0, 0, width, height, null, 0, width);
+      int[] sourcePixels = FastRgb.getRGB(awt(), 0, 0, width, height);
       LinearSubpixelInterpolator interpolator = new LinearSubpixelInterpolator(this, sourcePixels);
       int k = 0;
       for (int yIndex = 0; yIndex < subHeight; yIndex++) {
@@ -1839,7 +1840,7 @@ public class ImmutableImage extends MutableImage {
          }
       }
       ImmutableImage result = ImmutableImage.create(subWidth, subHeight, DEFAULT_DATA_TYPE);
-      result.awt().setRGB(0, 0, subWidth, subHeight, argb, 0, subWidth);
+      FastRgb.setRGB(result.awt(), 0, 0, subWidth, subHeight, argb);
       return result.associateMetadata(metadata);
    }
 
@@ -1882,7 +1883,7 @@ public class ImmutableImage extends MutableImage {
       // a fresh image. The previous implementation called pixels(x, y, w, h)
       // to materialise a Pixel[w*h] just so wrapPixels → create(Pixel[])
       // could re-extract argb from each Pixel.
-      int[] argb = awt().getRGB(x, y, w, h, null, 0, w);
+      int[] argb = FastRgb.getRGB(awt(), x, y, w, h);
       // Preserve the source image's type so cropping (and trim/autocrop/takeX,
       // which delegate here) doesn't silently promote e.g. a TYPE_INT_RGB image
       // to TYPE_INT_ARGB. TYPE_CUSTOM (0) can't be fed to the BufferedImage type
@@ -1890,7 +1891,7 @@ public class ImmutableImage extends MutableImage {
       int type = awt().getType();
       if (type == BufferedImage.TYPE_CUSTOM) type = DEFAULT_DATA_TYPE;
       ImmutableImage result = ImmutableImage.create(w, h, type);
-      result.awt().setRGB(0, 0, w, h, argb, 0, w);
+      FastRgb.setRGB(result.awt(), 0, 0, w, h, argb);
       return result.associateMetadata(metadata);
    }
 

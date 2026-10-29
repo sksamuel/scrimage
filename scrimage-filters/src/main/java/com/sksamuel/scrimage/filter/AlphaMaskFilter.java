@@ -1,6 +1,7 @@
 package com.sksamuel.scrimage.filter;
 
 import com.sksamuel.scrimage.ImmutableImage;
+import com.sksamuel.scrimage.pixels.FastRgb;
 
 import java.awt.image.BufferedImage;
 
@@ -55,8 +56,8 @@ public class AlphaMaskFilter implements Filter {
             "AlphaMaskFilter mask must match the image dimensions: mask is "
                + mask.width + "x" + mask.height + ", image is " + w + "x" + h);
       }
-      int[] imagePixels = image.awt().getRGB(0, 0, w, h, null, 0, w);
-      int[] maskPixels = mask.awt().getRGB(0, 0, w, h, null, 0, w);
+      int[] imagePixels = FastRgb.getRGB(image.awt(), 0, 0, w, h);
+      int[] maskPixels = FastRgb.getRGB(mask.awt(), 0, 0, w, h);
 
       // The chosen source channel is fixed for the whole call, so resolve the
       // mask bits and left shift once instead of branching per pixel. The
@@ -80,6 +81,6 @@ public class AlphaMaskFilter implements Filter {
          int alpha = (maskPixels[i] & maskBits) << shift;
          imagePixels[i] = color | alpha;
       }
-      image.awt().setRGB(0, 0, w, h, imagePixels, 0, w);
+      FastRgb.setRGB(image.awt(), 0, 0, w, h, imagePixels);
    }
 }

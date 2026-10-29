@@ -2,6 +2,7 @@ package com.sksamuel.scrimage.filter;
 
 import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.color.RGBColor;
+import com.sksamuel.scrimage.pixels.FastRgb;
 
 /**
  * Created by guw on 23/09/14.
@@ -57,11 +58,11 @@ public class ErrorSpotterFilter implements Filter {
         // row-major iteration order produces identical results.
         int w = src.width;
         int h = src.height;
-        int[] basePixels = base.awt().getRGB(0, 0, w, h, null, 0, w);
-        int[] srcPixels = src.awt().getRGB(0, 0, w, h, null, 0, w);
+        int[] basePixels = FastRgb.getRGB(base.awt(), 0, 0, w, h);
+        int[] srcPixels = FastRgb.getRGB(src.awt(), 0, 0, w, h);
         for (int i = 0; i < srcPixels.length; i++) {
             srcPixels[i] = error(RGBColor.fromARGBInt(basePixels[i]), RGBColor.fromARGBInt(srcPixels[i]));
         }
-        src.awt().setRGB(0, 0, w, h, srcPixels, 0, w);
+        FastRgb.setRGB(src.awt(), 0, 0, w, h, srcPixels);
     }
 }
