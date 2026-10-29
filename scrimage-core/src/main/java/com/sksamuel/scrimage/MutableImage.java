@@ -141,7 +141,12 @@ public class MutableImage extends AwtImage {
       }
       RescaleOp rescale = new RescaleOp((float) factor, 0f,
          new RenderingHints(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY));
-      rescale.filter(awt(), awt());
+      // Filter into a fresh destination and copy the result back rather than filtering
+      // in place: the JDK's in-place RescaleOp mis-addresses byte-interleaved child
+      // rasters (getSubimage views of TYPE_3BYTE_BGR / TYPE_4BYTE_ABGR images), shifting
+      // channels inside the view and writing pixels of the parent image outside it.
+      BufferedImage rescaled = rescale.filter(awt(), null);
+      awt().setData(rescaled.getRaster());
    }
 
    public void contrastInPlace(double factor) {
