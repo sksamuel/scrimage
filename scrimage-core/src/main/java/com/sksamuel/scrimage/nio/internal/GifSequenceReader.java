@@ -558,8 +558,19 @@ public class GifSequenceReader {
                code = old_code;
             }
             while (code > clear) {
+               // A valid code expands to at most MaxStackSize pixels. Corrupt data can make the
+               // prefix chain cycle (codes left over from earlier frames or out of order), which
+               // used to run past pixelStack and escape as an ArrayIndexOutOfBoundsException.
+               if (top >= MaxStackSize) {
+                  status = STATUS_FORMAT_ERROR;
+                  return;
+               }
                pixelStack[top++] = suffix[code];
                code = prefix[code];
+            }
+            if (top >= MaxStackSize) {
+               status = STATUS_FORMAT_ERROR;
+               return;
             }
             first = ((int) suffix[code]) & 0xff;
 
