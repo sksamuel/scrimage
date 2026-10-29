@@ -2,6 +2,7 @@ package com.sksamuel.scrimage.nio;
 
 import ar.com.hjg.pngj.ImageLineHelper;
 import ar.com.hjg.pngj.ImageLineInt;
+import ar.com.hjg.pngj.PngjException;
 import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.metadata.ImageMetadata;
 import com.sksamuel.scrimage.pixels.PixelTools;
@@ -13,14 +14,28 @@ import java.awt.image.DataBufferInt;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 public class PngReader implements ImageReader {
 
    @Override
-   public ImmutableImage read(byte[] bytes, Rectangle rectangle) {
+   public ImmutableImage read(byte[] bytes, Rectangle rectangle) throws IOException {
 
       if (!isPng(bytes))
          return null;
+
+      // pngj reports truncated or malformed input with its own unchecked PngjException (for
+      // example PngjInputException "failed feed bytes" for a truncated file). ImageReader
+      // declares IOException for unreadable input, so surface it as one rather than leaking a
+      // RuntimeException to callers that use this reader directly.
+      try {
+         return decode(bytes, rectangle);
+      } catch (PngjException e) {
+         throw new IOException("Could not read PNG: " + e.getMessage(), e);
+      }
+   }
+
+   private ImmutableImage decode(byte[] bytes, Rectangle rectangle) {
 
       ar.com.hjg.pngj.PngReader pngr = new ar.com.hjg.pngj.PngReader(new ByteArrayInputStream(bytes));
       // close() in a finally: any exception during the read loop (truncated or
