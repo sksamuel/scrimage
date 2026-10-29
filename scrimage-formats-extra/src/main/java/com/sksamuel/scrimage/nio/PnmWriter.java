@@ -35,6 +35,12 @@ public class PnmWriter extends TwelveMonkeysWriter {
         return UNSUPPORTED_TYPES;
     }
 
+    // 16-bit RGB TYPE_CUSTOM images (e.g. from a 16-bit PNG) are encoded natively as a 16-bit PPM.
+    @Override
+    protected boolean supportsCustomType() {
+        return true;
+    }
+
     // The PNM formats have no alpha channel and the TwelveMonkeys PNM encoder throws an
     // undeclared IllegalArgumentException ("Unknown TupleType for BufferedImage") for
     // images with one - including scrimage's default TYPE_INT_ARGB. Flatten alpha onto
