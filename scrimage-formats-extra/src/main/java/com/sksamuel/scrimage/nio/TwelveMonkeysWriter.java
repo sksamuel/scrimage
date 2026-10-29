@@ -33,11 +33,27 @@ abstract class TwelveMonkeysWriter implements ImageWriter {
     }
 
     /**
+     * Whether the TwelveMonkeys encoder for {@link #format()} can encode {@code TYPE_CUSTOM}
+     * images, such as the 16-bit RGB(A) images ImageIO decodes 16-bit PNGs into. Most encoders
+     * cannot (TIFF throws IllegalArgumentException("Not implemented for data type: 1"), IFF
+     * ArrayIndexOutOfBoundsException, PICT IIOException, and TGA/BMP write files that cannot be
+     * decoded), so by default such images are redrawn like an {@link #unsupportedTypes()} type.
+     * Writers whose encoder handles them natively override this to keep the bit depth.
+     */
+    protected boolean supportsCustomType() {
+        return false;
+    }
+
+    /**
      * Returns the image unchanged if its type is encodable by this writer, otherwise a copy
      * drawn into {@code TYPE_INT_RGB} ({@code TYPE_INT_ARGB} when the colour model has alpha).
      */
     protected AwtImage normalise(AwtImage image) {
-        if (!unsupportedTypes().contains(image.awt().getType())) {
+        int type = image.awt().getType();
+        boolean encodable = type == BufferedImage.TYPE_CUSTOM
+            ? supportsCustomType()
+            : !unsupportedTypes().contains(type);
+        if (encodable) {
             return image;
         }
         int target = image.awt().getColorModel().hasAlpha() ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
