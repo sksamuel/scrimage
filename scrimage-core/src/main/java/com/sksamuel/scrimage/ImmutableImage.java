@@ -1124,10 +1124,14 @@ public class ImmutableImage extends MutableImage {
     * @param position    where to position the original image after the canvas size change. Defaults to centre.
     * @param background  the color to use for expande background areas.
     * @param imageType   the AWT image type to create. See BufferedImage.TYPE_*
-    * @return a new Image that is the result of resizing the canvas.
+    * @return a new Image that is the result of resizing the canvas; each dimension is at least 1.
     */
    public ImmutableImage resize(double scaleFactor, Position position, Color background, int imageType) {
-      return resizeTo((int) (width * scaleFactor), (int) (height * scaleFactor), position, background, imageType);
+      // Clamp to at least 1: a small factor floors (int) (width * scaleFactor) to 0,
+      // which then fails creating a 0-sized canvas. Mirrors resizeToWidth/Height.
+      int targetWidth = Math.max(1, (int) (width * scaleFactor));
+      int targetHeight = Math.max(1, (int) (height * scaleFactor));
+      return resizeTo(targetWidth, targetHeight, position, background, imageType);
    }
 
    public ImmutableImage resizeTo(int targetWidth,
@@ -1630,7 +1634,9 @@ public class ImmutableImage extends MutableImage {
    }
 
    public ImmutableImage scaleHeightToRatio(double ratio, ScaleMethod scaleMethod) {
-      return scaleToHeight((int) (height * ratio), scaleMethod);
+      // Clamp to at least 1: a small ratio floors (int) (height * ratio) to 0, which
+      // then fails creating a 0-height image. scaleToHeight clamps the derived width.
+      return scaleToHeight(Math.max(1, (int) (height * ratio)), scaleMethod);
    }
 
    public ImmutableImage scale(double scaleFactor) {
@@ -1643,10 +1649,15 @@ public class ImmutableImage extends MutableImage {
     *
     * @param scaleFactor the target increase or decrease. 1 is the same as original.
     * @param scaleMethod the type of scaling method to use.
-    * @return a new Image that is the result of scaling this image
+    * @return a new Image that is the result of scaling this image; each dimension is at least 1.
     */
    public ImmutableImage scale(double scaleFactor, ScaleMethod scaleMethod) {
-      return scaleTo((int) (width * scaleFactor), (int) (height * scaleFactor), scaleMethod);
+      // Clamp to at least 1: a small factor floors (int) (width * scaleFactor) to 0,
+      // which then fails creating a 0-sized image. Mirrors scaleToWidth/Height and
+      // DimensionTools; zoom(factor) delegates here and was failing the same way.
+      int targetWidth = Math.max(1, (int) (width * scaleFactor));
+      int targetHeight = Math.max(1, (int) (height * scaleFactor));
+      return scaleTo(targetWidth, targetHeight, scaleMethod);
    }
 
    /**
