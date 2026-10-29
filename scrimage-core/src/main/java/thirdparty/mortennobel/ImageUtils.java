@@ -80,9 +80,14 @@ public class ImageUtils {
             ints2bytes(temp, array, 2, 1, 0, 3);  // argb -->  abgr
             break;
          case BufferedImage.TYPE_USHORT_GRAY:
-            img.getRGB(x, y, w, h, temp, 0, w);
+            // Read the raw 16-bit samples, like the 8-bit TYPE_BYTE_GRAY case does, so that
+            // setBGRPixels (which writes the raw sample back as value * 257) round-trips.
+            // getRGB would return the sRGB-encoded value of the linear CS_GRAY sample, and
+            // writing that back as a raw sample applied the gamma curve twice (brightening).
+            raster = img.getRaster();
+            raster.getSamples(x, y, w, h, 0, temp);
             for (int i = 0; i < w; i++) {
-               array[i] = (byte) (temp[i] & 0xFF);  // extract gray (R=G=B for gray images)
+               array[i] = (byte) ((temp[i] + 128) / 257);  // nearest 8-bit value of the 16-bit sample
             }
             break;
          default:
