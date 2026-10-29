@@ -70,22 +70,6 @@ public class GifSequenceWriter extends AbstractGifWriter {
       try {
          ImageWriteParam imageWriteParam = writer.getDefaultWriteParam();
 
-         // createFromRenderedImage rather than createFromBufferedImageType: the latter throws
-         // IllegalArgumentException for TYPE_CUSTOM (type 0), which is what the JDK PNG reader
-         // returns for 16-bit per channel PNGs — so such frames could never be written to a gif.
-         ImageTypeSpecifier imageTypeSpecifier = ImageTypeSpecifier.createFromRenderedImage(images[0].awt());
-         IIOMetadata imageMetaData = writer.getDefaultImageMetadata(imageTypeSpecifier, imageWriteParam);
-
-         String metaFormatName = imageMetaData.getNativeMetadataFormatName();
-
-         IIOMetadataNode root = (IIOMetadataNode) imageMetaData.getAsTree(metaFormatName);
-         populateGraphicsControlNode(root, Duration.ofMillis(frameDelayMillis));
-         populateCommentsNode(root);
-         if (infiniteLoop)
-            populateApplicationExtensions(root, infiniteLoop);
-
-         imageMetaData.setFromTree(metaFormatName, root);
-
          // Size hint to avoid repeated growth of the default 32 byte buffer; GIF output for a
          // frame is at most one byte per pixel before LZW compression, and usually much smaller.
          int initialCapacity = (int) Math.min(16L * 1024 * 1024, Math.max(1024L, (long) images[0].width * images[0].height));
@@ -95,6 +79,12 @@ public class GifSequenceWriter extends AbstractGifWriter {
                writer.prepareWriteSequence(null);
 
                for (ImmutableImage image : images) {
+                  // Metadata is built per frame from that frame's own type. A single metadata object
+                  // built from the first frame carried the first frame's LocalColorTable when that
+                  // frame used an IndexColorModel, and the JDK writer then emitted that table for
+                  // every later frame, so later frames (palette or RGB) were drawn with the first
+                  // frame's colours.
+                  IIOMetadata imageMetaData = frameMetadata(writer, image, imageWriteParam);
                   writer.writeToSequence(new IIOImage(image.awt(), null, imageMetaData), imageWriteParam);
                }
 
@@ -106,5 +96,24 @@ public class GifSequenceWriter extends AbstractGifWriter {
       } finally {
          writer.dispose();
       }
+   }
+
+   private IIOMetadata frameMetadata(ImageWriter writer, ImmutableImage image, ImageWriteParam imageWriteParam) throws IOException {
+      // createFromRenderedImage rather than createFromBufferedImageType: the latter throws
+      // IllegalArgumentException for TYPE_CUSTOM (type 0), which is what the JDK PNG reader
+      // returns for 16-bit per channel PNGs — so such frames could never be written to a gif.
+      ImageTypeSpecifier imageTypeSpecifier = ImageTypeSpecifier.createFromRenderedImage(image.awt());
+      IIOMetadata imageMetaData = writer.getDefaultImageMetadata(imageTypeSpecifier, imageWriteParam);
+
+      String metaFormatName = imageMetaData.getNativeMetadataFormatName();
+
+      IIOMetadataNode root = (IIOMetadataNode) imageMetaData.getAsTree(metaFormatName);
+      populateGraphicsControlNode(root, Duration.ofMillis(frameDelayMillis));
+      populateCommentsNode(root);
+      if (infiniteLoop)
+         populateApplicationExtensions(root, infiniteLoop);
+
+      imageMetaData.setFromTree(metaFormatName, root);
+      return imageMetaData;
    }
 }
