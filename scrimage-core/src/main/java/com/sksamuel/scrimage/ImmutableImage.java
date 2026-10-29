@@ -749,7 +749,7 @@ public class ImmutableImage extends MutableImage {
       ImmutableImage scaled = scaleTo(coveredDimensions.getX(), coveredDimensions.getY(), scaleMethod);
       Dimension dim = position.calculateXY(targetWidth, targetHeight, coveredDimensions.getX(), coveredDimensions.getY());
       ImmutableImage result = create(targetWidth, targetHeight, imageType);
-      result.overlayInPlace(scaled.awt(), dim.getX(), dim.getY());
+      overlayOntoFill(result, scaled.awt(), dim.getX(), dim.getY(), Colors.Transparent.awt());
       return result.associateMetadata(metadata);
    }
 
@@ -917,7 +917,7 @@ public class ImmutableImage extends MutableImage {
       Dimension dim = position.calculateXY(canvasWidth, canvasHeight, wh.getX(), wh.getY());
       ImmutableImage scaled = scaleTo(wh.getX(), wh.getY(), scaleMethod);
       ImmutableImage result = ImmutableImage.filled(canvasWidth, canvasHeight, color, imageType);
-      result.overlayInPlace(scaled.awt(), dim.getX(), dim.getY());
+      overlayOntoFill(result, scaled.awt(), dim.getX(), dim.getY(), color);
       return result.associateMetadata(metadata);
    }
 
@@ -996,6 +996,40 @@ public class ImmutableImage extends MutableImage {
             "Cannot %s images of different dimensions: %dx%d vs %dx%d",
             op, width, height, other.width, other.height));
       }
+   }
+
+   /**
+    * Draws {@code overlay} at (x, y) onto {@code target}, a freshly created image whose every
+    * pixel is the single colour {@code fill}. This is SrcOver, exactly as overlayInPlace.
+    * <p>
+    * When the fill is fully transparent, SrcOver reduces to "the overlay pixel, or the existing
+    * pixel where the overlay is fully transparent". Java2D computes it through a premultiplied
+    * blit instead, which loses colour precision at low alpha (alpha 5: 0x40ff80 came back as
+    * 0x33ff99), so pad/translate/resizeTo/fit/cover did not reproduce translucent pixels. For a
+    * TYPE_INT_ARGB target and an sRGB overlay the result is therefore computed directly. Other
+    * targets, fills and colour spaces (e.g. linear CS_GRAY, whose getRGB differs from what
+    * Java2D draws) keep the Graphics2D path unchanged.
+    */
+   private static void overlayOntoFill(ImmutableImage target, BufferedImage overlay, int x, int y, Color fill) {
+      if (fill.getAlpha() != 0
+         || target.getType() != BufferedImage.TYPE_INT_ARGB
+         || !overlay.getColorModel().getColorSpace().isCS_sRGB()) {
+         target.overlayInPlace(overlay, x, y);
+         return;
+      }
+      int x0 = Math.max(0, x);
+      int y0 = Math.max(0, y);
+      int x1 = (int) Math.min(target.width, (long) x + overlay.getWidth());
+      int y1 = (int) Math.min(target.height, (long) y + overlay.getHeight());
+      if (x1 <= x0 || y1 <= y0) return;
+      int w = x1 - x0;
+      int h = y1 - y0;
+      int[] src = overlay.getRGB(x0 - x, y0 - y, w, h, null, 0, w);
+      int[] dst = target.awt().getRGB(x0, y0, w, h, null, 0, w);
+      for (int i = 0; i < src.length; i++) {
+         if ((src[i] >>> 24) != 0) dst[i] = src[i];
+      }
+      target.awt().setRGB(x0, y0, w, h, dst, 0, w);
    }
 
    /**
@@ -1200,7 +1234,7 @@ public class ImmutableImage extends MutableImage {
       else {
          Dimension dim = position.calculateXY(targetWidth, targetHeight, width, height);
          ImmutableImage result = filled(targetWidth, targetHeight, background, imageType);
-         result.overlayInPlace(awt(), dim.getX(), dim.getY());
+         overlayOntoFill(result, awt(), dim.getX(), dim.getY(), background);
          return result.associateMetadata(metadata);
       }
    }
@@ -1460,7 +1494,7 @@ public class ImmutableImage extends MutableImage {
       // overlayInPlace. Going through overlay() would clone that just-created
       // buffer first (a full-image copy) for no reason.
       ImmutableImage result = filled(w, h, color);
-      result.overlayInPlace(awt(), left, top);
+      overlayOntoFill(result, awt(), left, top, color);
       return result.associateMetadata(metadata);
    }
 
@@ -2014,7 +2048,7 @@ public class ImmutableImage extends MutableImage {
       // fill() returns a fresh, unshared image, so draw straight into it with
       // overlayInPlace rather than overlay(), which would clone it first.
       ImmutableImage result = fill(bg);
-      result.overlayInPlace(awt(), x, y);
+      overlayOntoFill(result, awt(), x, y, bg);
       return result.associateMetadata(metadata);
    }
 
