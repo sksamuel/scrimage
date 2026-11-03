@@ -19,9 +19,15 @@ public class ErodeFilter extends BufferedOpFilter {
     }
 
     /**
-     * @param iterations the number of erosion passes; higher values erode more.
+     * @param iterations the number of erosion passes (at least 1); higher values erode more.
+     * @throws IllegalArgumentException if iterations is less than 1
      */
     public ErodeFilter(int iterations) {
+        // The jhlabs implementation only writes the output buffer inside the
+        // iterations loop, so iterations <= 0 silently returned a fully
+        // transparent black image rather than the unchanged input.
+        if (iterations < 1)
+            throw new IllegalArgumentException("iterations must be >= 1, got " + iterations);
         this.iterations = iterations;
     }
 
