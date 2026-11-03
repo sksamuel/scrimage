@@ -4,7 +4,22 @@ import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.color.GrayscaleMethod
 import com.sksamuel.scrimage.pixels.PixelTools
 
+/**
+ * Computes a difference hash (dhash) by scaling the image down to [cols] x [rows] and
+ * comparing the luminance of each pixel with its right-hand neighbour, giving
+ * (cols - 1) * rows bits.
+ *
+ * @param cols the width of the scaled-down image; must be at least 2 so that adjacent
+ *             pixels exist to compare.
+ * @param rows the height of the scaled-down image; must be at least 1.
+ * @throws IllegalArgumentException if cols < 2 or rows < 1.
+ */
 class DifferenceHasher(private val cols: Int, private val rows: Int) {
+
+   init {
+      require(cols >= 2) { "dhash cols must be >= 2 (adjacent pixels are compared) but was $cols" }
+      require(rows >= 1) { "dhash rows must be >= 1 but was $rows" }
+   }
 
    /**
     * Returns the dhash for this input [image] based on the configured [cols] and [rows].
