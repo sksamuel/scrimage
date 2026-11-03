@@ -77,6 +77,11 @@ public class AnimatedGif {
       return frames;
    }
 
+   /**
+    * Returns a copy of the encoded GIF exactly as it was read, so per-frame delays,
+    * disposal methods and loop count are preserved. To re-encode the frames use
+    * {@link #bytes(AnimatedImageWriter)} instead.
+    */
    public byte[] getBytes() throws IOException {
       return reader.bytes();
    }
