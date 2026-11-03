@@ -10,6 +10,8 @@ import javax.imageio.stream.MemoryCacheImageOutputStream;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -117,6 +119,11 @@ public class JpegWriter implements ImageWriter {
          } finally {
             g2.dispose();
          }
+      } else if (hasWideSamples(image.awt())) {
+         // The JDK JPEG writer only accepts samples of at most 8 bits, so the 16-bit images the
+         // PNG reader returns for 16-bit PNGs (TYPE_USHORT_GRAY, or TYPE_CUSTOM for RGB) failed
+         // with "Illegal band size". Reduce them to 8 bits per sample first.
+         noAlpha = toEightBit(image.awt());
       } else {
          noAlpha = image.awt();
       }
@@ -129,5 +136,41 @@ public class JpegWriter implements ImageWriter {
       } finally {
          writer.dispose();
       }
+   }
+
+   private static boolean hasWideSamples(BufferedImage image) {
+      for (int size : image.getColorModel().getComponentSize()) {
+         if (size > 8) return true;
+      }
+      return false;
+   }
+
+   private static BufferedImage toEightBit(BufferedImage image) {
+      int w = image.getWidth();
+      int h = image.getHeight();
+      Raster src = image.getRaster();
+      if (image.getColorModel().getNumComponents() == 1 && src.getNumBands() == 1) {
+         // Single band grey: keep a greyscale JPEG and the stored sample values by taking the
+         // high byte of each sample. Going through an RGB image would apply the JDK's linear
+         // grey conversion and brighten the image.
+         int bits = image.getColorModel().getComponentSize(0);
+         BufferedImage grey = new BufferedImage(w, h, BufferedImage.TYPE_BYTE_GRAY);
+         WritableRaster dst = grey.getRaster();
+         int[] row = new int[w];
+         for (int y = 0; y < h; y++) {
+            src.getSamples(0, y, w, 1, 0, row);
+            for (int x = 0; x < w; x++) row[x] = row[x] >>> (bits - 8);
+            dst.setSamples(0, y, w, 1, 0, row);
+         }
+         return grey;
+      }
+      BufferedImage rgb = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+      Graphics2D g2 = rgb.createGraphics();
+      try {
+         g2.drawImage(image, 0, 0, null);
+      } finally {
+         g2.dispose();
+      }
+      return rgb;
    }
 }
